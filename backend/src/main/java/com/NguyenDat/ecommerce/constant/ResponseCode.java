@@ -1,4 +1,4 @@
-package com.NguyenDat.ecommerce.enums;
+package com.NguyenDat.ecommerce.constant;
 
 import lombok.Getter;
 
@@ -18,9 +18,8 @@ public enum SuccessCode {
     // Product (thêm sau)
     PRODUCT_CREATED(3000, "Product created successfully"),
 
-    //ROLE
+    // ROLE
     ROLE_FETCHED(2001, "Role fetched successfully");
-
 
     private final int code;
     private final String message;

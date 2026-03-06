@@ -1,15 +1,15 @@
 package com.NguyenDat.ecommerce.dto.response;
 
-import lombok.*;
-
 import java.util.Set;
+
+import lombok.*;
 
 @Setter
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class StaffCreationResponse {
+public class StaffResponse {
     private String email;
     private String fullName;
     private String phoneNumber;

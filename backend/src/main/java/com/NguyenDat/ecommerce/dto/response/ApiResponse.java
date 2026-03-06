@@ -1,8 +1,11 @@
 package com.NguyenDat.ecommerce.dto.response;
 
+import java.time.LocalDateTime;
+
 import com.NguyenDat.ecommerce.enums.SuccessCode;
 import com.NguyenDat.ecommerce.exception.ErrorCode;
 import com.fasterxml.jackson.annotation.JsonInclude;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -16,6 +19,9 @@ public class ResponseAPI<T> {
     int code;
     String message;
     T data;
+
+    @Builder.Default
+    LocalDateTime timestamp = LocalDateTime.now();
 
     public static <T> ResponseAPI<T> success(SuccessCode successCode, T result) {
         return ResponseAPI.<T>builder()
@@ -31,5 +37,4 @@ public class ResponseAPI<T> {
                 .message(er.getMessage())
                 .build();
     }
-
 }

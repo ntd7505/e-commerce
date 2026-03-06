@@ -1,12 +1,12 @@
 package com.NguyenDat.ecommerce.dto.request;
 
+import java.util.Set;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.*;
-import org.springframework.validation.annotation.Validated;
 
-import java.util.Set;
+import lombok.*;
 
 @Setter
 @Getter
@@ -28,9 +28,7 @@ public class StaffCreationRequest {
     @NotBlank
     private String phoneNumber;
 
-
     private String avatar;
-
 
     private Set<String> roles;
 }

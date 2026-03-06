@@ -1,15 +1,18 @@
 package com.NguyenDat.ecommerce.entity;
 
-import com.NguyenDat.ecommerce.enums.Active;
-import jakarta.persistence.*;
-import lombok.*;
-import lombok.experimental.FieldDefaults;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
+
+import jakarta.persistence.*;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import com.NguyenDat.ecommerce.enums.Active;
+
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Entity
 @Table(name = "users")
@@ -41,18 +44,20 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    Active status;
+    @Builder.Default
+    Active status = Active.ACTIVE;
 
     @ManyToMany
     @JoinTable(
             name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_name")
-    )
+            inverseJoinColumns = @JoinColumn(name = "role_name"))
+    @Builder.Default
     Set<Role> roles = new HashSet<>();
 
-    @Column(nullable = false, columnDefinition = "boolean default true")
-    boolean isDeleted = false;
+    @Column(name = "is_deleted", nullable = false, columnDefinition = "boolean default false")
+    @Builder.Default
+    boolean deleted = false;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
@@ -61,5 +66,4 @@ public class User {
     @UpdateTimestamp
     @Column(name = "update_at")
     LocalDateTime updateAt;
-
 }

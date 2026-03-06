@@ -1,16 +1,18 @@
 package com.NguyenDat.ecommerce.controller;
 
-import com.NguyenDat.ecommerce.dto.response.ResponseAPI;
-import com.NguyenDat.ecommerce.enums.SuccessCode;
-import com.NguyenDat.ecommerce.entity.Role;
-import com.NguyenDat.ecommerce.service.RoleService;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
+import java.util.List;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import com.NguyenDat.ecommerce.dto.response.ApiResponse;
+import com.NguyenDat.ecommerce.entity.Role;
+import com.NguyenDat.ecommerce.constant.SuccessCode;
+import com.NguyenDat.ecommerce.service.RoleService;
+
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 
 @RestController
 @RequiredArgsConstructor
@@ -19,9 +21,7 @@ public class RoleController {
     RoleService roleService;
 
     @GetMapping(value = "/roles")
-    ResponseAPI<List<Role>> getAllRoles() {
-        return ResponseAPI.success(SuccessCode.ROLE_FETCHED, roleService.getAllRole());
+    ApiResponse<List<Role>> getAllRoles() {
+        return ApiResponse.success(SuccessCode.ROLE_FETCHED, roleService.getAllRole());
     }
-
-
 }
