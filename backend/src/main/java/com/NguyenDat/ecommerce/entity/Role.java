@@ -1,11 +1,12 @@
 package com.NguyenDat.ecommerce.entity;
 
-import jakarta.persistence.*;
-import lombok.*;
-import lombok.experimental.FieldDefaults;
-
 import java.util.HashSet;
 import java.util.Set;
+
+import jakarta.persistence.*;
+
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Entity
 @Table(name = "roles")
@@ -22,5 +23,4 @@ public class Role {
 
     @ManyToMany(mappedBy = "roles")
     Set<User> userSet = new HashSet<>();
-
 }
