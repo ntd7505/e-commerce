@@ -1,38 +1,56 @@
 package com.NguyenDat.ecommerce.controller.admin;
 
-import com.NguyenDat.ecommerce.dto.response.ResponseAPI;
-import com.NguyenDat.ecommerce.dto.response.StaffCreationResponse;
-import com.NguyenDat.ecommerce.enums.SuccessCode;
-import com.NguyenDat.ecommerce.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
-@RestController
-public class AdminUserController {
-    @Autowired
-    UserService userService;
-//
-//    @PostMapping("/admin/create")
-//    public ResponseAPI<StaffCreationRequest> createStaff(@RequestBody @Valid StaffCreationRequest staff) {
+import jakarta.validation.Valid;
 
-    /// /        System.out.println("User received: " + staff);
-    /// /        System.out.println("Roles: " + staff.getRoles());
-//        return ResponseAPI.success(SuccessCode.USER_CREATED, this.userService.handleSaveUser(staff));
-//    }
-    @GetMapping("/user/{userId}")
-    public ResponseAPI<StaffCreationResponse> getUser(@PathVariable int userId) {
-        return ResponseAPI.success(SuccessCode.USER_FETCHED, userService.getUserById(userId));
+import org.springframework.web.bind.annotation.*;
+
+import com.NguyenDat.ecommerce.constant.ApiConstant;
+import com.NguyenDat.ecommerce.constant.ResponseCode;
+import com.NguyenDat.ecommerce.dto.request.UserCreationRequest;
+import com.NguyenDat.ecommerce.dto.request.UserUpdateRequest;
+import com.NguyenDat.ecommerce.dto.response.ApiResponse;
+import com.NguyenDat.ecommerce.dto.response.UserResponse;
+import com.NguyenDat.ecommerce.service.UserService;
+
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+
+@RestController
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@RequestMapping(ApiConstant.ADMIN_PREFIX)
+public class AdminUserController {
+
+    UserService userService;
+
+    @PostMapping("/users")
+    public ApiResponse<UserResponse> createStaff(@RequestBody @Valid UserCreationRequest staff) {
+        return ApiResponse.of(ResponseCode.USER_CREATED, this.userService.createNewUsers(staff));
     }
 
-    @GetMapping("/user/list")
-    public ResponseAPI<List<StaffCreationResponse>> getAllUser() {
-        return ResponseAPI.<List<StaffCreationResponse>>builder()
-                .code(HttpStatus.OK.value())
-                .message("Success")
-                .data(this.userService.getAllUsers())
-                .build();
+    @GetMapping("/users/{userId}")
+    public ApiResponse<UserResponse> getUserById(@PathVariable int userId) {
+        return ApiResponse.of(ResponseCode.USER_FETCHED, userService.getUserById(userId));
+    }
+
+    @GetMapping("/users")
+    public ApiResponse<List<UserResponse>> getAllUser() {
+        return ApiResponse.ofList(ResponseCode.USERS_FETCHED, userService.getAllUsers());
+    }
+
+    @PutMapping(value = "/users/{userId}")
+    public ApiResponse<UserResponse> updateStaffById(
+            @PathVariable int userId, @RequestBody UserUpdateRequest userUpdateRequest) {
+        return ApiResponse.of(
+                ResponseCode.USER_UPDATED, this.userService.updateStaffById(userId, userUpdateRequest));
+    }
+
+    @DeleteMapping(value = "/users/{userId}")
+    public ApiResponse<UserResponse> deleteStaff(@PathVariable long userId) {
+        userService.deleteStaff(userId);
+        return ApiResponse.of(ResponseCode.USER_DELETED, null);
     }
 }
