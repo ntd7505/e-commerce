@@ -13,7 +13,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class StaffCreationRequest {
+public class UserCreationRequest {
     @Email
     @NotBlank
     private String email;
