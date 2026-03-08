@@ -39,8 +39,7 @@ public class ApiResponse<T> {
                 .build();
     }
 
-    public static <T extends Collection<?>> ApiResponse<T> ofList(
-            ResponseCode responseCode, T data) {
+    public static <T extends Collection<?>> ApiResponse<T> ofList(ResponseCode responseCode, T data) {
 
         if (data.isEmpty()) {
             return ApiResponse.<T>builder()

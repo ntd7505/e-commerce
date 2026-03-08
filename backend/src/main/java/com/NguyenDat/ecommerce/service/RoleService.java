@@ -4,7 +4,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.NguyenDat.ecommerce.entity.Role;
+import com.NguyenDat.ecommerce.dto.response.RoleResponse;
+import com.NguyenDat.ecommerce.mapper.RoleMapper;
 import com.NguyenDat.ecommerce.repository.RoleRepository;
 
 import lombok.AccessLevel;
@@ -16,8 +17,11 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class RoleService {
     RoleRepository roleRepository;
+    RoleMapper roleMapper;
 
-    public List<Role> getAllRole() {
-        return this.roleRepository.findAll();
+    public List<RoleResponse> getAllRole() {
+        return this.roleRepository.findAll().stream()
+                .map(roleMapper::toRoleResponse)
+                .toList();
     }
 }

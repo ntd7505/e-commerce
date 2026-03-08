@@ -1,3 +1,13 @@
 package com.NguyenDat.ecommerce.dto.response;
 
-public class RoleResponse {}
+import lombok.*;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class RoleResponse {
+
+    String name;
+    String description;
+}
