@@ -21,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequestMapping(ApiConstant.ADMIN_PREFIX)
-public class PermissonController {
+public class PermissionController {
     PermissionService permissionService;
 
     @PostMapping("/permissions")
@@ -31,7 +31,7 @@ public class PermissonController {
 
     @DeleteMapping("/permissions/{permissionsName}")
     public ApiResponse<PermissionResponse> deletePermissions(@PathVariable String permissionsName) {
-        permissionService.deletePermissonsById(permissionsName);
+        permissionService.deletePermissionById(permissionsName);
         return ApiResponse.of(ResponseCode.PERMISSION_DELETED, null);
     }
 

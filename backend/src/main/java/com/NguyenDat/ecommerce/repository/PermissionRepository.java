@@ -1,4 +1,9 @@
 package com.NguyenDat.ecommerce.repository;
 
-public class PermissionRepository {
-}
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import com.NguyenDat.ecommerce.entity.Permission;
+
+@Repository
+public interface PermissionRepository extends JpaRepository<Permission, String> {}
