@@ -40,7 +40,7 @@ public class User {
     String phoneNumber;
 
     @Column(name = "avatar_url")
-    String avatar;
+    String avatarUrl;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
@@ -61,9 +61,9 @@ public class User {
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
-    LocalDateTime createAt;
+    LocalDateTime createdAt;
 
     @UpdateTimestamp
     @Column(name = "update_at")
-    LocalDateTime updateAt;
+    LocalDateTime updatedAt;
 }

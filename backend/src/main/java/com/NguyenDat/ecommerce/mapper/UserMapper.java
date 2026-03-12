@@ -17,12 +17,12 @@ import com.NguyenDat.ecommerce.entity.User;
 @Mapper(componentModel = "spring")
 public interface UserMapper {
     @Mapping(target = "id", ignore = true)
-    //    @Mapping(target = "password", ignore = true)
+    @Mapping(target = "password", ignore = true)
     @Mapping(target = "status", ignore = true)
     @Mapping(target = "roles", ignore = true)
     @Mapping(target = "deleted", ignore = true)
-    @Mapping(target = "createAt", ignore = true)
-    @Mapping(target = "updateAt", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
     User toUser(UserCreationRequest userCreationRequest);
 
     // User to StaffCreationResponse

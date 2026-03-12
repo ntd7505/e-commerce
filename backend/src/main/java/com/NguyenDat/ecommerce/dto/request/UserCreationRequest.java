@@ -4,7 +4,10 @@ import java.util.Set;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+
+import com.NguyenDat.ecommerce.validator.PasswordConstraint;
 
 import lombok.*;
 
@@ -14,18 +17,21 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class UserCreationRequest {
-    @Email
-    @NotBlank
+
+    @NotBlank(message = "FIELD_REQUIRED")
+    @Email(message = "INVALID_EMAIL")
     private String email;
 
-    @Size(min = 6)
-    @NotBlank
+    @NotBlank(message = "FIELD_REQUIRED")
+    @PasswordConstraint
     private String password;
 
-    @NotBlank
+    @NotBlank(message = "FIELD_REQUIRED")
+    @Size(min = 5, message = "INVALID_FULL_NAME")
     private String fullName;
 
-    @NotBlank
+    @NotBlank(message = "FIELD_REQUIRED")
+    @Pattern(regexp = "^[0-9]{10}$", message = "INVALID_PHONE")
     private String phoneNumber;
 
     private String avatar;
