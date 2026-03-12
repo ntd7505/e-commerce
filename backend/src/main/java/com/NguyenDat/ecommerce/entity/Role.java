@@ -8,6 +8,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+@Builder
 @Entity
 @Table(name = "roles")
 @Getter
@@ -23,4 +24,8 @@ public class Role {
 
     @ManyToMany(mappedBy = "roles")
     Set<User> userSet = new HashSet<>();
+
+    @Builder.Default
+    @ManyToMany
+    Set<Permission> permissions = new HashSet<>();
 }
