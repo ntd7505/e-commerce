@@ -1,0 +1,20 @@
+package com.NguyenDat.ecommerce.modules.user.dto.response;
+
+import java.util.Set;
+
+import com.NguyenDat.ecommerce.modules.role.dto.response.RoleResponse;
+
+import lombok.*;
+
+@Setter
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class UserResponse {
+    private String email;
+    private String fullName;
+    private String phoneNumber;
+    private String avatar;
+    private Set<RoleResponse> roles;
+}
