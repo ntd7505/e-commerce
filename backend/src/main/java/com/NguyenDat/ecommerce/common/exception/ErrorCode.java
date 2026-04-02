@@ -18,6 +18,7 @@ public enum ErrorCode {
     PHONE_EXISTED(1003, "Phone number already existed", HttpStatus.BAD_REQUEST),
     USER_INACTIVE(1004, "User account is inactive", HttpStatus.FORBIDDEN),
     USER_LOCKED(1005, "User account is locked", HttpStatus.FORBIDDEN),
+    USER_DELETED(1006, "User has been deleted", HttpStatus.NOT_FOUND),
 
     // 1100 - Validation
     INVALID_EMAIL(1100, "Email is invalid", HttpStatus.BAD_REQUEST),
@@ -39,7 +40,12 @@ public enum ErrorCode {
     UNAUTHORIZED(3001, "You do not have permission", HttpStatus.FORBIDDEN),
     TOKEN_INVALID(3002, "Token is invalid", HttpStatus.UNAUTHORIZED),
     TOKEN_EXPIRED(3003, "Token has expired", HttpStatus.UNAUTHORIZED),
-    TOKEN_BLACKLISTED(3004, "Token has been logged out", HttpStatus.UNAUTHORIZED);
+    TOKEN_BLACKLISTED(3004, "Token has been logged out", HttpStatus.UNAUTHORIZED),
+
+    // brand
+    BRAND_EXISTED(4000, "Brand already existed", HttpStatus.BAD_REQUEST),
+    BRAND_NOT_FOUND(4001, "Brand not found", HttpStatus.BAD_REQUEST),
+    BRAND_DELETED(4002, "Brand has been deleted", HttpStatus.NOT_FOUND);
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {
         this.code = code;

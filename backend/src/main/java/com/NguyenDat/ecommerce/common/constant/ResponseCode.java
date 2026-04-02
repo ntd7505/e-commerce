@@ -39,7 +39,14 @@ public enum ResponseCode {
     PERMISSION_CREATED(5000, "Permission created successfully"),
     PERMISSION_FETCHED(5001, "Permission fetched successfully"),
     PERMISSION_DELETED(5002, "Permission deleted successfully"),
-    PERMISSIONS_FETCHED(5003, "Permissions fetched successfully");
+    PERMISSIONS_FETCHED(5003, "Permissions fetched successfully"),
+
+    // 6000 - Brand
+    BRAND_CREATED(6000, "Brand created successfully"),
+    BRAND_FETCHED(6001, "Brand fetched successfully"),
+    BRAND_UPDATED(6002, "Brand updated successfully"),
+    BRAND_DELETED(6003, "Brand deleted successfully"),
+    BRANDS_FETCHED(6004, "Brands fetched successfully");
 
     private final int code;
     private final String message;
