@@ -7,44 +7,31 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import com.NguyenDat.ecommerce.modules.category.entity.Category;
-
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Product {
+public class ProductVariant {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    private Long id;
 
-    @Column(nullable = false, length = 200)
-    String name;
+    @Column(nullable = false)
+    String sku;
 
-    @Column(nullable = false, unique = true, length = 255)
-    String slug;
+    @Column(nullable = false)
+    String color;
 
-    @Column(name = "short_description", length = 255)
-    String shortDescription;
-
-    @Column(columnDefinition = "LONGTEXT")
-    String description;
-
-    @ManyToOne
-    @JoinColumn(name = "brand_id", nullable = false)
-    Brand brand;
+    @Column(nullable = false)
+    String version;
 
     @Column(nullable = false)
     boolean active = true;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id", nullable = false)
-    Category category;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
@@ -53,4 +40,8 @@ public class Product {
     @UpdateTimestamp
     @Column(name = "update_at")
     LocalDateTime updateAt;
+
+    @ManyToOne
+    @JoinColumn(name = "product_id", nullable = false)
+    Product product;
 }
