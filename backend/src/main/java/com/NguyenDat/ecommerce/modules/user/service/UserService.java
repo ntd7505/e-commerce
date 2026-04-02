@@ -20,6 +20,7 @@ import com.NguyenDat.ecommerce.modules.user.dto.request.UserCreationRequest;
 import com.NguyenDat.ecommerce.modules.user.dto.request.UserUpdateRequest;
 import com.NguyenDat.ecommerce.modules.user.dto.response.UserResponse;
 import com.NguyenDat.ecommerce.modules.user.entity.User;
+import com.NguyenDat.ecommerce.modules.user.enums.Active;
 import com.NguyenDat.ecommerce.modules.user.mapper.UserMapper;
 import com.NguyenDat.ecommerce.modules.user.repository.UserRepository;
 
@@ -64,15 +65,18 @@ public class UserService {
         var context = SecurityContextHolder.getContext();
         String email = Objects.requireNonNull(context.getAuthentication()).getName();
         User user = userRepository.findByEmail(email).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        if (user.isDeleted() || user.getStatus() == Active.INACTIVE) {
+            throw new AppException(ErrorCode.USER_NOT_EXISTED);
+        }
         return userMapper.toStaffResponse(user);
     }
 
     @PostAuthorize("hasRole('ADMIN') or returnObject.email == authentication.name ")
     public UserResponse getUserById(long id) {
-        log.info("getUserById called - id: {}", id);
-
         User user = userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
-        log.info("returnObject email: {}", user.getEmail());
+        if (user.isDeleted() || user.getStatus() == Active.INACTIVE) {
+            throw new AppException(ErrorCode.USER_NOT_EXISTED);
+        }
         return userMapper.toStaffResponse(user);
     }
 
@@ -80,12 +84,19 @@ public class UserService {
     public List<UserResponse> getAllUsers() {
         log.info("In method get Users");
         return userRepository.findAll().stream()
+                .filter(user -> !user.isDeleted())
                 .map(userMapper::toStaffResponse)
                 .toList();
     }
 
     public UserResponse updateStaffById(long id, UserUpdateRequest userUpdateRequest) {
         User user = this.userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        if (user.isDeleted() || user.getStatus() == Active.INACTIVE) {
+            throw new AppException(ErrorCode.USER_NOT_EXISTED);
+        }
+        if (userRepository.existsByPhoneNumberAndIdNot(userUpdateRequest.getPhoneNumber(), id)) {
+            throw new AppException(ErrorCode.PHONE_EXISTED);
+        }
         userMapper.updateUserMapper(user, userUpdateRequest);
         return userMapper.toStaffResponse(userRepository.save(user));
     }

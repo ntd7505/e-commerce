@@ -5,16 +5,18 @@ import java.util.Set;
 import com.NguyenDat.ecommerce.modules.role.dto.response.RoleResponse;
 
 import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Setter
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserResponse {
-    private String email;
-    private String fullName;
-    private String phoneNumber;
-    private String avatar;
-    private Set<RoleResponse> roles;
+    String email;
+    String fullName;
+    String phoneNumber;
+    String avatar;
+    Set<RoleResponse> roles;
 }
