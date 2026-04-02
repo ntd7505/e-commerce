@@ -18,6 +18,7 @@ import com.NguyenDat.ecommerce.modules.auth.dto.request.IntrospectRequest;
 import com.NguyenDat.ecommerce.modules.auth.dto.response.AuthenticationResponse;
 import com.NguyenDat.ecommerce.modules.auth.dto.response.IntrospectResponse;
 import com.NguyenDat.ecommerce.modules.user.entity.User;
+import com.NguyenDat.ecommerce.modules.user.enums.Active;
 import com.NguyenDat.ecommerce.modules.user.repository.UserRepository;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
@@ -61,6 +62,9 @@ public class AuthenticationService {
         var user = userRepository
                 .findByEmail(request.getEmail())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        if (user.isDeleted() || user.getStatus() == Active.INACTIVE) {
+            throw new AppException(ErrorCode.USER_LOCKED);
+        }
         boolean matched = passwordEncoder.matches(request.getPassword(), user.getPassword());
         if (!matched) throw new AppException(ErrorCode.UNAUTHENTICATED);
         var token = generateToken(user);
