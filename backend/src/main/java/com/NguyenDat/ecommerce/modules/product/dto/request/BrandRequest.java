@@ -14,4 +14,6 @@ import lombok.experimental.FieldDefaults;
 public class BrandRequest {
     @NotBlank(message = "FIELD_REQUIRED")
     String name;
+
+    String logoUrl;
 }

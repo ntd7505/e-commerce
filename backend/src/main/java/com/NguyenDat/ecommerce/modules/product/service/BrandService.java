@@ -2,6 +2,7 @@ package com.NguyenDat.ecommerce.modules.product.service;
 
 import java.util.List;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import com.NguyenDat.ecommerce.common.exception.AppException;
@@ -11,6 +12,7 @@ import com.NguyenDat.ecommerce.modules.product.dto.response.BrandResponse;
 import com.NguyenDat.ecommerce.modules.product.entity.Brand;
 import com.NguyenDat.ecommerce.modules.product.mapper.BrandMapper;
 import com.NguyenDat.ecommerce.modules.product.repository.BrandRepository;
+import com.NguyenDat.ecommerce.util.SlugUtil;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -26,11 +28,20 @@ public class BrandService {
     BrandMapper brandMapper;
 
     public BrandResponse createBrand(BrandRequest brandRequest) {
-        if (brandRepository.findByName(brandRequest.getName()).isPresent()) {
+        String normalizedName = brandRequest.getName().trim();
+        if (brandRepository.findByName(normalizedName).isPresent()) {
             throw new AppException(ErrorCode.BRAND_EXISTED);
         }
+
         Brand brand = brandMapper.toBrand(brandRequest);
-        return brandMapper.toBrandResponse(brandRepository.save(brand));
+        brand.setName(normalizedName);
+        brand.setSlug(SlugUtil.toUniqueSlug(normalizedName, brandRepository::existsBySlug));
+
+        try {
+            return brandMapper.toBrandResponse(brandRepository.save(brand));
+        } catch (DataIntegrityViolationException ex) {
+            throw new AppException(ErrorCode.BRAND_EXISTED);
+        }
     }
 
     public List<BrandResponse> getAllBrands() {

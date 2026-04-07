@@ -12,5 +12,7 @@ import lombok.experimental.FieldDefaults;
 public class BrandResponse {
     Long id;
     String name;
+    String slug;
+    String logoUrl;
     boolean active = true;
 }
