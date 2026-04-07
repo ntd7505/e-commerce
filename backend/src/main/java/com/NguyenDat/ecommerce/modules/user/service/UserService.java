@@ -40,9 +40,17 @@ public class UserService {
     PasswordEncoder passwordEncoder;
 
     public UserResponse createNewUsers(UserCreationRequest userCreationRequest) {
+        if (userRepository.existsByEmail(userCreationRequest.getEmail())) {
+            throw new AppException(ErrorCode.EMAIL_EXISTED);
+        }
+
+        if (userRepository.existsByPhoneNumber(userCreationRequest.getPhoneNumber())) {
+            throw new AppException(ErrorCode.PHONE_EXISTED);
+        }
         User user = userMapper.toUser(userCreationRequest);
         user.setPassword(passwordEncoder.encode(userCreationRequest.getPassword()));
-        if (userCreationRequest.getRoles() == null) {
+        if (userCreationRequest.getRoles() == null
+                || userCreationRequest.getRoles().isEmpty()) {
             Role role = roleRepository.findById("USER").orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
             user.setRoles(Set.of(role));
         } else {
@@ -84,7 +92,7 @@ public class UserService {
     public List<UserResponse> getAllUsers() {
         log.info("In method get Users");
         return userRepository.findAll().stream()
-                .filter(user -> !user.isDeleted())
+                .filter(user -> !user.isDeleted() && !(user.getStatus() == Active.INACTIVE))
                 .map(userMapper::toStaffResponse)
                 .toList();
     }

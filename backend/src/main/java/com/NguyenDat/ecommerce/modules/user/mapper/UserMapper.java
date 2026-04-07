@@ -34,8 +34,6 @@ public interface UserMapper {
 
     default Set<String> mapRoles(Set<Role> roles) {
         if (roles == null) return new HashSet<>();
-        return roles.stream()
-                .map(Role::getName) // lấy field name trong Role
-                .collect(Collectors.toSet());
+        return roles.stream().map(Role::getName).collect(Collectors.toSet());
     }
 }

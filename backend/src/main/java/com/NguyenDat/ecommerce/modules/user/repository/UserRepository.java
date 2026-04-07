@@ -9,11 +9,15 @@ import com.NguyenDat.ecommerce.modules.user.entity.User;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
-    User getUserById(Long id);
-
-    boolean existsByEmail(String email);
+    //    User getUserById(Long id);
+    //
+    //    boolean existsByEmail(String email);
 
     Optional<User> findByEmail(String email);
 
     boolean existsByPhoneNumberAndIdNot(String phoneNumber, Long id);
+
+    boolean existsByEmail(String email);
+
+    boolean existsByPhoneNumber(String phoneNumber);
 }

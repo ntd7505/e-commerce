@@ -6,6 +6,7 @@ spring:
     url: jdbc:mysql://localhost:3306/e_commerce?useSSL=false&serverTimezone=UTC
     username: root
     password: 123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
     hibernate:

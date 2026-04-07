@@ -34,7 +34,7 @@ public class UserCreationRequest {
     @Pattern(regexp = "^[0-9]{10}$", message = "INVALID_PHONE")
     private String phoneNumber;
 
-    private String avatar;
+    private String avatarUrl;
 
     private Set<String> roles;
 }
