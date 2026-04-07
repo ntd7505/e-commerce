@@ -42,6 +42,9 @@ public class Product {
     @Column(nullable = false)
     boolean active = true;
 
+    @Column(nullable = false)
+    boolean deleted = false;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
     Category category;

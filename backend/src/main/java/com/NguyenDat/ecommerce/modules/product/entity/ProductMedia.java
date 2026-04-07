@@ -1,6 +1,11 @@
 package com.NguyenDat.ecommerce.modules.product.entity;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.*;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -28,7 +33,21 @@ public class ProductMedia {
     @Column(name = "sort_order")
     int sortOrder;
 
+    @Column(name = "alt_text", length = 255)
+    String altText;
+
+    @Column(nullable = false)
+    boolean active = true;
+
     @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
     Product product;
+
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false)
+    LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    @Column(name = "updated_at")
+    LocalDateTime updatedAt;
 }

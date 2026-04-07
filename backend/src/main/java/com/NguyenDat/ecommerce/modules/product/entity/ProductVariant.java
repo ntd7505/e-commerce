@@ -21,17 +21,29 @@ public class ProductVariant {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "variant_name", length = 255, nullable = false)
+    String variantName;
+
+    @Column(name = "stock_quantity", nullable = false)
+    int stockQuantity = 0;
+
+    @Column(nullable = false)
+    double price;
+
+    @Column(name = "sale_price", nullable = false)
+    double salePrice;
+
+    @Column(nullable = false, length = 10)
+    String currency;
+
     @Column(nullable = false)
     String sku;
 
     @Column(nullable = false)
-    String color;
-
-    @Column(nullable = false)
-    String version;
-
-    @Column(nullable = false)
     boolean active = true;
+
+    @Column(nullable = false)
+    boolean deleted = false;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
