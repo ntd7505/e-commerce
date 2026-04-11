@@ -17,9 +17,7 @@ import com.NguyenDat.ecommerce.util.SlugUtil;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -60,7 +58,7 @@ public class BrandService {
         brandRepository.save(brand);
     }
 
-    public BrandResponse getBrandById(long id) {
+    public BrandResponse getBrandById(Long id) {
         Brand brand = brandRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.BRAND_NOT_FOUND));
         if (brand.isDeleted()) {
             throw new AppException(ErrorCode.BRAND_NOT_FOUND);
@@ -68,15 +66,17 @@ public class BrandService {
         return brandMapper.toBrandResponse(brand);
     }
 
-    public BrandResponse updateBrandById(long id, BrandRequest brandRequest) {
+    public BrandResponse updateBrandById(Long id, BrandRequest brandRequest) {
         Brand brand = brandRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.BRAND_NOT_FOUND));
         if (brand.isDeleted()) {
             throw new AppException(ErrorCode.BRAND_NOT_FOUND);
         }
-        if (brandRepository.existsByNameAndIdNot(brandRequest.getName(), id)) {
+        String normalizedName = brandRequest.getName().trim();
+        if (brandRepository.existsByNameAndIdNot(normalizedName, id)) {
             throw new AppException(ErrorCode.BRAND_EXISTED);
         }
-        brand.setName(brandRequest.getName());
+        brand.setName(normalizedName);
+        brand.setSlug(SlugUtil.toUniqueSlug(normalizedName, brandRepository::existsBySlug));
         brandRepository.save(brand);
         return brandMapper.toBrandResponse(brand);
     }

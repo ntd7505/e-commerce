@@ -113,7 +113,7 @@ public class BrandServiceTest {
     void getBrandById_shouldThrowException_whenBrandIsDeleted() {
         brand.setDeleted(true);
         when(brandRepository.findById(1L)).thenReturn(Optional.of(brand));
-        AppException exception = assertThrows(AppException.class, () -> brandService.getBrandById(1));
+        AppException exception = assertThrows(AppException.class, () -> brandService.getBrandById(1L));
         assertEquals(ErrorCode.BRAND_NOT_FOUND, exception.getErrorCode());
     }
 

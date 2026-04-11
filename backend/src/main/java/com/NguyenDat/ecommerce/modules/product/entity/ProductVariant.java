@@ -47,11 +47,11 @@ public class ProductVariant {
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
-    LocalDateTime createAt;
+    LocalDateTime createdAt;
 
     @UpdateTimestamp
     @Column(name = "update_at")
-    LocalDateTime updateAt;
+    LocalDateTime updatedAt;
 
     @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)

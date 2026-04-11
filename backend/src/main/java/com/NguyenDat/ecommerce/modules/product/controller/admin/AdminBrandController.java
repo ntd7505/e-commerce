@@ -16,9 +16,7 @@ import com.NguyenDat.ecommerce.modules.product.service.BrandService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @RestController
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -45,13 +43,13 @@ public class AdminBrandController {
     }
 
     @GetMapping("/brands/{id}")
-    public ApiResponse<BrandResponse> getBrandById(@PathVariable long id) {
+    public ApiResponse<BrandResponse> getBrandById(@PathVariable Long id) {
         return ApiResponse.of(ResponseCode.BRAND_FETCHED, brandService.getBrandById(id));
     }
 
     @PutMapping("/brands/{id}")
     public ApiResponse<BrandResponse> updateBrandById(
-            @PathVariable long id, @RequestBody @Valid BrandRequest brandRequest) {
+            @PathVariable Long id, @RequestBody @Valid BrandRequest brandRequest) {
         return ApiResponse.of(ResponseCode.BRAND_UPDATED, brandService.updateBrandById(id, brandRequest));
     }
 }

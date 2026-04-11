@@ -13,8 +13,8 @@ public interface BrandMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "deleted", ignore = true)
     @Mapping(target = "active", ignore = true)
-    @Mapping(target = "createAt", ignore = true)
-    @Mapping(target = "updateAt", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
     Brand toBrand(BrandRequest brandRequest);
 
     BrandResponse toBrandResponse(Brand brand);

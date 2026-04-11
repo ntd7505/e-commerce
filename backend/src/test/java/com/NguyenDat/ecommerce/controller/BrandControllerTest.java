@@ -17,6 +17,7 @@ import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.NguyenDat.ecommerce.common.constant.ResponseCode;
 import com.NguyenDat.ecommerce.common.exception.AppException;
 import com.NguyenDat.ecommerce.common.exception.ErrorCode;
 import com.NguyenDat.ecommerce.modules.product.controller.admin.AdminBrandController;
@@ -65,8 +66,8 @@ public class BrandControllerTest {
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(brandRequest)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").value(6000))
-                .andExpect(jsonPath("$.message").value("Brand created successfully"))
+                .andExpect(jsonPath("$.code").value(ResponseCode.BRAND_CREATED.getCode()))
+                .andExpect(jsonPath("$.message").value(ResponseCode.BRAND_CREATED.getMessage()))
                 .andExpect(jsonPath("$.data.id").value(1))
                 .andExpect(jsonPath("$.data.name").value("Nike"))
                 .andExpect(jsonPath("$.data.slug").value("nike"))
@@ -93,9 +94,9 @@ public class BrandControllerTest {
         mockMvc.perform(post("/api/v1/admin/brands")
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(brandRequest)))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.code").value(4000))
-                .andExpect(jsonPath("$.message").value("Brand already existed"));
+                .andExpect(status().is(ErrorCode.BRAND_EXISTED.getStatusCode().value()))
+                .andExpect(jsonPath("$.code").value(ErrorCode.BRAND_EXISTED.getCode()))
+                .andExpect(jsonPath("$.message").value(ErrorCode.BRAND_EXISTED.getMessage()));
         verify(brandService).createBrand(any(BrandRequest.class));
     }
 
@@ -106,8 +107,8 @@ public class BrandControllerTest {
         when(brandService.getAllBrands()).thenReturn(brandResponseList);
         mockMvc.perform(get("/api/v1/admin/brands"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").value(6004))
-                .andExpect(jsonPath("$.message").value("Brands fetched successfully"))
+                .andExpect(jsonPath("$.code").value(ResponseCode.BRANDS_FETCHED.getCode()))
+                .andExpect(jsonPath("$.message").value(ResponseCode.BRANDS_FETCHED.getMessage()))
                 .andExpect(jsonPath("$.data.length()").value(1))
                 .andExpect(jsonPath("$.data[0].id").value(1))
                 .andExpect(jsonPath("$.data[0].name").value("Nike"))
@@ -124,8 +125,8 @@ public class BrandControllerTest {
         when(brandService.getAllBrands()).thenReturn(brandResponseList);
         mockMvc.perform(get("/api/v1/admin/brands"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").value(1005))
-                .andExpect(jsonPath("$.message").value("No data found"))
+                .andExpect(jsonPath("$.code").value(ResponseCode.NO_DATA_FOUND.getCode()))
+                .andExpect(jsonPath("$.message").value(ResponseCode.NO_DATA_FOUND.getMessage()))
                 .andExpect(jsonPath("$.data.length()").value(0));
         verify(brandService).getAllBrands();
     }
@@ -135,8 +136,8 @@ public class BrandControllerTest {
         when(brandService.getBrandById(1L)).thenReturn(response);
         mockMvc.perform(get("/api/v1/admin/brands/{id}", 1L))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").value(6001))
-                .andExpect(jsonPath("$.message").value("Brand fetched successfully"))
+                .andExpect(jsonPath("$.code").value(ResponseCode.BRAND_FETCHED.getCode()))
+                .andExpect(jsonPath("$.message").value(ResponseCode.BRAND_FETCHED.getMessage()))
                 .andExpect(jsonPath("$.data.id").value(1))
                 .andExpect(jsonPath("$.data.name").value("Nike"))
                 .andExpect(jsonPath("$.data.slug").value("nike"))
@@ -150,9 +151,9 @@ public class BrandControllerTest {
     void getBrandById_shouldReturnErrorResponse_whenBrandNotFound() throws Exception {
         when(brandService.getBrandById(1L)).thenThrow(new AppException(ErrorCode.BRAND_NOT_FOUND));
         mockMvc.perform(get("/api/v1/admin/brands/{id}", 1L))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.code").value(4001))
-                .andExpect(jsonPath("$.message").value("Brand not found"));
+                .andExpect(status().is(ErrorCode.BRAND_NOT_FOUND.getStatusCode().value()))
+                .andExpect(jsonPath("$.code").value(ErrorCode.BRAND_NOT_FOUND.getCode()))
+                .andExpect(jsonPath("$.message").value(ErrorCode.BRAND_NOT_FOUND.getMessage()));
         verify(brandService).getBrandById(1L);
     }
 
@@ -163,8 +164,8 @@ public class BrandControllerTest {
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(brandRequest)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").value(6002))
-                .andExpect(jsonPath("$.message").value("Brand updated successfully"))
+                .andExpect(jsonPath("$.code").value(ResponseCode.BRAND_UPDATED.getCode()))
+                .andExpect(jsonPath("$.message").value(ResponseCode.BRAND_UPDATED.getMessage()))
                 .andExpect(jsonPath("$.data.id").value(1))
                 .andExpect(jsonPath("$.data.name").value("Nike"))
                 .andExpect(jsonPath("$.data.slug").value("nike"))
@@ -180,8 +181,8 @@ public class BrandControllerTest {
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(brandRequest)))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.code").value(9998))
-                .andExpect(jsonPath(("$.message")).value("Invalid request data"));
+                .andExpect(jsonPath("$.code").value(ErrorCode.INVALID_KEY.getCode()))
+                .andExpect(jsonPath(("$.message")).value(ErrorCode.INVALID_KEY.getMessage()));
         verify(brandService, never()).updateBrandById(anyLong(), any(BrandRequest.class));
     }
 
@@ -193,9 +194,9 @@ public class BrandControllerTest {
         mockMvc.perform(put("/api/v1/admin/brands/{id}", 1L)
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(brandRequest)))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.code").value(4000))
-                .andExpect(jsonPath("$.message").value("Brand already existed"));
+                .andExpect(status().is(ErrorCode.BRAND_EXISTED.getStatusCode().value()))
+                .andExpect(jsonPath("$.code").value(ErrorCode.BRAND_EXISTED.getCode()))
+                .andExpect(jsonPath("$.message").value(ErrorCode.BRAND_EXISTED.getMessage()));
 
         verify(brandService).updateBrandById(eq(1L), any(BrandRequest.class));
     }
@@ -207,9 +208,9 @@ public class BrandControllerTest {
         mockMvc.perform(put("/api/v1/admin/brands/{id}", 1L)
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(brandRequest)))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.code").value(4001))
-                .andExpect(jsonPath("$.message").value("Brand not found"));
+                .andExpect(status().is(ErrorCode.BRAND_NOT_FOUND.getStatusCode().value()))
+                .andExpect(jsonPath("$.code").value(ErrorCode.BRAND_NOT_FOUND.getCode()))
+                .andExpect(jsonPath("$.message").value(ErrorCode.BRAND_NOT_FOUND.getMessage()));
 
         verify(brandService).updateBrandById(eq(1L), any(BrandRequest.class));
     }
@@ -219,8 +220,8 @@ public class BrandControllerTest {
         doNothing().when(brandService).deleteBrand(1L);
         mockMvc.perform(delete("/api/v1/admin/brands/{id}", 1L))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").value(6003))
-                .andExpect(jsonPath("$.message").value("Brand deleted successfully"));
+                .andExpect(jsonPath("$.code").value(ResponseCode.BRAND_DELETED.getCode()))
+                .andExpect(jsonPath("$.message").value(ResponseCode.BRAND_DELETED.getMessage()));
 
         verify(brandService).deleteBrand(1L);
     }
@@ -230,9 +231,9 @@ public class BrandControllerTest {
         doThrow(new AppException(ErrorCode.BRAND_NOT_FOUND)).when(brandService).deleteBrand(1L);
 
         mockMvc.perform(delete("/api/v1/admin/brands/{id}", 1L))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.code").value(4001))
-                .andExpect(jsonPath("$.message").value("Brand not found"));
+                .andExpect(status().is(ErrorCode.BRAND_NOT_FOUND.getStatusCode().value()))
+                .andExpect(jsonPath("$.code").value(ErrorCode.BRAND_NOT_FOUND.getCode()))
+                .andExpect(jsonPath("$.message").value(ErrorCode.BRAND_NOT_FOUND.getMessage()));
 
         verify(brandService).deleteBrand(1L);
     }
