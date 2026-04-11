@@ -1,0 +1,4 @@
+package com.NguyenDat.ecommerce.service;
+
+public class AuthenticationServiceTest {
+}
