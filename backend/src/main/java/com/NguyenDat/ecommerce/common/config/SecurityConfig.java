@@ -25,7 +25,12 @@ import com.NguyenDat.ecommerce.common.constant.ApiConstant;
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
-    private final String[] PUBLIC_ENDPOINT = {ApiConstant.ADMIN_PREFIX + "/users", "/auth/login"};
+    private final String[] PUBLIC_ENDPOINT = {
+        AUTH_PREFIX + "/login", AUTH_PREFIX + "/introspect",
+    };
+
+    private static final String ADMIN_PREFIX = ApiConstant.ADMIN_PREFIX;
+    private static final String AUTH_PREFIX = "/auth";
 
     @Value("${jwt.signerKey}")
     private String signerKey;
@@ -34,7 +39,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.authorizeHttpRequests(request -> request.requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINT)
                 .permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/v1/admin/users")
+                .requestMatchers(ADMIN_PREFIX + "/**")
                 .hasRole("ADMIN")
                 .anyRequest()
                 .authenticated());

@@ -44,26 +44,37 @@ public class AuthenticationService {
     @Value("${jwt.signerKey}")
     protected String SIGNER_KEY;
 
-    public IntrospectResponse introspect(IntrospectRequest request) throws JOSEException, ParseException {
-        var token = request.getToken();
+    public IntrospectResponse introspect(IntrospectRequest request) {
+        try {
+            var token = request.getToken();
 
-        JWSVerifier verifier = new MACVerifier(SIGNER_KEY.getBytes());
-        SignedJWT signedJWT = SignedJWT.parse(token);
+            JWSVerifier verifier = new MACVerifier(SIGNER_KEY.getBytes());
+            SignedJWT signedJWT = SignedJWT.parse(token);
 
-        Date expirationTime = signedJWT.getJWTClaimsSet().getExpirationTime();
+            Date expirationTime = signedJWT.getJWTClaimsSet().getExpirationTime();
 
-        var verified = signedJWT.verify(verifier);
-        boolean verifyResult = verified && expirationTime.after(new Date());
-        if (!verifyResult) throw new AppException(ErrorCode.TOKEN_INVALID);
-        return IntrospectResponse.builder().valid(true).build();
+            boolean verified = signedJWT.verify(verifier);
+            boolean verifyResult = verified && expirationTime.after(new Date());
+
+            if (!verifyResult) {
+                throw new AppException(ErrorCode.TOKEN_INVALID);
+            }
+
+            return IntrospectResponse.builder().valid(true).build();
+        } catch (JOSEException | ParseException e) {
+            throw new AppException(ErrorCode.TOKEN_INVALID);
+        }
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
         var user = userRepository
                 .findByEmail(request.getEmail())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
-        if (user.isDeleted() || user.getStatus() == Active.INACTIVE) {
-            throw new AppException(ErrorCode.USER_LOCKED);
+        if (user.getStatus() == Active.INACTIVE) {
+            throw new AppException(ErrorCode.USER_INACTIVE);
+        }
+        if (user.isDeleted()) {
+            throw new AppException(ErrorCode.USER_DELETED);
         }
         boolean matched = passwordEncoder.matches(request.getPassword(), user.getPassword());
         if (!matched) throw new AppException(ErrorCode.UNAUTHENTICATED);
@@ -90,7 +101,7 @@ public class AuthenticationService {
             jwsObject.sign(new MACSigner(SIGNER_KEY.getBytes()));
             return jwsObject.serialize();
         } catch (JOSEException e) {
-            log.error("Cannot create token");
+            log.error("Cannot create token for user {}", user.getEmail(), e);
             throw new RuntimeException(e);
         }
     }

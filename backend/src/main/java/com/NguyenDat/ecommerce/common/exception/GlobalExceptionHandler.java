@@ -24,6 +24,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     ResponseEntity<ApiResponse<?>> handlingException(Exception ex) {
+        log.error("Unhandled exception", ex);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(ApiResponse.of(ErrorCode.UNCATEGORIZED_EXCEPTION));
     }
@@ -37,7 +38,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = AccessDeniedException.class)
     ResponseEntity<ApiResponse<?>> handlingAccessDeniedException(AccessDeniedException ex) {
         ErrorCode errorCode = ErrorCode.UNAUTHORIZED;
-        log.error("AccessDeniedException: {}", ex.getMessage());
+        log.warn("Access denied: {}", ex.getMessage());
         return ResponseEntity.status(errorCode.getStatusCode()).body(ApiResponse.of(errorCode));
     }
 
@@ -57,7 +58,7 @@ public class GlobalExceptionHandler {
                     var constraintViolation = fieldError.unwrap(ConstraintViolation.class);
                     attributes = constraintViolation.getConstraintDescriptor().getAttributes();
                 } catch (Exception e) {
-                    log.warn("Cannot unwrap ConstraintViolation: {}", e.getMessage());
+                    log.debug("Cannot unwrap ConstraintViolation for field {}", fieldError.getField(), e);
                 }
                 message = Objects.nonNull(attributes)
                         ? mapAttribute(errorCode.getMessage(), attributes)

@@ -1,6 +1,6 @@
 package com.NguyenDat.ecommerce.modules.auth.controller;
 
-import java.text.ParseException;
+import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,7 +14,6 @@ import com.NguyenDat.ecommerce.modules.auth.dto.request.IntrospectRequest;
 import com.NguyenDat.ecommerce.modules.auth.dto.response.AuthenticationResponse;
 import com.NguyenDat.ecommerce.modules.auth.dto.response.IntrospectResponse;
 import com.NguyenDat.ecommerce.modules.auth.service.AuthenticationService;
-import com.nimbusds.jose.JOSEException;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -28,14 +27,13 @@ public class AuthenticationController {
     AuthenticationService authenticationService;
 
     @PostMapping(value = "/login")
-    ApiResponse<AuthenticationResponse> login(@RequestBody AuthenticationRequest request) {
+    ApiResponse<AuthenticationResponse> login(@RequestBody @Valid AuthenticationRequest request) {
         AuthenticationResponse result = authenticationService.authenticate(request);
         return ApiResponse.of(ResponseCode.LOGIN_SUCCESS, result);
     }
 
     @PostMapping(value = "/introspect")
-    ApiResponse<IntrospectResponse> introspect(@RequestBody IntrospectRequest request)
-            throws ParseException, JOSEException {
+    ApiResponse<IntrospectResponse> introspect(@RequestBody @Valid IntrospectRequest request) {
         return ApiResponse.of(ResponseCode.INTROSPECT_SUCCESS, authenticationService.introspect(request));
     }
 }
