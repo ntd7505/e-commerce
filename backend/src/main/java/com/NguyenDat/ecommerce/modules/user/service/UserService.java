@@ -27,9 +27,7 @@ import com.NguyenDat.ecommerce.modules.user.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -90,7 +88,6 @@ public class UserService {
 
     @PreAuthorize("hasRole('ADMIN')")
     public List<UserResponse> getAllUsers() {
-        log.info("In method get Users");
         return userRepository.findAll().stream()
                 .filter(user -> !user.isDeleted() && !(user.getStatus() == Active.INACTIVE))
                 .map(userMapper::toStaffResponse)

@@ -193,6 +193,9 @@ public class UserServiceTest {
 
         UserResponse result = userService.updateStaffById(1L, userUpdateRequest);
 
+        assertEquals("Nguyen Dat Updated", user.getFullName());
+        assertEquals("0987654321", user.getPhoneNumber());
+        assertEquals("updated-avatar.png", user.getAvatarUrl());
         assertEquals("Nguyen Dat", result.getFullName());
         assertEquals("0912345678", result.getPhoneNumber());
         assertEquals("avatar.png", result.getAvatarUrl());
@@ -265,10 +268,10 @@ public class UserServiceTest {
         when(userMapper.toStaffResponse(user)).thenReturn(userResponse);
         List<UserResponse> result = userService.getAllUsers();
         assertEquals(1, result.size());
-        assertEquals(result.getFirst().getFullName(), userResponse.getFullName());
-        assertEquals(result.getFirst().getPhoneNumber(), userResponse.getPhoneNumber());
-        assertEquals(result.getFirst().getAvatarUrl(), userResponse.getAvatarUrl());
-        assertEquals(result.getFirst().getEmail(), userResponse.getEmail());
+        assertEquals(userResponse.getFullName(), result.getFirst().getFullName());
+        assertEquals(userResponse.getPhoneNumber(), result.getFirst().getPhoneNumber());
+        assertEquals(userResponse.getAvatarUrl(), result.getFirst().getAvatarUrl());
+        assertEquals(userResponse.getEmail(), result.getFirst().getEmail());
 
         verify(userMapper).toStaffResponse(user);
         verify(userMapper, never()).toStaffResponse(deletedUser);

@@ -4,7 +4,6 @@ import java.util.List;
 
 import jakarta.validation.Valid;
 
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import com.NguyenDat.ecommerce.common.constant.ApiConstant;
@@ -18,9 +17,7 @@ import com.NguyenDat.ecommerce.modules.user.service.UserService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @RestController
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -35,33 +32,28 @@ public class AdminUserController {
     }
 
     @GetMapping("/users/{userId}")
-    public ApiResponse<UserResponse> getUserById(@PathVariable int userId) {
+    public ApiResponse<UserResponse> getUserById(@PathVariable Long userId) {
         return ApiResponse.of(ResponseCode.USER_FETCHED, userService.getUserById(userId));
     }
 
-    @GetMapping("/users/myInfo")
+    @GetMapping("/users/me")
     public ApiResponse<UserResponse> getMyInfo() {
         return ApiResponse.of(ResponseCode.USER_FETCHED, userService.getMyInfo());
     }
 
     @GetMapping("/users")
     public ApiResponse<List<UserResponse>> getAllUser() {
-        var authentication = SecurityContextHolder.getContext().getAuthentication();
-        assert authentication != null;
-        log.info("Email: {}", authentication.getName());
-        authentication.getAuthorities().forEach(grantedAuthority -> log.info(grantedAuthority.getAuthority()));
-
         return ApiResponse.ofList(ResponseCode.USERS_FETCHED, userService.getAllUsers());
     }
 
     @PutMapping(value = "/users/{userId}")
     public ApiResponse<UserResponse> updateStaffById(
-            @PathVariable int userId, @RequestBody @Valid UserUpdateRequest userUpdateRequest) {
+            @PathVariable Long userId, @RequestBody @Valid UserUpdateRequest userUpdateRequest) {
         return ApiResponse.of(ResponseCode.USER_UPDATED, this.userService.updateStaffById(userId, userUpdateRequest));
     }
 
     @DeleteMapping(value = "/users/{userId}")
-    public ApiResponse<UserResponse> deleteStaff(@PathVariable long userId) {
+    public ApiResponse<UserResponse> deleteStaff(@PathVariable Long userId) {
         userService.deleteStaff(userId);
         return ApiResponse.of(ResponseCode.USER_DELETED, null);
     }
