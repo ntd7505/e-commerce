@@ -34,6 +34,8 @@ public enum ErrorCode {
     ROLE_NOT_FOUND(2000, "Role not found", HttpStatus.NOT_FOUND),
     ROLE_EXISTED(2001, "Role already existed", HttpStatus.BAD_REQUEST),
     PERMISSION_NOT_FOUND(2002, "Permission not found", HttpStatus.NOT_FOUND),
+    PERMISSION_EXISTED(2003, "Permission already existed", HttpStatus.BAD_REQUEST),
+    PERMISSION_IN_USE(2004, "Permission is assigned to one or more roles", HttpStatus.BAD_REQUEST),
 
     // 3000 - Auth & JWT
     UNAUTHENTICATED(3000, "Unauthenticated", HttpStatus.UNAUTHORIZED),

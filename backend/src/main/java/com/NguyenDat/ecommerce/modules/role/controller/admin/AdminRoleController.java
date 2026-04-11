@@ -2,6 +2,8 @@ package com.NguyenDat.ecommerce.modules.role.controller.admin;
 
 import java.util.List;
 
+import jakarta.validation.Valid;
+
 import org.springframework.web.bind.annotation.*;
 
 import com.NguyenDat.ecommerce.common.constant.ApiConstant;
@@ -23,13 +25,13 @@ public class AdminRoleController {
     RoleService roleService;
 
     @PostMapping("/roles")
-    public ApiResponse<RoleResponse> createRoles(@RequestBody RoleRequest request) {
+    public ApiResponse<RoleResponse> createRoles(@RequestBody @Valid RoleRequest request) {
         return ApiResponse.of(ResponseCode.ROLE_CREATED, roleService.createRole(request));
     }
 
     @GetMapping(value = "/roles")
     public ApiResponse<List<RoleResponse>> getAllRoles() {
-        return ApiResponse.ofList(ResponseCode.ROLE_FETCHED, roleService.getAllRole());
+        return ApiResponse.ofList(ResponseCode.ROLES_FETCHED, roleService.getAllRole());
     }
 
     //    @DeleteMapping("/roles/{roleName}")

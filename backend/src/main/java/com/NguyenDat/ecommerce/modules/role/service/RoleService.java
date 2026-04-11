@@ -30,6 +30,10 @@ public class RoleService {
     PermissionRepository permissionRepository;
 
     public RoleResponse createRole(RoleRequest request) {
+        if (roleRepository.existsById(request.getName())) {
+            throw new AppException(ErrorCode.ROLE_EXISTED);
+        }
+
         Role role = roleMapper.toRole(request);
         // Set<String> -> Set<Permission>
         Set<Permission> permissions = request.getPermissions().stream()
@@ -39,7 +43,7 @@ public class RoleService {
                 .collect(Collectors.toSet());
         role.setPermissions(permissions);
         try {
-            roleRepository.save(role);
+            role = roleRepository.save(role);
         } catch (DataIntegrityViolationException e) {
             throw new AppException(ErrorCode.ROLE_EXISTED);
         }

@@ -7,7 +7,7 @@ import com.NguyenDat.ecommerce.modules.permission.dto.response.PermissionRespons
 import com.NguyenDat.ecommerce.modules.permission.entity.Permission;
 
 @Mapper(componentModel = "spring")
-public interface PermissonMapper {
+public interface PermissionMapper {
     PermissionResponse toPermissionResponse(Permission permission);
 
     Permission toPermission(PermissionRequest permissionRequest);
