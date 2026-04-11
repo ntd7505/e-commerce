@@ -47,7 +47,17 @@ public enum ErrorCode {
     // brand
     BRAND_EXISTED(4000, "Brand already existed", HttpStatus.BAD_REQUEST),
     BRAND_NOT_FOUND(4001, "Brand not found", HttpStatus.BAD_REQUEST),
-    BRAND_DELETED(4002, "Brand has been deleted", HttpStatus.NOT_FOUND);
+    BRAND_DELETED(4002, "Brand has been deleted", HttpStatus.NOT_FOUND),
+
+    // category
+    CATEGORY_EXISTED(5000, "Category already existed", HttpStatus.BAD_REQUEST),
+    CATEGORY_NOT_FOUND(5001, "Category not found", HttpStatus.NOT_FOUND),
+    CATEGORY_DELETED(5002, "Category has been deleted", HttpStatus.NOT_FOUND),
+    PARENT_CATEGORY_NOT_FOUND(5003, "Parent category not found", HttpStatus.NOT_FOUND),
+    CATEGORY_HAS_CHILDREN(5005, "Category has child categories", HttpStatus.BAD_REQUEST),
+    CATEGORY_HAS_PRODUCTS(5006, "Category has associated products", HttpStatus.BAD_REQUEST),
+    CATEGORY_CIRCULAR_REFERENCE(5007, "Category parent creates a circular reference", HttpStatus.BAD_REQUEST),
+    CATEGORY_INACTIVE(5004, "Category is inactive", HttpStatus.FORBIDDEN);
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {
         this.code = code;

@@ -46,7 +46,14 @@ public enum ResponseCode {
     BRAND_FETCHED(6001, "Brand fetched successfully"),
     BRAND_UPDATED(6002, "Brand updated successfully"),
     BRAND_DELETED(6003, "Brand deleted successfully"),
-    BRANDS_FETCHED(6004, "Brands fetched successfully");
+    BRANDS_FETCHED(6004, "Brands fetched successfully"),
+
+    // 7000 - Category
+    CATEGORY_CREATED(7000, "Category created successfully"),
+    CATEGORY_FETCHED(7001, "Category fetched successfully"),
+    CATEGORY_UPDATED(7002, "Category updated successfully"),
+    CATEGORY_DELETED(7003, "Category deleted successfully"),
+    CATEGORIES_FETCHED(7004, "Categories fetched successfully");
 
     private final int code;
     private final String message;
