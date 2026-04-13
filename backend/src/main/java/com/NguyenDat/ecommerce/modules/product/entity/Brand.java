@@ -1,6 +1,8 @@
 package com.NguyenDat.ecommerce.modules.product.entity;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import jakarta.persistence.*;
 
@@ -35,6 +37,9 @@ public class Brand {
 
     @Column(nullable = false)
     boolean deleted = false;
+
+    @OneToMany(mappedBy = "brand")
+    List<Product> productList = new ArrayList<>();
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)

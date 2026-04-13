@@ -21,7 +21,7 @@ public class ProductVariant {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "variant_name", length = 255, nullable = false)
+    @Column(name = "variant_name", length = 150, nullable = false)
     String variantName;
 
     @Column(name = "stock_quantity", nullable = false)
@@ -33,10 +33,10 @@ public class ProductVariant {
     @Column(name = "sale_price", nullable = false)
     double salePrice;
 
-    @Column(nullable = false, length = 10)
+    @Column(nullable = false, length = 3)
     String currency;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true, length = 64)
     String sku;
 
     @Column(nullable = false)
@@ -53,7 +53,7 @@ public class ProductVariant {
     @Column(name = "update_at")
     LocalDateTime updatedAt;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id", nullable = false)
     Product product;
 }

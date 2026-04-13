@@ -21,10 +21,10 @@ public class ProductMedia {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 255)
+    @Column(length = 500, nullable = false)
     String url;
 
-    @Column(name = "media_type", length = 250)
+    @Column(name = "media_type", length = 50, nullable = false)
     String mediaType;
 
     @Column(name = "is_thumbnail")
@@ -39,7 +39,7 @@ public class ProductMedia {
     @Column(nullable = false)
     boolean active = true;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id", nullable = false)
     Product product;
 
