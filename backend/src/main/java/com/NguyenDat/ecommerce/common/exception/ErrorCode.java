@@ -29,6 +29,9 @@ public enum ErrorCode {
     INVALID_PHONE(1102, "Phone number must be exactly 10 digits.", HttpStatus.BAD_REQUEST),
     INVALID_FULL_NAME(1103, "Full name must be at least {min} characters", HttpStatus.BAD_REQUEST),
     FIELD_REQUIRED(1104, "This field is required", HttpStatus.BAD_REQUEST),
+    STOCK_MUST_BE_POSITIVE(1105, "Stock quantity must be greater than or equal to 0", HttpStatus.BAD_REQUEST),
+    PRICE_MUST_BE_POSITIVE(1106, "Price must be greater than 0", HttpStatus.BAD_REQUEST),
+    SALE_PRICE_MUST_BE_NON_NEGATIVE(1107, "Sale price must be greater than or equal to 0", HttpStatus.BAD_REQUEST),
 
     // 2000 - Role & Permission
     ROLE_NOT_FOUND(2000, "Role not found", HttpStatus.NOT_FOUND),
@@ -43,6 +46,12 @@ public enum ErrorCode {
     TOKEN_INVALID(3002, "Token is invalid", HttpStatus.UNAUTHORIZED),
     TOKEN_EXPIRED(3003, "Token has expired", HttpStatus.UNAUTHORIZED),
     TOKEN_BLACKLISTED(3004, "Token has been logged out", HttpStatus.UNAUTHORIZED),
+
+    // product
+    PRODUCT_EXISTED(3500, "Product already existed", HttpStatus.BAD_REQUEST),
+    PRODUCT_NOT_FOUND(3501, "Product not found", HttpStatus.NOT_FOUND),
+    PRODUCT_DELETED(3502, "Product has been deleted", HttpStatus.NOT_FOUND),
+    PRODUCT_INACTIVE(3503, "Product is inactive", HttpStatus.FORBIDDEN),
 
     // brand
     BRAND_EXISTED(4000, "Brand already existed", HttpStatus.BAD_REQUEST),
