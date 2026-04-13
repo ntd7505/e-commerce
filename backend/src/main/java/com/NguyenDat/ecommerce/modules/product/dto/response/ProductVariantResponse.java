@@ -1,0 +1,4 @@
+package com.NguyenDat.ecommerce.modules.product.dto.response;
+
+public class ProductVariantResponse {
+}
