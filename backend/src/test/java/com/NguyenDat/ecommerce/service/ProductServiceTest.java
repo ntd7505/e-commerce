@@ -1,0 +1,378 @@
+package com.NguyenDat.ecommerce.service;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import com.NguyenDat.ecommerce.common.exception.AppException;
+import com.NguyenDat.ecommerce.common.exception.ErrorCode;
+import com.NguyenDat.ecommerce.modules.category.dto.CategorySummaryResponse;
+import com.NguyenDat.ecommerce.modules.category.entity.Category;
+import com.NguyenDat.ecommerce.modules.category.repository.CategoryRepository;
+import com.NguyenDat.ecommerce.modules.product.dto.request.ProductCreateRequest;
+import com.NguyenDat.ecommerce.modules.product.dto.request.ProductMediaRequest;
+import com.NguyenDat.ecommerce.modules.product.dto.request.ProductUpdateRequest;
+import com.NguyenDat.ecommerce.modules.product.dto.request.ProductVariantRequest;
+import com.NguyenDat.ecommerce.modules.product.dto.request.ProductVariantUpdateRequest;
+import com.NguyenDat.ecommerce.modules.product.dto.response.BrandSummaryResponse;
+import com.NguyenDat.ecommerce.modules.product.dto.response.ProductMediaResponse;
+import com.NguyenDat.ecommerce.modules.product.dto.response.ProductResponse;
+import com.NguyenDat.ecommerce.modules.product.dto.response.ProductVariantResponse;
+import com.NguyenDat.ecommerce.modules.product.entity.Brand;
+import com.NguyenDat.ecommerce.modules.product.entity.Product;
+import com.NguyenDat.ecommerce.modules.product.entity.ProductMedia;
+import com.NguyenDat.ecommerce.modules.product.entity.ProductVariant;
+import com.NguyenDat.ecommerce.modules.product.mapper.ProductMapper;
+import com.NguyenDat.ecommerce.modules.product.mapper.ProductMediaMapper;
+import com.NguyenDat.ecommerce.modules.product.mapper.ProductVariantMapper;
+import com.NguyenDat.ecommerce.modules.product.repository.BrandRepository;
+import com.NguyenDat.ecommerce.modules.product.repository.ProductRepository;
+import com.NguyenDat.ecommerce.modules.product.repository.ProductVariantRepository;
+import com.NguyenDat.ecommerce.modules.product.service.ProductService;
+
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
+
+@ExtendWith(MockitoExtension.class)
+@FieldDefaults(level = AccessLevel.PRIVATE)
+public class ProductServiceTest {
+
+    @Mock
+    CategoryRepository categoryRepository;
+
+    @Mock
+    BrandRepository brandRepository;
+
+    @Mock
+    ProductRepository productRepository;
+
+    @Mock
+    ProductVariantRepository productVariantRepository;
+
+    @Mock
+    ProductMapper productMapper;
+
+    @Mock
+    ProductVariantMapper productVariantMapper;
+
+    @Mock
+    ProductMediaMapper productMediaMapper;
+
+    @InjectMocks
+    ProductService productService;
+
+    ProductCreateRequest productCreateRequest;
+    ProductUpdateRequest productUpdateRequest;
+    ProductVariantUpdateRequest productVariantUpdateRequest;
+    Brand brand;
+    Category category;
+    Product product;
+    Product deletedProduct;
+    ProductVariant productVariant;
+    ProductMedia productMedia;
+    ProductResponse productResponse;
+    ProductVariantResponse productVariantResponse;
+    ProductMediaResponse productMediaResponse;
+
+    @BeforeEach
+    void setUp() {
+        ProductVariantRequest productVariantRequest = ProductVariantRequest.builder()
+                .variantName("Den - M")
+                .stockQuantity(10)
+                .price(350000)
+                .salePrice(289000)
+                .currency("VND")
+                .build();
+
+        ProductMediaRequest productMediaRequest = ProductMediaRequest.builder()
+                .url("https://cdn.test/product.jpg")
+                .mediaType("image")
+                .sortOrder(0)
+                .altText("Product image")
+                .build();
+
+        productCreateRequest = ProductCreateRequest.builder()
+                .name("Ao Hoodie")
+                .shortDescription("Hoodie form rong")
+                .description("Mo ta san pham")
+                .brandId(1L)
+                .categoryId(2L)
+                .active(true)
+                .variants(List.of(productVariantRequest))
+                .media(List.of(productMediaRequest))
+                .build();
+
+        productUpdateRequest = ProductUpdateRequest.builder()
+                .name("Ao Hoodie Updated")
+                .shortDescription("Hoodie updated")
+                .description("Mo ta updated")
+                .active(true)
+                .build();
+
+        productVariantUpdateRequest = ProductVariantUpdateRequest.builder()
+                .variantName("Den - L")
+                .price(360000.0)
+                .salePrice(300000.0)
+                .currency("VND")
+                .active(true)
+                .build();
+
+        brand = new Brand();
+        brand.setId(1L);
+        brand.setName("Nike");
+        brand.setSlug("nike");
+        brand.setActive(true);
+        brand.setDeleted(false);
+
+        category = Category.builder()
+                .id(2L)
+                .name("Hoodie")
+                .slug("hoodie")
+                .active(true)
+                .deleted(false)
+                .children(new ArrayList<>())
+                .products(new ArrayList<>())
+                .build();
+
+        product = new Product();
+        product.setId(10L);
+        product.setName("Ao Hoodie");
+        product.setSlug("ao-hoodie");
+        product.setShortDescription("Hoodie form rong");
+        product.setDescription("Mo ta san pham");
+        product.setBrand(brand);
+        product.setCategory(category);
+        product.setActive(true);
+        product.setDeleted(false);
+
+        deletedProduct = new Product();
+        deletedProduct.setId(11L);
+        deletedProduct.setName("Deleted product");
+        deletedProduct.setDeleted(true);
+        deletedProduct.setVariants(new ArrayList<>());
+        deletedProduct.setMedia(new ArrayList<>());
+
+        productVariant = new ProductVariant();
+        productVariant.setId(100L);
+        productVariant.setVariantName("Den - M");
+        productVariant.setStockQuantity(10);
+        productVariant.setPrice(350000);
+        productVariant.setSalePrice(289000);
+        productVariant.setCurrency("VND");
+        productVariant.setSku("AO-HOODIE-DEN-M");
+        productVariant.setActive(true);
+        productVariant.setDeleted(false);
+        productVariant.setProduct(product);
+
+        productMedia = new ProductMedia();
+        productMedia.setId(200L);
+        productMedia.setUrl("https://cdn.test/product.jpg");
+        productMedia.setMediaType("image");
+        productMedia.setThumbnail(true);
+        productMedia.setSortOrder(0);
+        productMedia.setAltText("Product image");
+        productMedia.setActive(true);
+        productMedia.setProduct(product);
+
+        product.setVariants(new ArrayList<>(List.of(productVariant)));
+        product.setMedia(new ArrayList<>(List.of(productMedia)));
+
+        productVariantResponse = ProductVariantResponse.builder()
+                .id(100L)
+                .variantName("Den - M")
+                .stockQuantity(10)
+                .price(350000)
+                .salePrice(289000)
+                .currency("VND")
+                .sku("AO-HOODIE-DEN-M")
+                .active(true)
+                .build();
+
+        productMediaResponse = ProductMediaResponse.builder()
+                .id(200L)
+                .url("https://cdn.test/product.jpg")
+                .mediaType("image")
+                .isThumbnail(true)
+                .sortOrder(0)
+                .altText("Product image")
+                .active(true)
+                .build();
+
+        productResponse = ProductResponse.builder()
+                .id(10L)
+                .name("Ao Hoodie")
+                .slug("ao-hoodie")
+                .shortDescription("Hoodie form rong")
+                .description("Mo ta san pham")
+                .brand(BrandSummaryResponse.builder()
+                        .id(1L)
+                        .name("Nike")
+                        .slug("nike")
+                        .build())
+                .category(CategorySummaryResponse.builder()
+                        .id(2L)
+                        .name("Hoodie")
+                        .slug("hoodie")
+                        .build())
+                .active(true)
+                .build();
+    }
+
+    @Test
+    void createProduct_shouldReturnProductResponse_whenRequestIsValid() {
+        when(brandRepository.findById(1L)).thenReturn(Optional.of(brand));
+        when(categoryRepository.findById(2L)).thenReturn(Optional.of(category));
+        when(productMapper.toProduct(productCreateRequest)).thenReturn(product);
+        when(productRepository.existsBySlug("ao-hoodie")).thenReturn(false);
+        when(productVariantRepository.existsBySku("AO-HOODIE-DEN-M")).thenReturn(false);
+        when(productVariantMapper.toProductVariant(
+                        productCreateRequest.getVariants().getFirst()))
+                .thenReturn(productVariant);
+        when(productMediaMapper.toProductMedia(productCreateRequest.getMedia().getFirst()))
+                .thenReturn(productMedia);
+        when(productRepository.save(product)).thenReturn(product);
+        when(productMapper.toProductResponse(product)).thenReturn(productResponse);
+        when(productVariantMapper.toProductVariantResponse(productVariant)).thenReturn(productVariantResponse);
+        when(productMediaMapper.toProductMediaResponse(productMedia)).thenReturn(productMediaResponse);
+
+        ProductResponse result = productService.createProduct(productCreateRequest);
+
+        assertEquals("Ao Hoodie", result.getName());
+        assertEquals("ao-hoodie", result.getSlug());
+        assertEquals(1, result.getVariants().size());
+        assertEquals(1, result.getMedia().size());
+        verify(productRepository).save(product);
+    }
+
+    @Test
+    void createProduct_shouldThrowException_whenBrandIsDeleted() {
+        brand.setDeleted(true);
+        when(brandRepository.findById(1L)).thenReturn(Optional.of(brand));
+        when(categoryRepository.findById(2L)).thenReturn(Optional.of(category));
+
+        AppException exception =
+                assertThrows(AppException.class, () -> productService.createProduct(productCreateRequest));
+
+        assertEquals(ErrorCode.BRAND_DELETED, exception.getErrorCode());
+        verify(productRepository, never()).save(any());
+    }
+
+    @Test
+    void getAllProducts_shouldReturnOnlyNonDeletedProducts() {
+        when(productRepository.findAll()).thenReturn(List.of(product, deletedProduct));
+        when(productMapper.toProductResponse(product)).thenReturn(productResponse);
+        when(productVariantMapper.toProductVariantResponse(productVariant)).thenReturn(productVariantResponse);
+        when(productMediaMapper.toProductMediaResponse(productMedia)).thenReturn(productMediaResponse);
+
+        List<ProductResponse> result = productService.getAllProducts();
+
+        assertEquals(1, result.size());
+        assertEquals("Ao Hoodie", result.getFirst().getName());
+        verify(productMapper, never()).toProductResponse(deletedProduct);
+    }
+
+    @Test
+    void getProductById_shouldReturnProductResponse_whenProductExists() {
+        when(productRepository.findById(10L)).thenReturn(Optional.of(product));
+        when(productMapper.toProductResponse(product)).thenReturn(productResponse);
+        when(productVariantMapper.toProductVariantResponse(productVariant)).thenReturn(productVariantResponse);
+        when(productMediaMapper.toProductMediaResponse(productMedia)).thenReturn(productMediaResponse);
+
+        ProductResponse result = productService.getProductById(10L);
+
+        assertEquals("Ao Hoodie", result.getName());
+        assertEquals(1, result.getVariants().size());
+        assertEquals(1, result.getMedia().size());
+    }
+
+    @Test
+    void getProductById_shouldThrowException_whenProductIsDeleted() {
+        when(productRepository.findById(10L)).thenReturn(Optional.of(deletedProduct));
+
+        AppException exception = assertThrows(AppException.class, () -> productService.getProductById(10L));
+
+        assertEquals(ErrorCode.PRODUCT_DELETED, exception.getErrorCode());
+        verify(productMapper, never()).toProductResponse(any());
+    }
+
+    @Test
+    void updateProductById_shouldReturnProductResponse_whenRequestIsValid() {
+        when(productRepository.findById(10L)).thenReturn(Optional.of(product));
+        doAnswer(invocation -> {
+                    product.setName(productUpdateRequest.getName());
+                    product.setShortDescription(productUpdateRequest.getShortDescription());
+                    product.setDescription(productUpdateRequest.getDescription());
+                    return null;
+                })
+                .when(productMapper)
+                .updateProduct(product, productUpdateRequest);
+        when(productRepository.existsBySlugAndIdNot("ao-hoodie-updated", 10L)).thenReturn(false);
+        when(productRepository.save(product)).thenReturn(product);
+        when(productMapper.toProductResponse(product)).thenReturn(productResponse);
+        when(productVariantMapper.toProductVariantResponse(productVariant)).thenReturn(productVariantResponse);
+        when(productMediaMapper.toProductMediaResponse(productMedia)).thenReturn(productMediaResponse);
+
+        ProductResponse result = productService.updateProductById(productUpdateRequest, 10L);
+
+        assertEquals("Ao Hoodie", result.getName());
+        assertEquals("Ao Hoodie Updated", product.getName());
+        verify(productRepository).save(product);
+    }
+
+    @Test
+    void getVariantById_shouldReturnVariantResponse_whenVariantExists() {
+        when(productVariantRepository.findById(100L)).thenReturn(Optional.of(productVariant));
+        when(productVariantMapper.toProductVariantResponse(productVariant)).thenReturn(productVariantResponse);
+
+        ProductVariantResponse result = productService.getVariantById(100L);
+
+        assertEquals("Den - M", result.getVariantName());
+        assertEquals("AO-HOODIE-DEN-M", result.getSku());
+    }
+
+    @Test
+    void getVariantById_shouldThrowException_whenVariantIsDeleted() {
+        productVariant.setDeleted(true);
+        when(productVariantRepository.findById(100L)).thenReturn(Optional.of(productVariant));
+
+        AppException exception = assertThrows(AppException.class, () -> productService.getVariantById(100L));
+
+        assertEquals(ErrorCode.PRODUCT_VARIANT_DELETED, exception.getErrorCode());
+        verify(productVariantMapper, never()).toProductVariantResponse(any());
+    }
+
+    @Test
+    void updateVariantById_shouldReturnVariantResponse_whenRequestIsValid() {
+        when(productVariantRepository.findById(100L)).thenReturn(Optional.of(productVariant));
+        doAnswer(invocation -> {
+                    productVariant.setVariantName(productVariantUpdateRequest.getVariantName());
+                    productVariant.setPrice(productVariantUpdateRequest.getPrice());
+                    productVariant.setSalePrice(productVariantUpdateRequest.getSalePrice());
+                    productVariant.setCurrency(productVariantUpdateRequest.getCurrency());
+                    productVariant.setActive(productVariantUpdateRequest.getActive());
+                    return null;
+                })
+                .when(productVariantMapper)
+                .updateProductVariant(productVariant, productVariantUpdateRequest);
+        when(productVariantRepository.existsBySkuAndIdNot("AO-HOODIE-DEN-L", 100L))
+                .thenReturn(false);
+        when(productVariantRepository.save(productVariant)).thenReturn(productVariant);
+        when(productVariantMapper.toProductVariantResponse(productVariant)).thenReturn(productVariantResponse);
+
+        ProductVariantResponse result = productService.updateVariantById(productVariantUpdateRequest, 100L);
+
+        assertEquals("Den - M", result.getVariantName());
+        assertEquals("Den - L", productVariant.getVariantName());
+        verify(productVariantRepository).save(productVariant);
+    }
+}
