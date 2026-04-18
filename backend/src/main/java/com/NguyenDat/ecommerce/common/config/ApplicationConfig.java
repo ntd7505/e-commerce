@@ -5,6 +5,7 @@ import java.util.Set;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.NguyenDat.ecommerce.common.exception.AppException;
@@ -27,6 +28,7 @@ public class ApplicationConfig {
     PasswordEncoder passwordEncoder;
 
     @Bean
+    @Profile("!test")
     ApplicationRunner applicationRunner(UserRepository userRepository, RoleRepository roleRepository) {
         return args -> {
             if (userRepository.findByEmail("admin@gmail.com").isEmpty()) {
