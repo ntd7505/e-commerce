@@ -76,7 +76,7 @@ public class BrandService {
             throw new AppException(ErrorCode.BRAND_EXISTED);
         }
         brand.setName(normalizedName);
-        brand.setSlug(SlugUtil.toUniqueSlug(normalizedName, brandRepository::existsBySlug));
+        brand.setSlug(SlugUtil.toUniqueSlug(normalizedName, slug -> brandRepository.existsBySlugAndIdNot(slug, id)));
         brandRepository.save(brand);
         return brandMapper.toBrandResponse(brand);
     }
