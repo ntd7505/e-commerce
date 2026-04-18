@@ -32,6 +32,8 @@ public enum ErrorCode {
     STOCK_MUST_BE_POSITIVE(1105, "Stock quantity must be greater than or equal to 0", HttpStatus.BAD_REQUEST),
     PRICE_MUST_BE_POSITIVE(1106, "Price must be greater than 0", HttpStatus.BAD_REQUEST),
     SALE_PRICE_MUST_BE_NON_NEGATIVE(1107, "Sale price must be greater than or equal to 0", HttpStatus.BAD_REQUEST),
+    PRICE_MUST_BE_GREATER_THAN_OR_EQUAL_TO_SALE_PRICE(
+            1108, "Price must be greater than or equal to sale price", HttpStatus.BAD_REQUEST),
 
     // 2000 - Role & Permission
     ROLE_NOT_FOUND(2000, "Role not found", HttpStatus.NOT_FOUND),
@@ -53,10 +55,17 @@ public enum ErrorCode {
     PRODUCT_DELETED(3502, "Product has been deleted", HttpStatus.NOT_FOUND),
     PRODUCT_INACTIVE(3503, "Product is inactive", HttpStatus.FORBIDDEN),
 
+    // product variant
+    PRODUCT_VARIANT_NOT_FOUND(3600, "Product variant not found", HttpStatus.NOT_FOUND),
+    PRODUCT_VARIANT_DELETED(3601, "Product variant has been deleted", HttpStatus.NOT_FOUND),
+    PRODUCT_VARIANT_INACTIVE(3602, "Product variant is inactive", HttpStatus.FORBIDDEN),
+    PRODUCT_VARIANT_SKU_EXISTED(3603, "Product variant SKU already existed", HttpStatus.BAD_REQUEST),
+
     // brand
     BRAND_EXISTED(4000, "Brand already existed", HttpStatus.BAD_REQUEST),
     BRAND_NOT_FOUND(4001, "Brand not found", HttpStatus.BAD_REQUEST),
     BRAND_DELETED(4002, "Brand has been deleted", HttpStatus.NOT_FOUND),
+    BRAND_INACTIVE(4003, "Brand is inactive", HttpStatus.NOT_FOUND),
 
     // category
     CATEGORY_EXISTED(5000, "Category already existed", HttpStatus.BAD_REQUEST),
