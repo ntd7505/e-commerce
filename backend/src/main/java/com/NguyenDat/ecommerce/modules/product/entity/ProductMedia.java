@@ -16,6 +16,7 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@Table(name = "product_media")
 public class ProductMedia {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

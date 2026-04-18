@@ -7,6 +7,7 @@ import com.NguyenDat.ecommerce.modules.category.dto.CategoryChildResponse;
 import com.NguyenDat.ecommerce.modules.category.dto.CategoryParentResponse;
 import com.NguyenDat.ecommerce.modules.category.dto.CategoryRequest;
 import com.NguyenDat.ecommerce.modules.category.dto.CategoryResponse;
+import com.NguyenDat.ecommerce.modules.category.dto.CategorySummaryResponse;
 import com.NguyenDat.ecommerce.modules.category.entity.Category;
 
 @Mapper(componentModel = "spring")
@@ -29,4 +30,6 @@ public interface CategoryMapper {
     CategoryParentResponse toCategoryParentResponse(Category category);
 
     CategoryChildResponse toCategoryChildResponse(Category category);
+
+    CategorySummaryResponse toCategorySummaryResponse(Category category);
 }
