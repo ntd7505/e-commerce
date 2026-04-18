@@ -17,7 +17,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ProductRequest {
+public class ProductCreateRequest {
     @NotBlank(message = "FIELD_REQUIRED")
     @Size(max = 200)
     String name;

@@ -9,13 +9,8 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ProductVariantResponse {
-    private Long id;
-    String variantName;
-    int stockQuantity = 0;
-    double price;
-    double salePrice;
-    String currency;
-    String sku;
-    boolean active;
+public class BrandSummaryResponse {
+    Long id;
+    String name;
+    String slug;
 }

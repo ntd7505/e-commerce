@@ -33,8 +33,4 @@ public class ProductVariantRequest {
     @NotBlank(message = "FIELD_REQUIRED")
     @Size(max = 3)
     String currency;
-
-    @NotBlank(message = "FIELD_REQUIRED")
-    @Size(max = 64)
-    String sku;
 }

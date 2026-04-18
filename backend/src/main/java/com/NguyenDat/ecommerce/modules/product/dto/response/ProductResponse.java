@@ -3,7 +3,7 @@ package com.NguyenDat.ecommerce.modules.product.dto.response;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.NguyenDat.ecommerce.modules.category.dto.CategoryResponse;
+import com.NguyenDat.ecommerce.modules.category.dto.CategorySummaryResponse;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -20,8 +20,8 @@ public class ProductResponse {
     String slug;
     String shortDescription;
     String description;
-    BrandResponse brand;
-    CategoryResponse category;
+    BrandSummaryResponse brand;
+    CategorySummaryResponse category;
     boolean active;
     List<ProductVariantResponse> variants;
     List<ProductMediaResponse> media;

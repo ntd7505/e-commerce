@@ -6,4 +6,8 @@ import org.springframework.stereotype.Repository;
 import com.NguyenDat.ecommerce.modules.product.entity.Product;
 
 @Repository
-public interface ProductRepository extends JpaRepository<Product, Long> {}
+public interface ProductRepository extends JpaRepository<Product, Long> {
+    boolean existsBySlug(String slug);
+
+    boolean existsBySlugAndIdNot(String slug, Long id);
+}

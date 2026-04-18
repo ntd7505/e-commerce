@@ -1,4 +1,6 @@
 package com.NguyenDat.ecommerce.modules.product.repository;
 
-public interface ProductMediaRepository {
-}
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface ProductMediaRepository {}
