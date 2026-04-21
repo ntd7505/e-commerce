@@ -29,6 +29,9 @@ jobs:
       - name: Grant execute permission for Maven wrapper
         run: chmod +x mvnw
 
+      - name: Check code formatting
+        run: ./mvnw spotless:check
+
       - name: Run tests
         run: ./mvnw test
 
