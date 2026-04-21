@@ -20,6 +20,7 @@ import com.NguyenDat.ecommerce.modules.product.dto.response.BrandResponse;
 import com.NguyenDat.ecommerce.modules.product.entity.Brand;
 import com.NguyenDat.ecommerce.modules.product.mapper.BrandMapper;
 import com.NguyenDat.ecommerce.modules.product.repository.BrandRepository;
+import com.NguyenDat.ecommerce.modules.product.repository.ProductRepository;
 import com.NguyenDat.ecommerce.modules.product.service.BrandService;
 
 import lombok.AccessLevel;
@@ -30,6 +31,9 @@ import lombok.experimental.FieldDefaults;
 public class BrandServiceTest {
     @Mock
     BrandRepository brandRepository;
+
+    @Mock
+    ProductRepository productRepository;
 
     @Mock
     BrandMapper brandMapper;
@@ -132,6 +136,7 @@ public class BrandServiceTest {
     void deleteBrand_shouldMarkBrandAsDeleted_whenBrandExists() {
         when(brandRepository.findByIdAndDeletedFalse(1L)).thenReturn(Optional.of(brand));
         when(brandRepository.save(brand)).thenReturn(brand);
+        when(productRepository.existsByBrandIdAndDeletedFalse(1L)).thenReturn(false);
         brandService.deleteBrand(1L);
         assertTrue(brand.isDeleted());
         verify(brandRepository).save(brand);
