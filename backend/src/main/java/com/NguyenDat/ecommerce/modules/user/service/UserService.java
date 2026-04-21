@@ -70,19 +70,17 @@ public class UserService {
     public UserResponse getMyInfo() {
         var context = SecurityContextHolder.getContext();
         String email = Objects.requireNonNull(context.getAuthentication()).getName();
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
-        if (user.isDeleted() || user.getStatus() == Active.INACTIVE) {
-            throw new AppException(ErrorCode.USER_NOT_EXISTED);
-        }
+        User user = userRepository
+                .findByEmailAndDeletedFalse(email)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         return userMapper.toUserResponse(user);
     }
 
     @PostAuthorize("hasRole('ADMIN') or returnObject.email == authentication.name ")
     public UserResponse getUserById(long id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
-        if (user.isDeleted()) {
-            throw new AppException(ErrorCode.USER_NOT_EXISTED);
-        }
+        User user = userRepository
+                .findByIdAndDeletedFalse(id)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         return userMapper.toUserResponse(user);
     }
 
@@ -94,10 +92,9 @@ public class UserService {
     }
 
     public UserResponse updateUserById(long id, UserUpdateRequest userUpdateRequest) {
-        User user = this.userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
-        if (user.isDeleted() || user.getStatus() == Active.INACTIVE) {
-            throw new AppException(ErrorCode.USER_NOT_EXISTED);
-        }
+        User user = this.userRepository
+                .findByIdAndDeletedFalse(id)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         if (userRepository.existsByPhoneNumberAndIdNot(userUpdateRequest.getPhoneNumber(), id)) {
             throw new AppException(ErrorCode.PHONE_EXISTED);
         }
@@ -106,11 +103,17 @@ public class UserService {
     }
 
     public void softDeleteUser(long id) {
-        User user = this.userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
-        if (user.isDeleted()) {
-            throw new AppException(ErrorCode.USER_NOT_EXISTED);
-        }
+        User user = this.userRepository
+                .findByIdAndDeletedFalse(id)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         user.setDeleted(true);
+        user.setStatus(Active.INACTIVE);
         this.userRepository.save(user);
+    }
+
+    public List<UserResponse> getDeletedUsers() {
+        return userRepository.findAllByDeletedTrue().stream()
+                .map(userMapper::toUserResponse)
+                .toList();
     }
 }

@@ -46,6 +46,11 @@ public class AdminUserController {
         return ApiResponse.ofList(ResponseCode.USERS_FETCHED, userService.getAllUsers());
     }
 
+    @GetMapping("/users/deleted")
+    public ApiResponse<List<UserResponse>> getDeletedUsers() {
+        return ApiResponse.ofList(ResponseCode.DELETED_USERS_FETCHED, userService.getDeletedUsers());
+    }
+
     @PutMapping(value = "/users/{userId}")
     public ApiResponse<UserResponse> updateUserById(
             @PathVariable Long userId, @RequestBody @Valid UserUpdateRequest userUpdateRequest) {
