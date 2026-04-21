@@ -1,5 +1,6 @@
 package com.NguyenDat.ecommerce.modules.product.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,4 +18,10 @@ public interface BrandRepository extends JpaRepository<Brand, Long> {
     boolean existsBySlug(String name);
 
     boolean existsBySlugAndIdNot(String slug, Long id);
+
+    List<Brand> findAllByDeletedFalse();
+
+    List<Brand> findAllByDeletedTrue();
+
+    Optional<Brand> findByIdAndDeletedFalse(Long id);
 }

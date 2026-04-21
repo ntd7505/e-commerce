@@ -47,6 +47,11 @@ public class AdminBrandController {
         return ApiResponse.of(ResponseCode.BRAND_FETCHED, brandService.getBrandById(id));
     }
 
+    @GetMapping("/brands/deleted")
+    public ApiResponse<List<BrandResponse>> getDeletedBrands() {
+        return ApiResponse.ofList(ResponseCode.DELETED_BRANDS_FETCHED, brandService.getDeletedBrands());
+    }
+
     @PutMapping("/brands/{id}")
     public ApiResponse<BrandResponse> updateBrandById(
             @PathVariable Long id, @RequestBody @Valid BrandRequest brandRequest) {

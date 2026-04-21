@@ -43,41 +43,45 @@ public class BrandService {
     }
 
     public List<BrandResponse> getAllBrands() {
-        return brandRepository.findAll().stream()
-                .filter(brand -> !brand.isDeleted())
+        return brandRepository.findAllByDeletedFalse().stream()
                 .map(brandMapper::toBrandResponse)
                 .toList();
     }
 
     public void deleteBrand(Long id) {
-        Brand brand = brandRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.BRAND_NOT_FOUND));
-        if (brand.isDeleted()) {
-            throw new AppException(ErrorCode.BRAND_NOT_FOUND);
-        }
+        Brand brand = brandRepository
+                .findByIdAndDeletedFalse(id)
+                .orElseThrow(() -> new AppException(ErrorCode.BRAND_NOT_FOUND));
         brand.setDeleted(true);
+        brand.setActive(false);
         brandRepository.save(brand);
     }
 
     public BrandResponse getBrandById(Long id) {
-        Brand brand = brandRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.BRAND_NOT_FOUND));
-        if (brand.isDeleted()) {
-            throw new AppException(ErrorCode.BRAND_NOT_FOUND);
-        }
+        Brand brand = brandRepository
+                .findByIdAndDeletedFalse(id)
+                .orElseThrow(() -> new AppException(ErrorCode.BRAND_NOT_FOUND));
         return brandMapper.toBrandResponse(brand);
     }
 
     public BrandResponse updateBrandById(Long id, BrandRequest brandRequest) {
-        Brand brand = brandRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.BRAND_NOT_FOUND));
-        if (brand.isDeleted()) {
-            throw new AppException(ErrorCode.BRAND_NOT_FOUND);
-        }
+        Brand brand = brandRepository
+                .findByIdAndDeletedFalse(id)
+                .orElseThrow(() -> new AppException(ErrorCode.BRAND_NOT_FOUND));
         String normalizedName = brandRequest.getName().trim();
         if (brandRepository.existsByNameAndIdNot(normalizedName, id)) {
             throw new AppException(ErrorCode.BRAND_EXISTED);
         }
         brand.setName(normalizedName);
         brand.setSlug(SlugUtil.toUniqueSlug(normalizedName, slug -> brandRepository.existsBySlugAndIdNot(slug, id)));
+        brand.setLogoUrl(brandRequest.getLogoUrl());
         brandRepository.save(brand);
         return brandMapper.toBrandResponse(brand);
+    }
+
+    public List<BrandResponse> getDeletedBrands() {
+        return brandRepository.findAllByDeletedTrue().stream()
+                .map(brandMapper::toBrandResponse)
+                .toList();
     }
 }
