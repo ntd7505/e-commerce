@@ -178,11 +178,11 @@ public class UserServiceTest {
         when(userRepository.existsByPhoneNumberAndIdNot(userUpdateRequest.getPhoneNumber(), 1L))
                 .thenReturn(false);
         doAnswer(invocation -> {
-            user.setFullName(userUpdateRequest.getFullName());
-            user.setPhoneNumber(userUpdateRequest.getPhoneNumber());
-            user.setAvatarUrl(userUpdateRequest.getAvatarUrl());
-            return null;
-        })
+                    user.setFullName(userUpdateRequest.getFullName());
+                    user.setPhoneNumber(userUpdateRequest.getPhoneNumber());
+                    user.setAvatarUrl(userUpdateRequest.getAvatarUrl());
+                    return null;
+                })
                 .when(userMapper)
                 .updateUserMapper(user, userUpdateRequest);
         when(userRepository.save(user)).thenReturn(user);
