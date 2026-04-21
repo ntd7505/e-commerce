@@ -25,8 +25,7 @@ public interface UserMapper {
     @Mapping(target = "updatedAt", ignore = true)
     User toUser(UserCreationRequest userCreationRequest);
 
-    // User to StaffCreationResponse
-    UserResponse toStaffResponse(User user);
+    UserResponse toUserResponse(User user);
 
     // update mapper
     @Mapping(target = "roles", ignore = true)

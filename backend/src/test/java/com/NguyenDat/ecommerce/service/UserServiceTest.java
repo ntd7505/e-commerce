@@ -95,16 +95,16 @@ public class UserServiceTest {
     }
 
     @Test
-    void createNewUsers_shouldReturnUserResponse_whenRequestIsValid() {
+    void createUser_shouldReturnUserResponse_whenRequestIsValid() {
         when(userRepository.existsByEmail("dat@gmail.com")).thenReturn(false);
         when(userRepository.existsByPhoneNumber("0912345678")).thenReturn(false);
         when(userMapper.toUser(userCreationRequest)).thenReturn(user);
         when(passwordEncoder.encode("Dat@1234")).thenReturn("encoded-password");
         when(roleRepository.findById("USER")).thenReturn(Optional.of(role));
         when(userRepository.save(user)).thenReturn(user);
-        when(userMapper.toStaffResponse(user)).thenReturn(userResponse);
+        when(userMapper.toUserResponse(user)).thenReturn(userResponse);
 
-        UserResponse result = userService.createNewUsers(userCreationRequest);
+        UserResponse result = userService.createUser(userCreationRequest);
         assertEquals("dat@gmail.com", result.getEmail());
         assertEquals("Nguyen Dat", result.getFullName());
         assertEquals("0912345678", result.getPhoneNumber());
@@ -118,25 +118,23 @@ public class UserServiceTest {
     }
 
     @Test
-    void createNewUsers_shouldThrowException_whenEmailAlreadyExists() {
+    void createUser_shouldThrowException_whenEmailAlreadyExists() {
         when(userRepository.existsByEmail("dat@gmail.com")).thenReturn(true);
-        AppException exception =
-                assertThrows(AppException.class, () -> userService.createNewUsers(userCreationRequest));
+        AppException exception = assertThrows(AppException.class, () -> userService.createUser(userCreationRequest));
         assertEquals(ErrorCode.EMAIL_EXISTED, exception.getErrorCode());
         verify(userRepository, never()).save(any());
     }
 
     @Test
-    void createNewUsers_shouldThrowException_whenPhoneAlreadyExists() {
+    void createUser_shouldThrowException_whenPhoneAlreadyExists() {
         when(userRepository.existsByPhoneNumber("0912345678")).thenReturn(true);
-        AppException exception =
-                assertThrows(AppException.class, () -> userService.createNewUsers(userCreationRequest));
+        AppException exception = assertThrows(AppException.class, () -> userService.createUser(userCreationRequest));
         assertEquals(ErrorCode.PHONE_EXISTED, exception.getErrorCode());
         verify(userRepository, never()).save(any());
     }
 
     @Test
-    void createNewUsers_shouldAssignUserRole_whenRolesIsNull() {
+    void createUser_shouldAssignUserRole_whenRolesIsNull() {
         userCreationRequest.setRoles(null);
         when(userRepository.existsByEmail("dat@gmail.com")).thenReturn(false);
         when(userRepository.existsByPhoneNumber("0912345678")).thenReturn(false);
@@ -144,9 +142,9 @@ public class UserServiceTest {
         when(passwordEncoder.encode("Dat@1234")).thenReturn("encoded-password");
         when(roleRepository.findById("USER")).thenReturn(Optional.of(role));
         when(userRepository.save(user)).thenReturn(user);
-        when(userMapper.toStaffResponse(user)).thenReturn(userResponse);
+        when(userMapper.toUserResponse(user)).thenReturn(userResponse);
 
-        UserResponse result = userService.createNewUsers(userCreationRequest);
+        UserResponse result = userService.createUser(userCreationRequest);
         assertEquals(Set.of(role), user.getRoles());
         assertEquals("encoded-password", user.getPassword());
         assertEquals("dat@gmail.com", result.getEmail());
@@ -162,21 +160,20 @@ public class UserServiceTest {
     }
 
     @Test
-    void createNewUsers_shouldThrowException_whenRoleNotFound() {
+    void createUser_shouldThrowException_whenRoleNotFound() {
         when(userRepository.existsByEmail("dat@gmail.com")).thenReturn(false);
         when(userRepository.existsByPhoneNumber("0912345678")).thenReturn(false);
         when(userMapper.toUser(userCreationRequest)).thenReturn(user);
         when(passwordEncoder.encode("Dat@1234")).thenReturn("encoded-password");
         when(roleRepository.findById("USER")).thenReturn(Optional.empty());
-        AppException exception =
-                assertThrows(AppException.class, () -> userService.createNewUsers(userCreationRequest));
+        AppException exception = assertThrows(AppException.class, () -> userService.createUser(userCreationRequest));
         assertEquals(ErrorCode.ROLE_NOT_FOUND, exception.getErrorCode());
         verify(roleRepository).findById("USER");
         verify(userRepository, never()).save(any());
     }
 
     @Test
-    void updateStaffById_shouldReturnUserResponse_whenRequestIsValid() {
+    void updateUserById_shouldReturnUserResponse_whenRequestIsValid() {
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         when(userRepository.existsByPhoneNumberAndIdNot(userUpdateRequest.getPhoneNumber(), 1L))
                 .thenReturn(false);
@@ -189,9 +186,9 @@ public class UserServiceTest {
                 .when(userMapper)
                 .updateUserMapper(user, userUpdateRequest);
         when(userRepository.save(user)).thenReturn(user);
-        when(userMapper.toStaffResponse(user)).thenReturn(userResponse);
+        when(userMapper.toUserResponse(user)).thenReturn(userResponse);
 
-        UserResponse result = userService.updateStaffById(1L, userUpdateRequest);
+        UserResponse result = userService.updateUserById(1L, userUpdateRequest);
 
         assertEquals("Nguyen Dat Updated", user.getFullName());
         assertEquals("0987654321", user.getPhoneNumber());
@@ -203,50 +200,50 @@ public class UserServiceTest {
     }
 
     @Test
-    void updateStaffById_shouldThrowException_whenPhoneAlreadyExists() {
+    void updateUserById_shouldThrowException_whenPhoneAlreadyExists() {
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         when(userRepository.existsByPhoneNumberAndIdNot(userUpdateRequest.getPhoneNumber(), 1L))
                 .thenReturn(true);
         AppException exception =
-                assertThrows(AppException.class, () -> userService.updateStaffById(1L, userUpdateRequest));
+                assertThrows(AppException.class, () -> userService.updateUserById(1L, userUpdateRequest));
         assertEquals(ErrorCode.PHONE_EXISTED, exception.getErrorCode());
         verify(userRepository, never()).save(any());
         verify(userMapper, never()).updateUserMapper(any(), any());
     }
 
     @Test
-    void updateStaffById_shouldThrowException_whenUserIsDeleted() {
+    void updateUserById_shouldThrowException_whenUserIsDeleted() {
         user.setDeleted(true);
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         AppException exception =
-                assertThrows(AppException.class, () -> userService.updateStaffById(1L, userUpdateRequest));
+                assertThrows(AppException.class, () -> userService.updateUserById(1L, userUpdateRequest));
         assertEquals(ErrorCode.USER_NOT_EXISTED, exception.getErrorCode());
         verify(userRepository, never()).save(any());
         verify(userMapper, never()).updateUserMapper(any(), any());
     }
 
     @Test
-    void deleteStaff_shouldMarkUserAsDeleted_whenUserExists() {
+    void softDeleteUser_shouldMarkUserAsDeleted_whenUserExists() {
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         when(userRepository.save(user)).thenReturn(user);
 
-        userService.deleteStaff(1L);
+        userService.softDeleteUser(1L);
 
         assertTrue(user.isDeleted());
         verify(userRepository).save(user);
     }
 
     @Test
-    void deleteStaff_shouldThrowException_whenUserAlreadyDeleted() {
+    void softDeleteUser_shouldThrowException_whenUserAlreadyDeleted() {
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         user.setDeleted(true);
-        AppException exception = assertThrows(AppException.class, () -> userService.deleteStaff(1L));
+        AppException exception = assertThrows(AppException.class, () -> userService.softDeleteUser(1L));
         assertEquals(ErrorCode.USER_NOT_EXISTED, exception.getErrorCode());
         verify(userRepository, never()).save(any());
     }
 
     @Test
-    void getAllUsers_shouldReturnOnlyActiveNonDeletedUsers() {
+    void getAllUsers_shouldReturnOnlyNonDeletedUsers() {
         User deletedUser = User.builder()
                 .id(2L)
                 .email("deleted@gmail.com")
@@ -264,17 +261,27 @@ public class UserServiceTest {
                 .status(Active.INACTIVE)
                 .deleted(false)
                 .build();
-        when(userRepository.findAll()).thenReturn(List.of(user, deletedUser, inactiveUser));
-        when(userMapper.toStaffResponse(user)).thenReturn(userResponse);
+
+        UserResponse inactiveResponse = UserResponse.builder()
+                .fullName("Inactive User")
+                .phoneNumber("0888888888")
+                .email("inactive@gmail.com")
+                .build();
+
+        when(userRepository.findAllByDeletedFalse()).thenReturn(List.of(user, inactiveUser));
+        when(userMapper.toUserResponse(user)).thenReturn(userResponse);
+        when(userMapper.toUserResponse(inactiveUser)).thenReturn(inactiveResponse);
+
         List<UserResponse> result = userService.getAllUsers();
-        assertEquals(1, result.size());
+
+        assertEquals(2, result.size());
         assertEquals(userResponse.getFullName(), result.getFirst().getFullName());
         assertEquals(userResponse.getPhoneNumber(), result.getFirst().getPhoneNumber());
         assertEquals(userResponse.getAvatarUrl(), result.getFirst().getAvatarUrl());
         assertEquals(userResponse.getEmail(), result.getFirst().getEmail());
 
-        verify(userMapper).toStaffResponse(user);
-        verify(userMapper, never()).toStaffResponse(deletedUser);
-        verify(userMapper, never()).toStaffResponse(inactiveUser);
+        verify(userMapper).toUserResponse(user);
+        verify(userMapper).toUserResponse(inactiveUser);
+        verify(userMapper, never()).toUserResponse(deletedUser);
     }
 }

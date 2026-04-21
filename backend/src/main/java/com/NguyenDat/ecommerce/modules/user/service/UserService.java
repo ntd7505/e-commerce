@@ -37,7 +37,7 @@ public class UserService {
     UserMapper userMapper;
     PasswordEncoder passwordEncoder;
 
-    public UserResponse createNewUsers(UserCreationRequest userCreationRequest) {
+    public UserResponse createUser(UserCreationRequest userCreationRequest) {
         if (userRepository.existsByEmail(userCreationRequest.getEmail())) {
             throw new AppException(ErrorCode.EMAIL_EXISTED);
         }
@@ -64,7 +64,7 @@ public class UserService {
         } catch (DataIntegrityViolationException ex) {
             throw new AppException(ErrorCode.USER_EXISTED);
         }
-        return userMapper.toStaffResponse(user);
+        return userMapper.toUserResponse(user);
     }
 
     public UserResponse getMyInfo() {
@@ -74,27 +74,26 @@ public class UserService {
         if (user.isDeleted() || user.getStatus() == Active.INACTIVE) {
             throw new AppException(ErrorCode.USER_NOT_EXISTED);
         }
-        return userMapper.toStaffResponse(user);
+        return userMapper.toUserResponse(user);
     }
 
     @PostAuthorize("hasRole('ADMIN') or returnObject.email == authentication.name ")
     public UserResponse getUserById(long id) {
         User user = userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
-        if (user.isDeleted() || user.getStatus() == Active.INACTIVE) {
+        if (user.isDeleted()) {
             throw new AppException(ErrorCode.USER_NOT_EXISTED);
         }
-        return userMapper.toStaffResponse(user);
+        return userMapper.toUserResponse(user);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     public List<UserResponse> getAllUsers() {
-        return userRepository.findAll().stream()
-                .filter(user -> !user.isDeleted() && !(user.getStatus() == Active.INACTIVE))
-                .map(userMapper::toStaffResponse)
+        return userRepository.findAllByDeletedFalse().stream()
+                .map(userMapper::toUserResponse)
                 .toList();
     }
 
-    public UserResponse updateStaffById(long id, UserUpdateRequest userUpdateRequest) {
+    public UserResponse updateUserById(long id, UserUpdateRequest userUpdateRequest) {
         User user = this.userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         if (user.isDeleted() || user.getStatus() == Active.INACTIVE) {
             throw new AppException(ErrorCode.USER_NOT_EXISTED);
@@ -103,10 +102,10 @@ public class UserService {
             throw new AppException(ErrorCode.PHONE_EXISTED);
         }
         userMapper.updateUserMapper(user, userUpdateRequest);
-        return userMapper.toStaffResponse(userRepository.save(user));
+        return userMapper.toUserResponse(userRepository.save(user));
     }
 
-    public void deleteStaff(long id) {
+    public void softDeleteUser(long id) {
         User user = this.userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         if (user.isDeleted()) {
             throw new AppException(ErrorCode.USER_NOT_EXISTED);

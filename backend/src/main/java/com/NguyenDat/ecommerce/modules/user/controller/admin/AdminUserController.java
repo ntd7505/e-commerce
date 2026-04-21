@@ -27,8 +27,8 @@ public class AdminUserController {
     UserService userService;
 
     @PostMapping("/users")
-    public ApiResponse<UserResponse> createStaff(@RequestBody @Valid UserCreationRequest staff) {
-        return ApiResponse.of(ResponseCode.USER_CREATED, this.userService.createNewUsers(staff));
+    public ApiResponse<UserResponse> createUser(@RequestBody @Valid UserCreationRequest userCreationRequest) {
+        return ApiResponse.of(ResponseCode.USER_CREATED, this.userService.createUser(userCreationRequest));
     }
 
     @GetMapping("/users/{userId}")
@@ -42,19 +42,19 @@ public class AdminUserController {
     }
 
     @GetMapping("/users")
-    public ApiResponse<List<UserResponse>> getAllUser() {
+    public ApiResponse<List<UserResponse>> getAllUsers() {
         return ApiResponse.ofList(ResponseCode.USERS_FETCHED, userService.getAllUsers());
     }
 
     @PutMapping(value = "/users/{userId}")
-    public ApiResponse<UserResponse> updateStaffById(
+    public ApiResponse<UserResponse> updateUserById(
             @PathVariable Long userId, @RequestBody @Valid UserUpdateRequest userUpdateRequest) {
-        return ApiResponse.of(ResponseCode.USER_UPDATED, this.userService.updateStaffById(userId, userUpdateRequest));
+        return ApiResponse.of(ResponseCode.USER_UPDATED, this.userService.updateUserById(userId, userUpdateRequest));
     }
 
     @DeleteMapping(value = "/users/{userId}")
-    public ApiResponse<UserResponse> deleteStaff(@PathVariable Long userId) {
-        userService.deleteStaff(userId);
+    public ApiResponse<UserResponse> softDeleteUser(@PathVariable Long userId) {
+        userService.softDeleteUser(userId);
         return ApiResponse.of(ResponseCode.USER_DELETED, null);
     }
 }

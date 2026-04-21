@@ -76,8 +76,8 @@ public class AdminUserControllerTest {
     }
 
     @Test
-    void createStaff_shouldReturnCreatedResponse_whenRequestIsValid() throws Exception {
-        when(userService.createNewUsers(any(UserCreationRequest.class))).thenReturn(userResponse);
+    void createUser_shouldReturnCreatedResponse_whenRequestIsValid() throws Exception {
+        when(userService.createUser(any(UserCreationRequest.class))).thenReturn(userResponse);
         mockMvc.perform(post("/api/v1/admin/users")
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(userCreationRequest)))
@@ -89,11 +89,11 @@ public class AdminUserControllerTest {
                 .andExpect(jsonPath("$.data.phoneNumber").value("0912345678"))
                 .andExpect(jsonPath("$.data.avatarUrl").value("avatar.png"));
 
-        verify(userService).createNewUsers(any(UserCreationRequest.class));
+        verify(userService).createUser(any(UserCreationRequest.class));
     }
 
     @Test
-    void createStaff_shouldReturnBadRequest_whenEmailIsBlank() throws Exception {
+    void createUser_shouldReturnBadRequest_whenEmailIsBlank() throws Exception {
         userCreationRequest = UserCreationRequest.builder()
                 .email("")
                 .password("Dat@1234")
@@ -108,11 +108,11 @@ public class AdminUserControllerTest {
                 .andExpect(jsonPath("$.code").value(ErrorCode.INVALID_KEY.getCode()))
                 .andExpect(jsonPath("$.message").value(ErrorCode.INVALID_KEY.getMessage()));
 
-        verify(userService, never()).createNewUsers(any(UserCreationRequest.class));
+        verify(userService, never()).createUser(any(UserCreationRequest.class));
     }
 
     @Test
-    void createStaff_shouldReturnBadRequest_whenPasswordIsBlank() throws Exception {
+    void createUser_shouldReturnBadRequest_whenPasswordIsBlank() throws Exception {
         userCreationRequest = UserCreationRequest.builder()
                 .email("dat@gmail.com")
                 .password("")
@@ -127,11 +127,11 @@ public class AdminUserControllerTest {
                 .andExpect(jsonPath("$.code").value(ErrorCode.INVALID_KEY.getCode()))
                 .andExpect(jsonPath("$.message").value(ErrorCode.INVALID_KEY.getMessage()));
 
-        verify(userService, never()).createNewUsers(any(UserCreationRequest.class));
+        verify(userService, never()).createUser(any(UserCreationRequest.class));
     }
 
     @Test
-    void createStaff_shouldReturnBadRequest_whenPhoneNumberIsInvalid() throws Exception {
+    void createUser_shouldReturnBadRequest_whenPhoneNumberIsInvalid() throws Exception {
         userCreationRequest = UserCreationRequest.builder()
                 .email("dat@gmail.com")
                 .password("Dat@1234")
@@ -146,12 +146,12 @@ public class AdminUserControllerTest {
                 .andExpect(jsonPath("$.code").value(ErrorCode.INVALID_KEY.getCode()))
                 .andExpect(jsonPath("$.message").value(ErrorCode.INVALID_KEY.getMessage()));
 
-        verify(userService, never()).createNewUsers(any(UserCreationRequest.class));
+        verify(userService, never()).createUser(any(UserCreationRequest.class));
     }
 
     @Test
-    void createStaff_shouldReturnErrorResponse_whenEmailAlreadyExists() throws Exception {
-        when(userService.createNewUsers(any(UserCreationRequest.class)))
+    void createUser_shouldReturnErrorResponse_whenEmailAlreadyExists() throws Exception {
+        when(userService.createUser(any(UserCreationRequest.class)))
                 .thenThrow(new AppException(ErrorCode.EMAIL_EXISTED));
         mockMvc.perform(post("/api/v1/admin/users")
                         .contentType(APPLICATION_JSON)
@@ -159,12 +159,12 @@ public class AdminUserControllerTest {
                 .andExpect(status().is(ErrorCode.EMAIL_EXISTED.getStatusCode().value()))
                 .andExpect(jsonPath("$.code").value(ErrorCode.EMAIL_EXISTED.getCode()))
                 .andExpect(jsonPath("$.message").value(ErrorCode.EMAIL_EXISTED.getMessage()));
-        verify(userService).createNewUsers(any(UserCreationRequest.class));
+        verify(userService).createUser(any(UserCreationRequest.class));
     }
 
     @Test
-    void createStaff_shouldReturnErrorResponse_whenPhoneAlreadyExists() throws Exception {
-        when(userService.createNewUsers(any(UserCreationRequest.class)))
+    void createUser_shouldReturnErrorResponse_whenPhoneAlreadyExists() throws Exception {
+        when(userService.createUser(any(UserCreationRequest.class)))
                 .thenThrow(new AppException(ErrorCode.PHONE_EXISTED));
         mockMvc.perform(post("/api/v1/admin/users")
                         .contentType(APPLICATION_JSON)
@@ -172,7 +172,7 @@ public class AdminUserControllerTest {
                 .andExpect(status().is(ErrorCode.PHONE_EXISTED.getStatusCode().value()))
                 .andExpect(jsonPath("$.code").value(ErrorCode.PHONE_EXISTED.getCode()))
                 .andExpect(jsonPath("$.message").value(ErrorCode.PHONE_EXISTED.getMessage()));
-        verify(userService).createNewUsers(any(UserCreationRequest.class));
+        verify(userService).createUser(any(UserCreationRequest.class));
     }
 
     @Test
@@ -202,7 +202,7 @@ public class AdminUserControllerTest {
     }
 
     @Test
-    void getAllUser_shouldReturnFetchedResponse_whenDataExists() throws Exception {
+    void getAllUsers_shouldReturnFetchedResponse_whenDataExists() throws Exception {
         List<UserResponse> userResponseList = new ArrayList<>();
         userResponseList.add(userResponse);
         when(userService.getAllUsers()).thenReturn(userResponseList);
@@ -219,7 +219,7 @@ public class AdminUserControllerTest {
     }
 
     @Test
-    void getAllUser_shouldReturnNoDataFound_whenListIsEmpty() throws Exception {
+    void getAllUsers_shouldReturnNoDataFound_whenListIsEmpty() throws Exception {
         List<UserResponse> userResponseList = new ArrayList<>();
         when(userService.getAllUsers()).thenReturn(userResponseList);
         mockMvc.perform(get("/api/v1/admin/users"))
@@ -231,7 +231,7 @@ public class AdminUserControllerTest {
     }
 
     @Test
-    void updateStaffById_shouldReturnUpdatedResponse_whenRequestIsValid() throws Exception {
+    void updateUserById_shouldReturnUpdatedResponse_whenRequestIsValid() throws Exception {
         UserResponse updatedUserResponse = UserResponse.builder()
                 .email("dat@gmail.com")
                 .fullName("Nguyen Dat Updated")
@@ -239,7 +239,7 @@ public class AdminUserControllerTest {
                 .avatarUrl("updated-avatar.png")
                 .roles(Set.of())
                 .build();
-        when(userService.updateStaffById(eq(1L), any(UserUpdateRequest.class))).thenReturn(updatedUserResponse);
+        when(userService.updateUserById(eq(1L), any(UserUpdateRequest.class))).thenReturn(updatedUserResponse);
         mockMvc.perform(put("/api/v1/admin/users/{id}", 1L)
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(userUpdateRequest)))
@@ -249,11 +249,11 @@ public class AdminUserControllerTest {
                 .andExpect(jsonPath("$.data.fullName").value("Nguyen Dat Updated"))
                 .andExpect(jsonPath("$.data.phoneNumber").value("0987654321"))
                 .andExpect(jsonPath("$.data.avatarUrl").value("updated-avatar.png"));
-        verify(userService).updateStaffById(eq(1L), any(UserUpdateRequest.class));
+        verify(userService).updateUserById(eq(1L), any(UserUpdateRequest.class));
     }
 
     @Test
-    void updateStaffById_shouldReturnBadRequest_whenFullNameIsBlank() throws Exception {
+    void updateUserById_shouldReturnBadRequest_whenFullNameIsBlank() throws Exception {
         userUpdateRequest = UserUpdateRequest.builder()
                 .fullName("")
                 .phoneNumber("0987654321")
@@ -265,11 +265,11 @@ public class AdminUserControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code").value(ErrorCode.INVALID_KEY.getCode()))
                 .andExpect(jsonPath("$.message").value(ErrorCode.INVALID_KEY.getMessage()));
-        verify(userService, never()).updateStaffById(anyLong(), any(UserUpdateRequest.class));
+        verify(userService, never()).updateUserById(anyLong(), any(UserUpdateRequest.class));
     }
 
     @Test
-    void updateStaffById_shouldReturnBadRequest_whenPhoneNumberIsInvalid() throws Exception {
+    void updateUserById_shouldReturnBadRequest_whenPhoneNumberIsInvalid() throws Exception {
         userUpdateRequest = UserUpdateRequest.builder()
                 .fullName("Nguyen Dat Updated")
                 .phoneNumber("098765431")
@@ -283,12 +283,12 @@ public class AdminUserControllerTest {
                 .andExpect(jsonPath("$.code").value(ErrorCode.INVALID_KEY.getCode()))
                 .andExpect(jsonPath("$.message").value(ErrorCode.INVALID_KEY.getMessage()));
 
-        verify(userService, never()).updateStaffById(anyLong(), any(UserUpdateRequest.class));
+        verify(userService, never()).updateUserById(anyLong(), any(UserUpdateRequest.class));
     }
 
     @Test
-    void updateStaffById_shouldReturnErrorResponse_whenPhoneAlreadyExists() throws Exception {
-        when(userService.updateStaffById(anyLong(), any(UserUpdateRequest.class)))
+    void updateUserById_shouldReturnErrorResponse_whenPhoneAlreadyExists() throws Exception {
+        when(userService.updateUserById(anyLong(), any(UserUpdateRequest.class)))
                 .thenThrow(new AppException(ErrorCode.PHONE_EXISTED));
 
         mockMvc.perform(put("/api/v1/admin/users/{userId}", 1)
@@ -298,12 +298,12 @@ public class AdminUserControllerTest {
                 .andExpect(jsonPath("$.code").value(ErrorCode.PHONE_EXISTED.getCode()))
                 .andExpect(jsonPath("$.message").value(ErrorCode.PHONE_EXISTED.getMessage()));
 
-        verify(userService).updateStaffById(anyLong(), any(UserUpdateRequest.class));
+        verify(userService).updateUserById(anyLong(), any(UserUpdateRequest.class));
     }
 
     @Test
-    void updateStaffById_shouldReturnErrorResponse_whenUserNotFound() throws Exception {
-        when(userService.updateStaffById(anyLong(), any(UserUpdateRequest.class)))
+    void updateUserById_shouldReturnErrorResponse_whenUserNotFound() throws Exception {
+        when(userService.updateUserById(anyLong(), any(UserUpdateRequest.class)))
                 .thenThrow(new AppException(ErrorCode.USER_NOT_EXISTED));
         mockMvc.perform(put("/api/v1/admin/users/{userId}", 1)
                         .contentType(APPLICATION_JSON)
@@ -313,24 +313,24 @@ public class AdminUserControllerTest {
                 .andExpect(jsonPath("$.code").value(ErrorCode.USER_NOT_EXISTED.getCode()))
                 .andExpect(jsonPath("$.message").value(ErrorCode.USER_NOT_EXISTED.getMessage()));
 
-        verify(userService).updateStaffById(anyLong(), any(UserUpdateRequest.class));
+        verify(userService).updateUserById(anyLong(), any(UserUpdateRequest.class));
     }
 
     @Test
-    void deleteStaff_shouldReturnDeletedResponse_whenUserExists() throws Exception {
-        doNothing().when(userService).deleteStaff(1L);
+    void softDeleteUser_shouldReturnDeletedResponse_whenUserExists() throws Exception {
+        doNothing().when(userService).softDeleteUser(1L);
 
         mockMvc.perform(delete("/api/v1/admin/users/{userId}", 1L))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(ResponseCode.USER_DELETED.getCode()))
                 .andExpect(jsonPath("$.message").value(ResponseCode.USER_DELETED.getMessage()));
 
-        verify(userService).deleteStaff(1L);
+        verify(userService).softDeleteUser(1L);
     }
 
     @Test
-    void deleteStaff_shouldReturnErrorResponse_whenUserNotFound() throws Exception {
-        doThrow(new AppException(ErrorCode.USER_NOT_EXISTED)).when(userService).deleteStaff(1L);
+    void softDeleteUser_shouldReturnErrorResponse_whenUserNotFound() throws Exception {
+        doThrow(new AppException(ErrorCode.USER_NOT_EXISTED)).when(userService).softDeleteUser(1L);
 
         mockMvc.perform(delete("/api/v1/admin/users/{userId}", 1L))
                 .andExpect(
@@ -338,7 +338,7 @@ public class AdminUserControllerTest {
                 .andExpect(jsonPath("$.code").value(ErrorCode.USER_NOT_EXISTED.getCode()))
                 .andExpect(jsonPath("$.message").value(ErrorCode.USER_NOT_EXISTED.getMessage()));
 
-        verify(userService).deleteStaff(1L);
+        verify(userService).softDeleteUser(1L);
     }
 
     @Test
