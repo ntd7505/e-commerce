@@ -2,12 +2,17 @@ package com.NguyenDat.ecommerce.modules.product.service;
 
 import java.util.List;
 
+import com.NguyenDat.ecommerce.modules.product.entity.Product;
+import com.NguyenDat.ecommerce.modules.product.repository.ProductRepository;
+import jakarta.validation.Valid;
+
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import com.NguyenDat.ecommerce.common.exception.AppException;
 import com.NguyenDat.ecommerce.common.exception.ErrorCode;
 import com.NguyenDat.ecommerce.modules.product.dto.request.BrandRequest;
+import com.NguyenDat.ecommerce.modules.product.dto.request.BrandStatusUpdateRequest;
 import com.NguyenDat.ecommerce.modules.product.dto.response.BrandResponse;
 import com.NguyenDat.ecommerce.modules.product.entity.Brand;
 import com.NguyenDat.ecommerce.modules.product.mapper.BrandMapper;
@@ -24,6 +29,7 @@ import lombok.experimental.FieldDefaults;
 public class BrandService {
     BrandRepository brandRepository;
     BrandMapper brandMapper;
+    ProductRepository productRepository;
 
     public BrandResponse createBrand(BrandRequest brandRequest) {
         String normalizedName = brandRequest.getName().trim();
@@ -52,6 +58,9 @@ public class BrandService {
         Brand brand = brandRepository
                 .findByIdAndDeletedFalse(id)
                 .orElseThrow(() -> new AppException(ErrorCode.BRAND_NOT_FOUND));
+        if (productRepository.existsByBrandIdAndDeletedFalse(id)) {
+            throw new AppException(ErrorCode.BRAND_HAS_PRODUCTS);
+        }
         brand.setDeleted(true);
         brand.setActive(false);
         brandRepository.save(brand);
@@ -83,5 +92,13 @@ public class BrandService {
         return brandRepository.findAllByDeletedTrue().stream()
                 .map(brandMapper::toBrandResponse)
                 .toList();
+    }
+
+    public BrandResponse updateBrandStatusById(@Valid BrandStatusUpdateRequest brandStatusUpdateRequest, Long id) {
+        Brand brand = brandRepository
+                .findByIdAndDeletedFalse(id)
+                .orElseThrow(() -> new AppException(ErrorCode.BRAND_NOT_FOUND));
+        brand.setActive(brandStatusUpdateRequest.getActive());
+        return brandMapper.toBrandResponse(brandRepository.save(brand));
     }
 }

@@ -10,6 +10,7 @@ import com.NguyenDat.ecommerce.common.constant.ApiConstant;
 import com.NguyenDat.ecommerce.common.constant.ResponseCode;
 import com.NguyenDat.ecommerce.common.dto.response.ApiResponse;
 import com.NguyenDat.ecommerce.modules.product.dto.request.BrandRequest;
+import com.NguyenDat.ecommerce.modules.product.dto.request.BrandStatusUpdateRequest;
 import com.NguyenDat.ecommerce.modules.product.dto.response.BrandResponse;
 import com.NguyenDat.ecommerce.modules.product.service.BrandService;
 
@@ -56,5 +57,12 @@ public class AdminBrandController {
     public ApiResponse<BrandResponse> updateBrandById(
             @PathVariable Long id, @RequestBody @Valid BrandRequest brandRequest) {
         return ApiResponse.of(ResponseCode.BRAND_UPDATED, brandService.updateBrandById(id, brandRequest));
+    }
+
+    @PatchMapping("/brands/{id}/status")
+    public ApiResponse<BrandResponse> updateBrandStatusById(
+            @RequestBody @Valid BrandStatusUpdateRequest brandStatusUpdateRequest, @PathVariable Long id) {
+        return ApiResponse.of(
+                ResponseCode.BRAND_STATUS_UPDATED, brandService.updateBrandStatusById(brandStatusUpdateRequest, id));
     }
 }
