@@ -63,7 +63,7 @@ public enum ErrorCode {
 
     // brand
     BRAND_EXISTED(4000, "Brand already existed", HttpStatus.BAD_REQUEST),
-    BRAND_NOT_FOUND(4001, "Brand not found", HttpStatus.BAD_REQUEST),
+    BRAND_NOT_FOUND(4001, "Brand not found", HttpStatus.NOT_FOUND),
     BRAND_DELETED(4002, "Brand has been deleted", HttpStatus.NOT_FOUND),
     BRAND_INACTIVE(4003, "Brand is inactive", HttpStatus.NOT_FOUND),
 

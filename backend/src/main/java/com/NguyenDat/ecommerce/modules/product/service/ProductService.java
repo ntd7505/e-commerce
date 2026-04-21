@@ -204,7 +204,9 @@ public class ProductService {
         if (productVariant.isDeleted()) {
             throw new AppException(ErrorCode.PRODUCT_VARIANT_DELETED);
         }
-
+        if (productVariant.getProduct().isDeleted()) {
+            throw new AppException(ErrorCode.PRODUCT_DELETED);
+        }
         productVariant.setDeleted(true);
         productVariant.setActive(false);
 
