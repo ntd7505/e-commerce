@@ -17,9 +17,7 @@ public enum ErrorCode {
     EMAIL_EXISTED(1002, "Email already existed", HttpStatus.BAD_REQUEST),
     PHONE_EXISTED(1003, "Phone number already existed", HttpStatus.BAD_REQUEST),
     USER_INACTIVE(1004, "User account is inactive", HttpStatus.FORBIDDEN),
-    USER_LOCKED(1005, "User account is locked", HttpStatus.FORBIDDEN),
     USER_DELETED(1006, "User has been deleted", HttpStatus.NOT_FOUND),
-    DELETED_USERS_NOT_FOUND(1007, "No deleted users found", HttpStatus.NOT_FOUND),
 
     // 1100 - Validation
     INVALID_EMAIL(1100, "Email is invalid", HttpStatus.BAD_REQUEST),
@@ -35,6 +33,7 @@ public enum ErrorCode {
     SALE_PRICE_MUST_BE_NON_NEGATIVE(1107, "Sale price must be greater than or equal to 0", HttpStatus.BAD_REQUEST),
     PRICE_MUST_BE_GREATER_THAN_OR_EQUAL_TO_SALE_PRICE(
             1108, "Price must be greater than or equal to sale price", HttpStatus.BAD_REQUEST),
+    INVALID_USER_STATUS(1109, "Status must be one of: ACTIVE, INACTIVE", HttpStatus.BAD_REQUEST),
 
     // 2000 - Role & Permission
     ROLE_NOT_FOUND(2000, "Role not found", HttpStatus.NOT_FOUND),
@@ -67,6 +66,7 @@ public enum ErrorCode {
     BRAND_NOT_FOUND(4001, "Brand not found", HttpStatus.NOT_FOUND),
     BRAND_DELETED(4002, "Brand has been deleted", HttpStatus.NOT_FOUND),
     BRAND_INACTIVE(4003, "Brand is inactive", HttpStatus.NOT_FOUND),
+    BRAND_HAS_PRODUCTS(4004, "Brand has associated products and can only be set inactive", HttpStatus.BAD_REQUEST),
 
     // category
     CATEGORY_EXISTED(5000, "Category already existed", HttpStatus.BAD_REQUEST),
