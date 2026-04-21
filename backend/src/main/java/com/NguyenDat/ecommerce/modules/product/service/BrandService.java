@@ -2,8 +2,6 @@ package com.NguyenDat.ecommerce.modules.product.service;
 
 import java.util.List;
 
-import com.NguyenDat.ecommerce.modules.product.entity.Product;
-import com.NguyenDat.ecommerce.modules.product.repository.ProductRepository;
 import jakarta.validation.Valid;
 
 import org.springframework.dao.DataIntegrityViolationException;
@@ -17,6 +15,7 @@ import com.NguyenDat.ecommerce.modules.product.dto.response.BrandResponse;
 import com.NguyenDat.ecommerce.modules.product.entity.Brand;
 import com.NguyenDat.ecommerce.modules.product.mapper.BrandMapper;
 import com.NguyenDat.ecommerce.modules.product.repository.BrandRepository;
+import com.NguyenDat.ecommerce.modules.product.repository.ProductRepository;
 import com.NguyenDat.ecommerce.util.SlugUtil;
 
 import lombok.AccessLevel;
