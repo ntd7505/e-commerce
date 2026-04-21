@@ -19,6 +19,7 @@ public enum ErrorCode {
     USER_INACTIVE(1004, "User account is inactive", HttpStatus.FORBIDDEN),
     USER_LOCKED(1005, "User account is locked", HttpStatus.FORBIDDEN),
     USER_DELETED(1006, "User has been deleted", HttpStatus.NOT_FOUND),
+    DELETED_USERS_NOT_FOUND(1007, "No deleted users found", HttpStatus.NOT_FOUND),
 
     // 1100 - Validation
     INVALID_EMAIL(1100, "Email is invalid", HttpStatus.BAD_REQUEST),

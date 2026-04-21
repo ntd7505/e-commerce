@@ -14,6 +14,7 @@ public enum ResponseCode {
     USER_UPDATED(1102, "User updated successfully"),
     USER_DELETED(1103, "User deleted successfully"),
     USERS_FETCHED(1104, "Users fetched successfully"),
+    DELETED_USERS_FETCHED(1105, "Deleted users fetched successfully"),
 
     // 2000 - Auth
     LOGIN_SUCCESS(2000, "Login successfully"),
@@ -49,6 +50,7 @@ public enum ResponseCode {
     BRAND_UPDATED(6002, "Brand updated successfully"),
     BRAND_DELETED(6003, "Brand deleted successfully"),
     BRANDS_FETCHED(6004, "Brands fetched successfully"),
+    DELETED_BRANDS_FETCHED(6005, "Deleted brands fetched successfully"),
 
     // 7000 - Category
     CATEGORY_CREATED(7000, "Category created successfully"),
