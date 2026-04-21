@@ -5,6 +5,8 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import jakarta.validation.Valid;
+
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -18,6 +20,7 @@ import com.NguyenDat.ecommerce.modules.role.entity.Role;
 import com.NguyenDat.ecommerce.modules.role.repository.RoleRepository;
 import com.NguyenDat.ecommerce.modules.user.dto.request.UserCreationRequest;
 import com.NguyenDat.ecommerce.modules.user.dto.request.UserUpdateRequest;
+import com.NguyenDat.ecommerce.modules.user.dto.request.UserUpdateStatusRequest;
 import com.NguyenDat.ecommerce.modules.user.dto.response.UserResponse;
 import com.NguyenDat.ecommerce.modules.user.entity.User;
 import com.NguyenDat.ecommerce.modules.user.enums.Active;
@@ -115,5 +118,13 @@ public class UserService {
         return userRepository.findAllByDeletedTrue().stream()
                 .map(userMapper::toUserResponse)
                 .toList();
+    }
+
+    public UserResponse updateUserStatusById(Long id, @Valid UserUpdateStatusRequest userUpdateStatusRequest) {
+        User user = this.userRepository
+                .findByIdAndDeletedFalse(id)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        user.setStatus(userUpdateStatusRequest.getStatus());
+        return userMapper.toUserResponse(userRepository.save(user));
     }
 }

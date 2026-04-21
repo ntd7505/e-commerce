@@ -3,6 +3,7 @@ package com.NguyenDat.ecommerce.modules.user.dto.response;
 import java.util.Set;
 
 import com.NguyenDat.ecommerce.modules.role.dto.response.RoleResponse;
+import com.NguyenDat.ecommerce.modules.user.enums.Active;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -18,5 +19,6 @@ public class UserResponse {
     String fullName;
     String phoneNumber;
     String avatarUrl;
+    Active status;
     Set<RoleResponse> roles;
 }

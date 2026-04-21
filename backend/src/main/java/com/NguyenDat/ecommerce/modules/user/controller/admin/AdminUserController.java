@@ -11,6 +11,7 @@ import com.NguyenDat.ecommerce.common.constant.ResponseCode;
 import com.NguyenDat.ecommerce.common.dto.response.ApiResponse;
 import com.NguyenDat.ecommerce.modules.user.dto.request.UserCreationRequest;
 import com.NguyenDat.ecommerce.modules.user.dto.request.UserUpdateRequest;
+import com.NguyenDat.ecommerce.modules.user.dto.request.UserUpdateStatusRequest;
 import com.NguyenDat.ecommerce.modules.user.dto.response.UserResponse;
 import com.NguyenDat.ecommerce.modules.user.service.UserService;
 
@@ -55,6 +56,13 @@ public class AdminUserController {
     public ApiResponse<UserResponse> updateUserById(
             @PathVariable Long userId, @RequestBody @Valid UserUpdateRequest userUpdateRequest) {
         return ApiResponse.of(ResponseCode.USER_UPDATED, this.userService.updateUserById(userId, userUpdateRequest));
+    }
+
+    @PatchMapping("/users/{id}/status")
+    public ApiResponse<UserResponse> updateUserStatusById(
+            @PathVariable Long id, @RequestBody @Valid UserUpdateStatusRequest userUpdateStatusRequest) {
+        return ApiResponse.of(
+                ResponseCode.USER_STATUS_UPDATED, userService.updateUserStatusById(id, userUpdateStatusRequest));
     }
 
     @DeleteMapping(value = "/users/{userId}")
