@@ -99,7 +99,7 @@ public class BrandServiceTest {
         deletedBrand.setActive(true);
         deletedBrand.setDeleted(true);
 
-        when(brandRepository.findAll()).thenReturn(List.of(brand, deletedBrand));
+        when(brandRepository.findAllByDeletedFalse()).thenReturn(List.of(brand));
         when(brandMapper.toBrandResponse((brand))).thenReturn(brandResponse);
 
         List<BrandResponse> result = brandService.getAllBrands();
@@ -112,7 +112,7 @@ public class BrandServiceTest {
     @Test
     void getBrandById_shouldThrowException_whenBrandIsDeleted() {
         brand.setDeleted(true);
-        when(brandRepository.findById(1L)).thenReturn(Optional.of(brand));
+        when(brandRepository.findByIdAndDeletedFalse(1L)).thenReturn(Optional.empty());
         AppException exception = assertThrows(AppException.class, () -> brandService.getBrandById(1L));
         assertEquals(ErrorCode.BRAND_NOT_FOUND, exception.getErrorCode());
     }
@@ -120,7 +120,7 @@ public class BrandServiceTest {
     @Test
     void updateBrandById_shouldThrowException_whenBrandNameAlreadyExists() {
         BrandRequest updateRequest = BrandRequest.builder().name("Nike").build();
-        when(brandRepository.findById(1L)).thenReturn(Optional.of(brand));
+        when(brandRepository.findByIdAndDeletedFalse(1L)).thenReturn(Optional.of(brand));
         when(brandRepository.existsByNameAndIdNot("Nike", 1L)).thenReturn(true);
         AppException exception =
                 assertThrows(AppException.class, () -> brandService.updateBrandById(1L, updateRequest));
@@ -130,7 +130,7 @@ public class BrandServiceTest {
 
     @Test
     void deleteBrand_shouldMarkBrandAsDeleted_whenBrandExists() {
-        when(brandRepository.findById(1L)).thenReturn(Optional.of(brand));
+        when(brandRepository.findByIdAndDeletedFalse(1L)).thenReturn(Optional.of(brand));
         when(brandRepository.save(brand)).thenReturn(brand);
         brandService.deleteBrand(1L);
         assertTrue(brand.isDeleted());
@@ -140,7 +140,7 @@ public class BrandServiceTest {
     @Test
     void deleteBrand_shouldThrowException_whenBrandIsAlreadyDeleted() {
         brand.setDeleted(true);
-        when(brandRepository.findById(1L)).thenReturn(Optional.of(brand));
+        when(brandRepository.findByIdAndDeletedFalse(1L)).thenReturn(Optional.empty());
         AppException exception = assertThrows(AppException.class, () -> brandService.deleteBrand(1L));
         assertEquals(ErrorCode.BRAND_NOT_FOUND, exception.getErrorCode());
         verify(brandRepository, never()).save(any());
@@ -148,7 +148,7 @@ public class BrandServiceTest {
 
     @Test
     void getBrandById_shouldThrowException_whenBrandDoesNotExist() {
-        when(brandRepository.findById(1L)).thenReturn(Optional.empty());
+        when(brandRepository.findByIdAndDeletedFalse(1L)).thenReturn(Optional.empty());
         AppException exception = assertThrows(AppException.class, () -> brandService.getBrandById(1L));
         assertEquals(ErrorCode.BRAND_NOT_FOUND, exception.getErrorCode());
         verify(brandRepository, never()).save(any());
@@ -157,7 +157,7 @@ public class BrandServiceTest {
     @Test
     void updateBrandById_shouldReturnBrandResponse_whenRequestIsValid() {
         BrandRequest updateRequest = BrandRequest.builder().name("Nike").build();
-        when(brandRepository.findById(1L)).thenReturn(Optional.of(brand));
+        when(brandRepository.findByIdAndDeletedFalse(1L)).thenReturn(Optional.of(brand));
         when(brandRepository.existsByNameAndIdNot("Nike", 1L)).thenReturn(false);
         when(brandRepository.save(brand)).thenReturn(brand);
         when(brandMapper.toBrandResponse(brand)).thenReturn(brandResponse);
@@ -170,9 +170,8 @@ public class BrandServiceTest {
 
     @Test
     void updateBrandById_shouldThrowException_whenBrandIsDeleted() {
-        brand.setDeleted(true);
         BrandRequest updateRequest = BrandRequest.builder().name("Nike").build();
-        when(brandRepository.findById(1L)).thenReturn(Optional.of(brand));
+        when(brandRepository.findByIdAndDeletedFalse(1L)).thenReturn(Optional.empty());
         AppException exception =
                 assertThrows(AppException.class, () -> brandService.updateBrandById(1L, updateRequest));
 

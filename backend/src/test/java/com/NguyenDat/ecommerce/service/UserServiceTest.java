@@ -174,15 +174,15 @@ public class UserServiceTest {
 
     @Test
     void updateUserById_shouldReturnUserResponse_whenRequestIsValid() {
-        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(userRepository.findByIdAndDeletedFalse(1L)).thenReturn(Optional.of(user));
         when(userRepository.existsByPhoneNumberAndIdNot(userUpdateRequest.getPhoneNumber(), 1L))
                 .thenReturn(false);
         doAnswer(invocation -> {
-                    user.setFullName(userUpdateRequest.getFullName());
-                    user.setPhoneNumber(userUpdateRequest.getPhoneNumber());
-                    user.setAvatarUrl(userUpdateRequest.getAvatarUrl());
-                    return null;
-                })
+            user.setFullName(userUpdateRequest.getFullName());
+            user.setPhoneNumber(userUpdateRequest.getPhoneNumber());
+            user.setAvatarUrl(userUpdateRequest.getAvatarUrl());
+            return null;
+        })
                 .when(userMapper)
                 .updateUserMapper(user, userUpdateRequest);
         when(userRepository.save(user)).thenReturn(user);
@@ -201,7 +201,7 @@ public class UserServiceTest {
 
     @Test
     void updateUserById_shouldThrowException_whenPhoneAlreadyExists() {
-        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(userRepository.findByIdAndDeletedFalse(1L)).thenReturn(Optional.of(user));
         when(userRepository.existsByPhoneNumberAndIdNot(userUpdateRequest.getPhoneNumber(), 1L))
                 .thenReturn(true);
         AppException exception =
@@ -213,8 +213,7 @@ public class UserServiceTest {
 
     @Test
     void updateUserById_shouldThrowException_whenUserIsDeleted() {
-        user.setDeleted(true);
-        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(userRepository.findByIdAndDeletedFalse(1L)).thenReturn(Optional.empty());
         AppException exception =
                 assertThrows(AppException.class, () -> userService.updateUserById(1L, userUpdateRequest));
         assertEquals(ErrorCode.USER_NOT_EXISTED, exception.getErrorCode());
@@ -224,7 +223,7 @@ public class UserServiceTest {
 
     @Test
     void softDeleteUser_shouldMarkUserAsDeleted_whenUserExists() {
-        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(userRepository.findByIdAndDeletedFalse(1L)).thenReturn(Optional.of(user));
         when(userRepository.save(user)).thenReturn(user);
 
         userService.softDeleteUser(1L);
@@ -235,8 +234,7 @@ public class UserServiceTest {
 
     @Test
     void softDeleteUser_shouldThrowException_whenUserAlreadyDeleted() {
-        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
-        user.setDeleted(true);
+        when(userRepository.findByIdAndDeletedFalse(1L)).thenReturn(Optional.empty());
         AppException exception = assertThrows(AppException.class, () -> userService.softDeleteUser(1L));
         assertEquals(ErrorCode.USER_NOT_EXISTED, exception.getErrorCode());
         verify(userRepository, never()).save(any());
