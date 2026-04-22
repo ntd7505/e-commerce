@@ -1,5 +1,8 @@
 package com.NguyenDat.ecommerce.modules.category.repository;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -10,15 +13,21 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 
     boolean existsById(Long id);
 
-    boolean existsByNameAndParentCategoryIsNull(String name);
+    boolean existsByNameAndDeletedFalseAndParentCategoryIsNull(String name);
 
-    boolean existsByNameAndParentCategory_Id(String name, Long id);
+    boolean existsByNameAndDeletedFalseAndParentCategory_Id(String name, Long id);
 
     boolean existsBySlug(String slug);
 
-    boolean existsByNameAndParentCategoryIsNullAndIdNot(String name, Long id);
+    boolean existsByNameAndDeletedFalseAndParentCategoryIsNullAndIdNot(String name, Long id);
 
-    boolean existsByNameAndParentCategory_IdAndIdNot(String name, Long id, Long id2);
+    boolean existsByNameAndDeletedFalseAndParentCategory_IdAndIdNot(String name, Long id, Long id2);
 
     boolean existsBySlugAndIdNot(String slug, Long id);
+
+    List<Category> findAllByDeletedFalse();
+
+    Optional<Category> findByIdAndDeletedFalse(Long id);
+
+    boolean existsByParentCategoryIdAndDeletedFalse(Long id);
 }

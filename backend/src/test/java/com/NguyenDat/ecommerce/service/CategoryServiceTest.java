@@ -2,6 +2,8 @@ package com.NguyenDat.ecommerce.service;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 import java.util.ArrayList;
@@ -25,6 +27,7 @@ import com.NguyenDat.ecommerce.modules.category.entity.Category;
 import com.NguyenDat.ecommerce.modules.category.mapper.CategoryMapper;
 import com.NguyenDat.ecommerce.modules.category.repository.CategoryRepository;
 import com.NguyenDat.ecommerce.modules.category.service.CategoryService;
+import com.NguyenDat.ecommerce.modules.product.repository.ProductRepository;
 
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
@@ -38,6 +41,9 @@ public class CategoryServiceTest {
 
     @Mock
     CategoryMapper categoryMapper;
+
+    @Mock
+    ProductRepository productRepository;
 
     @InjectMocks
     CategoryService categoryService;
@@ -127,7 +133,8 @@ public class CategoryServiceTest {
 
     @Test
     void createCategory_shouldCreateRootCategory_whenRequestIsValid() {
-        when(categoryRepository.existsByNameAndParentCategoryIsNull("Dien tu")).thenReturn(false);
+        when(categoryRepository.existsByNameAndDeletedFalseAndParentCategoryIsNull("Dien tu"))
+                .thenReturn(false);
         when(categoryRepository.existsBySlug("dien-tu")).thenReturn(false);
         when(categoryMapper.toCategory(categoryRequest)).thenReturn(category);
         when(categoryRepository.save(category)).thenReturn(category);
@@ -138,8 +145,8 @@ public class CategoryServiceTest {
         assertEquals("Danh muc dien tu", rs.getDescription());
         assertEquals("dien-tu", rs.getSlug());
 
-        verify(categoryRepository, never()).findById(anyLong());
-        verify(categoryRepository).existsByNameAndParentCategoryIsNull("Dien tu");
+        verify(categoryRepository, never()).findByIdAndDeletedFalse(anyLong());
+        verify(categoryRepository).existsByNameAndDeletedFalseAndParentCategoryIsNull("Dien tu");
         verify(categoryRepository).existsBySlug("dien-tu");
         verify(categoryRepository).save(category);
     }
@@ -183,10 +190,10 @@ public class CategoryServiceTest {
                 .children(List.of())
                 .build();
 
-        when(categoryRepository.findById(1L)).thenReturn(Optional.of(categoryParent));
+        when(categoryRepository.findByIdAndDeletedFalse(1L)).thenReturn(Optional.of(categoryParent));
         when(categoryMapper.toCategory(categoryRequest)).thenReturn(childCategory);
         when(categoryRepository.existsBySlug("thiet-bi")).thenReturn(false);
-        when(categoryRepository.existsByNameAndParentCategory_Id("Thiet bi", 1L))
+        when(categoryRepository.existsByNameAndDeletedFalseAndParentCategory_Id("Thiet bi", 1L))
                 .thenReturn(false);
         when(categoryRepository.save(childCategory)).thenReturn(childCategory);
         when(categoryMapper.toCategoryResponse(childCategory)).thenReturn(childCategoryResponse);
@@ -198,9 +205,9 @@ public class CategoryServiceTest {
         assertEquals("thiet-bi", rs.getSlug());
         assertEquals(categoryParent, childCategory.getParentCategory());
 
-        verify(categoryRepository).findById(1L);
-        verify(categoryRepository, never()).existsByNameAndParentCategoryIsNull("Thiet bi");
-        verify(categoryRepository).existsByNameAndParentCategory_Id("Thiet bi", 1L);
+        verify(categoryRepository).findByIdAndDeletedFalse(1L);
+        verify(categoryRepository, never()).existsByNameAndDeletedFalseAndParentCategoryIsNull("Thiet bi");
+        verify(categoryRepository).existsByNameAndDeletedFalseAndParentCategory_Id("Thiet bi", 1L);
         verify(categoryRepository).existsBySlug("thiet-bi");
         verify(categoryRepository).save(childCategory);
         verify(categoryMapper).toCategoryResponse(childCategory);
@@ -213,7 +220,8 @@ public class CategoryServiceTest {
                 .description("Danh muc dien tu")
                 .parentCategoryId(null)
                 .build();
-        when(categoryRepository.existsByNameAndParentCategoryIsNull("Dien tu")).thenReturn(false);
+        when(categoryRepository.existsByNameAndDeletedFalseAndParentCategoryIsNull("Dien tu"))
+                .thenReturn(false);
         when(categoryRepository.existsBySlug("dien-tu")).thenReturn(false);
         when(categoryMapper.toCategory(categoryRequest)).thenReturn(category);
         when(categoryRepository.save(category)).thenReturn(category);
@@ -224,8 +232,8 @@ public class CategoryServiceTest {
         assertEquals("Danh muc dien tu", rs.getDescription());
         assertEquals("dien-tu", rs.getSlug());
 
-        verify(categoryRepository, never()).findById(anyLong());
-        verify(categoryRepository).existsByNameAndParentCategoryIsNull("Dien tu");
+        verify(categoryRepository, never()).findByIdAndDeletedFalse(anyLong());
+        verify(categoryRepository).existsByNameAndDeletedFalseAndParentCategoryIsNull("Dien tu");
         verify(categoryRepository).existsBySlug("dien-tu");
         verify(categoryRepository).save(category);
     }
@@ -240,6 +248,7 @@ public class CategoryServiceTest {
         AppException exception =
                 assertThrows(AppException.class, () -> categoryService.createCategory(categoryRequest));
         assertEquals(ErrorCode.PARENT_CATEGORY_NOT_FOUND, exception.getErrorCode());
+        verify(categoryRepository).findByIdAndDeletedFalse(1L);
         verify(categoryMapper, never()).toCategory(categoryRequest);
         verify(categoryRepository, never()).existsBySlug("dien-tu");
         verify(categoryMapper, never()).toCategoryResponse(category);
@@ -247,17 +256,16 @@ public class CategoryServiceTest {
     }
 
     @Test
-    void createCategory_shouldThrowException_whenParentCategoryIsDeleted() {
+    void createCategory_shouldThrowException_whenParentCategoryIsNotVisible() {
         categoryRequest = CategoryRequest.builder()
                 .name("Dien tu")
                 .description("Danh muc dien tu")
                 .parentCategoryId(1L)
                 .build();
-        when(categoryRepository.findById(1L)).thenReturn(Optional.of(category));
-        category.setDeleted(true);
         AppException exception =
                 assertThrows(AppException.class, () -> categoryService.createCategory(categoryRequest));
         assertEquals(ErrorCode.PARENT_CATEGORY_NOT_FOUND, exception.getErrorCode());
+        verify(categoryRepository).findByIdAndDeletedFalse(1L);
         verify(categoryMapper, never()).toCategory(categoryRequest);
         verify(categoryRepository, never()).existsBySlug("dien-tu");
         verify(categoryMapper, never()).toCategoryResponse(category);
@@ -271,7 +279,8 @@ public class CategoryServiceTest {
                 .description("Danh muc dien tu")
                 .parentCategoryId(null)
                 .build();
-        when(categoryRepository.existsByNameAndParentCategoryIsNull("Dien tu")).thenReturn(true);
+        when(categoryRepository.existsByNameAndDeletedFalseAndParentCategoryIsNull("Dien tu"))
+                .thenReturn(true);
 
         AppException exception =
                 assertThrows(AppException.class, () -> categoryService.createCategory(categoryRequest));
@@ -289,8 +298,9 @@ public class CategoryServiceTest {
                 .description("Danh muc dien tu")
                 .parentCategoryId(1L)
                 .build();
-        when(categoryRepository.findById(1L)).thenReturn(Optional.of(category));
-        when(categoryRepository.existsByNameAndParentCategory_Id("Dien tu", 1L)).thenReturn(true);
+        when(categoryRepository.findByIdAndDeletedFalse(1L)).thenReturn(Optional.of(category));
+        when(categoryRepository.existsByNameAndDeletedFalseAndParentCategory_Id("Dien tu", 1L))
+                .thenReturn(true);
 
         AppException exception =
                 assertThrows(AppException.class, () -> categoryService.createCategory(categoryRequest));
@@ -303,7 +313,8 @@ public class CategoryServiceTest {
 
     @Test
     void createCategory_shouldGenerateUniqueSlug_whenSlugAlreadyExists() {
-        when(categoryRepository.existsByNameAndParentCategoryIsNull("Dien tu")).thenReturn(false);
+        when(categoryRepository.existsByNameAndDeletedFalseAndParentCategoryIsNull("Dien tu"))
+                .thenReturn(false);
         when(categoryMapper.toCategory(categoryRequest)).thenReturn(category);
         when(categoryRepository.existsBySlug("dien-tu")).thenReturn(true);
         when(categoryRepository.existsBySlug("dien-tu-1")).thenReturn(false);
@@ -319,27 +330,16 @@ public class CategoryServiceTest {
         assertEquals("Danh muc dien tu", rs.getDescription());
         assertEquals("dien-tu-1", rs.getSlug());
 
-        verify(categoryRepository, never()).findById(anyLong());
-        verify(categoryRepository).existsByNameAndParentCategoryIsNull("Dien tu");
+        verify(categoryRepository, never()).findByIdAndDeletedFalse(anyLong());
+        verify(categoryRepository).existsByNameAndDeletedFalseAndParentCategoryIsNull("Dien tu");
         verify(categoryRepository).existsBySlug("dien-tu");
         verify(categoryRepository).existsBySlug("dien-tu-1");
         verify(categoryRepository).save(category);
     }
 
     @Test
-    void getAllCategories_shouldReturnOnlyActiveAndNonDeletedCategories() {
-        Category categoryIsDeleted = Category.builder()
-                .id(1L)
-                .name("Dien tu")
-                .slug("dien-tu")
-                .description("Danh muc dien tu")
-                .active(true)
-                .deleted(true)
-                .parentCategory(null)
-                .children(new ArrayList<>())
-                .products(new ArrayList<>())
-                .build();
-        when(categoryRepository.findAll()).thenReturn(List.of(category, categoryIsDeleted));
+    void getAllCategories_shouldReturnNonDeletedCategories() {
+        when(categoryRepository.findAllByDeletedFalse()).thenReturn(List.of(category));
         when(categoryMapper.toCategoryResponse(category)).thenReturn(categoryResponse);
         List<CategoryResponse> rs = categoryService.getAllCategories();
         assertEquals(1, rs.size());
@@ -347,30 +347,30 @@ public class CategoryServiceTest {
         assertEquals(categoryResponse.getSlug(), rs.getFirst().getSlug());
         assertEquals(categoryResponse.getDescription(), rs.getFirst().getDescription());
 
+        verify(categoryRepository).findAllByDeletedFalse();
         verify(categoryMapper).toCategoryResponse(category);
-        verify(categoryMapper, never()).toCategoryResponse(categoryIsDeleted);
     }
 
     @Test
     void getAllCategories_shouldReturnEmptyList_whenNoValidCategoriesExist() {
 
-        when(categoryRepository.findAll()).thenReturn(List.of());
+        when(categoryRepository.findAllByDeletedFalse()).thenReturn(List.of());
         List<CategoryResponse> rs = categoryService.getAllCategories();
         assertTrue(rs.isEmpty());
-        verify(categoryRepository).findAll();
+        verify(categoryRepository).findAllByDeletedFalse();
         verify(categoryMapper, never()).toCategoryResponse(any());
     }
 
     @Test
     void getCategoryById_shouldReturnCategoryResponse_whenCategoryExists() {
-        when(categoryRepository.findById(1L)).thenReturn(Optional.of(category));
+        when(categoryRepository.findByIdAndDeletedFalse(1L)).thenReturn(Optional.of(category));
         when(categoryMapper.toCategoryResponse(category)).thenReturn(categoryResponse);
         CategoryResponse rs = categoryService.getCategoryById(1L);
         assertEquals(category.getName(), rs.getName());
         assertEquals(category.getSlug(), rs.getSlug());
         assertEquals(category.getDescription(), rs.getDescription());
 
-        verify(categoryRepository).findById(1L);
+        verify(categoryRepository).findByIdAndDeletedFalse(1L);
         verify(categoryMapper).toCategoryResponse(category);
     }
 
@@ -378,17 +378,15 @@ public class CategoryServiceTest {
     void getCategoryById_shouldThrowException_whenCategoryNotFound() {
         AppException exception = assertThrows(AppException.class, () -> categoryService.getCategoryById(1L));
         assertEquals(ErrorCode.CATEGORY_NOT_FOUND, exception.getErrorCode());
-        verify(categoryRepository).findById(1L);
+        verify(categoryRepository).findByIdAndDeletedFalse(1L);
         verify(categoryMapper, never()).toCategoryResponse(category);
     }
 
     @Test
-    void getCategoryById_shouldThrowException_whenCategoryIsDeleted() {
-        when(categoryRepository.findById(1L)).thenReturn(Optional.of(category));
-        category.setDeleted(true);
+    void getCategoryById_shouldThrowException_whenCategoryIsNotVisible() {
         AppException exception = assertThrows(AppException.class, () -> categoryService.getCategoryById(1L));
-        assertEquals(ErrorCode.CATEGORY_DELETED, exception.getErrorCode());
-        verify(categoryRepository).findById(1L);
+        assertEquals(ErrorCode.CATEGORY_NOT_FOUND, exception.getErrorCode());
+        verify(categoryRepository).findByIdAndDeletedFalse(1L);
         verify(categoryMapper, never()).toCategoryResponse(category);
     }
 
@@ -403,8 +401,8 @@ public class CategoryServiceTest {
                 .children(List.of(categoryChildResponse))
                 .build();
 
-        when(categoryRepository.findById(1L)).thenReturn(Optional.of(category));
-        when(categoryRepository.existsByNameAndParentCategoryIsNullAndIdNot("Dien tu update", 1L))
+        when(categoryRepository.findByIdAndDeletedFalse(1L)).thenReturn(Optional.of(category));
+        when(categoryRepository.existsByNameAndDeletedFalseAndParentCategoryIsNullAndIdNot("Dien tu update", 1L))
                 .thenReturn(false);
         when(categoryRepository.existsBySlugAndIdNot("dien-tu-update", 1L)).thenReturn(false);
         when(categoryRepository.save(category)).thenReturn(category);
@@ -421,8 +419,8 @@ public class CategoryServiceTest {
         assertEquals("dien-tu-update", category.getSlug());
         assertNull(category.getParentCategory());
 
-        verify(categoryRepository).findById(1L);
-        verify(categoryRepository).existsByNameAndParentCategoryIsNullAndIdNot("Dien tu update", 1L);
+        verify(categoryRepository).findByIdAndDeletedFalse(1L);
+        verify(categoryRepository).existsByNameAndDeletedFalseAndParentCategoryIsNullAndIdNot("Dien tu update", 1L);
         verify(categoryRepository).existsBySlugAndIdNot("dien-tu-update", 1L);
         verify(categoryRepository).save(category);
         verify(categoryMapper).toCategoryResponse(category);
@@ -439,8 +437,8 @@ public class CategoryServiceTest {
                 .children(List.of(categoryChildResponse))
                 .build();
 
-        when(categoryRepository.findById(1L)).thenReturn(Optional.of(category));
-        when(categoryRepository.existsByNameAndParentCategoryIsNullAndIdNot("Dien tu update", 1L))
+        when(categoryRepository.findByIdAndDeletedFalse(1L)).thenReturn(Optional.of(category));
+        when(categoryRepository.existsByNameAndDeletedFalseAndParentCategoryIsNullAndIdNot("Dien tu update", 1L))
                 .thenReturn(false);
         when(categoryRepository.existsBySlugAndIdNot("dien-tu-update", 1L)).thenReturn(false);
         when(categoryRepository.save(category)).thenReturn(category);
@@ -457,8 +455,8 @@ public class CategoryServiceTest {
         assertEquals("dien-tu-update", category.getSlug());
         assertNull(category.getParentCategory());
 
-        verify(categoryRepository).findById(1L);
-        verify(categoryRepository).existsByNameAndParentCategoryIsNullAndIdNot("Dien tu update", 1L);
+        verify(categoryRepository).findByIdAndDeletedFalse(1L);
+        verify(categoryRepository).existsByNameAndDeletedFalseAndParentCategoryIsNullAndIdNot("Dien tu update", 1L);
         verify(categoryRepository).existsBySlugAndIdNot("dien-tu-update", 1L);
         verify(categoryRepository).save(category);
         verify(categoryMapper).toCategoryResponse(category);
@@ -482,8 +480,8 @@ public class CategoryServiceTest {
                 .children(List.of(categoryChildResponse))
                 .build();
 
-        when(categoryRepository.findById(1L)).thenReturn(Optional.of(category));
-        when(categoryRepository.existsByNameAndParentCategoryIsNullAndIdNot("Dien tu", 1L))
+        when(categoryRepository.findByIdAndDeletedFalse(1L)).thenReturn(Optional.of(category));
+        when(categoryRepository.existsByNameAndDeletedFalseAndParentCategoryIsNullAndIdNot("Dien tu", 1L))
                 .thenReturn(false);
         when(categoryRepository.save(category)).thenReturn(category);
         when(categoryMapper.toCategoryResponse(category)).thenReturn(updatedCategoryResponse);
@@ -499,8 +497,8 @@ public class CategoryServiceTest {
         assertEquals("dien-tu", category.getSlug());
         assertNull(category.getParentCategory());
 
-        verify(categoryRepository).findById(1L);
-        verify(categoryRepository).existsByNameAndParentCategoryIsNullAndIdNot("Dien tu", 1L);
+        verify(categoryRepository).findByIdAndDeletedFalse(1L);
+        verify(categoryRepository).existsByNameAndDeletedFalseAndParentCategoryIsNullAndIdNot("Dien tu", 1L);
         verify(categoryRepository, never()).existsBySlugAndIdNot(anyString(), eq(1L));
         verify(categoryRepository).save(category);
         verify(categoryMapper).toCategoryResponse(category);
@@ -511,63 +509,49 @@ public class CategoryServiceTest {
         AppException exception =
                 assertThrows(AppException.class, () -> categoryService.updateCategoryById(categoryUpdateRequest, 1L));
         assertEquals(ErrorCode.CATEGORY_NOT_FOUND, exception.getErrorCode());
-        verify(categoryRepository).findById(1L);
+        verify(categoryRepository).findByIdAndDeletedFalse(1L);
         verify(categoryRepository, never()).save(category);
         verify(categoryMapper, never()).toCategoryResponse(category);
     }
 
     @Test
-    void updateCategoryById_shouldThrowException_whenCategoryIsDeleted() {
-        category.setDeleted(true);
-        when(categoryRepository.findById(1L)).thenReturn(Optional.of(category));
+    void updateCategoryById_shouldThrowException_whenCategoryIsNotVisible() {
         AppException exception =
                 assertThrows(AppException.class, () -> categoryService.updateCategoryById(categoryUpdateRequest, 1L));
         assertEquals(ErrorCode.CATEGORY_NOT_FOUND, exception.getErrorCode());
-        verify(categoryRepository).findById(1L);
+        verify(categoryRepository).findByIdAndDeletedFalse(1L);
         verify(categoryRepository, never()).save(category);
         verify(categoryMapper, never()).toCategoryResponse(category);
     }
 
     @Test
     void updateCategoryById_shouldThrowException_whenParentCategoryNotFound() {
-        when(categoryRepository.findById(1L)).thenReturn(Optional.of(category));
-        when(categoryRepository.findById(categoryUpdateWithParentRequest.getParentCategoryId()))
+        when(categoryRepository.findByIdAndDeletedFalse(1L)).thenReturn(Optional.of(category));
+        when(categoryRepository.findByIdAndDeletedFalse(categoryUpdateWithParentRequest.getParentCategoryId()))
                 .thenReturn(Optional.empty());
         AppException exception = assertThrows(
                 AppException.class, () -> categoryService.updateCategoryById(categoryUpdateWithParentRequest, 1L));
 
         assertEquals(ErrorCode.PARENT_CATEGORY_NOT_FOUND, exception.getErrorCode());
 
-        verify(categoryRepository).findById(1L);
-        verify(categoryRepository).findById(categoryUpdateWithParentRequest.getParentCategoryId());
+        verify(categoryRepository).findByIdAndDeletedFalse(1L);
+        verify(categoryRepository).findByIdAndDeletedFalse(categoryUpdateWithParentRequest.getParentCategoryId());
         verify(categoryRepository, never()).save(category);
         verify(categoryMapper, never()).toCategoryResponse(category);
     }
 
     @Test
-    void updateCategoryById_shouldThrowException_whenParentCategoryIsDeleted() {
-        Category categoryParent = Category.builder()
-                .id(1L)
-                .name("Dien tu cha")
-                .slug("dien-tu-cha")
-                .description("Danh muc dien tu cha")
-                .active(true)
-                .deleted(true)
-                .parentCategory(null)
-                .children(new ArrayList<>(List.of(category)))
-                .products(new ArrayList<>())
-                .build();
-
-        when(categoryRepository.findById(1L)).thenReturn(Optional.of(category));
-        when(categoryRepository.findById(categoryUpdateWithParentRequest.getParentCategoryId()))
-                .thenReturn(Optional.of(categoryParent));
+    void updateCategoryById_shouldThrowException_whenParentCategoryIsNotVisible() {
+        when(categoryRepository.findByIdAndDeletedFalse(1L)).thenReturn(Optional.of(category));
+        when(categoryRepository.findByIdAndDeletedFalse(categoryUpdateWithParentRequest.getParentCategoryId()))
+                .thenReturn(Optional.empty());
         AppException exception = assertThrows(
                 AppException.class, () -> categoryService.updateCategoryById(categoryUpdateWithParentRequest, 1L));
 
         assertEquals(ErrorCode.PARENT_CATEGORY_NOT_FOUND, exception.getErrorCode());
 
-        verify(categoryRepository).findById(1L);
-        verify(categoryRepository).findById(categoryUpdateWithParentRequest.getParentCategoryId());
+        verify(categoryRepository).findByIdAndDeletedFalse(1L);
+        verify(categoryRepository).findByIdAndDeletedFalse(categoryUpdateWithParentRequest.getParentCategoryId());
         verify(categoryRepository, never()).save(category);
         verify(categoryMapper, never()).toCategoryResponse(category);
     }
@@ -579,16 +563,14 @@ public class CategoryServiceTest {
                 .description("Danh muc laptop update")
                 .parentCategoryId(1L)
                 .build();
-        when(categoryRepository.findById(1L)).thenReturn(Optional.of(category));
-        when(categoryRepository.findById(categoryUpdateWithParentRequest.getParentCategoryId()))
-                .thenReturn(Optional.of(category));
+        when(categoryRepository.findByIdAndDeletedFalse(1L)).thenReturn(Optional.of(category));
         AppException exception = assertThrows(
                 AppException.class, () -> categoryService.updateCategoryById(categoryUpdateWithParentRequest, 1L));
 
         assertEquals(ErrorCode.CATEGORY_CIRCULAR_REFERENCE, exception.getErrorCode());
 
-        verify(categoryRepository).findById(1L);
-        verify(categoryRepository).findById(categoryUpdateWithParentRequest.getParentCategoryId());
+        verify(categoryRepository).findByIdAndDeletedFalse(1L);
+        verify(categoryRepository).findByIdAndDeletedFalse(categoryUpdateWithParentRequest.getParentCategoryId());
         verify(categoryRepository, never()).save(category);
         verify(categoryMapper, never()).toCategoryResponse(category);
     }
@@ -614,30 +596,30 @@ public class CategoryServiceTest {
                 .products(new ArrayList<>())
                 .build();
 
-        when(categoryRepository.findById(1L)).thenReturn(Optional.of(category));
-        when(categoryRepository.findById(categoryUpdateWithParentRequest.getParentCategoryId()))
+        when(categoryRepository.findByIdAndDeletedFalse(1L)).thenReturn(Optional.of(category));
+        when(categoryRepository.findByIdAndDeletedFalse(categoryUpdateWithParentRequest.getParentCategoryId()))
                 .thenReturn(Optional.of(categoryParent));
         AppException exception = assertThrows(
                 AppException.class, () -> categoryService.updateCategoryById(categoryUpdateWithParentRequest, 1L));
 
         assertEquals(ErrorCode.CATEGORY_CIRCULAR_REFERENCE, exception.getErrorCode());
 
-        verify(categoryRepository).findById(1L);
-        verify(categoryRepository).findById(categoryUpdateWithParentRequest.getParentCategoryId());
+        verify(categoryRepository).findByIdAndDeletedFalse(1L);
+        verify(categoryRepository).findByIdAndDeletedFalse(categoryUpdateWithParentRequest.getParentCategoryId());
         verify(categoryRepository, never()).save(category);
         verify(categoryMapper, never()).toCategoryResponse(category);
     }
 
     @Test
     void updateCategoryById_shouldThrowException_whenRootCategoryNameAlreadyExists() {
-        when(categoryRepository.findById(1L)).thenReturn(Optional.of(category));
-        when(categoryRepository.existsByNameAndParentCategoryIsNullAndIdNot("Dien tu update", 1L))
+        when(categoryRepository.findByIdAndDeletedFalse(1L)).thenReturn(Optional.of(category));
+        when(categoryRepository.existsByNameAndDeletedFalseAndParentCategoryIsNullAndIdNot("Dien tu update", 1L))
                 .thenReturn(true);
         AppException exception =
                 assertThrows(AppException.class, () -> categoryService.updateCategoryById(categoryUpdateRequest, 1L));
         assertEquals(ErrorCode.CATEGORY_EXISTED, exception.getErrorCode());
-        verify(categoryRepository).findById(1L);
-        verify(categoryRepository).existsByNameAndParentCategoryIsNullAndIdNot("Dien tu update", 1L);
+        verify(categoryRepository).findByIdAndDeletedFalse(1L);
+        verify(categoryRepository).existsByNameAndDeletedFalseAndParentCategoryIsNullAndIdNot("Dien tu update", 1L);
         verify(categoryRepository, never()).save(category);
         verify(categoryMapper, never()).toCategoryResponse(category);
     }
@@ -655,17 +637,17 @@ public class CategoryServiceTest {
                 .children(new ArrayList<>(List.of(category)))
                 .products(new ArrayList<>())
                 .build();
-        when(categoryRepository.findById(1L)).thenReturn(Optional.of(category));
-        when(categoryRepository.findById(categoryUpdateWithParentRequest.getParentCategoryId()))
+        when(categoryRepository.findByIdAndDeletedFalse(1L)).thenReturn(Optional.of(category));
+        when(categoryRepository.findByIdAndDeletedFalse(categoryUpdateWithParentRequest.getParentCategoryId()))
                 .thenReturn(Optional.of(categoryParent));
-        when(categoryRepository.existsByNameAndParentCategory_IdAndIdNot("Laptop update", 10L, 1L))
+        when(categoryRepository.existsByNameAndDeletedFalseAndParentCategory_IdAndIdNot("Laptop update", 10L, 1L))
                 .thenReturn(true);
         AppException exception = assertThrows(
                 AppException.class, () -> categoryService.updateCategoryById(categoryUpdateWithParentRequest, 1L));
         assertEquals(ErrorCode.CATEGORY_EXISTED, exception.getErrorCode());
-        verify(categoryRepository).findById(1L);
-        verify(categoryRepository).findById(10L);
-        verify(categoryRepository).existsByNameAndParentCategory_IdAndIdNot("Laptop update", 10L, 1L);
+        verify(categoryRepository).findByIdAndDeletedFalse(1L);
+        verify(categoryRepository).findByIdAndDeletedFalse(10L);
+        verify(categoryRepository).existsByNameAndDeletedFalseAndParentCategory_IdAndIdNot("Laptop update", 10L, 1L);
         verify(categoryRepository, never()).save(category);
         verify(categoryMapper, never()).toCategoryResponse(category);
     }
@@ -683,38 +665,39 @@ public class CategoryServiceTest {
                 .children(new ArrayList<>())
                 .products(new ArrayList<>())
                 .build();
-        when(categoryRepository.findById(1L)).thenReturn(Optional.of(category));
+        when(categoryRepository.findByIdAndDeletedFalse(1L)).thenReturn(Optional.of(category));
         when(categoryRepository.save(category)).thenReturn(category);
         categoryService.deleteCategoryById(1L);
-        verify(categoryRepository).findById(1L);
+        verify(categoryRepository).findByIdAndDeletedFalse(1L);
         verify(categoryRepository).save(category);
     }
 
     @Test
     void deleteCategoryById_shouldThrowException_whenCategoryNotFound() {
-        when(categoryRepository.findById(1L)).thenReturn(Optional.empty());
+        when(categoryRepository.findByIdAndDeletedFalse(1L)).thenReturn(Optional.empty());
         AppException exception = assertThrows(AppException.class, () -> categoryService.deleteCategoryById(1L));
         assertEquals(ErrorCode.CATEGORY_NOT_FOUND, exception.getErrorCode());
-        verify(categoryRepository).findById(1L);
+        verify(categoryRepository).findByIdAndDeletedFalse(1L);
         verify(categoryRepository, never()).save(category);
     }
 
     @Test
-    void deleteCategoryById_shouldThrowException_whenCategoryIsDeleted() {
-        category.setDeleted(true);
-        when(categoryRepository.findById(1L)).thenReturn(Optional.of(category));
+    void deleteCategoryById_shouldThrowException_whenCategoryIsNotVisible() {
+        when(categoryRepository.findByIdAndDeletedFalse(1L)).thenReturn(Optional.empty());
         AppException exception = assertThrows(AppException.class, () -> categoryService.deleteCategoryById(1L));
-        assertEquals(ErrorCode.CATEGORY_DELETED, exception.getErrorCode());
-        verify(categoryRepository).findById(1L);
+        assertEquals(ErrorCode.CATEGORY_NOT_FOUND, exception.getErrorCode());
+        verify(categoryRepository).findByIdAndDeletedFalse(1L);
         verify(categoryRepository, never()).save(category);
     }
 
     @Test
     void deleteCategoryById_shouldThrowException_whenCategoryHasActiveChildren() {
-        when(categoryRepository.findById(1L)).thenReturn(Optional.of(category));
+        when(categoryRepository.findByIdAndDeletedFalse(1L)).thenReturn(Optional.of(category));
+        when(categoryRepository.existsByParentCategoryIdAndDeletedFalse(1L)).thenReturn(true);
+        when(productRepository.existsByCategoryIdAndDeletedFalse(1L)).thenReturn(false);
         AppException exception = assertThrows(AppException.class, () -> categoryService.deleteCategoryById(1L));
         assertEquals(ErrorCode.CATEGORY_HAS_CHILDREN, exception.getErrorCode());
-        verify(categoryRepository).findById(1L);
+        verify(categoryRepository).findByIdAndDeletedFalse(1L);
         verify(categoryRepository, never()).save(category);
     }
 
@@ -743,20 +726,12 @@ public class CategoryServiceTest {
                 .products(new ArrayList<>())
                 .build();
 
-        when(categoryRepository.findById(1L)).thenReturn(Optional.of(category));
+        when(categoryRepository.findByIdAndDeletedFalse(1L)).thenReturn(Optional.of(category));
+        when(categoryRepository.existsByParentCategoryIdAndDeletedFalse(1L)).thenReturn(false);
+        when(productRepository.existsByCategoryIdAndDeletedFalse(1L)).thenReturn(false);
         when(categoryRepository.save(category)).thenReturn(category);
         categoryService.deleteCategoryById(1L);
-        verify(categoryRepository).findById(1L);
+        verify(categoryRepository).findByIdAndDeletedFalse(1L);
         verify(categoryRepository).save(category);
     }
-
-    //    @Test
-    //    void deleteCategoryById_shouldThrowException_whenCategoryHasActiveProducts() {
-    //
-    //    }
-    //
-    //    @Test
-    //    void deleteCategoryById_shouldIgnoreDeletedProducts_whenDeletingCategory() {
-    //
-    //    }
 }

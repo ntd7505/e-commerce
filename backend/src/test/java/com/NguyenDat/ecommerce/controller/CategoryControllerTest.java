@@ -131,7 +131,6 @@ public class CategoryControllerTest {
                 .andExpect(jsonPath("$.data.children[0].name").value("Laptop"))
                 .andExpect(jsonPath("$.data.children[0].slug").value("laptop"))
                 .andExpect(jsonPath("$.data.children[0].active").value(true));
-        ;
         verify(categoryService).createCategory(any(CategoryRequest.class));
     }
 
@@ -260,14 +259,13 @@ public class CategoryControllerTest {
     }
 
     @Test
-    void getCategoryById_shouldReturnErrorResponse_whenCategoryDeleted() throws Exception {
-        category.setDeleted(true);
-        when(categoryService.getCategoryById(1L)).thenThrow(new AppException(ErrorCode.CATEGORY_DELETED));
+    void getCategoryById_shouldReturnErrorResponse_whenCategoryIsNotVisible() throws Exception {
+        when(categoryService.getCategoryById(1L)).thenThrow(new AppException(ErrorCode.CATEGORY_NOT_FOUND));
         mockMvc.perform(get("/api/v1/admin/categories/{id}", 1L))
                 .andExpect(
-                        status().is(ErrorCode.CATEGORY_DELETED.getStatusCode().value()))
-                .andExpect(jsonPath("$.code").value(ErrorCode.CATEGORY_DELETED.getCode()))
-                .andExpect(jsonPath("$.message").value(ErrorCode.CATEGORY_DELETED.getMessage()));
+                        status().is(ErrorCode.CATEGORY_NOT_FOUND.getStatusCode().value()))
+                .andExpect(jsonPath("$.code").value(ErrorCode.CATEGORY_NOT_FOUND.getCode()))
+                .andExpect(jsonPath("$.message").value(ErrorCode.CATEGORY_NOT_FOUND.getMessage()));
 
         verify(categoryService).getCategoryById(1L);
     }
@@ -417,16 +415,16 @@ public class CategoryControllerTest {
     }
 
     @Test
-    void deleteCategory_shouldReturnErrorResponse_whenCategoryDeleted() throws Exception {
-        doThrow(new AppException(ErrorCode.CATEGORY_DELETED))
+    void deleteCategory_shouldReturnErrorResponse_whenCategoryIsNotVisible() throws Exception {
+        doThrow(new AppException(ErrorCode.CATEGORY_NOT_FOUND))
                 .when(categoryService)
                 .deleteCategoryById(1L);
 
         mockMvc.perform(delete("/api/v1/admin/categories/{id}", 1L))
                 .andExpect(
-                        status().is(ErrorCode.CATEGORY_DELETED.getStatusCode().value()))
-                .andExpect(jsonPath("$.code").value(ErrorCode.CATEGORY_DELETED.getCode()))
-                .andExpect(jsonPath("$.message").value(ErrorCode.CATEGORY_DELETED.getMessage()));
+                        status().is(ErrorCode.CATEGORY_NOT_FOUND.getStatusCode().value()))
+                .andExpect(jsonPath("$.code").value(ErrorCode.CATEGORY_NOT_FOUND.getCode()))
+                .andExpect(jsonPath("$.message").value(ErrorCode.CATEGORY_NOT_FOUND.getMessage()));
 
         verify(categoryService).deleteCategoryById(1L);
     }
