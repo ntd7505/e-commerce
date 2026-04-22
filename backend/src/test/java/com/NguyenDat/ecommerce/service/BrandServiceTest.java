@@ -96,13 +96,7 @@ public class BrandServiceTest {
     }
 
     @Test
-    void getAllBrands_shouldReturnOnlyNonDeletedBrands() {
-        Brand deletedBrand = new Brand();
-        deletedBrand.setId(2L);
-        deletedBrand.setName("Adidas");
-        deletedBrand.setActive(true);
-        deletedBrand.setDeleted(true);
-
+    void getAllBrands_shouldReturnRepositoryResults() {
         when(brandRepository.findAllByDeletedFalse()).thenReturn(List.of(brand));
         when(brandMapper.toBrandResponse((brand))).thenReturn(brandResponse);
 
@@ -110,12 +104,12 @@ public class BrandServiceTest {
 
         assertEquals(1, result.size());
         assertEquals("Nike", result.getFirst().getName());
-        verify(brandMapper, never()).toBrandResponse(deletedBrand);
+        verify(brandRepository).findAllByDeletedFalse();
+        verify(brandMapper).toBrandResponse(brand);
     }
 
     @Test
-    void getBrandById_shouldThrowException_whenBrandIsDeleted() {
-        brand.setDeleted(true);
+    void getBrandById_shouldThrowException_whenBrandIsNotVisible() {
         when(brandRepository.findByIdAndDeletedFalse(1L)).thenReturn(Optional.empty());
         AppException exception = assertThrows(AppException.class, () -> brandService.getBrandById(1L));
         assertEquals(ErrorCode.BRAND_NOT_FOUND, exception.getErrorCode());
@@ -143,20 +137,24 @@ public class BrandServiceTest {
     }
 
     @Test
-    void deleteBrand_shouldThrowException_whenBrandIsAlreadyDeleted() {
-        brand.setDeleted(true);
-        when(brandRepository.findByIdAndDeletedFalse(1L)).thenReturn(Optional.empty());
+    void deleteBrand_shouldThrowException_whenBrandHasProducts() {
+        when(brandRepository.findByIdAndDeletedFalse(1L)).thenReturn(Optional.of(brand));
+        when(productRepository.existsByBrandIdAndDeletedFalse(1L)).thenReturn(true);
         AppException exception = assertThrows(AppException.class, () -> brandService.deleteBrand(1L));
-        assertEquals(ErrorCode.BRAND_NOT_FOUND, exception.getErrorCode());
+        assertEquals(ErrorCode.BRAND_HAS_PRODUCTS, exception.getErrorCode());
         verify(brandRepository, never()).save(any());
     }
 
     @Test
-    void getBrandById_shouldThrowException_whenBrandDoesNotExist() {
-        when(brandRepository.findByIdAndDeletedFalse(1L)).thenReturn(Optional.empty());
-        AppException exception = assertThrows(AppException.class, () -> brandService.getBrandById(1L));
-        assertEquals(ErrorCode.BRAND_NOT_FOUND, exception.getErrorCode());
-        verify(brandRepository, never()).save(any());
+    void getBrandById_shouldReturnBrandResponse_whenBrandExists() {
+        when(brandRepository.findByIdAndDeletedFalse(1L)).thenReturn(Optional.of(brand));
+        when(brandMapper.toBrandResponse(brand)).thenReturn(brandResponse);
+
+        BrandResponse result = brandService.getBrandById(1L);
+
+        assertEquals(1L, result.getId());
+        assertEquals("Nike", result.getName());
+        verify(brandMapper).toBrandResponse(brand);
     }
 
     @Test

@@ -174,6 +174,14 @@ public class UserServiceTest {
 
     @Test
     void updateUserById_shouldReturnUserResponse_whenRequestIsValid() {
+        UserResponse updatedUserResponse = UserResponse.builder()
+                .email("dat@gmail.com")
+                .fullName("Nguyen Dat Updated")
+                .phoneNumber("0987654321")
+                .avatarUrl("updated-avatar.png")
+                .roles(Set.of())
+                .build();
+
         when(userRepository.findByIdAndDeletedFalse(1L)).thenReturn(Optional.of(user));
         when(userRepository.existsByPhoneNumberAndIdNot(userUpdateRequest.getPhoneNumber(), 1L))
                 .thenReturn(false);
@@ -186,16 +194,16 @@ public class UserServiceTest {
                 .when(userMapper)
                 .updateUserMapper(user, userUpdateRequest);
         when(userRepository.save(user)).thenReturn(user);
-        when(userMapper.toUserResponse(user)).thenReturn(userResponse);
+        when(userMapper.toUserResponse(user)).thenReturn(updatedUserResponse);
 
         UserResponse result = userService.updateUserById(1L, userUpdateRequest);
 
         assertEquals("Nguyen Dat Updated", user.getFullName());
         assertEquals("0987654321", user.getPhoneNumber());
         assertEquals("updated-avatar.png", user.getAvatarUrl());
-        assertEquals("Nguyen Dat", result.getFullName());
-        assertEquals("0912345678", result.getPhoneNumber());
-        assertEquals("avatar.png", result.getAvatarUrl());
+        assertEquals("Nguyen Dat Updated", result.getFullName());
+        assertEquals("0987654321", result.getPhoneNumber());
+        assertEquals("updated-avatar.png", result.getAvatarUrl());
         verify(userRepository).save(user);
     }
 
@@ -233,7 +241,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void softDeleteUser_shouldThrowException_whenUserAlreadyDeleted() {
+    void softDeleteUser_shouldThrowException_whenUserIsNotVisible() {
         when(userRepository.findByIdAndDeletedFalse(1L)).thenReturn(Optional.empty());
         AppException exception = assertThrows(AppException.class, () -> userService.softDeleteUser(1L));
         assertEquals(ErrorCode.USER_NOT_EXISTED, exception.getErrorCode());
@@ -241,16 +249,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void getAllUsers_shouldReturnOnlyNonDeletedUsers() {
-        User deletedUser = User.builder()
-                .id(2L)
-                .email("deleted@gmail.com")
-                .fullName("Deleted User")
-                .phoneNumber("0999999999")
-                .status(Active.ACTIVE)
-                .deleted(true)
-                .build();
-
+    void getAllUsers_shouldReturnRepositoryResults() {
         User inactiveUser = User.builder()
                 .id(3L)
                 .email("inactive@gmail.com")
@@ -278,8 +277,8 @@ public class UserServiceTest {
         assertEquals(userResponse.getAvatarUrl(), result.getFirst().getAvatarUrl());
         assertEquals(userResponse.getEmail(), result.getFirst().getEmail());
 
+        verify(userRepository).findAllByDeletedFalse();
         verify(userMapper).toUserResponse(user);
         verify(userMapper).toUserResponse(inactiveUser);
-        verify(userMapper, never()).toUserResponse(deletedUser);
     }
 }

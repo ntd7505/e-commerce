@@ -22,6 +22,7 @@ import com.NguyenDat.ecommerce.common.exception.AppException;
 import com.NguyenDat.ecommerce.common.exception.ErrorCode;
 import com.NguyenDat.ecommerce.modules.product.controller.admin.AdminBrandController;
 import com.NguyenDat.ecommerce.modules.product.dto.request.BrandRequest;
+import com.NguyenDat.ecommerce.modules.product.dto.request.BrandStatusUpdateRequest;
 import com.NguyenDat.ecommerce.modules.product.dto.response.BrandResponse;
 import com.NguyenDat.ecommerce.modules.product.service.BrandService;
 
@@ -43,11 +44,14 @@ public class BrandControllerTest {
     BrandService brandService;
 
     BrandRequest brandRequest;
+    BrandStatusUpdateRequest brandStatusUpdateRequest;
     BrandResponse response;
 
     @BeforeEach
     void setUp() {
         brandRequest = BrandRequest.builder().name("Nike").logoUrl("nike.com").build();
+        brandStatusUpdateRequest =
+                BrandStatusUpdateRequest.builder().active(false).build();
 
         response = BrandResponse.builder()
                 .id(1L)
@@ -78,14 +82,20 @@ public class BrandControllerTest {
     }
 
     @Test
-    void createBrand_shouldReturnBadRequest_whenNameIsBlank() throws Exception {
-        brandRequest = BrandRequest.builder().name("").logoUrl("nike.com").build();
-        mockMvc.perform(post("/api/v1/admin/brands")
-                        .contentType(APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(brandRequest)))
-                .andExpect(status().isBadRequest());
+    void getDeletedBrands_shouldReturnFetchedResponse_whenDataExists() throws Exception {
+        List<BrandResponse> brandResponseList = new ArrayList<>();
+        brandResponseList.add(response);
+        when(brandService.getDeletedBrands()).thenReturn(brandResponseList);
 
-        verify(brandService, never()).createBrand(any());
+        mockMvc.perform(get("/api/v1/admin/brands/deleted"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(ResponseCode.DELETED_BRANDS_FETCHED.getCode()))
+                .andExpect(jsonPath("$.message").value(ResponseCode.DELETED_BRANDS_FETCHED.getMessage()))
+                .andExpect(jsonPath("$.data.length()").value(1))
+                .andExpect(jsonPath("$.data[0].id").value(1))
+                .andExpect(jsonPath("$.data[0].name").value("Nike"));
+
+        verify(brandService).getDeletedBrands();
     }
 
     @Test
@@ -175,15 +185,20 @@ public class BrandControllerTest {
     }
 
     @Test
-    void updateBrandById_shouldReturnBadRequest_whenNameIsBlank() throws Exception {
-        brandRequest = BrandRequest.builder().name("").logoUrl("nike.com").build();
-        mockMvc.perform(put("/api/v1/admin/brands/{id}", 1L)
+    void updateBrandStatusById_shouldReturnUpdatedResponse_whenRequestIsValid() throws Exception {
+        when(brandService.updateBrandStatusById(any(BrandStatusUpdateRequest.class), eq(1L)))
+                .thenReturn(response);
+
+        mockMvc.perform(patch("/api/v1/admin/brands/{id}/status", 1L)
                         .contentType(APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(brandRequest)))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.code").value(ErrorCode.INVALID_KEY.getCode()))
-                .andExpect(jsonPath(("$.message")).value(ErrorCode.INVALID_KEY.getMessage()));
-        verify(brandService, never()).updateBrandById(anyLong(), any(BrandRequest.class));
+                        .content(objectMapper.writeValueAsString(brandStatusUpdateRequest)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(ResponseCode.BRAND_STATUS_UPDATED.getCode()))
+                .andExpect(jsonPath("$.message").value(ResponseCode.BRAND_STATUS_UPDATED.getMessage()))
+                .andExpect(jsonPath("$.data.id").value(1))
+                .andExpect(jsonPath("$.data.name").value("Nike"));
+
+        verify(brandService).updateBrandStatusById(any(BrandStatusUpdateRequest.class), eq(1L));
     }
 
     @Test

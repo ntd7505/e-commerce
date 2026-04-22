@@ -11,8 +11,6 @@ import com.NguyenDat.ecommerce.modules.product.entity.Brand;
 @Repository
 public interface BrandRepository extends JpaRepository<Brand, Long> {
 
-//    Optional<Brand> findByName(String name);
-
     boolean existsByNameAndDeletedFalseAndIdNot(String name, long id);
 
     boolean existsBySlug(String name);
