@@ -11,6 +11,10 @@ jobs:
     name: Build And Test
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: backend
+
     steps:
       - name: Checkout source
         uses: actions/checkout@v5
@@ -36,4 +40,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: jacoco-report
-          path: target/site/jacoco
+          path: backend/target/site/jacoco
