@@ -68,7 +68,7 @@ public class BrandServiceTest {
 
     @Test
     void createBrand_shouldReturnBrandResponse_whenRequestIsValid() {
-        when(brandRepository.findByName("Nike")).thenReturn(Optional.empty());
+        when(brandRepository.findByNameAndDeletedFalse("Nike")).thenReturn(Optional.empty());
         when(brandRepository.existsBySlug("nike")).thenReturn(false);
         when(brandMapper.toBrand(brandRequest)).thenReturn(brand);
         when(brandRepository.save(brand)).thenReturn(brand);
@@ -89,7 +89,7 @@ public class BrandServiceTest {
 
     @Test
     void createBrand_shouldThrowException_whenBrandNameAlreadyExists() {
-        when(brandRepository.findByName("Nike")).thenReturn(Optional.of(brand));
+        when(brandRepository.findByNameAndDeletedFalse("Nike")).thenReturn(Optional.of(brand));
         AppException exception = assertThrows(AppException.class, () -> brandService.createBrand(brandRequest));
         assertEquals(ErrorCode.BRAND_EXISTED, exception.getErrorCode());
         verify(brandRepository, never()).save(any());
@@ -125,7 +125,7 @@ public class BrandServiceTest {
     void updateBrandById_shouldThrowException_whenBrandNameAlreadyExists() {
         BrandRequest updateRequest = BrandRequest.builder().name("Nike").build();
         when(brandRepository.findByIdAndDeletedFalse(1L)).thenReturn(Optional.of(brand));
-        when(brandRepository.existsByNameAndIdNot("Nike", 1L)).thenReturn(true);
+        when(brandRepository.existsByNameAndDeletedFalseAndIdNot("Nike", 1L)).thenReturn(true);
         AppException exception =
                 assertThrows(AppException.class, () -> brandService.updateBrandById(1L, updateRequest));
         assertEquals(ErrorCode.BRAND_EXISTED, exception.getErrorCode());
@@ -163,7 +163,7 @@ public class BrandServiceTest {
     void updateBrandById_shouldReturnBrandResponse_whenRequestIsValid() {
         BrandRequest updateRequest = BrandRequest.builder().name("Nike").build();
         when(brandRepository.findByIdAndDeletedFalse(1L)).thenReturn(Optional.of(brand));
-        when(brandRepository.existsByNameAndIdNot("Nike", 1L)).thenReturn(false);
+        when(brandRepository.existsByNameAndDeletedFalseAndIdNot("Nike", 1L)).thenReturn(false);
         when(brandRepository.save(brand)).thenReturn(brand);
         when(brandMapper.toBrandResponse(brand)).thenReturn(brandResponse);
 
