@@ -32,7 +32,7 @@ public class BrandService {
 
     public BrandResponse createBrand(BrandRequest brandRequest) {
         String normalizedName = brandRequest.getName().trim();
-        if (brandRepository.findByName(normalizedName).isPresent()) {
+        if (brandRepository.findByNameAndDeletedFalse(normalizedName).isPresent()) {
             throw new AppException(ErrorCode.BRAND_EXISTED);
         }
 
@@ -76,15 +76,19 @@ public class BrandService {
         Brand brand = brandRepository
                 .findByIdAndDeletedFalse(id)
                 .orElseThrow(() -> new AppException(ErrorCode.BRAND_NOT_FOUND));
+        String oldName = brand.getName();
         String normalizedName = brandRequest.getName().trim();
-        if (brandRepository.existsByNameAndIdNot(normalizedName, id)) {
+        if (brandRepository.existsByNameAndDeletedFalseAndIdNot(normalizedName, id)) {
             throw new AppException(ErrorCode.BRAND_EXISTED);
         }
         brand.setName(normalizedName);
-        brand.setSlug(SlugUtil.toUniqueSlug(normalizedName, slug -> brandRepository.existsBySlugAndIdNot(slug, id)));
+        if (!oldName.equals(normalizedName)) {
+            brand.setSlug(
+                    SlugUtil.toUniqueSlug(normalizedName, slug -> brandRepository.existsBySlugAndIdNot(slug, id)));
+        }
         brand.setLogoUrl(brandRequest.getLogoUrl());
-        brandRepository.save(brand);
-        return brandMapper.toBrandResponse(brand);
+        Brand savedBrand = brandRepository.save(brand);
+        return brandMapper.toBrandResponse(savedBrand);
     }
 
     public List<BrandResponse> getDeletedBrands() {
