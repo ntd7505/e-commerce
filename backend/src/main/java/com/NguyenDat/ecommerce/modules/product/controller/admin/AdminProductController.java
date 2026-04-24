@@ -42,6 +42,14 @@ public class AdminProductController {
         return ApiResponse.of(ResponseCode.PRODUCT_FETCHED, productService.getProductById(id));
     }
 
+    @PostMapping("/products/{productId}/variants")
+    public ApiResponse<ProductVariantResponse> addNewProductVariants(
+            @PathVariable Long productId, @RequestBody @Valid ProductVariantRequest productVariantRequest) {
+        return ApiResponse.of(
+                ResponseCode.PRODUCT_VARIANT_FETCHED,
+                productService.addNewProductVariants(productId, productVariantRequest));
+    }
+
     @GetMapping("/products/variants/{id}")
     public ApiResponse<ProductVariantResponse> getVariantById(@PathVariable Long id) {
         return ApiResponse.of(ResponseCode.PRODUCT_VARIANT_FETCHED, productService.getVariantById(id));
@@ -51,6 +59,17 @@ public class AdminProductController {
     public ApiResponse<ProductResponse> updateProductById(
             @RequestBody @Valid ProductUpdateRequest productUpdateRequest, @PathVariable Long id) {
         return ApiResponse.of(ResponseCode.PRODUCT_UPDATED, productService.updateProductById(productUpdateRequest, id));
+    }
+
+    @PatchMapping("/products/{id}/status")
+    public ApiResponse<ProductResponse> updateProductStatus(@PathVariable Long id) {
+        return ApiResponse.of(ResponseCode.PRODUCT_UPDATED, productService.updateProductStatus(id));
+    }
+
+    @PatchMapping("/products/variants/{variantId}/status")
+    public ApiResponse<ProductVariantResponse> updateProductVariantStatus(@PathVariable Long variantId) {
+        return ApiResponse.of(
+                ResponseCode.PRODUCT_VARIANT_CREATED, productService.updateProductVariantStatus(variantId));
     }
 
     @PutMapping("/products/variants/{id}")

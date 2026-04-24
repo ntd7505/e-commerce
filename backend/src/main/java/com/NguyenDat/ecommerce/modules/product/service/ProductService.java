@@ -93,6 +93,26 @@ public class ProductService {
         return toProductResponse(savedProduct);
     }
 
+    public ProductVariantResponse addNewProductVariants(
+            Long productId, @Valid ProductVariantRequest productVariantRequest) {
+        Product product = productRepository
+                .findByIdAndDeletedFalse(productId)
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+
+        if (productVariantRequest.getPrice() < productVariantRequest.getSalePrice()) {
+            throw new AppException(ErrorCode.PRICE_MUST_BE_GREATER_THAN_OR_EQUAL_TO_SALE_PRICE);
+        }
+
+        String sku = SkuUtil.toUniqueSku(
+                product.getName(), productVariantRequest.getVariantName(), productVariantRepository::existsBySku);
+
+        ProductVariant productVariant = productVariantMapper.toProductVariant(productVariantRequest);
+        productVariant.setSku(sku);
+        productVariant.setProduct(product);
+
+        return productVariantMapper.toProductVariantResponse(productVariantRepository.save(productVariant));
+    }
+
     public List<ProductResponse> getAllProducts() {
         return productRepository.findAllByDeletedFalse().stream()
                 .map(this::toProductResponse)
@@ -146,6 +166,15 @@ public class ProductService {
         return toProductResponse(savedProduct);
     }
 
+    public ProductResponse updateProductStatus(Long id) {
+        Product product = productRepository
+                .findByIdAndDeletedFalse(id)
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+        product.setActive(!product.isActive());
+        Product savedProduct = productRepository.save(product);
+        return toProductResponse(savedProduct);
+    }
+
     public ProductVariantResponse updateVariantById(
             @Valid ProductVariantUpdateRequest productVariantUpdateRequest, Long id) {
         ProductVariant productVariant = productVariantRepository
@@ -170,6 +199,15 @@ public class ProductService {
                     sku -> productVariantRepository.existsBySkuAndIdNot(sku, id)));
         }
         return productVariantMapper.toProductVariantResponse(productVariantRepository.save(productVariant));
+    }
+
+    public ProductVariantResponse updateProductVariantStatus(Long variantId) {
+        ProductVariant productVariant = productVariantRepository
+                .findByIdAndDeletedFalseAndProductDeletedFalse(variantId)
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_VARIANT_NOT_FOUND));
+        productVariant.setActive(!productVariant.isActive());
+        ProductVariant productVariantSaved = productVariantRepository.save(productVariant);
+        return productVariantMapper.toProductVariantResponse(productVariantSaved);
     }
 
     public void deleteProductVariantsById(Long id) {
