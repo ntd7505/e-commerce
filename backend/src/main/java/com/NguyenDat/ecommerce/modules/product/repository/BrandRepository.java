@@ -23,5 +23,7 @@ public interface BrandRepository extends JpaRepository<Brand, Long> {
 
     Optional<Brand> findByIdAndDeletedFalse(Long id);
 
+    Optional<Brand> findByIdAndDeletedFalseAndActiveTrue(Long id);
+
     Optional<Brand> findByNameAndDeletedFalse(String name);
 }

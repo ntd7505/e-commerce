@@ -1,5 +1,7 @@
 package com.NguyenDat.ecommerce.modules.product.repository;
 
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -10,4 +12,8 @@ public interface ProductVariantRepository extends JpaRepository<ProductVariant, 
     boolean existsBySku(String sku);
 
     boolean existsBySkuAndIdNot(String sku, Long id);
+
+    Optional<ProductVariant> findByIdAndDeletedFalse(Long id);
+
+    Optional<ProductVariant> findByIdAndDeletedFalseAndProductDeletedFalse(Long id);
 }

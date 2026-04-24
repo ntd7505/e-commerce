@@ -1,7 +1,6 @@
 package com.NguyenDat.ecommerce.modules.product.dto.request;
 
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 import lombok.*;
@@ -13,21 +12,20 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ProductMediaRequest {
-
-    @NotBlank(message = "FIELD_REQUIRED")
+public class ProductMediaUpdateRequest {
     @Size(max = 500)
     String url;
 
-    @NotBlank(message = "FIELD_REQUIRED")
     @Size(max = 50)
     String mediaType;
 
-    boolean thumbnail;
+    Boolean thumbnail;
 
-    @Min(value = 0)
-    int sortOrder;
+    @Min(0)
+    Integer sortOrder;
 
     @Size(max = 255)
     String altText;
+
+    Boolean active;
 }

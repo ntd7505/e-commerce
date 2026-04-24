@@ -31,6 +31,11 @@ public enum ResponseCode {
     PRODUCTS_FETCHED(3004, "Products fetched successfully"),
     PRODUCT_VARIANT_FETCHED(3005, "Product variant fetched successfully"),
     PRODUCT_VARIANT_DELETED(3006, "Product variant deleted successfully"),
+    PRODUCT_MEDIA_CREATED(3007, "Product media created successfully"),
+    PRODUCT_MEDIA_FETCHED(3008, "Product media fetched successfully"),
+    PRODUCT_MEDIA_UPDATED(3009, "Product media updated successfully"),
+    PRODUCT_MEDIA_DELETED(3010, "Product media deleted successfully"),
+    PRODUCT_MEDIA_REORDERED(3011, "Product media reordered successfully"),
 
     // 4000 - Role
     ROLE_CREATED(4000, "Role created successfully"),

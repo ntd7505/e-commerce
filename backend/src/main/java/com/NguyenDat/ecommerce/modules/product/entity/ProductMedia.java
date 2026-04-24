@@ -40,6 +40,9 @@ public class ProductMedia {
     @Column(nullable = false)
     boolean active = true;
 
+    @Column(nullable = false)
+    Boolean deleted = false;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id", nullable = false)
     Product product;

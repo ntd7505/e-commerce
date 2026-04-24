@@ -9,9 +9,8 @@ import org.springframework.web.bind.annotation.*;
 import com.NguyenDat.ecommerce.common.constant.ApiConstant;
 import com.NguyenDat.ecommerce.common.constant.ResponseCode;
 import com.NguyenDat.ecommerce.common.dto.response.ApiResponse;
-import com.NguyenDat.ecommerce.modules.product.dto.request.ProductCreateRequest;
-import com.NguyenDat.ecommerce.modules.product.dto.request.ProductUpdateRequest;
-import com.NguyenDat.ecommerce.modules.product.dto.request.ProductVariantUpdateRequest;
+import com.NguyenDat.ecommerce.modules.product.dto.request.*;
+import com.NguyenDat.ecommerce.modules.product.dto.response.ProductMediaResponse;
 import com.NguyenDat.ecommerce.modules.product.dto.response.ProductResponse;
 import com.NguyenDat.ecommerce.modules.product.dto.response.ProductVariantResponse;
 import com.NguyenDat.ecommerce.modules.product.service.ProductService;
@@ -65,5 +64,28 @@ public class AdminProductController {
     public ApiResponse<Void> deleteProductVariantsById(@PathVariable Long id) {
         productService.deleteProductVariantsById(id);
         return ApiResponse.of(ResponseCode.PRODUCT_VARIANT_DELETED, null);
+    }
+
+    // media
+
+    @PostMapping("/products/{productId}/media")
+    public ApiResponse<ProductMediaResponse> createProductMedia(
+            @PathVariable Long productId, @RequestBody @Valid ProductMediaRequest productMediaRequest) {
+        return ApiResponse.of(
+                ResponseCode.PRODUCT_MEDIA_CREATED, productService.createProductMedia(productId, productMediaRequest));
+    }
+
+    @PutMapping("/products/media/{mediaId}")
+    public ApiResponse<ProductMediaResponse> updateProductMediaById(
+            @PathVariable Long mediaId, @RequestBody @Valid ProductMediaUpdateRequest productMediaUpdateRequest) {
+        return ApiResponse.of(
+                ResponseCode.PRODUCT_MEDIA_UPDATED,
+                productService.updateProductMediaById(mediaId, productMediaUpdateRequest));
+    }
+
+    @DeleteMapping("/products/media/{mediaId}")
+    public ApiResponse<Void> deleteProductMediaById(@PathVariable Long mediaId) {
+        productService.deleteProductMediaById(mediaId);
+        return ApiResponse.of(ResponseCode.PRODUCT_MEDIA_DELETED, null);
     }
 }

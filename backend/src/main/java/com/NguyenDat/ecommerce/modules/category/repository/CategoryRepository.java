@@ -29,5 +29,7 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 
     Optional<Category> findByIdAndDeletedFalse(Long id);
 
+    Optional<Category> findByIdAndDeletedFalseAndActiveTrue(Long id);
+
     boolean existsByParentCategoryIdAndDeletedFalse(Long id);
 }

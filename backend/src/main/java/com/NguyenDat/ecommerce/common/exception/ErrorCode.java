@@ -61,6 +61,13 @@ public enum ErrorCode {
     PRODUCT_VARIANT_INACTIVE(3602, "Product variant is inactive", HttpStatus.FORBIDDEN),
     PRODUCT_VARIANT_SKU_EXISTED(3603, "Product variant SKU already existed", HttpStatus.BAD_REQUEST),
 
+    // product media
+    PRODUCT_MEDIA_NOT_FOUND(3700, "Product media not found", HttpStatus.NOT_FOUND),
+    PRODUCT_MEDIA_DELETED(3701, "Product media has been deleted", HttpStatus.NOT_FOUND),
+    PRODUCT_MEDIA_INACTIVE(3702, "Product media is inactive", HttpStatus.FORBIDDEN),
+    PRODUCT_MEDIA_THUMBNAIL_REQUIRED(3703, "Product must have a thumbnail media", HttpStatus.BAD_REQUEST),
+    PRODUCT_MEDIA_EXISTED(3704, "Product media already existed", HttpStatus.BAD_REQUEST),
+
     // brand
     BRAND_EXISTED(4000, "Brand already existed", HttpStatus.BAD_REQUEST),
     BRAND_NOT_FOUND(4001, "Brand not found", HttpStatus.NOT_FOUND),

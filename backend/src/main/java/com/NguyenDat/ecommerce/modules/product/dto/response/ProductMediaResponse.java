@@ -13,7 +13,7 @@ public class ProductMediaResponse {
     private Long id;
     String url;
     String mediaType;
-    boolean isThumbnail;
+    boolean thumbnail;
     int sortOrder;
     String altText;
     boolean active = true;

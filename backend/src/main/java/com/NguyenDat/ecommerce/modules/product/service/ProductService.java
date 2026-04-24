@@ -12,6 +12,7 @@ import com.NguyenDat.ecommerce.common.exception.ErrorCode;
 import com.NguyenDat.ecommerce.modules.category.entity.Category;
 import com.NguyenDat.ecommerce.modules.category.repository.CategoryRepository;
 import com.NguyenDat.ecommerce.modules.product.dto.request.*;
+import com.NguyenDat.ecommerce.modules.product.dto.response.ProductMediaResponse;
 import com.NguyenDat.ecommerce.modules.product.dto.response.ProductResponse;
 import com.NguyenDat.ecommerce.modules.product.dto.response.ProductVariantResponse;
 import com.NguyenDat.ecommerce.modules.product.entity.Brand;
@@ -22,6 +23,7 @@ import com.NguyenDat.ecommerce.modules.product.mapper.ProductMapper;
 import com.NguyenDat.ecommerce.modules.product.mapper.ProductMediaMapper;
 import com.NguyenDat.ecommerce.modules.product.mapper.ProductVariantMapper;
 import com.NguyenDat.ecommerce.modules.product.repository.BrandRepository;
+import com.NguyenDat.ecommerce.modules.product.repository.ProductMediaRepository;
 import com.NguyenDat.ecommerce.modules.product.repository.ProductRepository;
 import com.NguyenDat.ecommerce.modules.product.repository.ProductVariantRepository;
 import com.NguyenDat.ecommerce.util.SkuUtil;
@@ -40,25 +42,20 @@ public class ProductService {
     BrandRepository brandRepository;
     ProductRepository productRepository;
     ProductVariantRepository productVariantRepository;
+    ProductMediaRepository productMediaRepository;
     ProductMapper productMapper;
     ProductVariantMapper productVariantMapper;
     ProductMediaMapper productMediaMapper;
 
     public ProductResponse createProduct(ProductCreateRequest productCreateRequest) {
         Brand brand = brandRepository
-                .findById(productCreateRequest.getBrandId())
+                .findByIdAndDeletedFalse(productCreateRequest.getBrandId())
                 .orElseThrow(() -> new AppException(ErrorCode.BRAND_NOT_FOUND));
         Category category = categoryRepository
-                .findById(productCreateRequest.getCategoryId())
+                .findByIdAndDeletedFalse(productCreateRequest.getCategoryId())
                 .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
-        if (category.isDeleted()) {
-            throw new AppException(ErrorCode.CATEGORY_DELETED);
-        }
         if (!category.isActive()) {
             throw new AppException(ErrorCode.CATEGORY_INACTIVE);
-        }
-        if (brand.isDeleted()) {
-            throw new AppException(ErrorCode.BRAND_DELETED);
         }
         if (!brand.isActive()) {
             throw new AppException(ErrorCode.BRAND_INACTIVE);
@@ -96,40 +93,29 @@ public class ProductService {
     }
 
     public List<ProductResponse> getAllProducts() {
-        return productRepository.findAll().stream()
-                .filter(product -> !product.isDeleted())
+        return productRepository.findAllByDeletedFalse().stream()
                 .map(this::toProductResponse)
                 .toList();
     }
 
     public ProductResponse getProductById(Long id) {
-        Product product =
-                productRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
-        if (product.isDeleted()) {
-            throw new AppException(ErrorCode.PRODUCT_DELETED);
-        }
+        Product product = productRepository
+                .findByIdAndDeletedFalse(id)
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
         return toProductResponse(product);
     }
 
     public ProductVariantResponse getVariantById(Long id) {
         ProductVariant productVariant = productVariantRepository
-                .findById(id)
+                .findByIdAndDeletedFalseAndProductDeletedFalse(id)
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_VARIANT_NOT_FOUND));
-        if (productVariant.getProduct().isDeleted()) {
-            throw new AppException(ErrorCode.PRODUCT_DELETED);
-        }
-        if (productVariant.isDeleted()) {
-            throw new AppException(ErrorCode.PRODUCT_VARIANT_DELETED);
-        }
         return productVariantMapper.toProductVariantResponse(productVariant);
     }
 
     public ProductResponse updateProductById(@Valid ProductUpdateRequest productUpdateRequest, Long id) {
-        Product product =
-                productRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
-        if (product.isDeleted()) {
-            throw new AppException(ErrorCode.PRODUCT_DELETED);
-        }
+        Product product = productRepository
+                .findByIdAndDeletedFalse(id)
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
         String oldName = product.getName();
         productMapper.updateProduct(product, productUpdateRequest);
         if (productUpdateRequest.getName() != null
@@ -139,11 +125,8 @@ public class ProductService {
         }
         if (productUpdateRequest.getBrandId() != null) {
             Brand brand = brandRepository
-                    .findById(productUpdateRequest.getBrandId())
+                    .findByIdAndDeletedFalse(productUpdateRequest.getBrandId())
                     .orElseThrow(() -> new AppException(ErrorCode.BRAND_NOT_FOUND));
-            if (brand.isDeleted()) {
-                throw new AppException(ErrorCode.BRAND_DELETED);
-            }
             if (!brand.isActive()) {
                 throw new AppException(ErrorCode.BRAND_INACTIVE);
             }
@@ -151,11 +134,8 @@ public class ProductService {
         }
         if (productUpdateRequest.getCategoryId() != null) {
             Category category = categoryRepository
-                    .findById(productUpdateRequest.getCategoryId())
+                    .findByIdAndDeletedFalse(productUpdateRequest.getCategoryId())
                     .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
-            if (category.isDeleted()) {
-                throw new AppException(ErrorCode.CATEGORY_DELETED);
-            }
             if (!category.isActive()) {
                 throw new AppException(ErrorCode.CATEGORY_INACTIVE);
             }
@@ -168,14 +148,8 @@ public class ProductService {
     public ProductVariantResponse updateVariantById(
             @Valid ProductVariantUpdateRequest productVariantUpdateRequest, Long id) {
         ProductVariant productVariant = productVariantRepository
-                .findById(id)
+                .findByIdAndDeletedFalseAndProductDeletedFalse(id)
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_VARIANT_NOT_FOUND));
-        if (productVariant.getProduct().isDeleted()) {
-            throw new AppException(ErrorCode.PRODUCT_DELETED);
-        }
-        if (productVariant.isDeleted()) {
-            throw new AppException(ErrorCode.PRODUCT_VARIANT_DELETED);
-        }
         String oldName = productVariant.getVariantName();
         double finalPrice = productVariantUpdateRequest.getPrice() != null
                 ? productVariantUpdateRequest.getPrice()
@@ -199,14 +173,8 @@ public class ProductService {
 
     public void deleteProductVariantsById(Long id) {
         ProductVariant productVariant = productVariantRepository
-                .findById(id)
+                .findByIdAndDeletedFalseAndProductDeletedFalse(id)
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_VARIANT_NOT_FOUND));
-        if (productVariant.isDeleted()) {
-            throw new AppException(ErrorCode.PRODUCT_VARIANT_DELETED);
-        }
-        if (productVariant.getProduct().isDeleted()) {
-            throw new AppException(ErrorCode.PRODUCT_DELETED);
-        }
         productVariant.setDeleted(true);
         productVariant.setActive(false);
 
@@ -223,5 +191,50 @@ public class ProductService {
                 .map(productMediaMapper::toProductMediaResponse)
                 .toList());
         return response;
+    }
+
+    public ProductMediaResponse createProductMedia(Long productId, ProductMediaRequest productMediaRequest) {
+        Product product = productRepository
+                .findByIdAndDeletedFalse(productId)
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+
+        if (productMediaRepository.existsByProductIdAndUrlAndDeletedFalse(productId, productMediaRequest.getUrl())) {
+            throw new AppException(ErrorCode.PRODUCT_MEDIA_EXISTED);
+        }
+
+        ProductMedia productMedia = productMediaMapper.toProductMedia(productMediaRequest);
+        productMedia.setProduct(product);
+
+        ProductMedia savedProductMedia = productMediaRepository.save(productMedia);
+        return productMediaMapper.toProductMediaResponse(savedProductMedia);
+    }
+
+    public ProductMediaResponse updateProductMediaById(
+            Long mediaId, @Valid ProductMediaUpdateRequest productMediaUpdateRequest) {
+        ProductMedia productMedia = productMediaRepository
+                .findByIdAndDeletedFalse(mediaId)
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_MEDIA_NOT_FOUND));
+
+        String newUrl = productMediaUpdateRequest.getUrl() == null
+                ? null
+                : productMediaUpdateRequest.getUrl().trim();
+        if (newUrl != null
+                && !newUrl.equals(productMedia.getUrl())
+                && productMediaRepository.existsByProductIdAndUrlAndDeletedFalseAndIdNot(
+                        productMedia.getProduct().getId(), newUrl, mediaId)) {
+            throw new AppException(ErrorCode.PRODUCT_MEDIA_EXISTED);
+        }
+
+        productMediaMapper.updateProductMedia(productMedia, productMediaUpdateRequest);
+        return productMediaMapper.toProductMediaResponse(productMediaRepository.save(productMedia));
+    }
+
+    public void deleteProductMediaById(Long mediaId) {
+        ProductMedia productMedia = productMediaRepository
+                .findByIdAndDeletedFalse(mediaId)
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_MEDIA_NOT_FOUND));
+        productMedia.setDeleted(true);
+        productMedia.setActive(false);
+        productMediaRepository.save(productMedia);
     }
 }

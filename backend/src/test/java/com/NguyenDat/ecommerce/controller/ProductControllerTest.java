@@ -31,6 +31,8 @@ import com.NguyenDat.ecommerce.common.exception.ErrorCode;
 import com.NguyenDat.ecommerce.modules.category.dto.CategorySummaryResponse;
 import com.NguyenDat.ecommerce.modules.product.controller.admin.AdminProductController;
 import com.NguyenDat.ecommerce.modules.product.dto.request.ProductCreateRequest;
+import com.NguyenDat.ecommerce.modules.product.dto.request.ProductMediaRequest;
+import com.NguyenDat.ecommerce.modules.product.dto.request.ProductMediaUpdateRequest;
 import com.NguyenDat.ecommerce.modules.product.dto.request.ProductUpdateRequest;
 import com.NguyenDat.ecommerce.modules.product.dto.request.ProductVariantRequest;
 import com.NguyenDat.ecommerce.modules.product.dto.request.ProductVariantUpdateRequest;
@@ -58,10 +60,13 @@ public class ProductControllerTest {
     ProductService productService;
 
     ProductCreateRequest productCreateRequest;
+    ProductMediaRequest productMediaRequest;
+    ProductMediaUpdateRequest productMediaUpdateRequest;
     ProductUpdateRequest productUpdateRequest;
     ProductVariantUpdateRequest productVariantUpdateRequest;
     ProductResponse productResponse;
     ProductVariantResponse productVariantResponse;
+    ProductMediaResponse productMediaResponse;
 
     @BeforeEach
     void setUp() {
@@ -80,6 +85,22 @@ public class ProductControllerTest {
                         .currency("VND")
                         .build()))
                 .media(null)
+                .build();
+
+        productMediaRequest = ProductMediaRequest.builder()
+                .url("https://cdn.test/product.jpg")
+                .mediaType("image")
+                .sortOrder(0)
+                .altText("Product image")
+                .build();
+
+        productMediaUpdateRequest = ProductMediaUpdateRequest.builder()
+                .url("https://cdn.test/product-updated.jpg")
+                .mediaType("image")
+                .thumbnail(false)
+                .sortOrder(1)
+                .altText("Product image updated")
+                .active(true)
                 .build();
 
         productUpdateRequest = ProductUpdateRequest.builder()
@@ -111,11 +132,11 @@ public class ProductControllerTest {
                 .active(true)
                 .build();
 
-        ProductMediaResponse productMediaResponse = ProductMediaResponse.builder()
+        productMediaResponse = ProductMediaResponse.builder()
                 .id(200L)
                 .url("https://cdn.test/product.jpg")
                 .mediaType("image")
-                .isThumbnail(true)
+                .thumbnail(true)
                 .sortOrder(0)
                 .altText("Product image")
                 .active(true)
@@ -308,5 +329,51 @@ public class ProductControllerTest {
                 .andExpect(jsonPath("$.message").value(ErrorCode.PRODUCT_VARIANT_NOT_FOUND.getMessage()));
 
         verify(productService).deleteProductVariantsById(100L);
+    }
+
+    @Test
+    void createProductMedia_shouldReturnCreatedResponse_whenRequestIsValid() throws Exception {
+        when(productService.createProductMedia(eq(10L), any(ProductMediaRequest.class)))
+                .thenReturn(productMediaResponse);
+
+        mockMvc.perform(post("/api/v1/admin/products/{productId}/media", 10L)
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(productMediaRequest)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(ResponseCode.PRODUCT_MEDIA_CREATED.getCode()))
+                .andExpect(jsonPath("$.message").value(ResponseCode.PRODUCT_MEDIA_CREATED.getMessage()))
+                .andExpect(jsonPath("$.data.id").value(200))
+                .andExpect(jsonPath("$.data.url").value("https://cdn.test/product.jpg"));
+
+        verify(productService).createProductMedia(eq(10L), any(ProductMediaRequest.class));
+    }
+
+    @Test
+    void updateProductMediaById_shouldReturnUpdatedResponse_whenRequestIsValid() throws Exception {
+        when(productService.updateProductMediaById(eq(200L), any(ProductMediaUpdateRequest.class)))
+                .thenReturn(productMediaResponse);
+
+        mockMvc.perform(put("/api/v1/admin/products/media/{mediaId}", 200L)
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(productMediaUpdateRequest)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(ResponseCode.PRODUCT_MEDIA_UPDATED.getCode()))
+                .andExpect(jsonPath("$.message").value(ResponseCode.PRODUCT_MEDIA_UPDATED.getMessage()))
+                .andExpect(jsonPath("$.data.id").value(200))
+                .andExpect(jsonPath("$.data.url").value("https://cdn.test/product.jpg"));
+
+        verify(productService).updateProductMediaById(eq(200L), any(ProductMediaUpdateRequest.class));
+    }
+
+    @Test
+    void deleteProductMediaById_shouldReturnDeletedResponse_whenMediaExists() throws Exception {
+        doNothing().when(productService).deleteProductMediaById(200L);
+
+        mockMvc.perform(delete("/api/v1/admin/products/media/{mediaId}", 200L))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(ResponseCode.PRODUCT_MEDIA_DELETED.getCode()))
+                .andExpect(jsonPath("$.message").value(ResponseCode.PRODUCT_MEDIA_DELETED.getMessage()));
+
+        verify(productService).deleteProductMediaById(200L);
     }
 }
