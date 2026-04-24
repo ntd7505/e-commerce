@@ -1,6 +1,7 @@
 package com.NguyenDat.ecommerce.modules.product.service;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import jakarta.validation.Valid;
@@ -188,6 +189,8 @@ public class ProductService {
                 .map(productVariantMapper::toProductVariantResponse)
                 .toList());
         response.setMedia(product.getMedia().stream()
+                .filter(media -> !media.isDeleted())
+                .sorted(Comparator.comparingInt(ProductMedia::getSortOrder))
                 .map(productMediaMapper::toProductMediaResponse)
                 .toList());
         return response;
@@ -212,7 +215,7 @@ public class ProductService {
     public ProductMediaResponse updateProductMediaById(
             Long mediaId, @Valid ProductMediaUpdateRequest productMediaUpdateRequest) {
         ProductMedia productMedia = productMediaRepository
-                .findByIdAndDeletedFalse(mediaId)
+                .findByIdAndDeletedFalseAndProductDeletedFalse(mediaId)
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_MEDIA_NOT_FOUND));
 
         String newUrl = productMediaUpdateRequest.getUrl() == null

@@ -13,5 +13,7 @@ public interface ProductMediaRepository extends JpaRepository<ProductMedia, Long
 
     Optional<ProductMedia> findByIdAndDeletedFalse(Long id);
 
+    Optional<ProductMedia> findByIdAndDeletedFalseAndProductDeletedFalse(Long id);
+
     boolean existsByProductIdAndUrlAndDeletedFalseAndIdNot(Long productId, String url, Long id);
 }

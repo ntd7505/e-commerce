@@ -424,7 +424,8 @@ public class ProductServiceTest {
 
     @Test
     void updateProductMediaById_shouldReturnMediaResponse_whenRequestIsValid() {
-        when(productMediaRepository.findByIdAndDeletedFalse(200L)).thenReturn(Optional.of(productMedia));
+        when(productMediaRepository.findByIdAndDeletedFalseAndProductDeletedFalse(200L))
+                .thenReturn(Optional.of(productMedia));
         when(productMediaRepository.existsByProductIdAndUrlAndDeletedFalseAndIdNot(
                         10L, productMediaUpdateRequest.getUrl(), 200L))
                 .thenReturn(false);
@@ -456,7 +457,7 @@ public class ProductServiceTest {
 
         productService.deleteProductMediaById(200L);
 
-        assertTrue(productMedia.getDeleted());
+        assertTrue(productMedia.isDeleted());
         assertFalse(productMedia.isActive());
         verify(productMediaRepository).save(productMedia);
     }

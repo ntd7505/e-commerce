@@ -41,7 +41,7 @@ public class ProductMedia {
     boolean active = true;
 
     @Column(nullable = false)
-    Boolean deleted = false;
+    boolean deleted = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id", nullable = false)
