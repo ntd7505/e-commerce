@@ -295,8 +295,8 @@ public class ProductControllerTest {
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(productVariantUpdateRequest)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").value(ResponseCode.PRODUCT_UPDATED.getCode()))
-                .andExpect(jsonPath("$.message").value(ResponseCode.PRODUCT_UPDATED.getMessage()))
+                .andExpect(jsonPath("$.code").value(ResponseCode.PRODUCT_VARIANT_UPDATED.getCode()))
+                .andExpect(jsonPath("$.message").value(ResponseCode.PRODUCT_VARIANT_UPDATED.getMessage()))
                 .andExpect(jsonPath("$.data.id").value(100))
                 .andExpect(jsonPath("$.data.variantName").value("Den - M"));
 

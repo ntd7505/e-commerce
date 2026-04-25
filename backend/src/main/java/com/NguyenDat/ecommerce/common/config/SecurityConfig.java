@@ -28,6 +28,7 @@ public class SecurityConfig {
     private final String[] PUBLIC_ENDPOINT = {
         AUTH_PREFIX + "/login", AUTH_PREFIX + "/introspect",
     };
+    private final String[] SWAGGER_ENDPOINTS = {"/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html"};
 
     private static final String ADMIN_PREFIX = ApiConstant.ADMIN_PREFIX;
     private static final String AUTH_PREFIX = "/auth";
@@ -38,6 +39,8 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.authorizeHttpRequests(request -> request.requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINT)
+                .permitAll()
+                .requestMatchers(SWAGGER_ENDPOINTS)
                 .permitAll()
                 .requestMatchers(ADMIN_PREFIX + "/**")
                 .hasRole("ADMIN")

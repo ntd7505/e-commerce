@@ -272,7 +272,7 @@ public class ProductService {
 
     public void deleteProductMediaById(Long mediaId) {
         ProductMedia productMedia = productMediaRepository
-                .findByIdAndDeletedFalse(mediaId)
+                .findByIdAndDeletedFalseAndProductDeletedFalse(mediaId)
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_MEDIA_NOT_FOUND));
         productMedia.setDeleted(true);
         productMedia.setActive(false);

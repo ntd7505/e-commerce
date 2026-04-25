@@ -452,7 +452,8 @@ public class ProductServiceTest {
 
     @Test
     void deleteProductMediaById_shouldMarkMediaAsDeleted_whenMediaExists() {
-        when(productMediaRepository.findByIdAndDeletedFalse(200L)).thenReturn(Optional.of(productMedia));
+        when(productMediaRepository.findByIdAndDeletedFalseAndProductDeletedFalse(200L))
+                .thenReturn(Optional.of(productMedia));
         when(productMediaRepository.save(productMedia)).thenReturn(productMedia);
 
         productService.deleteProductMediaById(200L);
