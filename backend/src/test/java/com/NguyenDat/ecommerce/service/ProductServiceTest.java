@@ -368,6 +368,67 @@ public class ProductServiceTest {
     }
 
     @Test
+    void addNewProductVariants_shouldReturnVariantResponse_whenRequestIsValid() {
+        ProductVariantRequest productVariantRequest = ProductVariantRequest.builder()
+                .variantName("Den - XL")
+                .stockQuantity(8)
+                .price(380000)
+                .salePrice(320000)
+                .currency("VND")
+                .build();
+        ProductVariant newProductVariant = new ProductVariant();
+        newProductVariant.setVariantName("Den - XL");
+        newProductVariant.setPrice(380000);
+        newProductVariant.setSalePrice(320000);
+        newProductVariant.setCurrency("VND");
+        when(productRepository.findByIdAndDeletedFalse(10L)).thenReturn(Optional.of(product));
+        when(productVariantRepository.existsBySku("AO-HOODIE-DEN-XL")).thenReturn(false);
+        when(productVariantMapper.toProductVariant(productVariantRequest)).thenReturn(newProductVariant);
+        when(productVariantRepository.save(newProductVariant)).thenReturn(newProductVariant);
+        when(productVariantMapper.toProductVariantResponse(newProductVariant)).thenReturn(productVariantResponse);
+
+        ProductVariantResponse result = productService.addNewProductVariants(10L, productVariantRequest);
+
+        assertEquals("Den - M", result.getVariantName());
+        assertEquals("AO-HOODIE-DEN-XL", newProductVariant.getSku());
+        assertEquals(product, newProductVariant.getProduct());
+        verify(productVariantRepository).save(newProductVariant);
+    }
+
+    @Test
+    void addNewProductVariants_shouldThrowException_whenSalePriceIsGreaterThanPrice() {
+        ProductVariantRequest productVariantRequest = ProductVariantRequest.builder()
+                .variantName("Den - XL")
+                .stockQuantity(8)
+                .price(300000)
+                .salePrice(320000)
+                .currency("VND")
+                .build();
+        when(productRepository.findByIdAndDeletedFalse(10L)).thenReturn(Optional.of(product));
+
+        AppException exception = assertThrows(
+                AppException.class, () -> productService.addNewProductVariants(10L, productVariantRequest));
+
+        assertEquals(ErrorCode.PRICE_MUST_BE_GREATER_THAN_OR_EQUAL_TO_SALE_PRICE, exception.getErrorCode());
+        verify(productVariantRepository, never()).save(any());
+    }
+
+    @Test
+    void updateProductStatus_shouldToggleProductActive_whenProductExists() {
+        when(productRepository.findByIdAndDeletedFalse(10L)).thenReturn(Optional.of(product));
+        when(productRepository.save(product)).thenReturn(product);
+        when(productMapper.toProductResponse(product)).thenReturn(productResponse);
+        when(productVariantMapper.toProductVariantResponse(productVariant)).thenReturn(productVariantResponse);
+        when(productMediaMapper.toProductMediaResponse(productMedia)).thenReturn(productMediaResponse);
+
+        ProductResponse result = productService.updateProductStatus(10L);
+
+        assertEquals("Ao Hoodie", result.getName());
+        assertFalse(product.isActive());
+        verify(productRepository).save(product);
+    }
+
+    @Test
     void updateVariantById_shouldReturnVariantResponse_whenRequestIsValid() {
         when(productVariantRepository.findByIdAndDeletedFalseAndProductDeletedFalse(100L))
                 .thenReturn(Optional.of(productVariant));
@@ -390,6 +451,20 @@ public class ProductServiceTest {
 
         assertEquals("Den - M", result.getVariantName());
         assertEquals("Den - L", productVariant.getVariantName());
+        verify(productVariantRepository).save(productVariant);
+    }
+
+    @Test
+    void updateProductVariantStatus_shouldToggleVariantActive_whenVariantExists() {
+        when(productVariantRepository.findByIdAndDeletedFalseAndProductDeletedFalse(100L))
+                .thenReturn(Optional.of(productVariant));
+        when(productVariantRepository.save(productVariant)).thenReturn(productVariant);
+        when(productVariantMapper.toProductVariantResponse(productVariant)).thenReturn(productVariantResponse);
+
+        ProductVariantResponse result = productService.updateProductVariantStatus(100L);
+
+        assertEquals("Den - M", result.getVariantName());
+        assertFalse(productVariant.isActive());
         verify(productVariantRepository).save(productVariant);
     }
 

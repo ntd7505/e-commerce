@@ -8,10 +8,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -270,6 +267,30 @@ public class ProductControllerTest {
     }
 
     @Test
+    void addNewProductVariants_shouldReturnCreatedResponse_whenRequestIsValid() throws Exception {
+        ProductVariantRequest productVariantRequest = ProductVariantRequest.builder()
+                .variantName("Den - XL")
+                .stockQuantity(8)
+                .price(380000)
+                .salePrice(320000)
+                .currency("VND")
+                .build();
+        when(productService.addNewProductVariants(eq(10L), any(ProductVariantRequest.class)))
+                .thenReturn(productVariantResponse);
+
+        mockMvc.perform(post("/api/v1/admin/products/{productId}/variants", 10L)
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(productVariantRequest)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(ResponseCode.PRODUCT_VARIANT_CREATED.getCode()))
+                .andExpect(jsonPath("$.message").value(ResponseCode.PRODUCT_VARIANT_CREATED.getMessage()))
+                .andExpect(jsonPath("$.data.id").value(100))
+                .andExpect(jsonPath("$.data.variantName").value("Den - M"));
+
+        verify(productService).addNewProductVariants(eq(10L), any(ProductVariantRequest.class));
+    }
+
+    @Test
     void updateProductById_shouldReturnUpdatedResponse_whenRequestIsValid() throws Exception {
         when(productService.updateProductById(any(ProductUpdateRequest.class), eq(10L)))
                 .thenReturn(productResponse);
@@ -287,6 +308,19 @@ public class ProductControllerTest {
     }
 
     @Test
+    void updateProductStatus_shouldReturnStatusUpdatedResponse_whenProductExists() throws Exception {
+        when(productService.updateProductStatus(10L)).thenReturn(productResponse);
+
+        mockMvc.perform(patch("/api/v1/admin/products/{id}/status", 10L))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(ResponseCode.PRODUCT_STATUS_UPDATED.getCode()))
+                .andExpect(jsonPath("$.message").value(ResponseCode.PRODUCT_STATUS_UPDATED.getMessage()))
+                .andExpect(jsonPath("$.data.id").value(10));
+
+        verify(productService).updateProductStatus(10L);
+    }
+
+    @Test
     void updateVariantById_shouldReturnUpdatedResponse_whenRequestIsValid() throws Exception {
         when(productService.updateVariantById(any(ProductVariantUpdateRequest.class), eq(100L)))
                 .thenReturn(productVariantResponse);
@@ -301,6 +335,19 @@ public class ProductControllerTest {
                 .andExpect(jsonPath("$.data.variantName").value("Den - M"));
 
         verify(productService).updateVariantById(any(ProductVariantUpdateRequest.class), eq(100L));
+    }
+
+    @Test
+    void updateProductVariantStatus_shouldReturnStatusUpdatedResponse_whenVariantExists() throws Exception {
+        when(productService.updateProductVariantStatus(100L)).thenReturn(productVariantResponse);
+
+        mockMvc.perform(patch("/api/v1/admin/products/variants/{variantId}/status", 100L))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(ResponseCode.PRODUCT_VARIANT_STATUS_UPDATED.getCode()))
+                .andExpect(jsonPath("$.message").value(ResponseCode.PRODUCT_VARIANT_STATUS_UPDATED.getMessage()))
+                .andExpect(jsonPath("$.data.id").value(100));
+
+        verify(productService).updateProductVariantStatus(100L);
     }
 
     @Test
