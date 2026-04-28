@@ -1,4 +1,6 @@
-package com.NguyenDat.ecommerce.modules.auth.dto.response;
+package com.NguyenDat.ecommerce.modules.auth.dto.request;
+
+import jakarta.validation.constraints.NotBlank;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -8,8 +10,7 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class AuthenticationResponse {
-    String accessToken;
+public class RefreshTokenRequest {
+    @NotBlank(message = "FIELD_REQUIRED")
     String refreshToken;
-    boolean authenticated;
 }

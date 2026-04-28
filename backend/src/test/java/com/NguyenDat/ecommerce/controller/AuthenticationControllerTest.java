@@ -20,6 +20,7 @@ import com.NguyenDat.ecommerce.common.exception.ErrorCode;
 import com.NguyenDat.ecommerce.modules.auth.controller.AuthenticationController;
 import com.NguyenDat.ecommerce.modules.auth.dto.request.AuthenticationRequest;
 import com.NguyenDat.ecommerce.modules.auth.dto.request.IntrospectRequest;
+import com.NguyenDat.ecommerce.modules.auth.dto.request.RefreshTokenRequest;
 import com.NguyenDat.ecommerce.modules.auth.dto.response.AuthenticationResponse;
 import com.NguyenDat.ecommerce.modules.auth.dto.response.IntrospectResponse;
 import com.NguyenDat.ecommerce.modules.auth.service.AuthenticationService;
@@ -45,6 +46,7 @@ public class AuthenticationControllerTest {
     AuthenticationResponse response;
     IntrospectRequest introspectRequest;
     IntrospectResponse introspectResponse;
+    RefreshTokenRequest refreshTokenRequest;
 
     @BeforeEach
     void setUp() {
@@ -54,13 +56,17 @@ public class AuthenticationControllerTest {
                 .build();
 
         response = AuthenticationResponse.builder()
-                .token("jwt-token")
+                .accessToken("access-token")
+                .refreshToken("refresh-token")
                 .authenticated(true)
                 .build();
 
         introspectRequest = IntrospectRequest.builder().token("token-test").build();
 
         introspectResponse = IntrospectResponse.builder().valid(true).build();
+
+        refreshTokenRequest =
+                RefreshTokenRequest.builder().refreshToken("refresh-token").build();
     }
 
     @Test
@@ -73,7 +79,8 @@ public class AuthenticationControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(ResponseCode.LOGIN_SUCCESS.getCode()))
                 .andExpect(jsonPath("$.message").value(ResponseCode.LOGIN_SUCCESS.getMessage()))
-                .andExpect(jsonPath("$.data.token").value("jwt-token"))
+                .andExpect(jsonPath("$.data.accessToken").value("access-token"))
+                .andExpect(jsonPath("$.data.refreshToken").value("refresh-token"))
                 .andExpect(jsonPath("$.data.authenticated").value(true));
 
         verify(authenticationService).authenticate(any(AuthenticationRequest.class));
@@ -174,6 +181,53 @@ public class AuthenticationControllerTest {
                 .andExpect(jsonPath("$.code").value(9998))
                 .andExpect(jsonPath("$.message").value("Invalid request data"));
         verify(authenticationService, never()).introspect(any(IntrospectRequest.class));
+    }
+
+    @Test
+    void refreshToken_shouldReturnSuccessResponse_whenRefreshTokenIsValid() throws Exception {
+        when(authenticationService.refreshToken(any(RefreshTokenRequest.class))).thenReturn(response);
+
+        mockMvc.perform(post("/auth/refresh")
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(refreshTokenRequest)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(ResponseCode.LOGIN_SUCCESS.getCode()))
+                .andExpect(jsonPath("$.message").value(ResponseCode.LOGIN_SUCCESS.getMessage()))
+                .andExpect(jsonPath("$.data.accessToken").value("access-token"))
+                .andExpect(jsonPath("$.data.refreshToken").value("refresh-token"))
+                .andExpect(jsonPath("$.data.authenticated").value(true));
+
+        verify(authenticationService).refreshToken(any(RefreshTokenRequest.class));
+    }
+
+    @Test
+    void refreshToken_shouldReturnErrorResponse_whenRefreshTokenIsBlacklisted() throws Exception {
+        when(authenticationService.refreshToken(any(RefreshTokenRequest.class)))
+                .thenThrow(new AppException(ErrorCode.TOKEN_BLACKLISTED));
+
+        mockMvc.perform(post("/auth/refresh")
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(refreshTokenRequest)))
+                .andExpect(
+                        status().is(ErrorCode.TOKEN_BLACKLISTED.getStatusCode().value()))
+                .andExpect(jsonPath("$.code").value(ErrorCode.TOKEN_BLACKLISTED.getCode()))
+                .andExpect(jsonPath("$.message").value(ErrorCode.TOKEN_BLACKLISTED.getMessage()));
+
+        verify(authenticationService).refreshToken(any(RefreshTokenRequest.class));
+    }
+
+    @Test
+    void refreshToken_shouldReturnBadRequest_whenRefreshTokenIsBlank() throws Exception {
+        refreshTokenRequest = RefreshTokenRequest.builder().refreshToken("").build();
+
+        mockMvc.perform(post("/auth/refresh")
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(refreshTokenRequest)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value(9998))
+                .andExpect(jsonPath("$.message").value("Invalid request data"));
+
+        verify(authenticationService, never()).refreshToken(any(RefreshTokenRequest.class));
     }
 
     @Test

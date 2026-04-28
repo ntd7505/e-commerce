@@ -2,9 +2,13 @@ package com.NguyenDat.ecommerce.modules.auth.service;
 
 import java.text.ParseException;
 import java.time.Instant;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.StringJoiner;
+import java.util.UUID;
+
+import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,8 +19,12 @@ import com.NguyenDat.ecommerce.common.exception.AppException;
 import com.NguyenDat.ecommerce.common.exception.ErrorCode;
 import com.NguyenDat.ecommerce.modules.auth.dto.request.AuthenticationRequest;
 import com.NguyenDat.ecommerce.modules.auth.dto.request.IntrospectRequest;
+import com.NguyenDat.ecommerce.modules.auth.dto.request.LogoutRequest;
+import com.NguyenDat.ecommerce.modules.auth.dto.request.RefreshTokenRequest;
 import com.NguyenDat.ecommerce.modules.auth.dto.response.AuthenticationResponse;
 import com.NguyenDat.ecommerce.modules.auth.dto.response.IntrospectResponse;
+import com.NguyenDat.ecommerce.modules.auth.entity.InvalidatedToken;
+import com.NguyenDat.ecommerce.modules.auth.repository.InvalidatedTokenRepository;
 import com.NguyenDat.ecommerce.modules.user.entity.User;
 import com.NguyenDat.ecommerce.modules.user.enums.Active;
 import com.NguyenDat.ecommerce.modules.user.repository.UserRepository;
@@ -39,6 +47,7 @@ import lombok.extern.slf4j.Slf4j;
 public class AuthenticationService {
     UserRepository userRepository;
     PasswordEncoder passwordEncoder;
+    InvalidatedTokenRepository invalidatedTokenRepository;
 
     @NonFinal
     @Value("${jwt.signerKey}")
@@ -60,6 +69,11 @@ public class AuthenticationService {
                 throw new AppException(ErrorCode.TOKEN_INVALID);
             }
 
+            String tokenId = signedJWT.getJWTClaimsSet().getJWTID();
+            if (invalidatedTokenRepository.existsById(tokenId)) {
+                throw new AppException(ErrorCode.TOKEN_BLACKLISTED);
+            }
+
             return IntrospectResponse.builder().valid(true).build();
         } catch (JOSEException | ParseException e) {
             throw new AppException(ErrorCode.TOKEN_INVALID);
@@ -78,19 +92,26 @@ public class AuthenticationService {
         }
         boolean matched = passwordEncoder.matches(request.getPassword(), user.getPassword());
         if (!matched) throw new AppException(ErrorCode.UNAUTHENTICATED);
-        var token = generateToken(user);
-        return AuthenticationResponse.builder().token(token).authenticated(true).build();
+        var accessToken = generateToken(user, 1, ChronoUnit.HOURS, "ACCESS");
+        var refreshToken = generateToken(user, 7, ChronoUnit.DAYS, "REFRESH");
+        return AuthenticationResponse.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .authenticated(true)
+                .build();
     }
 
-    private String generateToken(User user) {
+    private String generateToken(User user, long amount, ChronoUnit unit, String tokenType) {
         // jwt : header + payload + signature
         JWSHeader jwsHeader = new JWSHeader(JWSAlgorithm.HS512);
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
                 .subject(user.getEmail())
                 .issuer("NguyenDat.ecom")
                 .issueTime(new Date())
-                .expirationTime(new Date(Instant.now().plus(1, ChronoUnit.HOURS).toEpochMilli()))
+                .expirationTime(new Date(Instant.now().plus(amount, unit).toEpochMilli()))
+                .jwtID(UUID.randomUUID().toString())
                 .claim("scope", buildScope(user))
+                .claim("type", tokenType)
                 .build();
         // payload
         Payload payload = new Payload(jwtClaimsSet.toJSONObject());
@@ -116,5 +137,85 @@ public class AuthenticationService {
             });
         }
         return stringJoiner.toString();
+    }
+
+    public void logOut(@Valid LogoutRequest logoutRequest) {
+        try {
+            var token = logoutRequest.getToken();
+
+            JWSVerifier verifier = new MACVerifier(SIGNER_KEY.getBytes());
+            SignedJWT signedJWT = SignedJWT.parse(token);
+
+            Date expirationTime = signedJWT.getJWTClaimsSet().getExpirationTime();
+
+            boolean verified = signedJWT.verify(verifier);
+            boolean verifyResult = verified && expirationTime.after(new Date());
+
+            if (!verifyResult) {
+                throw new AppException(ErrorCode.TOKEN_INVALID);
+            }
+
+            String tokenId = signedJWT.getJWTClaimsSet().getJWTID();
+
+            invalidatedTokenRepository.save(InvalidatedToken.builder()
+                    .id(tokenId)
+                    .expiryTime(expirationTime
+                            .toInstant()
+                            .atZone(ZoneId.systemDefault())
+                            .toLocalDateTime())
+                    .build());
+
+        } catch (JOSEException | ParseException e) {
+            throw new AppException(ErrorCode.TOKEN_INVALID);
+        }
+    }
+
+    public AuthenticationResponse refreshToken(RefreshTokenRequest request) {
+        try {
+            SignedJWT signedJWT = SignedJWT.parse(request.getRefreshToken());
+
+            JWSVerifier verifier = new MACVerifier(SIGNER_KEY.getBytes());
+            Date expirationTime = signedJWT.getJWTClaimsSet().getExpirationTime();
+
+            boolean verified = signedJWT.verify(verifier);
+            boolean notExpired = expirationTime.after(new Date());
+
+            if (!verified || !notExpired) {
+                throw new AppException(ErrorCode.TOKEN_INVALID);
+            }
+            String tokenType = signedJWT.getJWTClaimsSet().getStringClaim("type");
+            if (!"REFRESH".equals(tokenType)) {
+                throw new AppException(ErrorCode.TOKEN_INVALID);
+            }
+            String tokenId = signedJWT.getJWTClaimsSet().getJWTID();
+            if (invalidatedTokenRepository.existsById(tokenId)) {
+                throw new AppException(ErrorCode.TOKEN_BLACKLISTED);
+            }
+
+            String email = signedJWT.getJWTClaimsSet().getSubject();
+            User user = userRepository
+                    .findByEmailAndDeletedFalse(email)
+                    .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+            if (user.getStatus() == Active.INACTIVE) {
+                throw new AppException(ErrorCode.USER_INACTIVE);
+            }
+
+            invalidatedTokenRepository.save(InvalidatedToken.builder()
+                    .id(tokenId)
+                    .expiryTime(expirationTime
+                            .toInstant()
+                            .atZone(ZoneId.systemDefault())
+                            .toLocalDateTime())
+                    .build());
+            return AuthenticationResponse.builder()
+                    .accessToken(generateToken(user, 1, ChronoUnit.HOURS, "ACCESS"))
+                    .refreshToken(generateToken(user, 7, ChronoUnit.DAYS, "REFRESH"))
+                    .authenticated(true)
+                    .build();
+
+        } catch (JOSEException | ParseException e) {
+            throw new AppException(ErrorCode.TOKEN_INVALID);
+        }
     }
 }

@@ -11,6 +11,8 @@ import com.NguyenDat.ecommerce.common.constant.ResponseCode;
 import com.NguyenDat.ecommerce.common.dto.response.ApiResponse;
 import com.NguyenDat.ecommerce.modules.auth.dto.request.AuthenticationRequest;
 import com.NguyenDat.ecommerce.modules.auth.dto.request.IntrospectRequest;
+import com.NguyenDat.ecommerce.modules.auth.dto.request.LogoutRequest;
+import com.NguyenDat.ecommerce.modules.auth.dto.request.RefreshTokenRequest;
 import com.NguyenDat.ecommerce.modules.auth.dto.response.AuthenticationResponse;
 import com.NguyenDat.ecommerce.modules.auth.dto.response.IntrospectResponse;
 import com.NguyenDat.ecommerce.modules.auth.service.AuthenticationService;
@@ -30,6 +32,17 @@ public class AuthenticationController {
     ApiResponse<AuthenticationResponse> login(@RequestBody @Valid AuthenticationRequest request) {
         AuthenticationResponse result = authenticationService.authenticate(request);
         return ApiResponse.of(ResponseCode.LOGIN_SUCCESS, result);
+    }
+
+    @PostMapping("/logout")
+    public ApiResponse<Void> logOut(@RequestBody @Valid LogoutRequest token) {
+        authenticationService.logOut(token);
+        return ApiResponse.of(ResponseCode.LOGOUT_SUCCESS, null);
+    }
+
+    @PostMapping("/refresh")
+    ApiResponse<AuthenticationResponse> refreshToken(@RequestBody @Valid RefreshTokenRequest request) {
+        return ApiResponse.of(ResponseCode.LOGIN_SUCCESS, authenticationService.refreshToken(request));
     }
 
     @PostMapping(value = "/introspect")

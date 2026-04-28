@@ -9,6 +9,7 @@ import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -19,8 +20,11 @@ import com.NguyenDat.ecommerce.common.exception.AppException;
 import com.NguyenDat.ecommerce.common.exception.ErrorCode;
 import com.NguyenDat.ecommerce.modules.auth.dto.request.AuthenticationRequest;
 import com.NguyenDat.ecommerce.modules.auth.dto.request.IntrospectRequest;
+import com.NguyenDat.ecommerce.modules.auth.dto.request.RefreshTokenRequest;
 import com.NguyenDat.ecommerce.modules.auth.dto.response.AuthenticationResponse;
 import com.NguyenDat.ecommerce.modules.auth.dto.response.IntrospectResponse;
+import com.NguyenDat.ecommerce.modules.auth.entity.InvalidatedToken;
+import com.NguyenDat.ecommerce.modules.auth.repository.InvalidatedTokenRepository;
 import com.NguyenDat.ecommerce.modules.auth.service.AuthenticationService;
 import com.NguyenDat.ecommerce.modules.permission.entity.Permission;
 import com.NguyenDat.ecommerce.modules.role.entity.Role;
@@ -41,11 +45,15 @@ public class AuthenticationServiceTest {
     @Mock
     PasswordEncoder passwordEncoder;
 
+    @Mock
+    InvalidatedTokenRepository invalidatedTokenRepository;
+
     @InjectMocks
     AuthenticationService authenticationService;
 
     AuthenticationRequest authenticationRequest;
     IntrospectRequest introspectRequest;
+    RefreshTokenRequest refreshTokenRequest;
     User user;
     Role role;
     Permission permission;
@@ -80,6 +88,9 @@ public class AuthenticationServiceTest {
 
         introspectRequest = IntrospectRequest.builder().token("dummy-token").build();
 
+        refreshTokenRequest =
+                RefreshTokenRequest.builder().refreshToken("dummy-token").build();
+
         ReflectionTestUtils.setField(
                 authenticationService,
                 "SIGNER_KEY",
@@ -92,7 +103,8 @@ public class AuthenticationServiceTest {
         when(passwordEncoder.matches("123456", user.getPassword())).thenReturn(true);
         AuthenticationResponse result = authenticationService.authenticate(authenticationRequest);
         assertNotNull(result);
-        assertNotNull(result.getToken());
+        assertNotNull(result.getAccessToken());
+        assertNotNull(result.getRefreshToken());
         assertTrue(result.isAuthenticated());
         verify(userRepository).findByEmail("admin@gmail.com");
     }
@@ -146,13 +158,15 @@ public class AuthenticationServiceTest {
         when(passwordEncoder.matches("123456", user.getPassword())).thenReturn(true);
 
         AuthenticationResponse authenticationResponse = authenticationService.authenticate(authenticationRequest);
-        introspectRequest.setToken(authenticationResponse.getToken());
+        introspectRequest.setToken(authenticationResponse.getAccessToken());
+        when(invalidatedTokenRepository.existsById(anyString())).thenReturn(false);
         IntrospectResponse result = authenticationService.introspect(introspectRequest);
 
         assertTrue(result.isValid());
-        assertNotNull(authenticationResponse.getToken());
+        assertNotNull(authenticationResponse.getAccessToken());
         verify(userRepository).findByEmail("admin@gmail.com");
         verify(passwordEncoder).matches("123456", user.getPassword());
+        verify(invalidatedTokenRepository).existsById(anyString());
     }
 
     @Test
@@ -161,5 +175,102 @@ public class AuthenticationServiceTest {
         AppException exception =
                 assertThrows(AppException.class, () -> authenticationService.introspect(introspectRequest));
         assertEquals(ErrorCode.TOKEN_INVALID, exception.getErrorCode());
+    }
+
+    @Test
+    void refreshToken_shouldReturnNewTokens_whenRefreshTokenIsValid() {
+        when(userRepository.findByEmail("admin@gmail.com")).thenReturn(Optional.of(user));
+        when(passwordEncoder.matches("123456", user.getPassword())).thenReturn(true);
+
+        AuthenticationResponse loginResponse = authenticationService.authenticate(authenticationRequest);
+        refreshTokenRequest.setRefreshToken(loginResponse.getRefreshToken());
+
+        when(invalidatedTokenRepository.existsById(anyString())).thenReturn(false);
+        when(userRepository.findByEmailAndDeletedFalse("admin@gmail.com")).thenReturn(Optional.of(user));
+
+        AuthenticationResponse result = authenticationService.refreshToken(refreshTokenRequest);
+
+        assertNotNull(result);
+        assertNotNull(result.getAccessToken());
+        assertNotNull(result.getRefreshToken());
+        assertNotEquals(loginResponse.getAccessToken(), result.getAccessToken());
+        assertNotEquals(loginResponse.getRefreshToken(), result.getRefreshToken());
+        assertTrue(result.isAuthenticated());
+
+        verify(invalidatedTokenRepository).existsById(anyString());
+        verify(userRepository).findByEmailAndDeletedFalse("admin@gmail.com");
+        verify(invalidatedTokenRepository).save(any(InvalidatedToken.class));
+    }
+
+    @Test
+    void refreshToken_shouldBlacklistOldRefreshToken_whenRefreshTokenIsValid() {
+        when(userRepository.findByEmail("admin@gmail.com")).thenReturn(Optional.of(user));
+        when(passwordEncoder.matches("123456", user.getPassword())).thenReturn(true);
+
+        AuthenticationResponse loginResponse = authenticationService.authenticate(authenticationRequest);
+        refreshTokenRequest.setRefreshToken(loginResponse.getRefreshToken());
+
+        when(invalidatedTokenRepository.existsById(anyString())).thenReturn(false);
+        when(userRepository.findByEmailAndDeletedFalse("admin@gmail.com")).thenReturn(Optional.of(user));
+
+        authenticationService.refreshToken(refreshTokenRequest);
+
+        ArgumentCaptor<InvalidatedToken> captor = ArgumentCaptor.forClass(InvalidatedToken.class);
+        verify(invalidatedTokenRepository).save(captor.capture());
+
+        assertNotNull(captor.getValue().getId());
+        assertNotNull(captor.getValue().getExpiryTime());
+    }
+
+    @Test
+    void refreshToken_shouldThrowException_whenTokenIsAccessToken() {
+        when(userRepository.findByEmail("admin@gmail.com")).thenReturn(Optional.of(user));
+        when(passwordEncoder.matches("123456", user.getPassword())).thenReturn(true);
+
+        AuthenticationResponse loginResponse = authenticationService.authenticate(authenticationRequest);
+        refreshTokenRequest.setRefreshToken(loginResponse.getAccessToken());
+
+        AppException exception =
+                assertThrows(AppException.class, () -> authenticationService.refreshToken(refreshTokenRequest));
+
+        assertEquals(ErrorCode.TOKEN_INVALID, exception.getErrorCode());
+        verify(invalidatedTokenRepository, never()).save(any());
+    }
+
+    @Test
+    void refreshToken_shouldThrowException_whenRefreshTokenIsBlacklisted() {
+        when(userRepository.findByEmail("admin@gmail.com")).thenReturn(Optional.of(user));
+        when(passwordEncoder.matches("123456", user.getPassword())).thenReturn(true);
+
+        AuthenticationResponse loginResponse = authenticationService.authenticate(authenticationRequest);
+        refreshTokenRequest.setRefreshToken(loginResponse.getRefreshToken());
+
+        when(invalidatedTokenRepository.existsById(anyString())).thenReturn(true);
+
+        AppException exception =
+                assertThrows(AppException.class, () -> authenticationService.refreshToken(refreshTokenRequest));
+
+        assertEquals(ErrorCode.TOKEN_BLACKLISTED, exception.getErrorCode());
+        verify(userRepository, never()).findByEmailAndDeletedFalse(anyString());
+        verify(invalidatedTokenRepository, never()).save(any());
+    }
+
+    @Test
+    void refreshToken_shouldThrowException_whenUserIsInactive() {
+        when(userRepository.findByEmail("admin@gmail.com")).thenReturn(Optional.of(user));
+        when(passwordEncoder.matches("123456", user.getPassword())).thenReturn(true);
+
+        AuthenticationResponse loginResponse = authenticationService.authenticate(authenticationRequest);
+        refreshTokenRequest.setRefreshToken(loginResponse.getRefreshToken());
+
+        user.setStatus(Active.INACTIVE);
+        when(invalidatedTokenRepository.existsById(anyString())).thenReturn(false);
+        when(userRepository.findByEmailAndDeletedFalse("admin@gmail.com")).thenReturn(Optional.of(user));
+
+        AppException exception =
+                assertThrows(AppException.class, () -> authenticationService.refreshToken(refreshTokenRequest));
+
+        assertEquals(ErrorCode.USER_INACTIVE, exception.getErrorCode());
+        verify(invalidatedTokenRepository, never()).save(any());
     }
 }
