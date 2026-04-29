@@ -13,14 +13,14 @@ import Settings from './pages/admin/Settings';
 import Categories from './pages/admin/Categories';
 import AdminRole from './pages/admin/AdminRole';
 import Brands from './pages/admin/Brands';
-// import Login from './pages/admin/Login';
+import Login from './pages/admin/Login';
 
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* <Route path="/" element={<Navigate to="/login" replace />} />
-        <Route path="/login" element={<Login />} /> */}
+        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route path="/login" element={<Login />} />
 
         {/* Admin Routes */}
         <Route path="/admin" element={<AdminLayout />}>

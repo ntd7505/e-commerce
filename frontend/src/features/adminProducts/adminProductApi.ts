@@ -1,7 +1,7 @@
 import { adminClient } from "../../api/adminClient";
+import type { ApiResponse } from "../../types/api";
 
 import type {
-    ApiResponse,
     ProductCreateRequest,
     ProductResponse,
 } from "./adminProductTypes";
