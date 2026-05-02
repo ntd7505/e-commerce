@@ -1,11 +1,11 @@
-import { adminClient } from "../../api/adminClient";
+import { publicClient } from "../../api/publicClient";
 import type { ApiResponse } from "../../types/api";
 import type {
     LoginCredentials,
     LoginResponse
 } from "./authTypes";
 export async function signIn(payload: LoginCredentials): Promise<LoginResponse> {
-    const response = await adminClient.post<ApiResponse<LoginResponse>>(
+    const response = await publicClient.post<ApiResponse<LoginResponse>>(
         "/auth/login",
         payload
     );
