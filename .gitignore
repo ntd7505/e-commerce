@@ -1,25 +1,18 @@
-# Compiled class file
-*.class
+# Bỏ qua tất cả các file và thư mục ở cấp cao nhất (root)
+/*
 
-# Log file
-*.log
+# Ngoại trừ 2 thư mục frontend và backend
+!/frontend/
+!/backend/
 
-# BlueJ files
-*.ctxt
+# Ngoại trừ chính file .gitignore này
+!/.gitignore
 
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
+# (Tuỳ chọn) Ngoại trừ thư mục cấu hình Github
+!/.github/
 
-# Package Files #
-*.jar
-*.war
-*.nar
-*.ear
-*.zip
-*.tar.gz
-*.rar
-
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
-hs_err_pid*
-replay_pid*
-.idea/
+# --- CÁC CẤU HÌNH BỎ QUA RIÊNG ---
+# Bỏ qua các thư mục/file rác không muốn đưa lên git (áp dụng cho cả backend và frontend)
+skills/
+postman/
+*.postman_collection.json
