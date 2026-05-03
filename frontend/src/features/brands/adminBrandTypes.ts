@@ -6,7 +6,13 @@ export type BrandResponse = {
     active: boolean;
 };
 
-export type BrandCreateRequest = {
+export type BrandRequest = {
     name: string;
     logoUrl: string;
-}
+};
+
+export type BrandCreateRequest = BrandRequest;
+
+export type BrandStatusUpdateRequest = {
+    active: boolean;
+};
