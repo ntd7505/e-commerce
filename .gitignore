@@ -1,18 +1,15 @@
-# Bỏ qua tất cả các file và thư mục ở cấp cao nhất (root)
+# Ignore everything at the repository root by default.
 /*
 
-# Ngoại trừ 2 thư mục frontend và backend
+# Keep the application workspaces tracked.
 !/frontend/
 !/backend/
 
-# Ngoại trừ chính file .gitignore này
+# Keep repository-level configuration tracked.
 !/.gitignore
-
-# (Tuỳ chọn) Ngoại trừ thư mục cấu hình Github
 !/.github/
 
-# --- CÁC CẤU HÌNH BỎ QUA RIÊNG ---
-# Bỏ qua các thư mục/file rác không muốn đưa lên git (áp dụng cho cả backend và frontend)
-skills/
-postman/
-*.postman_collection.json
+# Root-only local files and exported artifacts.
+/skills/
+/postman/
+/*.postman_collection.json

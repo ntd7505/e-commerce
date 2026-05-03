@@ -58,3 +58,8 @@ Thumbs.db
 .env.local
 .env.*.local
 
+### Local workspace artifacts ###
+skills/
+postman/
+*.postman_collection.json
+
