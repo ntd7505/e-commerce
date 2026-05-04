@@ -26,7 +26,7 @@ import {
     toProductFormValues,
     toProductUpdateRequest,
 } from "../adminProductMapper";
-import { uploadProductImage } from "../adminProductUpload";
+import { uploadProductImage, uploadProductImages, validateProductImageFile } from "../adminProductUpload";
 import { getBrands } from "../../brands/adminBrandApi";
 import type { BrandResponse } from "../../brands/adminBrandTypes";
 import { getCategories } from "../../categories/adminCategoryApi";
@@ -175,18 +175,26 @@ export function useAdminProductEditor() {
         });
     };
 
+    const getValidImageFiles = (files?: FileList | File[] | null) => {
+        const selectedFiles = Array.from(files ?? []);
+        const invalidFile = selectedFiles.find((file) => validateProductImageFile(file));
+
+        if (invalidFile) {
+            alert(validateProductImageFile(invalidFile));
+            return [];
+        }
+
+        return selectedFiles;
+    };
+
     const uploadFile = async (key: string, file?: File) => {
         if (!file) {
             return "";
         }
 
-        if (!file.type.startsWith("image/")) {
-            alert("Vui lòng chọn file ảnh");
-            return "";
-        }
-
-        if (file.size > 5 * 1024 * 1024) {
-            alert("Ảnh không được vượt quá 5MB");
+        const validationError = validateProductImageFile(file);
+        if (validationError) {
+            alert(validationError);
             return "";
         }
 
@@ -195,13 +203,12 @@ export function useAdminProductEditor() {
             return await uploadProductImage(file);
         } catch (error) {
             console.error("Failed to upload image:", error);
-            alert("Không thể upload ảnh. Kiểm tra cấu hình Cloudinary hoặc thử lại.");
+            alert("Cannot upload image. Check Cloudinary configuration or try again.");
             return "";
         } finally {
             setUploadingKey(null);
         }
     };
-
     const handleUploadCreateMediaFile = async (index: number, file?: File) => {
         const imageUrl = await uploadFile(`create-${index}`, file);
 
@@ -210,19 +217,128 @@ export function useAdminProductEditor() {
         }
     };
 
+    const handleUploadCreateMediaFiles = async (files?: FileList | null) => {
+        const imageFiles = getValidImageFiles(files);
+
+        if (imageFiles.length === 0) {
+            return;
+        }
+
+        try {
+            setUploadingKey("create-bulk");
+            const uploadedUrls = await uploadProductImages(imageFiles);
+
+            setFormValues((prev) => {
+                const currentUrls = prev.mediaUrls.map((url) => url.trim()).filter(Boolean);
+                const nextMediaUrls = [...currentUrls, ...uploadedUrls];
+
+                return {
+                    ...prev,
+                    imageUrl: nextMediaUrls[0] ?? "",
+                    mediaUrls: nextMediaUrls.length > 0 ? nextMediaUrls : [""],
+                };
+            });
+        } catch (error) {
+            console.error("Failed to upload product images:", error);
+            alert("Cannot upload images. Check Cloudinary configuration or try again.");
+        } finally {
+            setUploadingKey(null);
+        }
+    };
+
     const handleUploadEditMediaFile = async (index: number, file?: File) => {
         const imageUrl = await uploadFile(`edit-${index}`, file);
 
-        if (imageUrl) {
+        if (!imageUrl) {
+            return;
+        }
+
+        if (!productId) {
             setMediaItems((prev) =>
                 prev.map((item, currentIndex) =>
                     currentIndex === index ? { ...item, url: imageUrl } : item
                 )
             );
+            return;
+        }
+
+        const media = mediaItems[index] ?? {
+            ...emptyMedia,
+            sortOrder: String(index),
+            thumbnail: mediaItems.length === 0,
+        };
+        const payload = {
+            url: imageUrl,
+            mediaType: media.mediaType.trim() || "image",
+            thumbnail: media.thumbnail,
+            sortOrder: Number(media.sortOrder || index),
+            altText: media.altText.trim() || formValues.name.trim(),
+            active: media.active,
+        };
+
+        try {
+            setSavingMediaIndex(index);
+
+            if (media.id) {
+                const updated = await updateProductMedia(media.id, payload);
+                updateMediaDraft(index, mediaToDraft(updated));
+            } else {
+                const created = await createProductMedia(productId, payload);
+                updateMediaDraft(index, mediaToDraft(created));
+            }
+        } catch (error) {
+            console.error("Failed to save uploaded media:", error);
+            alert("Image uploaded, but product media could not be saved.");
+            updateMediaDraft(index, { url: imageUrl });
+        } finally {
+            setSavingMediaIndex(null);
+        }
+    };
+
+    const handleUploadEditMediaFiles = async (files?: FileList | null) => {
+        if (!productId) {
+            return;
+        }
+
+        const imageFiles = getValidImageFiles(files);
+
+        if (imageFiles.length === 0) {
+            return;
+        }
+
+        try {
+            setUploadingKey("edit-bulk");
+            const uploadedUrls = await uploadProductImages(imageFiles);
+            const startIndex = mediaItems.length;
+            const createdMedia: MediaDraft[] = [];
+
+            for (const [offset, url] of uploadedUrls.entries()) {
+                const created = await createProductMedia(productId, {
+                    url,
+                    mediaType: "image",
+                    thumbnail: mediaItems.length === 0 && offset === 0,
+                    sortOrder: startIndex + offset,
+                    altText: formValues.name.trim(),
+                });
+
+                createdMedia.push(mediaToDraft(created));
+            }
+
+            setMediaItems((prev) => [...prev, ...createdMedia]);
+        } catch (error) {
+            console.error("Failed to upload product media:", error);
+            alert("Cannot upload and save product images.");
+        } finally {
+            setUploadingKey(null);
         }
     };
 
     const handleSaveProduct = async () => {
+        if (uploadingKey) {
+            alert("Please wait for image uploads to finish.");
+            return;
+        }
+
         if (!formValues.name.trim()) {
             alert("Vui lòng nhập tên sản phẩm");
             return;
@@ -419,7 +535,9 @@ export function useAdminProductEditor() {
         handleAddMediaUrl,
         handleRemoveMediaUrl,
         handleUploadCreateMediaFile,
+        handleUploadCreateMediaFiles,
         handleUploadEditMediaFile,
+        handleUploadEditMediaFiles,
         handleSaveProduct,
         updateVariantDraft,
         handleAddVariantRow,

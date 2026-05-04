@@ -9,6 +9,7 @@ type ProductMediaEditorProps = {
     onSave: (index: number) => void;
     onDelete: (index: number) => void;
     onUpload: (index: number, file?: File) => void;
+    onUploadMany: (files?: FileList | null) => void;
     onChange: (index: number, patch: Partial<MediaDraft>) => void;
 };
 
@@ -20,19 +21,40 @@ export function ProductMediaEditor({
     onSave,
     onDelete,
     onUpload,
+    onUploadMany,
     onChange,
 }: ProductMediaEditorProps) {
+    const isUploading = uploadingKey !== null;
+
     return (
         <section className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
             <div className="mb-6 flex items-center justify-between gap-4">
                 <h3 className="text-lg font-bold text-gray-900">Product Media</h3>
-                <button
-                    type="button"
-                    onClick={onAdd}
-                    className="flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3 py-2 text-[12px] font-bold text-gray-600 shadow-sm hover:bg-gray-50"
-                >
-                    <PlusCircle className="h-3.5 w-3.5" /> Add media
-                </button>
+                <div className="flex items-center gap-2">
+                    <label className="flex cursor-pointer items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3 py-2 text-[12px] font-bold text-gray-600 shadow-sm hover:bg-gray-50">
+                        <Upload className="h-3.5 w-3.5" />
+                        {uploadingKey === "edit-bulk" ? "Uploading..." : "Upload images"}
+                        <input
+                            type="file"
+                            accept="image/*"
+                            multiple
+                            className="hidden"
+                            disabled={isUploading}
+                            onChange={(event) => {
+                                onUploadMany(event.target.files);
+                                event.target.value = "";
+                            }}
+                        />
+                    </label>
+                    <button
+                        type="button"
+                        onClick={onAdd}
+                        disabled={isUploading}
+                        className="flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3 py-2 text-[12px] font-bold text-gray-600 shadow-sm hover:bg-gray-50 disabled:opacity-50"
+                    >
+                        <PlusCircle className="h-3.5 w-3.5" /> Add URL
+                    </button>
+                </div>
             </div>
 
             <div className="space-y-4">
@@ -99,7 +121,7 @@ export function ProductMediaEditor({
                                         type="file"
                                         accept="image/*"
                                         className="hidden"
-                                        disabled={uploadingKey !== null}
+                                        disabled={isUploading}
                                         onChange={(event) => {
                                             onUpload(index, event.target.files?.[0]);
                                             event.target.value = "";

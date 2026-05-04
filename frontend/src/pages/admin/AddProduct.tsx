@@ -68,6 +68,7 @@ export default function AddProduct() {
               onRemove={editor.handleRemoveMediaUrl}
               onUrlChange={editor.handleMediaUrlChange}
               onUpload={editor.handleUploadCreateMediaFile}
+              onUploadMany={editor.handleUploadCreateMediaFiles}
             />
           )}
 
@@ -80,6 +81,7 @@ export default function AddProduct() {
               onSave={editor.handleSaveMedia}
               onDelete={editor.handleDeleteMedia}
               onUpload={editor.handleUploadEditMediaFile}
+              onUploadMany={editor.handleUploadEditMediaFiles}
               onChange={editor.updateMediaDraft}
             />
           )}
