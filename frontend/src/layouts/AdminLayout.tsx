@@ -4,7 +4,8 @@ import {
   PlusSquare, Image as ImageIcon, ClipboardList, MessageSquare,
   UserCog, ShieldCheck, Search, Bell, Sun, LogOut, ExternalLink, Menu
 } from 'lucide-react';
-import { Outlet, NavLink } from 'react-router-dom';
+import { Outlet, NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { clearAuthSession, getStoredUser } from '../features/auth/authStorage';
 
 type SidebarItemProps = {
   icon: React.ElementType;
@@ -29,6 +30,18 @@ const SidebarItem: React.FC<SidebarItemProps> = ({ icon: Icon, label, to }) => {
 };
 
 export default function AdminLayout() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const user = getStoredUser();
+  const displayName = user ? `${user.firstName} ${user.lastName}`.trim() || user.email : 'Dealport';
+  const displayEmail = user?.email ?? 'admin';
+  const pageTitle = getPageTitle(location.pathname);
+
+  const handleLogout = () => {
+    clearAuthSession();
+    navigate('/login', { replace: true });
+  };
+
   return (
     <div className="h-screen w-full bg-slate-50 flex overflow-hidden font-sans">
       {/* Sidebar */}
@@ -74,14 +87,23 @@ export default function AdminLayout() {
           <div className="flex items-center gap-3 px-2 py-2 mb-3">
             <img src="https://i.pravatar.cc/150?img=11" alt="User" className="w-9 h-9 rounded-full bg-gray-200 border border-gray-200" />
             <div className="flex-1 min-w-0">
-              <p className="text-[13px] font-bold text-gray-900 truncate">Dealport</p>
-              <p className="text-[11px] text-gray-500 truncate">Mark@thedesigner...</p>
+              <p className="text-[13px] font-bold text-gray-900 truncate">{displayName}</p>
+              <p className="text-[11px] text-gray-500 truncate">{displayEmail}</p>
             </div>
-            <button className="text-gray-400 hover:text-gray-600 transition-colors">
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="text-gray-400 hover:text-gray-600 transition-colors"
+              aria-label="Sign out"
+            >
               <LogOut className="w-4 h-4" />
             </button>
           </div>
-          <button className="w-full flex items-center justify-between px-4 py-2.5 text-[13px] font-semibold border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
+          <button
+            type="button"
+            onClick={() => navigate('/admin/profile')}
+            className="w-full flex items-center justify-between px-4 py-2.5 text-[13px] font-semibold border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+          >
             <span className="flex items-center gap-2"><ImageIcon className="w-4 h-4 text-emerald-600" /> Your Shop</span>
             <ExternalLink className="w-4 h-4 text-gray-400" />
           </button>
@@ -92,7 +114,7 @@ export default function AdminLayout() {
       <div className="flex-1 flex flex-col h-full overflow-hidden">
         {/* Header */}
         <header className="h-20 bg-white/80 backdrop-blur-md border-b border-gray-200 flex items-center justify-between px-8 shrink-0 z-10">
-          <h1 className="text-xl font-bold text-slate-800">Dashboard</h1>
+          <h1 className="text-xl font-bold text-slate-800">{pageTitle}</h1>
           
           <div className="flex items-center gap-5">
             <div className="relative w-80">
@@ -127,4 +149,30 @@ export default function AdminLayout() {
       </div>
     </div>
   );
+}
+
+function getPageTitle(pathname: string) {
+  const titleMap: Record<string, string> = {
+    '/admin/dashboard': 'Dashboard',
+    '/admin/orders': 'Orders',
+    '/admin/customers': 'Customers',
+    '/admin/coupons': 'Coupons',
+    '/admin/categories': 'Categories',
+    '/admin/transactions': 'Transactions',
+    '/admin/brands': 'Brands',
+    '/admin/products/add': 'Add Product',
+    '/admin/products/media': 'Product Media',
+    '/admin/products/reviews': 'Product Reviews',
+    '/admin/products': 'Products',
+    '/admin/roles': 'Roles',
+    '/admin/authority': 'Authority',
+    '/admin/profile': 'Profile',
+    '/admin/settings': 'Settings',
+  };
+
+  if (/^\/admin\/products\/\d+\/edit$/.test(pathname)) {
+    return 'Edit Product';
+  }
+
+  return titleMap[pathname] ?? 'Admin';
 }

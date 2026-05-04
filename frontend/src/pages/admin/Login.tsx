@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { Mail, Lock, ArrowRight } from 'lucide-react';
+import { Mail, Lock, ArrowRight, Sparkles } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { signIn } from '../../features/auth/authApi';
-
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -31,78 +30,136 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-[#f8f9fa] flex items-center justify-center p-4">
+    <>
+      <style>
+        {`
+          @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600&display=swap');
+          .font-editorial { font-family: 'Cormorant Garamond', serif; }
+          .font-sans-modern { font-family: 'Outfit', sans-serif; }
+          
+          .surface-light {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.03), inset 0 0 0 1px rgba(255,255,255,0.4);
+          }
+          
+          .input-editorial {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            color: #1a1a1a;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+          }
+          
+          .input-editorial:focus {
+            background: #ffffff;
+            border-color: #059669;
+            box-shadow: 0 0 0 4px rgba(5, 150, 105, 0.1);
+          }
 
-      <div className="max-w-[420px] w-full bg-white p-8 rounded-2xl border border-gray-200 shadow-sm">
+          @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+          }
+          .animate-slide-down { animation: slideDown 0.3s ease-out forwards; }
+        `}
+      </style>
+      
+      <div className="min-h-screen w-full bg-[#F5F4F0] flex items-center justify-center p-4 relative overflow-hidden font-sans-modern text-[#1a1a1a]">
+        
+        {/* Soft Organic Orbs */}
+        <div className="absolute top-[0%] left-[-5%] w-[45vw] h-[45vw] bg-emerald-200/40 rounded-full mix-blend-multiply filter blur-[100px] opacity-70 animate-pulse" style={{ animationDuration: '12s' }}></div>
+        <div className="absolute bottom-[-10%] right-[-5%] w-[50vw] h-[50vw] bg-amber-100/60 rounded-full mix-blend-multiply filter blur-[120px] opacity-70 animate-pulse" style={{ animationDuration: '15s', animationDelay: '2s' }}></div>
+        <div className="absolute top-[30%] right-[20%] w-[30vw] h-[30vw] bg-teal-100/50 rounded-full mix-blend-multiply filter blur-[90px] opacity-60 animate-pulse" style={{ animationDuration: '10s' }}></div>
 
-        <div className="text-center mb-8">
-          <div className="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center mx-auto mb-4">
-            <Lock className="w-6 h-6" />
+        {/* Paper texture overlay */}
+        <div className="absolute inset-0 opacity-[0.4] pointer-events-none mix-blend-overlay" style={{ backgroundImage: 'url("https://www.transparenttextures.com/patterns/cream-paper.png")' }}></div>
+
+        <div className="max-w-[460px] w-full surface-light p-10 sm:p-12 rounded-[2rem] relative z-10">
+          
+          <div className="text-center mb-10">
+            <div className="w-14 h-14 bg-[#059669] rounded-full flex items-center justify-center mx-auto mb-6 shadow-[0_8px_20px_rgba(5,150,105,0.25)] transform transition-transform hover:scale-105 duration-300">
+              <Sparkles className="w-6 h-6 text-white" />
+            </div>
+            <h1 className="text-5xl font-editorial font-bold text-[#1a1a1a] mb-3 tracking-tight">Dealport</h1>
+            <p className="text-[13px] text-[#059669] font-medium tracking-[0.25em] uppercase">Admin Portal</p>
           </div>
-          <h1 className="text-2xl font-bold text-[#0B2113] mb-2">Welcome Back</h1>
-          <p className="text-[13px] text-gray-500 font-medium">Please enter your details to sign in</p>
+
+          <form onSubmit={handleLogin} className="space-y-6">
+            
+            <div className="group">
+              <label className="block text-[11px] font-bold text-gray-500 mb-2 tracking-widest uppercase">Email Address</label>
+              <div className="relative">
+                <input
+                  type="email"
+                  name="email"
+                  autoComplete="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="admin@dealport.com"
+                  required
+                  className="w-full pl-12 pr-4 py-4 rounded-xl text-[15px] input-editorial placeholder-gray-400 focus:outline-none"
+                />
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-[#059669] transition-colors duration-400" />
+              </div>
+            </div>
+
+            <div className="group">
+              <div className="flex items-center justify-between mb-2">
+                <label className="block text-[11px] font-bold text-gray-500 tracking-widest uppercase">Password</label>
+                <a href="#" className="text-[12px] font-semibold text-[#059669] hover:text-[#047857] transition-colors duration-300">Forgot?</a>
+              </div>
+              <div className="relative">
+                <input
+                  type="password"
+                  name="password"
+                  autoComplete="current-password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  required
+                  className="w-full pl-12 pr-4 py-4 rounded-xl text-[15px] input-editorial placeholder-gray-400 focus:outline-none"
+                />
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-[#059669] transition-colors duration-400" />
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3 pt-2 mb-2">
+              <div className="relative flex items-center">
+                <input
+                  type="checkbox"
+                  id="remember"
+                  className="peer w-5 h-5 appearance-none border-2 border-gray-300 rounded bg-white checked:bg-[#059669] checked:border-[#059669] focus:outline-none transition-all duration-300 cursor-pointer"
+                />
+                <svg className="absolute w-3 h-3 text-white pointer-events-none opacity-0 peer-checked:opacity-100 left-1 top-1 transition-opacity duration-300" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              </div>
+              <label htmlFor="remember" className="text-[14px] text-gray-600 font-medium cursor-pointer select-none hover:text-[#1a1a1a] transition-colors duration-300">
+                Keep me signed in
+              </label>
+            </div>
+
+            {error && (
+              <div className="p-4 bg-red-50 border border-red-100 rounded-xl animate-slide-down">
+                <p className="text-[13px] font-semibold text-red-600 text-center">{error}</p>
+              </div>
+            )}
+
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full relative overflow-hidden flex items-center justify-center gap-2 bg-[#1a1a1a] text-white px-6 py-4 rounded-xl text-[14px] font-bold transition-all duration-500 hover:bg-[#2a2a2a] hover:shadow-[0_8px_25px_rgba(0,0,0,0.15)] hover:-translate-y-0.5 disabled:opacity-70 disabled:hover:translate-y-0 disabled:cursor-not-allowed mt-8 group"
+            >
+              <span className="relative z-10 flex items-center gap-2">
+                {isLoading ? 'Authenticating...' : 'Access Portal'} <ArrowRight className="w-4 h-4 transition-transform duration-500 group-hover:translate-x-1" />
+              </span>
+            </button>
+
+          </form>
         </div>
-
-        <form onSubmit={handleLogin} className="space-y-5">
-
-          <div>
-            <label className="block text-[13px] font-bold text-[#0B2113] mb-2">Email Address</label>
-            <div className="relative">
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="admin@dealport.com"
-                required
-                className="w-full pl-10 pr-4 py-3 bg-[#f8f9fa] border border-gray-200 rounded-lg text-[13px] font-medium text-gray-900 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-shadow"
-              />
-              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-            </div>
-          </div>
-
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <label className="block text-[13px] font-bold text-[#0B2113]">Password</label>
-              <a href="#" className="text-[12px] font-bold text-emerald-600 hover:text-emerald-700 transition-colors">Forgot Password?</a>
-            </div>
-            <div className="relative">
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                required
-                className="w-full pl-10 pr-4 py-3 bg-[#f8f9fa] border border-gray-200 rounded-lg text-[13px] font-medium text-gray-900 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-shadow"
-              />
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2.5 pt-1 mb-2">
-            <input
-              type="checkbox"
-              id="remember"
-              className="w-4 h-4 rounded text-emerald-500 border-gray-300 accent-emerald-500 cursor-pointer"
-            />
-            <label htmlFor="remember" className="text-[13px] text-gray-500 font-medium cursor-pointer select-none">
-              Remember for 30 days
-            </label>
-          </div>
-
-          {error && (
-            <p className="text-[13px] font-medium text-red-600">{error}</p>
-          )}
-
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="w-full flex items-center justify-center gap-2 bg-[#3c9c64] text-white px-5 py-3.5 rounded-lg text-[13px] font-bold hover:bg-emerald-700 transition-colors shadow-sm mt-2"
-          >
-            {isLoading ? 'Signing in...' : 'Sign In'} <ArrowRight className="w-4 h-4" />
-          </button>
-
-        </form>
       </div>
-    </div>
+    </>
   );
 }
