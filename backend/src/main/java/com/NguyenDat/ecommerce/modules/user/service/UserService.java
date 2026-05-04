@@ -13,6 +13,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.NguyenDat.ecommerce.common.exception.AppException;
 import com.NguyenDat.ecommerce.common.exception.ErrorCode;
@@ -34,12 +35,14 @@ import lombok.experimental.FieldDefaults;
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@Transactional(readOnly = true)
 public class UserService {
     UserRepository userRepository;
     RoleRepository roleRepository;
     UserMapper userMapper;
     PasswordEncoder passwordEncoder;
 
+    @Transactional
     public UserResponse createUser(UserCreationRequest userCreationRequest) {
         if (userRepository.existsByEmail(userCreationRequest.getEmail())) {
             throw new AppException(ErrorCode.EMAIL_EXISTED);
@@ -94,6 +97,7 @@ public class UserService {
                 .toList();
     }
 
+    @Transactional
     public UserResponse updateUserById(long id, UserUpdateRequest userUpdateRequest) {
         User user = this.userRepository
                 .findByIdAndDeletedFalse(id)
@@ -105,6 +109,7 @@ public class UserService {
         return userMapper.toUserResponse(userRepository.save(user));
     }
 
+    @Transactional
     public void softDeleteUser(long id) {
         User user = this.userRepository
                 .findByIdAndDeletedFalse(id)
@@ -120,6 +125,7 @@ public class UserService {
                 .toList();
     }
 
+    @Transactional
     public UserResponse updateUserStatusById(Long id, @Valid UserUpdateStatusRequest userUpdateStatusRequest) {
         User user = this.userRepository
                 .findByIdAndDeletedFalse(id)

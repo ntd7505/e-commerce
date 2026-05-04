@@ -7,6 +7,7 @@ import java.util.List;
 import jakarta.validation.Valid;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.NguyenDat.ecommerce.common.exception.AppException;
 import com.NguyenDat.ecommerce.common.exception.ErrorCode;
@@ -37,6 +38,7 @@ import lombok.experimental.FieldDefaults;
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@Transactional(readOnly = true)
 public class ProductService {
 
     CategoryRepository categoryRepository;
@@ -48,6 +50,7 @@ public class ProductService {
     ProductVariantMapper productVariantMapper;
     ProductMediaMapper productMediaMapper;
 
+    @Transactional
     public ProductResponse createProduct(ProductCreateRequest productCreateRequest) {
         Brand brand = brandRepository
                 .findByIdAndDeletedFalse(productCreateRequest.getBrandId())
@@ -93,6 +96,7 @@ public class ProductService {
         return toProductResponse(savedProduct);
     }
 
+    @Transactional
     public ProductVariantResponse addNewProductVariants(
             Long productId, @Valid ProductVariantRequest productVariantRequest) {
         Product product = productRepository
@@ -133,6 +137,7 @@ public class ProductService {
         return productVariantMapper.toProductVariantResponse(productVariant);
     }
 
+    @Transactional
     public ProductResponse updateProductById(@Valid ProductUpdateRequest productUpdateRequest, Long id) {
         Product product = productRepository
                 .findByIdAndDeletedFalse(id)
@@ -166,6 +171,7 @@ public class ProductService {
         return toProductResponse(savedProduct);
     }
 
+    @Transactional
     public ProductResponse updateProductStatus(Long id) {
         Product product = productRepository
                 .findByIdAndDeletedFalse(id)
@@ -175,6 +181,7 @@ public class ProductService {
         return toProductResponse(savedProduct);
     }
 
+    @Transactional
     public ProductVariantResponse updateVariantById(
             @Valid ProductVariantUpdateRequest productVariantUpdateRequest, Long id) {
         ProductVariant productVariant = productVariantRepository
@@ -201,6 +208,7 @@ public class ProductService {
         return productVariantMapper.toProductVariantResponse(productVariantRepository.save(productVariant));
     }
 
+    @Transactional
     public ProductVariantResponse updateProductVariantStatus(Long variantId) {
         ProductVariant productVariant = productVariantRepository
                 .findByIdAndDeletedFalseAndProductDeletedFalse(variantId)
@@ -210,6 +218,7 @@ public class ProductService {
         return productVariantMapper.toProductVariantResponse(productVariantSaved);
     }
 
+    @Transactional
     public void deleteProductVariantsById(Long id) {
         ProductVariant productVariant = productVariantRepository
                 .findByIdAndDeletedFalseAndProductDeletedFalse(id)
@@ -234,6 +243,7 @@ public class ProductService {
         return response;
     }
 
+    @Transactional
     public ProductMediaResponse createProductMedia(Long productId, ProductMediaRequest productMediaRequest) {
         Product product = productRepository
                 .findByIdAndDeletedFalse(productId)
@@ -250,6 +260,7 @@ public class ProductService {
         return productMediaMapper.toProductMediaResponse(savedProductMedia);
     }
 
+    @Transactional
     public ProductMediaResponse updateProductMediaById(
             Long mediaId, @Valid ProductMediaUpdateRequest productMediaUpdateRequest) {
         ProductMedia productMedia = productMediaRepository
@@ -270,6 +281,7 @@ public class ProductService {
         return productMediaMapper.toProductMediaResponse(productMediaRepository.save(productMedia));
     }
 
+    @Transactional
     public void deleteProductMediaById(Long mediaId) {
         ProductMedia productMedia = productMediaRepository
                 .findByIdAndDeletedFalseAndProductDeletedFalse(mediaId)

@@ -3,6 +3,7 @@ package com.NguyenDat.ecommerce.modules.permission.service;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.NguyenDat.ecommerce.common.exception.AppException;
 import com.NguyenDat.ecommerce.common.exception.ErrorCode;
@@ -20,11 +21,13 @@ import lombok.experimental.FieldDefaults;
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@Transactional(readOnly = true)
 public class PermissionService {
     PermissionRepository permissionRepository;
     PermissionMapper permissionMapper;
     RoleRepository roleRepository;
 
+    @Transactional
     public PermissionResponse createPermission(PermissionRequest request) {
         if (permissionRepository.existsById(request.getName())) {
             throw new AppException(ErrorCode.PERMISSION_EXISTED);
@@ -34,6 +37,7 @@ public class PermissionService {
         return permissionMapper.toPermissionResponse(permission);
     }
 
+    @Transactional
     public void deletePermissionById(String name) {
         if (!permissionRepository.existsById(name)) {
             throw new AppException(ErrorCode.PERMISSION_NOT_FOUND);

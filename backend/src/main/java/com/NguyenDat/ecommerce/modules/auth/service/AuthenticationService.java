@@ -13,6 +13,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import com.NguyenDat.ecommerce.common.exception.AppException;
@@ -44,6 +45,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@Transactional(readOnly = true)
 public class AuthenticationService {
     UserRepository userRepository;
     PasswordEncoder passwordEncoder;
@@ -139,6 +141,7 @@ public class AuthenticationService {
         return stringJoiner.toString();
     }
 
+    @Transactional
     public void logOut(@Valid LogoutRequest logoutRequest) {
         try {
             var token = logoutRequest.getToken();
@@ -170,6 +173,7 @@ public class AuthenticationService {
         }
     }
 
+    @Transactional
     public AuthenticationResponse refreshToken(RefreshTokenRequest request) {
         try {
             SignedJWT signedJWT = SignedJWT.parse(request.getRefreshToken());

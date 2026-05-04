@@ -6,6 +6,7 @@ import jakarta.validation.Valid;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.NguyenDat.ecommerce.common.exception.AppException;
 import com.NguyenDat.ecommerce.common.exception.ErrorCode;
@@ -25,11 +26,13 @@ import lombok.experimental.FieldDefaults;
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@Transactional(readOnly = true)
 public class BrandService {
     BrandRepository brandRepository;
     BrandMapper brandMapper;
     ProductRepository productRepository;
 
+    @Transactional
     public BrandResponse createBrand(BrandRequest brandRequest) {
         String normalizedName = brandRequest.getName().trim();
         if (brandRepository.findByNameAndDeletedFalse(normalizedName).isPresent()) {
@@ -53,6 +56,7 @@ public class BrandService {
                 .toList();
     }
 
+    @Transactional
     public void deleteBrand(Long id) {
         Brand brand = brandRepository
                 .findByIdAndDeletedFalse(id)
@@ -72,6 +76,7 @@ public class BrandService {
         return brandMapper.toBrandResponse(brand);
     }
 
+    @Transactional
     public BrandResponse updateBrandById(Long id, BrandRequest brandRequest) {
         Brand brand = brandRepository
                 .findByIdAndDeletedFalse(id)
@@ -97,6 +102,7 @@ public class BrandService {
                 .toList();
     }
 
+    @Transactional
     public BrandResponse updateBrandStatusById(@Valid BrandStatusUpdateRequest brandStatusUpdateRequest, Long id) {
         Brand brand = brandRepository
                 .findByIdAndDeletedFalse(id)

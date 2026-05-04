@@ -5,6 +5,7 @@ import java.util.List;
 import jakarta.validation.Valid;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.NguyenDat.ecommerce.common.exception.AppException;
 import com.NguyenDat.ecommerce.common.exception.ErrorCode;
@@ -23,6 +24,7 @@ import lombok.experimental.FieldDefaults;
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@Transactional(readOnly = true)
 public class CategoryService {
 
     CategoryRepository categoryRepository;
@@ -31,6 +33,7 @@ public class CategoryService {
 
     ProductRepository productRepository;
 
+    @Transactional
     public CategoryResponse createCategory(CategoryRequest categoryRequest) {
         String normalizedName = categoryRequest.getName().trim();
         Category parentCategory = null;
@@ -65,6 +68,7 @@ public class CategoryService {
                 .toList();
     }
 
+    @Transactional
     public CategoryResponse updateCategoryById(@Valid CategoryRequest categoryRequest, Long id) {
         Category category = categoryRepository
                 .findByIdAndDeletedFalse(id)
@@ -114,6 +118,7 @@ public class CategoryService {
         return categoryMapper.toCategoryResponse(category);
     }
 
+    @Transactional
     public void deleteCategoryById(Long id) {
         Category category = categoryRepository
                 .findByIdAndDeletedFalse(id)
