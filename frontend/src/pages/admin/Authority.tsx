@@ -1,5 +1,5 @@
 import RoleManagementPageContent from "../../features/roles/components/RoleManagementPageContent";
 
-export default function AdminRole() {
+export default function Authority() {
   return <RoleManagementPageContent />;
 }
