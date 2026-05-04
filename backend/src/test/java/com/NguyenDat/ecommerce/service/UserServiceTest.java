@@ -17,16 +17,15 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.NguyenDat.ecommerce.common.exception.AppException;
 import com.NguyenDat.ecommerce.common.exception.ErrorCode;
-import com.NguyenDat.ecommerce.modules.role.entity.Role;
-import com.NguyenDat.ecommerce.modules.role.repository.RoleRepository;
-import com.NguyenDat.ecommerce.modules.user.dto.request.UserCreationRequest;
-import com.NguyenDat.ecommerce.modules.user.dto.request.UserUpdateRequest;
-import com.NguyenDat.ecommerce.modules.user.dto.response.UserResponse;
-import com.NguyenDat.ecommerce.modules.user.entity.User;
-import com.NguyenDat.ecommerce.modules.user.enums.Active;
-import com.NguyenDat.ecommerce.modules.user.mapper.UserMapper;
-import com.NguyenDat.ecommerce.modules.user.repository.UserRepository;
-import com.NguyenDat.ecommerce.modules.user.service.UserService;
+import com.NguyenDat.ecommerce.dto.request.UserCreationRequest;
+import com.NguyenDat.ecommerce.dto.request.UserUpdateRequest;
+import com.NguyenDat.ecommerce.dto.response.UserResponse;
+import com.NguyenDat.ecommerce.entity.Role;
+import com.NguyenDat.ecommerce.entity.User;
+import com.NguyenDat.ecommerce.enums.Active;
+import com.NguyenDat.ecommerce.mapper.UserMapper;
+import com.NguyenDat.ecommerce.repository.RoleRepository;
+import com.NguyenDat.ecommerce.repository.UserRepository;
 
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;

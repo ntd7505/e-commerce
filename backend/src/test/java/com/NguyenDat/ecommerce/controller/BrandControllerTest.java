@@ -20,11 +20,11 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.NguyenDat.ecommerce.common.constant.ResponseCode;
 import com.NguyenDat.ecommerce.common.exception.AppException;
 import com.NguyenDat.ecommerce.common.exception.ErrorCode;
-import com.NguyenDat.ecommerce.modules.product.controller.admin.AdminBrandController;
-import com.NguyenDat.ecommerce.modules.product.dto.request.BrandRequest;
-import com.NguyenDat.ecommerce.modules.product.dto.request.BrandStatusUpdateRequest;
-import com.NguyenDat.ecommerce.modules.product.dto.response.BrandResponse;
-import com.NguyenDat.ecommerce.modules.product.service.BrandService;
+import com.NguyenDat.ecommerce.controller.admin.AdminBrandController;
+import com.NguyenDat.ecommerce.dto.request.BrandRequest;
+import com.NguyenDat.ecommerce.dto.request.BrandStatusUpdateRequest;
+import com.NguyenDat.ecommerce.dto.response.BrandResponse;
+import com.NguyenDat.ecommerce.service.BrandService;
 
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;

@@ -23,11 +23,11 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.NguyenDat.ecommerce.common.constant.ResponseCode;
 import com.NguyenDat.ecommerce.common.exception.AppException;
 import com.NguyenDat.ecommerce.common.exception.ErrorCode;
-import com.NguyenDat.ecommerce.modules.permission.dto.response.PermissionResponse;
-import com.NguyenDat.ecommerce.modules.role.controller.admin.AdminRoleController;
-import com.NguyenDat.ecommerce.modules.role.dto.request.RoleRequest;
-import com.NguyenDat.ecommerce.modules.role.dto.response.RoleResponse;
-import com.NguyenDat.ecommerce.modules.role.service.RoleService;
+import com.NguyenDat.ecommerce.controller.admin.AdminRoleController;
+import com.NguyenDat.ecommerce.dto.request.RoleRequest;
+import com.NguyenDat.ecommerce.dto.response.PermissionResponse;
+import com.NguyenDat.ecommerce.dto.response.RoleResponse;
+import com.NguyenDat.ecommerce.service.RoleService;
 
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;

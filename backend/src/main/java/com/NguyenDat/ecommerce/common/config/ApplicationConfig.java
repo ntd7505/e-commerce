@@ -10,10 +10,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.NguyenDat.ecommerce.common.exception.AppException;
 import com.NguyenDat.ecommerce.common.exception.ErrorCode;
-import com.NguyenDat.ecommerce.modules.role.entity.Role;
-import com.NguyenDat.ecommerce.modules.role.repository.RoleRepository;
-import com.NguyenDat.ecommerce.modules.user.entity.User;
-import com.NguyenDat.ecommerce.modules.user.repository.UserRepository;
+import com.NguyenDat.ecommerce.entity.Role;
+import com.NguyenDat.ecommerce.entity.User;
+import com.NguyenDat.ecommerce.repository.RoleRepository;
+import com.NguyenDat.ecommerce.repository.UserRepository;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;

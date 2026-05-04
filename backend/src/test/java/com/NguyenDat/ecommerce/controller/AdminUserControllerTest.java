@@ -22,11 +22,11 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.NguyenDat.ecommerce.common.constant.ResponseCode;
 import com.NguyenDat.ecommerce.common.exception.AppException;
 import com.NguyenDat.ecommerce.common.exception.ErrorCode;
-import com.NguyenDat.ecommerce.modules.user.controller.admin.AdminUserController;
-import com.NguyenDat.ecommerce.modules.user.dto.request.UserCreationRequest;
-import com.NguyenDat.ecommerce.modules.user.dto.request.UserUpdateRequest;
-import com.NguyenDat.ecommerce.modules.user.dto.response.UserResponse;
-import com.NguyenDat.ecommerce.modules.user.service.UserService;
+import com.NguyenDat.ecommerce.controller.admin.AdminUserController;
+import com.NguyenDat.ecommerce.dto.request.UserCreationRequest;
+import com.NguyenDat.ecommerce.dto.request.UserUpdateRequest;
+import com.NguyenDat.ecommerce.dto.response.UserResponse;
+import com.NguyenDat.ecommerce.service.UserService;
 
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;

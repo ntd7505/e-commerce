@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.NguyenDat.ecommerce.common.dto.response.ApiResponse;
-import com.NguyenDat.ecommerce.modules.user.enums.Active;
+import com.NguyenDat.ecommerce.enums.Active;
 
 import lombok.extern.slf4j.Slf4j;
 import tools.jackson.databind.exc.InvalidFormatException;

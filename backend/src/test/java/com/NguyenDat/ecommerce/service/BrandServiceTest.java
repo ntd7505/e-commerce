@@ -15,13 +15,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.NguyenDat.ecommerce.common.exception.AppException;
 import com.NguyenDat.ecommerce.common.exception.ErrorCode;
-import com.NguyenDat.ecommerce.modules.product.dto.request.BrandRequest;
-import com.NguyenDat.ecommerce.modules.product.dto.response.BrandResponse;
-import com.NguyenDat.ecommerce.modules.product.entity.Brand;
-import com.NguyenDat.ecommerce.modules.product.mapper.BrandMapper;
-import com.NguyenDat.ecommerce.modules.product.repository.BrandRepository;
-import com.NguyenDat.ecommerce.modules.product.repository.ProductRepository;
-import com.NguyenDat.ecommerce.modules.product.service.BrandService;
+import com.NguyenDat.ecommerce.dto.request.BrandRequest;
+import com.NguyenDat.ecommerce.dto.response.BrandResponse;
+import com.NguyenDat.ecommerce.entity.Brand;
+import com.NguyenDat.ecommerce.mapper.BrandMapper;
+import com.NguyenDat.ecommerce.repository.BrandRepository;
+import com.NguyenDat.ecommerce.repository.ProductRepository;
 
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;

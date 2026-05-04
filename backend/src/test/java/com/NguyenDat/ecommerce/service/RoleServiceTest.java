@@ -17,15 +17,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.NguyenDat.ecommerce.common.exception.AppException;
 import com.NguyenDat.ecommerce.common.exception.ErrorCode;
-import com.NguyenDat.ecommerce.modules.permission.dto.response.PermissionResponse;
-import com.NguyenDat.ecommerce.modules.permission.entity.Permission;
-import com.NguyenDat.ecommerce.modules.permission.repository.PermissionRepository;
-import com.NguyenDat.ecommerce.modules.role.dto.request.RoleRequest;
-import com.NguyenDat.ecommerce.modules.role.dto.response.RoleResponse;
-import com.NguyenDat.ecommerce.modules.role.entity.Role;
-import com.NguyenDat.ecommerce.modules.role.mapper.RoleMapper;
-import com.NguyenDat.ecommerce.modules.role.repository.RoleRepository;
-import com.NguyenDat.ecommerce.modules.role.service.RoleService;
+import com.NguyenDat.ecommerce.dto.request.RoleRequest;
+import com.NguyenDat.ecommerce.dto.response.PermissionResponse;
+import com.NguyenDat.ecommerce.dto.response.RoleResponse;
+import com.NguyenDat.ecommerce.entity.Permission;
+import com.NguyenDat.ecommerce.entity.Role;
+import com.NguyenDat.ecommerce.mapper.RoleMapper;
+import com.NguyenDat.ecommerce.repository.PermissionRepository;
+import com.NguyenDat.ecommerce.repository.RoleRepository;
 
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;

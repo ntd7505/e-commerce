@@ -19,15 +19,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.NguyenDat.ecommerce.common.exception.AppException;
 import com.NguyenDat.ecommerce.common.exception.ErrorCode;
-import com.NguyenDat.ecommerce.modules.category.dto.CategoryChildResponse;
-import com.NguyenDat.ecommerce.modules.category.dto.CategoryParentResponse;
-import com.NguyenDat.ecommerce.modules.category.dto.CategoryRequest;
-import com.NguyenDat.ecommerce.modules.category.dto.CategoryResponse;
-import com.NguyenDat.ecommerce.modules.category.entity.Category;
-import com.NguyenDat.ecommerce.modules.category.mapper.CategoryMapper;
-import com.NguyenDat.ecommerce.modules.category.repository.CategoryRepository;
-import com.NguyenDat.ecommerce.modules.category.service.CategoryService;
-import com.NguyenDat.ecommerce.modules.product.repository.ProductRepository;
+import com.NguyenDat.ecommerce.dto.request.CategoryRequest;
+import com.NguyenDat.ecommerce.dto.response.CategoryChildResponse;
+import com.NguyenDat.ecommerce.dto.response.CategoryParentResponse;
+import com.NguyenDat.ecommerce.dto.response.CategoryResponse;
+import com.NguyenDat.ecommerce.entity.Category;
+import com.NguyenDat.ecommerce.mapper.CategoryMapper;
+import com.NguyenDat.ecommerce.repository.CategoryRepository;
+import com.NguyenDat.ecommerce.repository.ProductRepository;
 
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
