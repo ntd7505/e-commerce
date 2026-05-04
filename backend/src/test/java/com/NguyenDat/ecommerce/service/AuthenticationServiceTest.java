@@ -30,6 +30,7 @@ import com.NguyenDat.ecommerce.entity.User;
 import com.NguyenDat.ecommerce.enums.Active;
 import com.NguyenDat.ecommerce.repository.InvalidatedTokenRepository;
 import com.NguyenDat.ecommerce.repository.UserRepository;
+import com.NguyenDat.ecommerce.service.impl.AuthenticationServiceImpl;
 
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
@@ -48,7 +49,7 @@ public class AuthenticationServiceTest {
     InvalidatedTokenRepository invalidatedTokenRepository;
 
     @InjectMocks
-    AuthenticationService authenticationService;
+    AuthenticationServiceImpl authenticationService;
 
     AuthenticationRequest authenticationRequest;
     IntrospectRequest introspectRequest;

@@ -26,6 +26,7 @@ import com.NguyenDat.ecommerce.enums.Active;
 import com.NguyenDat.ecommerce.mapper.UserMapper;
 import com.NguyenDat.ecommerce.repository.RoleRepository;
 import com.NguyenDat.ecommerce.repository.UserRepository;
+import com.NguyenDat.ecommerce.service.impl.UserServiceImpl;
 
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
@@ -46,7 +47,7 @@ public class UserServiceTest {
     PasswordEncoder passwordEncoder;
 
     @InjectMocks
-    UserService userService;
+    UserServiceImpl userService;
 
     UserCreationRequest userCreationRequest;
     UserUpdateRequest userUpdateRequest;

@@ -21,6 +21,7 @@ import com.NguyenDat.ecommerce.entity.Brand;
 import com.NguyenDat.ecommerce.mapper.BrandMapper;
 import com.NguyenDat.ecommerce.repository.BrandRepository;
 import com.NguyenDat.ecommerce.repository.ProductRepository;
+import com.NguyenDat.ecommerce.service.impl.BrandServiceImpl;
 
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
@@ -38,7 +39,7 @@ public class BrandServiceTest {
     BrandMapper brandMapper;
 
     @InjectMocks
-    BrandService brandService;
+    BrandServiceImpl brandService;
 
     BrandRequest brandRequest;
     Brand brand;

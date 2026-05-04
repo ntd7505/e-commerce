@@ -40,6 +40,7 @@ import com.NguyenDat.ecommerce.repository.CategoryRepository;
 import com.NguyenDat.ecommerce.repository.ProductMediaRepository;
 import com.NguyenDat.ecommerce.repository.ProductRepository;
 import com.NguyenDat.ecommerce.repository.ProductVariantRepository;
+import com.NguyenDat.ecommerce.service.impl.ProductServiceImpl;
 
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
@@ -73,7 +74,7 @@ public class ProductServiceTest {
     ProductMediaMapper productMediaMapper;
 
     @InjectMocks
-    ProductService productService;
+    ProductServiceImpl productService;
 
     ProductCreateRequest productCreateRequest;
     ProductMediaRequest productMediaRequest;

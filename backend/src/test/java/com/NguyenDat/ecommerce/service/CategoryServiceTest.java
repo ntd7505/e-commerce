@@ -27,6 +27,7 @@ import com.NguyenDat.ecommerce.entity.Category;
 import com.NguyenDat.ecommerce.mapper.CategoryMapper;
 import com.NguyenDat.ecommerce.repository.CategoryRepository;
 import com.NguyenDat.ecommerce.repository.ProductRepository;
+import com.NguyenDat.ecommerce.service.impl.CategoryServiceImpl;
 
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
@@ -45,7 +46,7 @@ public class CategoryServiceTest {
     ProductRepository productRepository;
 
     @InjectMocks
-    CategoryService categoryService;
+    CategoryServiceImpl categoryService;
 
     CategoryRequest categoryRequest;
     CategoryRequest categoryUpdateRequest;

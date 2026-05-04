@@ -1,3 +1,3 @@
 package com.NguyenDat.ecommerce.service;
 
-public class CouponService {}
+public interface CouponService {}

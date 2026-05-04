@@ -25,6 +25,7 @@ import com.NguyenDat.ecommerce.entity.Role;
 import com.NguyenDat.ecommerce.mapper.RoleMapper;
 import com.NguyenDat.ecommerce.repository.PermissionRepository;
 import com.NguyenDat.ecommerce.repository.RoleRepository;
+import com.NguyenDat.ecommerce.service.impl.RoleServiceImpl;
 
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
@@ -43,7 +44,7 @@ public class RoleServiceTest {
     PermissionRepository permissionRepository;
 
     @InjectMocks
-    RoleService roleService;
+    RoleServiceImpl roleService;
 
     RoleRequest roleRequest;
     Role role;
