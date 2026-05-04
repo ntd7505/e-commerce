@@ -1,5 +1,5 @@
-import DashboardOverview from "../../features/dashboard/components/DashboardOverview";
+import AdminDashboardSummary from "../../features/dashboard/components/AdminDashboardSummary";
 
 export default function Dashboard() {
-  return <DashboardOverview />;
+  return <AdminDashboardSummary />;
 }
