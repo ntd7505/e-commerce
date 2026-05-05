@@ -1,3 +1,6 @@
 package com.NguyenDat.ecommerce.enums;
 
-public class DiscountType {}
+public enum DiscountType {
+    PERCENT,
+    FIXED_AMOUNT
+}

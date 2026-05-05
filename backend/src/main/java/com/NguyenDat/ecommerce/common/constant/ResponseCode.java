@@ -68,7 +68,18 @@ public enum ResponseCode {
     CATEGORY_FETCHED(7001, "Category fetched successfully"),
     CATEGORY_UPDATED(7002, "Category updated successfully"),
     CATEGORY_DELETED(7003, "Category deleted successfully"),
-    CATEGORIES_FETCHED(7004, "Categories fetched successfully");
+    CATEGORIES_FETCHED(7004, "Categories fetched successfully"),
+
+    // 8000 - Coupon
+    COUPON_CREATED(8000, "Coupon created successfully"),
+    COUPON_FETCHED(8001, "Coupon fetched successfully"),
+    COUPON_UPDATED(8002, "Coupon updated successfully"),
+    COUPON_DELETED(8003, "Coupon deleted successfully"),
+    COUPONS_FETCHED(8004, "Coupons fetched successfully"),
+    DELETED_COUPONS_FETCHED(8005, "Deleted coupons fetched successfully"),
+    COUPON_STATUS_UPDATED(8006, "Coupon status updated successfully"),
+    COUPON_VALIDATED(8007, "Coupon validated successfully"),
+    COUPON_APPLIED(8008, "Coupon applied successfully");
 
     private final int code;
     private final String message;

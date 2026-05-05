@@ -83,7 +83,34 @@ public enum ErrorCode {
     CATEGORY_HAS_CHILDREN(5005, "Category has child categories", HttpStatus.BAD_REQUEST),
     CATEGORY_HAS_PRODUCTS(5006, "Category has associated products", HttpStatus.BAD_REQUEST),
     CATEGORY_CIRCULAR_REFERENCE(5007, "Category parent creates a circular reference", HttpStatus.BAD_REQUEST),
-    CATEGORY_INACTIVE(5004, "Category is inactive", HttpStatus.FORBIDDEN);
+    CATEGORY_INACTIVE(5004, "Category is inactive", HttpStatus.FORBIDDEN),
+
+    // coupon
+    COUPON_EXISTED(8000, "Coupon code already existed", HttpStatus.BAD_REQUEST),
+    COUPON_NOT_FOUND(8001, "Coupon not found", HttpStatus.NOT_FOUND),
+    COUPON_DELETED(8002, "Coupon has been deleted", HttpStatus.NOT_FOUND),
+    COUPON_INACTIVE(8003, "Coupon is inactive", HttpStatus.FORBIDDEN),
+    COUPON_EXPIRED(8004, "Coupon has expired", HttpStatus.BAD_REQUEST),
+    COUPON_NOT_STARTED(8005, "Coupon is not active yet", HttpStatus.BAD_REQUEST),
+    COUPON_USAGE_LIMIT_REACHED(8006, "Coupon usage limit has been reached", HttpStatus.BAD_REQUEST),
+    COUPON_PER_USER_LIMIT_REACHED(8007, "Coupon usage limit per user has been reached", HttpStatus.BAD_REQUEST),
+    COUPON_MIN_ORDER_AMOUNT_NOT_REACHED(
+            8008, "Order amount does not meet coupon minimum amount", HttpStatus.BAD_REQUEST),
+    COUPON_DATE_INVALID(8009, "Coupon end date must be after start date", HttpStatus.BAD_REQUEST),
+    COUPON_PERCENT_INVALID(8010, "Percent discount must be less than or equal to 100", HttpStatus.BAD_REQUEST),
+    COUPON_CODE_REQUIRED(8011, "Coupon code is required", HttpStatus.BAD_REQUEST),
+    COUPON_NAME_REQUIRED(8012, "Coupon name is required", HttpStatus.BAD_REQUEST),
+    COUPON_CODE_INVALID(8013, "Coupon code must not exceed 64 characters", HttpStatus.BAD_REQUEST),
+    COUPON_NAME_INVALID(8014, "Coupon name must not exceed 150 characters", HttpStatus.BAD_REQUEST),
+    COUPON_DESCRIPTION_INVALID(8015, "Coupon description must not exceed 500 characters", HttpStatus.BAD_REQUEST),
+    DISCOUNT_TYPE_REQUIRED(8016, "Discount type is required", HttpStatus.BAD_REQUEST),
+    DISCOUNT_VALUE_REQUIRED(8017, "Discount value is required", HttpStatus.BAD_REQUEST),
+    DISCOUNT_VALUE_INVALID(8018, "Discount value must be greater than 0", HttpStatus.BAD_REQUEST),
+    MIN_ORDER_AMOUNT_INVALID(8019, "Minimum order amount must be greater than or equal to 0", HttpStatus.BAD_REQUEST),
+    MAX_DISCOUNT_AMOUNT_INVALID(
+            8020, "Maximum discount amount must be greater than or equal to 0", HttpStatus.BAD_REQUEST),
+    USAGE_LIMIT_INVALID(8021, "Usage limit must be greater than 0", HttpStatus.BAD_REQUEST),
+    PER_USER_LIMIT_INVALID(8022, "Per-user limit must be greater than 0", HttpStatus.BAD_REQUEST);
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {
         this.code = code;
