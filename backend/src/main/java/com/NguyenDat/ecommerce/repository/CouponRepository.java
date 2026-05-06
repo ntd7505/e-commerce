@@ -14,7 +14,13 @@ public interface CouponRepository extends JpaRepository<Coupon, Long> {
 
     Optional<Coupon> findCouponByIdAndDeletedFalse(Long id);
 
+    Optional<Coupon> findCouponByIdAndDeletedTrue(Long id);
+
+    //    Optional<Coupon> findCouponByIdAndDeletedFalse(Long id);
+
     List<Coupon> findAllByDeletedFalse();
+
+    List<Coupon> findAllByDeletedTrue();
 
     boolean existsByCodeAndIdNot(String code, Long id);
 }

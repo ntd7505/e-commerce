@@ -79,7 +79,8 @@ public enum ResponseCode {
     DELETED_COUPONS_FETCHED(8005, "Deleted coupons fetched successfully"),
     COUPON_STATUS_UPDATED(8006, "Coupon status updated successfully"),
     COUPON_VALIDATED(8007, "Coupon validated successfully"),
-    COUPON_APPLIED(8008, "Coupon applied successfully");
+    COUPON_APPLIED(8008, "Coupon applied successfully"),
+    COUPON_RESTORED(8009, "Coupon restored successfully");
 
     private final int code;
     private final String message;

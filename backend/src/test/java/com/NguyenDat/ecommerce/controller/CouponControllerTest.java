@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -31,6 +32,7 @@ import com.NguyenDat.ecommerce.common.exception.AppException;
 import com.NguyenDat.ecommerce.common.exception.ErrorCode;
 import com.NguyenDat.ecommerce.controller.admin.AdminCouponController;
 import com.NguyenDat.ecommerce.dto.request.CouponRequest;
+import com.NguyenDat.ecommerce.dto.request.CouponStatusUpdateRequest;
 import com.NguyenDat.ecommerce.dto.response.CouponResponse;
 import com.NguyenDat.ecommerce.enums.DiscountType;
 import com.NguyenDat.ecommerce.service.CouponService;
@@ -54,6 +56,7 @@ class CouponControllerTest {
     CouponService couponService;
 
     CouponRequest couponRequest;
+    CouponStatusUpdateRequest couponStatusUpdateRequest;
     CouponResponse couponResponse;
 
     @BeforeEach
@@ -71,6 +74,9 @@ class CouponControllerTest {
                 .startAt(LocalDateTime.of(2026, 5, 5, 0, 0))
                 .endAt(LocalDateTime.of(2026, 5, 31, 23, 59))
                 .build();
+
+        couponStatusUpdateRequest =
+                CouponStatusUpdateRequest.builder().active(false).build();
 
         couponResponse = CouponResponse.builder()
                 .id(1L)
@@ -109,7 +115,8 @@ class CouponControllerTest {
 
     @Test
     void createCoupon_shouldReturnErrorResponse_whenCouponAlreadyExists() throws Exception {
-        when(couponService.createCoupon(any(CouponRequest.class))).thenThrow(new AppException(ErrorCode.COUPON_EXISTED));
+        when(couponService.createCoupon(any(CouponRequest.class)))
+                .thenThrow(new AppException(ErrorCode.COUPON_EXISTED));
 
         mockMvc.perform(post("/api/v1/admin/coupons")
                         .contentType(APPLICATION_JSON)
@@ -150,6 +157,20 @@ class CouponControllerTest {
     }
 
     @Test
+    void getAllDeletedCoupons_shouldReturnFetchedResponse_whenDataExists() throws Exception {
+        when(couponService.getAllCouponDeleted()).thenReturn(List.of(couponResponse));
+
+        mockMvc.perform(get("/api/v1/admin/coupons/deleted"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(ResponseCode.DELETED_COUPONS_FETCHED.getCode()))
+                .andExpect(jsonPath("$.message").value(ResponseCode.DELETED_COUPONS_FETCHED.getMessage()))
+                .andExpect(jsonPath("$.data.length()").value(1))
+                .andExpect(jsonPath("$.data[0].code").value("SALE10"));
+
+        verify(couponService).getAllCouponDeleted();
+    }
+
+    @Test
     void updateCouponById_shouldReturnUpdatedResponse_whenRequestIsValid() throws Exception {
         when(couponService.updateCouponById(any(CouponRequest.class), eq(1L))).thenReturn(couponResponse);
 
@@ -166,6 +187,53 @@ class CouponControllerTest {
     }
 
     @Test
+    void updateCouponStatusById_shouldReturnUpdatedResponse_whenRequestIsValid() throws Exception {
+        CouponResponse inactiveResponse = CouponResponse.builder()
+                .id(1L)
+                .code("SALE10")
+                .name("Sale 10 percent")
+                .active(false)
+                .deleted(false)
+                .build();
+
+        when(couponService.updateStatusCouponById(any(CouponStatusUpdateRequest.class), eq(1L)))
+                .thenReturn(inactiveResponse);
+
+        mockMvc.perform(patch("/api/v1/admin/coupons/{id}/status", 1L)
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(couponStatusUpdateRequest)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(ResponseCode.COUPON_STATUS_UPDATED.getCode()))
+                .andExpect(jsonPath("$.message").value(ResponseCode.COUPON_STATUS_UPDATED.getMessage()))
+                .andExpect(jsonPath("$.data.id").value(1))
+                .andExpect(jsonPath("$.data.active").value(false));
+
+        verify(couponService).updateStatusCouponById(any(CouponStatusUpdateRequest.class), eq(1L));
+    }
+
+    @Test
+    void restoreCouponById_shouldReturnRestoredResponse_whenCouponExists() throws Exception {
+        CouponResponse restoredResponse = CouponResponse.builder()
+                .id(1L)
+                .code("SALE10")
+                .name("Sale 10 percent")
+                .active(false)
+                .deleted(false)
+                .build();
+
+        when(couponService.restoreCouponById(1L)).thenReturn(restoredResponse);
+
+        mockMvc.perform(patch("/api/v1/admin/coupons/{id}/restore", 1L))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(ResponseCode.COUPON_RESTORED.getCode()))
+                .andExpect(jsonPath("$.message").value(ResponseCode.COUPON_RESTORED.getMessage()))
+                .andExpect(jsonPath("$.data.id").value(1))
+                .andExpect(jsonPath("$.data.deleted").value(false));
+
+        verify(couponService).restoreCouponById(1L);
+    }
+
+    @Test
     void deleteCouponById_shouldReturnDeletedResponse_whenCouponExists() throws Exception {
         doNothing().when(couponService).deletedCouponById(1L);
 
@@ -179,10 +247,13 @@ class CouponControllerTest {
 
     @Test
     void deleteCouponById_shouldReturnErrorResponse_whenCouponNotFound() throws Exception {
-        doThrow(new AppException(ErrorCode.COUPON_NOT_FOUND)).when(couponService).deletedCouponById(1L);
+        doThrow(new AppException(ErrorCode.COUPON_NOT_FOUND))
+                .when(couponService)
+                .deletedCouponById(1L);
 
         mockMvc.perform(delete("/api/v1/admin/coupons/{id}", 1L))
-                .andExpect(status().is(ErrorCode.COUPON_NOT_FOUND.getStatusCode().value()))
+                .andExpect(
+                        status().is(ErrorCode.COUPON_NOT_FOUND.getStatusCode().value()))
                 .andExpect(jsonPath("$.code").value(ErrorCode.COUPON_NOT_FOUND.getCode()))
                 .andExpect(jsonPath("$.message").value(ErrorCode.COUPON_NOT_FOUND.getMessage()));
 

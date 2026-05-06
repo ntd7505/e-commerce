@@ -24,6 +24,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.NguyenDat.ecommerce.common.exception.AppException;
 import com.NguyenDat.ecommerce.common.exception.ErrorCode;
 import com.NguyenDat.ecommerce.dto.request.CouponRequest;
+import com.NguyenDat.ecommerce.dto.request.CouponStatusUpdateRequest;
 import com.NguyenDat.ecommerce.dto.response.CouponResponse;
 import com.NguyenDat.ecommerce.entity.Coupon;
 import com.NguyenDat.ecommerce.enums.DiscountType;
@@ -48,6 +49,7 @@ class CouponServiceTest {
     CouponServiceImpl couponService;
 
     CouponRequest couponRequest;
+    CouponStatusUpdateRequest couponStatusUpdateRequest;
     Coupon coupon;
     CouponResponse couponResponse;
 
@@ -66,6 +68,9 @@ class CouponServiceTest {
                 .startAt(LocalDateTime.of(2026, 5, 5, 0, 0))
                 .endAt(LocalDateTime.of(2026, 5, 31, 23, 59))
                 .build();
+
+        couponStatusUpdateRequest =
+                CouponStatusUpdateRequest.builder().active(false).build();
 
         coupon = new Coupon();
         coupon.setId(1L);
@@ -176,6 +181,19 @@ class CouponServiceTest {
     }
 
     @Test
+    void getAllCouponDeleted_shouldReturnRepositoryResults() {
+        coupon.setDeleted(true);
+        when(couponRepository.findAllByDeletedTrue()).thenReturn(List.of(coupon));
+        when(couponMapper.toCouponResponse(coupon)).thenReturn(couponResponse);
+
+        List<CouponResponse> result = couponService.getAllCouponDeleted();
+
+        assertEquals(1, result.size());
+        assertEquals("SALE10", result.getFirst().getCode());
+        verify(couponRepository).findAllByDeletedTrue();
+    }
+
+    @Test
     void updateCouponById_shouldReturnCouponResponse_whenRequestIsValid() {
         when(couponRepository.findCouponByIdAndDeletedFalse(1L)).thenReturn(Optional.of(coupon));
         when(couponRepository.existsByCodeAndIdNot("SALE10", 1L)).thenReturn(false);
@@ -194,7 +212,58 @@ class CouponServiceTest {
     void updateCouponById_shouldThrowException_whenCouponNotFound() {
         when(couponRepository.findCouponByIdAndDeletedFalse(1L)).thenReturn(Optional.empty());
 
-        AppException exception = assertThrows(AppException.class, () -> couponService.updateCouponById(couponRequest, 1L));
+        AppException exception =
+                assertThrows(AppException.class, () -> couponService.updateCouponById(couponRequest, 1L));
+
+        assertEquals(ErrorCode.COUPON_NOT_FOUND, exception.getErrorCode());
+        verify(couponRepository, never()).save(any());
+    }
+
+    @Test
+    void updateStatusCouponById_shouldUpdateActiveStatus_whenCouponExists() {
+        when(couponRepository.findCouponByIdAndDeletedFalse(1L)).thenReturn(Optional.of(coupon));
+        when(couponRepository.save(coupon)).thenReturn(coupon);
+        when(couponMapper.toCouponResponse(coupon)).thenReturn(couponResponse);
+
+        CouponResponse result = couponService.updateStatusCouponById(couponStatusUpdateRequest, 1L);
+
+        assertEquals("SALE10", result.getCode());
+        assertFalse(coupon.isActive());
+        verify(couponRepository).save(coupon);
+    }
+
+    @Test
+    void updateStatusCouponById_shouldThrowException_whenCouponNotFound() {
+        when(couponRepository.findCouponByIdAndDeletedFalse(1L)).thenReturn(Optional.empty());
+
+        AppException exception = assertThrows(
+                AppException.class, () -> couponService.updateStatusCouponById(couponStatusUpdateRequest, 1L));
+
+        assertEquals(ErrorCode.COUPON_NOT_FOUND, exception.getErrorCode());
+        verify(couponRepository, never()).save(any());
+    }
+
+    @Test
+    void restoreCouponById_shouldRestoreCouponAsInactive_whenDeletedCouponExists() {
+        coupon.setDeleted(true);
+        coupon.setActive(true);
+        when(couponRepository.findCouponByIdAndDeletedTrue(1L)).thenReturn(Optional.of(coupon));
+        when(couponRepository.save(coupon)).thenReturn(coupon);
+        when(couponMapper.toCouponResponse(coupon)).thenReturn(couponResponse);
+
+        CouponResponse result = couponService.restoreCouponById(1L);
+
+        assertEquals("SALE10", result.getCode());
+        assertFalse(coupon.isDeleted());
+        assertFalse(coupon.isActive());
+        verify(couponRepository).save(coupon);
+    }
+
+    @Test
+    void restoreCouponById_shouldThrowException_whenCouponNotFound() {
+        when(couponRepository.findCouponByIdAndDeletedTrue(1L)).thenReturn(Optional.empty());
+
+        AppException exception = assertThrows(AppException.class, () -> couponService.restoreCouponById(1L));
 
         assertEquals(ErrorCode.COUPON_NOT_FOUND, exception.getErrorCode());
         verify(couponRepository, never()).save(any());

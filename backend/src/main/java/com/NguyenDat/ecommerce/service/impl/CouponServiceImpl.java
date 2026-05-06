@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.NguyenDat.ecommerce.common.exception.AppException;
 import com.NguyenDat.ecommerce.common.exception.ErrorCode;
 import com.NguyenDat.ecommerce.dto.request.CouponRequest;
+import com.NguyenDat.ecommerce.dto.request.CouponStatusUpdateRequest;
 import com.NguyenDat.ecommerce.dto.response.CouponResponse;
 import com.NguyenDat.ecommerce.entity.Coupon;
 import com.NguyenDat.ecommerce.enums.DiscountType;
@@ -56,6 +57,12 @@ public class CouponServiceImpl implements CouponService {
                 .toList();
     }
 
+    public List<CouponResponse> getAllCouponDeleted() {
+        return couponRepository.findAllByDeletedTrue().stream()
+                .map(couponMapper::toCouponResponse)
+                .toList();
+    }
+
     @Transactional
     public CouponResponse updateCouponById(CouponRequest couponRequest, Long id) {
 
@@ -74,6 +81,27 @@ public class CouponServiceImpl implements CouponService {
         couponMapper.updateCoupon(coupon, couponRequest);
         coupon.setCode(normalizedCode);
 
+        return couponMapper.toCouponResponse(couponRepository.save(coupon));
+    }
+
+    @Transactional
+    public CouponResponse updateStatusCouponById(CouponStatusUpdateRequest couponStatusUpdateRequest, Long id) {
+        Coupon coupon = couponRepository
+                .findCouponByIdAndDeletedFalse(id)
+                .orElseThrow(() -> new AppException(ErrorCode.COUPON_NOT_FOUND));
+
+        coupon.setActive(couponStatusUpdateRequest.getActive());
+
+        return couponMapper.toCouponResponse(couponRepository.save(coupon));
+    }
+
+    @Transactional
+    public CouponResponse restoreCouponById(Long id) {
+        Coupon coupon = couponRepository
+                .findCouponByIdAndDeletedTrue(id)
+                .orElseThrow(() -> new AppException(ErrorCode.COUPON_NOT_FOUND));
+        coupon.setDeleted(false);
+        coupon.setActive(false);
         return couponMapper.toCouponResponse(couponRepository.save(coupon));
     }
 

@@ -10,6 +10,7 @@ import com.NguyenDat.ecommerce.common.constant.ApiConstant;
 import com.NguyenDat.ecommerce.common.constant.ResponseCode;
 import com.NguyenDat.ecommerce.common.dto.response.ApiResponse;
 import com.NguyenDat.ecommerce.dto.request.CouponRequest;
+import com.NguyenDat.ecommerce.dto.request.CouponStatusUpdateRequest;
 import com.NguyenDat.ecommerce.dto.response.CouponResponse;
 import com.NguyenDat.ecommerce.service.CouponService;
 
@@ -40,10 +41,28 @@ public class AdminCouponController {
         return ApiResponse.ofList(ResponseCode.COUPONS_FETCHED, couponService.getAllCoupons());
     }
 
+    @GetMapping("/coupons/deleted")
+    public ApiResponse<List<CouponResponse>> getAllCouponDeleted() {
+        return ApiResponse.ofList(ResponseCode.DELETED_COUPONS_FETCHED, couponService.getAllCouponDeleted());
+    }
+
     @PutMapping("/coupons/{id}")
     public ApiResponse<CouponResponse> updateCouponById(
             @RequestBody @Valid CouponRequest couponRequest, @PathVariable Long id) {
         return ApiResponse.of(ResponseCode.COUPON_UPDATED, couponService.updateCouponById(couponRequest, id));
+    }
+
+    @PatchMapping("/coupons/{id}/status")
+    public ApiResponse<CouponResponse> updateStatusCouponById(
+            @RequestBody @Valid CouponStatusUpdateRequest couponStatusUpdateRequest, @PathVariable Long id) {
+        return ApiResponse.of(
+                ResponseCode.COUPON_STATUS_UPDATED,
+                couponService.updateStatusCouponById(couponStatusUpdateRequest, id));
+    }
+
+    @PatchMapping("/coupons/{id}/restore")
+    public ApiResponse<CouponResponse> restoreCouponById(@PathVariable Long id) {
+        return ApiResponse.of(ResponseCode.COUPON_RESTORED, couponService.restoreCouponById(id));
     }
 
     @DeleteMapping("/coupons/{id}")
