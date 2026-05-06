@@ -102,7 +102,7 @@ class CouponControllerTest {
         mockMvc.perform(post("/api/v1/admin/coupons")
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(couponRequest)))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.code").value(ResponseCode.COUPON_CREATED.getCode()))
                 .andExpect(jsonPath("$.message").value(ResponseCode.COUPON_CREATED.getMessage()))
                 .andExpect(jsonPath("$.data.id").value(1))

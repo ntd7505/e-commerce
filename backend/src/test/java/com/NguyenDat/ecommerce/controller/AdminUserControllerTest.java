@@ -81,7 +81,7 @@ public class AdminUserControllerTest {
         mockMvc.perform(post("/api/v1/admin/users")
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(userCreationRequest)))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.code").value(ResponseCode.USER_CREATED.getCode()))
                 .andExpect(jsonPath("$.message").value(ResponseCode.USER_CREATED.getMessage()))
                 .andExpect(jsonPath("$.data.email").value("dat@gmail.com"))

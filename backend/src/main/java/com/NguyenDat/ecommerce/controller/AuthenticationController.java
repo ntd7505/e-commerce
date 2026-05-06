@@ -2,6 +2,7 @@ package com.NguyenDat.ecommerce.controller;
 
 import jakarta.validation.Valid;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,24 +30,26 @@ public class AuthenticationController {
     AuthenticationService authenticationService;
 
     @PostMapping(value = "/login")
-    ApiResponse<AuthenticationResponse> login(@RequestBody @Valid AuthenticationRequest request) {
+    ResponseEntity<ApiResponse<AuthenticationResponse>> login(@RequestBody @Valid AuthenticationRequest request) {
         AuthenticationResponse result = authenticationService.authenticate(request);
-        return ApiResponse.of(ResponseCode.LOGIN_SUCCESS, result);
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.LOGIN_SUCCESS, result));
     }
 
     @PostMapping("/logout")
-    public ApiResponse<Void> logOut(@RequestBody @Valid LogoutRequest token) {
+    public ResponseEntity<ApiResponse<Void>> logOut(@RequestBody @Valid LogoutRequest token) {
         authenticationService.logOut(token);
-        return ApiResponse.of(ResponseCode.LOGOUT_SUCCESS, null);
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.LOGOUT_SUCCESS, null));
     }
 
     @PostMapping("/refresh")
-    ApiResponse<AuthenticationResponse> refreshToken(@RequestBody @Valid RefreshTokenRequest request) {
-        return ApiResponse.of(ResponseCode.LOGIN_SUCCESS, authenticationService.refreshToken(request));
+    ResponseEntity<ApiResponse<AuthenticationResponse>> refreshToken(@RequestBody @Valid RefreshTokenRequest request) {
+        return ResponseEntity.ok(
+                ApiResponse.of(ResponseCode.LOGIN_SUCCESS, authenticationService.refreshToken(request)));
     }
 
     @PostMapping(value = "/introspect")
-    ApiResponse<IntrospectResponse> introspect(@RequestBody @Valid IntrospectRequest request) {
-        return ApiResponse.of(ResponseCode.INTROSPECT_SUCCESS, authenticationService.introspect(request));
+    ResponseEntity<ApiResponse<IntrospectResponse>> introspect(@RequestBody @Valid IntrospectRequest request) {
+        return ResponseEntity.ok(
+                ApiResponse.of(ResponseCode.INTROSPECT_SUCCESS, authenticationService.introspect(request)));
     }
 }

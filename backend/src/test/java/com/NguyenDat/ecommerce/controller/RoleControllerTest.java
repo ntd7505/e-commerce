@@ -77,7 +77,7 @@ class RoleControllerTest {
         mockMvc.perform(post("/api/v1/admin/roles")
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(roleRequest)))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.code").value(ResponseCode.ROLE_CREATED.getCode()))
                 .andExpect(jsonPath("$.message").value(ResponseCode.ROLE_CREATED.getMessage()))
                 .andExpect(jsonPath("$.data.name").value("ADMIN"))

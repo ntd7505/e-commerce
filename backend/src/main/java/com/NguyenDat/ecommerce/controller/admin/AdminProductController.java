@@ -4,6 +4,8 @@ import java.util.List;
 
 import jakarta.validation.Valid;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.NguyenDat.ecommerce.common.constant.ApiConstant;
@@ -35,8 +37,10 @@ public class AdminProductController {
             summary = "Create product",
             description = "Create a new product with initial variants and media.")
     @PostMapping("/products")
-    public ApiResponse<ProductResponse> createProduct(@RequestBody @Valid ProductCreateRequest productCreateRequest) {
-        return ApiResponse.of(ResponseCode.PRODUCT_CREATED, productService.createProduct(productCreateRequest));
+    public ResponseEntity<ApiResponse<ProductResponse>> createProduct(
+            @RequestBody @Valid ProductCreateRequest productCreateRequest) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.of(ResponseCode.PRODUCT_CREATED, productService.createProduct(productCreateRequest)));
     }
 
     @Operation(
@@ -44,8 +48,8 @@ public class AdminProductController {
             summary = "Get all products",
             description = "Fetch all non-deleted products for admin management.")
     @GetMapping("/products")
-    public ApiResponse<List<ProductResponse>> getAllProducts() {
-        return ApiResponse.of(ResponseCode.PRODUCTS_FETCHED, productService.getAllProducts());
+    public ResponseEntity<ApiResponse<List<ProductResponse>>> getAllProducts() {
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.PRODUCTS_FETCHED, productService.getAllProducts()));
     }
 
     @Operation(
@@ -53,8 +57,8 @@ public class AdminProductController {
             summary = "Get product by ID",
             description = "Fetch one non-deleted product with its variants and media.")
     @GetMapping("/products/{id}")
-    public ApiResponse<ProductResponse> getProductById(@PathVariable Long id) {
-        return ApiResponse.of(ResponseCode.PRODUCT_FETCHED, productService.getProductById(id));
+    public ResponseEntity<ApiResponse<ProductResponse>> getProductById(@PathVariable Long id) {
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.PRODUCT_FETCHED, productService.getProductById(id)));
     }
 
     @Operation(
@@ -62,11 +66,12 @@ public class AdminProductController {
             summary = "Add product variant",
             description = "Add a new variant to an existing non-deleted product.")
     @PostMapping("/products/{productId}/variants")
-    public ApiResponse<ProductVariantResponse> addNewProductVariants(
+    public ResponseEntity<ApiResponse<ProductVariantResponse>> addNewProductVariants(
             @PathVariable Long productId, @RequestBody @Valid ProductVariantRequest productVariantRequest) {
-        return ApiResponse.of(
-                ResponseCode.PRODUCT_VARIANT_CREATED,
-                productService.addNewProductVariants(productId, productVariantRequest));
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.of(
+                        ResponseCode.PRODUCT_VARIANT_CREATED,
+                        productService.addNewProductVariants(productId, productVariantRequest)));
     }
 
     @Operation(
@@ -74,8 +79,9 @@ public class AdminProductController {
             summary = "Get variant by ID",
             description = "Fetch one non-deleted variant that belongs to a non-deleted product.")
     @GetMapping("/products/variants/{id}")
-    public ApiResponse<ProductVariantResponse> getVariantById(@PathVariable Long id) {
-        return ApiResponse.of(ResponseCode.PRODUCT_VARIANT_FETCHED, productService.getVariantById(id));
+    public ResponseEntity<ApiResponse<ProductVariantResponse>> getVariantById(@PathVariable Long id) {
+        return ResponseEntity.ok(
+                ApiResponse.of(ResponseCode.PRODUCT_VARIANT_FETCHED, productService.getVariantById(id)));
     }
 
     @Operation(
@@ -83,9 +89,10 @@ public class AdminProductController {
             summary = "Update product",
             description = "Update product information such as name, description, brand, category, or active status.")
     @PutMapping("/products/{id}")
-    public ApiResponse<ProductResponse> updateProductById(
+    public ResponseEntity<ApiResponse<ProductResponse>> updateProductById(
             @RequestBody @Valid ProductUpdateRequest productUpdateRequest, @PathVariable Long id) {
-        return ApiResponse.of(ResponseCode.PRODUCT_UPDATED, productService.updateProductById(productUpdateRequest, id));
+        return ResponseEntity.ok(ApiResponse.of(
+                ResponseCode.PRODUCT_UPDATED, productService.updateProductById(productUpdateRequest, id)));
     }
 
     @Operation(
@@ -93,8 +100,9 @@ public class AdminProductController {
             summary = "Toggle product status",
             description = "Toggle the active status of a non-deleted product.")
     @PatchMapping("/products/{id}/status")
-    public ApiResponse<ProductResponse> updateProductStatus(@PathVariable Long id) {
-        return ApiResponse.of(ResponseCode.PRODUCT_STATUS_UPDATED, productService.updateProductStatus(id));
+    public ResponseEntity<ApiResponse<ProductResponse>> updateProductStatus(@PathVariable Long id) {
+        return ResponseEntity.ok(
+                ApiResponse.of(ResponseCode.PRODUCT_STATUS_UPDATED, productService.updateProductStatus(id)));
     }
 
     @Operation(
@@ -102,9 +110,10 @@ public class AdminProductController {
             summary = "Toggle variant status",
             description = "Toggle the active status of a non-deleted product variant.")
     @PatchMapping("/products/variants/{variantId}/status")
-    public ApiResponse<ProductVariantResponse> updateProductVariantStatus(@PathVariable Long variantId) {
-        return ApiResponse.of(
-                ResponseCode.PRODUCT_VARIANT_STATUS_UPDATED, productService.updateProductVariantStatus(variantId));
+    public ResponseEntity<ApiResponse<ProductVariantResponse>> updateProductVariantStatus(
+            @PathVariable Long variantId) {
+        return ResponseEntity.ok(ApiResponse.of(
+                ResponseCode.PRODUCT_VARIANT_STATUS_UPDATED, productService.updateProductVariantStatus(variantId)));
     }
 
     @Operation(
@@ -112,11 +121,11 @@ public class AdminProductController {
             summary = "Update product variant",
             description = "Update a non-deleted product variant.")
     @PutMapping("/products/variants/{id}")
-    public ApiResponse<ProductVariantResponse> updateVariantById(
+    public ResponseEntity<ApiResponse<ProductVariantResponse>> updateVariantById(
             @RequestBody @Valid ProductVariantUpdateRequest productVariantUpdateRequest, @PathVariable Long id) {
-        return ApiResponse.of(
+        return ResponseEntity.ok(ApiResponse.of(
                 ResponseCode.PRODUCT_VARIANT_UPDATED,
-                productService.updateVariantById(productVariantUpdateRequest, id));
+                productService.updateVariantById(productVariantUpdateRequest, id)));
     }
 
     @Operation(
@@ -124,9 +133,9 @@ public class AdminProductController {
             summary = "Delete product variant",
             description = "Soft delete a product variant.")
     @DeleteMapping("/products/variants/{id}")
-    public ApiResponse<Void> deleteProductVariantsById(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<Void>> deleteProductVariantsById(@PathVariable Long id) {
         productService.deleteProductVariantsById(id);
-        return ApiResponse.of(ResponseCode.PRODUCT_VARIANT_DELETED, null);
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.PRODUCT_VARIANT_DELETED, null));
     }
 
     // media
@@ -136,10 +145,12 @@ public class AdminProductController {
             summary = "Add product media",
             description = "Add a new image or media item to an existing non-deleted product.")
     @PostMapping("/products/{productId}/media")
-    public ApiResponse<ProductMediaResponse> createProductMedia(
+    public ResponseEntity<ApiResponse<ProductMediaResponse>> createProductMedia(
             @PathVariable Long productId, @RequestBody @Valid ProductMediaRequest productMediaRequest) {
-        return ApiResponse.of(
-                ResponseCode.PRODUCT_MEDIA_CREATED, productService.createProductMedia(productId, productMediaRequest));
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.of(
+                        ResponseCode.PRODUCT_MEDIA_CREATED,
+                        productService.createProductMedia(productId, productMediaRequest)));
     }
 
     @Operation(
@@ -147,11 +158,11 @@ public class AdminProductController {
             summary = "Update product media",
             description = "Update a non-deleted product media item.")
     @PutMapping("/products/media/{mediaId}")
-    public ApiResponse<ProductMediaResponse> updateProductMediaById(
+    public ResponseEntity<ApiResponse<ProductMediaResponse>> updateProductMediaById(
             @PathVariable Long mediaId, @RequestBody @Valid ProductMediaUpdateRequest productMediaUpdateRequest) {
-        return ApiResponse.of(
+        return ResponseEntity.ok(ApiResponse.of(
                 ResponseCode.PRODUCT_MEDIA_UPDATED,
-                productService.updateProductMediaById(mediaId, productMediaUpdateRequest));
+                productService.updateProductMediaById(mediaId, productMediaUpdateRequest)));
     }
 
     @Operation(
@@ -159,8 +170,8 @@ public class AdminProductController {
             summary = "Delete product media",
             description = "Soft delete a product media item.")
     @DeleteMapping("/products/media/{mediaId}")
-    public ApiResponse<Void> deleteProductMediaById(@PathVariable Long mediaId) {
+    public ResponseEntity<ApiResponse<Void>> deleteProductMediaById(@PathVariable Long mediaId) {
         productService.deleteProductMediaById(mediaId);
-        return ApiResponse.of(ResponseCode.PRODUCT_MEDIA_DELETED, null);
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.PRODUCT_MEDIA_DELETED, null));
     }
 }

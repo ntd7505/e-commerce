@@ -69,7 +69,7 @@ public class BrandControllerTest {
         mockMvc.perform(post("/api/v1/admin/brands")
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(brandRequest)))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.code").value(ResponseCode.BRAND_CREATED.getCode()))
                 .andExpect(jsonPath("$.message").value(ResponseCode.BRAND_CREATED.getMessage()))
                 .andExpect(jsonPath("$.data.id").value(1))

@@ -4,6 +4,8 @@ import java.util.List;
 
 import jakarta.validation.Valid;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.NguyenDat.ecommerce.common.constant.ApiConstant;
@@ -28,46 +30,49 @@ public class AdminUserController {
     UserService userService;
 
     @PostMapping("/users")
-    public ApiResponse<UserResponse> createUser(@RequestBody @Valid UserCreationRequest userCreationRequest) {
-        return ApiResponse.of(ResponseCode.USER_CREATED, this.userService.createUser(userCreationRequest));
+    public ResponseEntity<ApiResponse<UserResponse>> createUser(
+            @RequestBody @Valid UserCreationRequest userCreationRequest) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.of(ResponseCode.USER_CREATED, this.userService.createUser(userCreationRequest)));
     }
 
     @GetMapping("/users/{userId}")
-    public ApiResponse<UserResponse> getUserById(@PathVariable Long userId) {
-        return ApiResponse.of(ResponseCode.USER_FETCHED, userService.getUserById(userId));
+    public ResponseEntity<ApiResponse<UserResponse>> getUserById(@PathVariable Long userId) {
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.USER_FETCHED, userService.getUserById(userId)));
     }
 
     @GetMapping("/users/me")
-    public ApiResponse<UserResponse> getMyInfo() {
-        return ApiResponse.of(ResponseCode.USER_FETCHED, userService.getMyInfo());
+    public ResponseEntity<ApiResponse<UserResponse>> getMyInfo() {
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.USER_FETCHED, userService.getMyInfo()));
     }
 
     @GetMapping("/users")
-    public ApiResponse<List<UserResponse>> getAllUsers() {
-        return ApiResponse.ofList(ResponseCode.USERS_FETCHED, userService.getAllUsers());
+    public ResponseEntity<ApiResponse<List<UserResponse>>> getAllUsers() {
+        return ResponseEntity.ok(ApiResponse.ofList(ResponseCode.USERS_FETCHED, userService.getAllUsers()));
     }
 
     @GetMapping("/users/deleted")
-    public ApiResponse<List<UserResponse>> getDeletedUsers() {
-        return ApiResponse.ofList(ResponseCode.DELETED_USERS_FETCHED, userService.getDeletedUsers());
+    public ResponseEntity<ApiResponse<List<UserResponse>>> getDeletedUsers() {
+        return ResponseEntity.ok(ApiResponse.ofList(ResponseCode.DELETED_USERS_FETCHED, userService.getDeletedUsers()));
     }
 
     @PutMapping(value = "/users/{userId}")
-    public ApiResponse<UserResponse> updateUserById(
+    public ResponseEntity<ApiResponse<UserResponse>> updateUserById(
             @PathVariable Long userId, @RequestBody @Valid UserUpdateRequest userUpdateRequest) {
-        return ApiResponse.of(ResponseCode.USER_UPDATED, this.userService.updateUserById(userId, userUpdateRequest));
+        return ResponseEntity.ok(
+                ApiResponse.of(ResponseCode.USER_UPDATED, this.userService.updateUserById(userId, userUpdateRequest)));
     }
 
     @PatchMapping("/users/{id}/status")
-    public ApiResponse<UserResponse> updateUserStatusById(
+    public ResponseEntity<ApiResponse<UserResponse>> updateUserStatusById(
             @PathVariable Long id, @RequestBody @Valid UserUpdateStatusRequest userUpdateStatusRequest) {
-        return ApiResponse.of(
-                ResponseCode.USER_STATUS_UPDATED, userService.updateUserStatusById(id, userUpdateStatusRequest));
+        return ResponseEntity.ok(ApiResponse.of(
+                ResponseCode.USER_STATUS_UPDATED, userService.updateUserStatusById(id, userUpdateStatusRequest)));
     }
 
     @DeleteMapping(value = "/users/{userId}")
-    public ApiResponse<UserResponse> softDeleteUser(@PathVariable Long userId) {
+    public ResponseEntity<ApiResponse<UserResponse>> softDeleteUser(@PathVariable Long userId) {
         userService.softDeleteUser(userId);
-        return ApiResponse.of(ResponseCode.USER_DELETED, null);
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.USER_DELETED, null));
     }
 }

@@ -4,6 +4,8 @@ import java.util.List;
 
 import jakarta.validation.Valid;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.NguyenDat.ecommerce.common.constant.ApiConstant;
@@ -27,42 +29,45 @@ public class AdminBrandController {
     BrandService brandService;
 
     @PostMapping("/brands")
-    public ApiResponse<BrandResponse> createBrand(@RequestBody @Valid BrandRequest brandRequest) {
+    public ResponseEntity<ApiResponse<BrandResponse>> createBrand(@RequestBody @Valid BrandRequest brandRequest) {
         BrandResponse brandResponse = brandService.createBrand(brandRequest);
-        return ApiResponse.of(ResponseCode.BRAND_CREATED, brandResponse);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.of(ResponseCode.BRAND_CREATED, brandResponse));
     }
 
     @GetMapping("/brands")
-    public ApiResponse<List<BrandResponse>> getAllBrands() {
-        return ApiResponse.ofList(ResponseCode.BRANDS_FETCHED, brandService.getAllBrands());
+    public ResponseEntity<ApiResponse<List<BrandResponse>>> getAllBrands() {
+        return ResponseEntity.ok(ApiResponse.ofList(ResponseCode.BRANDS_FETCHED, brandService.getAllBrands()));
     }
 
     @DeleteMapping("/brands/{id}")
-    public ApiResponse<BrandResponse> deleteBrand(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<BrandResponse>> deleteBrand(@PathVariable Long id) {
         brandService.deleteBrand(id);
-        return ApiResponse.of(ResponseCode.BRAND_DELETED, null);
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.BRAND_DELETED, null));
     }
 
     @GetMapping("/brands/{id}")
-    public ApiResponse<BrandResponse> getBrandById(@PathVariable Long id) {
-        return ApiResponse.of(ResponseCode.BRAND_FETCHED, brandService.getBrandById(id));
+    public ResponseEntity<ApiResponse<BrandResponse>> getBrandById(@PathVariable Long id) {
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.BRAND_FETCHED, brandService.getBrandById(id)));
     }
 
     @GetMapping("/brands/deleted")
-    public ApiResponse<List<BrandResponse>> getDeletedBrands() {
-        return ApiResponse.ofList(ResponseCode.DELETED_BRANDS_FETCHED, brandService.getDeletedBrands());
+    public ResponseEntity<ApiResponse<List<BrandResponse>>> getDeletedBrands() {
+        return ResponseEntity.ok(
+                ApiResponse.ofList(ResponseCode.DELETED_BRANDS_FETCHED, brandService.getDeletedBrands()));
     }
 
     @PutMapping("/brands/{id}")
-    public ApiResponse<BrandResponse> updateBrandById(
+    public ResponseEntity<ApiResponse<BrandResponse>> updateBrandById(
             @PathVariable Long id, @RequestBody @Valid BrandRequest brandRequest) {
-        return ApiResponse.of(ResponseCode.BRAND_UPDATED, brandService.updateBrandById(id, brandRequest));
+        return ResponseEntity.ok(
+                ApiResponse.of(ResponseCode.BRAND_UPDATED, brandService.updateBrandById(id, brandRequest)));
     }
 
     @PatchMapping("/brands/{id}/status")
-    public ApiResponse<BrandResponse> updateBrandStatusById(
+    public ResponseEntity<ApiResponse<BrandResponse>> updateBrandStatusById(
             @RequestBody @Valid BrandStatusUpdateRequest brandStatusUpdateRequest, @PathVariable Long id) {
-        return ApiResponse.of(
-                ResponseCode.BRAND_STATUS_UPDATED, brandService.updateBrandStatusById(brandStatusUpdateRequest, id));
+        return ResponseEntity.ok(ApiResponse.of(
+                ResponseCode.BRAND_STATUS_UPDATED, brandService.updateBrandStatusById(brandStatusUpdateRequest, id)));
     }
 }

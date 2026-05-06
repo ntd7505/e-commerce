@@ -118,7 +118,7 @@ public class CategoryControllerTest {
         mockMvc.perform(post("/api/v1/admin/categories")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(categoryRequest)))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.code").value(ResponseCode.CATEGORY_CREATED.getCode()))
                 .andExpect(jsonPath("$.message").value(ResponseCode.CATEGORY_CREATED.getMessage()))
                 .andExpect(jsonPath("$.data.name").value("Dien tu"))

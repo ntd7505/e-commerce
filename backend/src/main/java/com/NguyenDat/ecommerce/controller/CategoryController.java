@@ -4,6 +4,8 @@ import java.util.List;
 
 import jakarta.validation.Valid;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.NguyenDat.ecommerce.common.constant.ApiConstant;
@@ -25,29 +27,33 @@ public class CategoryController {
     CategoryService categoryService;
 
     @PostMapping("/categories")
-    public ApiResponse<CategoryResponse> createCategory(@RequestBody @Valid CategoryRequest categoryRequest) {
-        return ApiResponse.of(ResponseCode.CATEGORY_CREATED, categoryService.createCategory(categoryRequest));
+    public ResponseEntity<ApiResponse<CategoryResponse>> createCategory(
+            @RequestBody @Valid CategoryRequest categoryRequest) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.of(ResponseCode.CATEGORY_CREATED, categoryService.createCategory(categoryRequest)));
     }
 
     @GetMapping("/categories")
-    public ApiResponse<List<CategoryResponse>> getAllCategories() {
-        return ApiResponse.ofList(ResponseCode.CATEGORIES_FETCHED, categoryService.getAllCategories());
+    public ResponseEntity<ApiResponse<List<CategoryResponse>>> getAllCategories() {
+        return ResponseEntity.ok(
+                ApiResponse.ofList(ResponseCode.CATEGORIES_FETCHED, categoryService.getAllCategories()));
     }
 
     @GetMapping("/categories/{id}")
-    public ApiResponse<CategoryResponse> getCategoryById(@PathVariable Long id) {
-        return ApiResponse.of(ResponseCode.CATEGORY_FETCHED, categoryService.getCategoryById(id));
+    public ResponseEntity<ApiResponse<CategoryResponse>> getCategoryById(@PathVariable Long id) {
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.CATEGORY_FETCHED, categoryService.getCategoryById(id)));
     }
 
     @PutMapping("/categories/{id}")
-    public ApiResponse<CategoryResponse> updateCategory(
+    public ResponseEntity<ApiResponse<CategoryResponse>> updateCategory(
             @RequestBody @Valid CategoryRequest categoryRequest, @PathVariable Long id) {
-        return ApiResponse.of(ResponseCode.CATEGORY_UPDATED, categoryService.updateCategoryById(categoryRequest, id));
+        return ResponseEntity.ok(
+                ApiResponse.of(ResponseCode.CATEGORY_UPDATED, categoryService.updateCategoryById(categoryRequest, id)));
     }
 
     @DeleteMapping("/categories/{id}")
-    public ApiResponse<Void> deleteCategoryById(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<Void>> deleteCategoryById(@PathVariable Long id) {
         categoryService.deleteCategoryById(id);
-        return ApiResponse.of(ResponseCode.CATEGORY_DELETED, null);
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.CATEGORY_DELETED, null));
     }
 }
