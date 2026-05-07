@@ -80,7 +80,15 @@ public enum ResponseCode {
     COUPON_STATUS_UPDATED(8006, "Coupon status updated successfully"),
     COUPON_VALIDATED(8007, "Coupon validated successfully"),
     COUPON_APPLIED(8008, "Coupon applied successfully"),
-    COUPON_RESTORED(8009, "Coupon restored successfully");
+    COUPON_RESTORED(8009, "Coupon restored successfully"),
+
+    // 9000 - Address
+    ADDRESS_CREATED(9000, "Address created successfully"),
+    ADDRESS_FETCHED(9001, "Address fetched successfully"),
+    ADDRESS_UPDATED(9002, "Address updated successfully"),
+    ADDRESS_DELETED(9003, "Address deleted successfully"),
+    ADDRESSES_FETCHED(9004, "Addresses fetched successfully"),
+    ADDRESS_DEFAULT_UPDATED(9005, "Default address updated successfully");
 
     private final int code;
     private final String message;

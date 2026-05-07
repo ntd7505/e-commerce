@@ -110,7 +110,29 @@ public enum ErrorCode {
     MAX_DISCOUNT_AMOUNT_INVALID(
             8020, "Maximum discount amount must be greater than or equal to 0", HttpStatus.BAD_REQUEST),
     USAGE_LIMIT_INVALID(8021, "Usage limit must be greater than 0", HttpStatus.BAD_REQUEST),
-    PER_USER_LIMIT_INVALID(8022, "Per-user limit must be greater than 0", HttpStatus.BAD_REQUEST);
+    PER_USER_LIMIT_INVALID(8022, "Per-user limit must be greater than 0", HttpStatus.BAD_REQUEST),
+
+    // address
+    ADDRESS_NOT_FOUND(9000, "Address not found", HttpStatus.NOT_FOUND),
+    ADDRESS_NOT_BELONG_TO_USER(9001, "Address does not belong to current user", HttpStatus.FORBIDDEN),
+    ADDRESS_DELETED(9002, "Address has been deleted", HttpStatus.NOT_FOUND),
+    ADDRESS_TYPE_REQUIRED(9003, "Address type is required", HttpStatus.BAD_REQUEST),
+    RECIPIENT_NAME_REQUIRED(9004, "Recipient name is required", HttpStatus.BAD_REQUEST),
+    RECIPIENT_NAME_INVALID(9005, "Recipient name must not exceed 100 characters", HttpStatus.BAD_REQUEST),
+    ADDRESS_PHONE_REQUIRED(9006, "Phone number is required", HttpStatus.BAD_REQUEST),
+    ADDRESS_PHONE_INVALID(9007, "Phone number must not exceed 20 characters", HttpStatus.BAD_REQUEST),
+    PROVINCE_NAME_REQUIRED(9008, "Province name is required", HttpStatus.BAD_REQUEST),
+    PROVINCE_NAME_INVALID(9009, "Province name must not exceed 100 characters", HttpStatus.BAD_REQUEST),
+    DISTRICT_NAME_REQUIRED(9010, "District name is required", HttpStatus.BAD_REQUEST),
+    DISTRICT_NAME_INVALID(9011, "District name must not exceed 100 characters", HttpStatus.BAD_REQUEST),
+    WARD_NAME_REQUIRED(9012, "Ward name is required", HttpStatus.BAD_REQUEST),
+    WARD_NAME_INVALID(9013, "Ward name must not exceed 100 characters", HttpStatus.BAD_REQUEST),
+    FULL_ADDRESS_REQUIRED(9014, "Full address is required", HttpStatus.BAD_REQUEST),
+    FULL_ADDRESS_INVALID(9015, "Full address must not exceed 200 characters", HttpStatus.BAD_REQUEST),
+    DEFAULT_ADDRESS_CANNOT_BE_DELETED(
+            9016,
+            "Default address cannot be deleted. Please set another address as default first.",
+            HttpStatus.BAD_REQUEST);
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {
         this.code = code;
