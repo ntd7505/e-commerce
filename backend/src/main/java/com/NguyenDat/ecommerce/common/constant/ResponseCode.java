@@ -88,7 +88,17 @@ public enum ResponseCode {
     ADDRESS_UPDATED(9002, "Address updated successfully"),
     ADDRESS_DELETED(9003, "Address deleted successfully"),
     ADDRESSES_FETCHED(9004, "Addresses fetched successfully"),
-    ADDRESS_DEFAULT_UPDATED(9005, "Default address updated successfully");
+    ADDRESS_DEFAULT_UPDATED(9005, "Default address updated successfully"),
+
+    // 10000 - Cart
+    CART_CREATED(10000, "Cart created successfully"),
+    CART_FETCHED(10001, "Cart fetched successfully"),
+    CART_ITEM_ADDED(10002, "Cart item added successfully"),
+    CART_ITEM_UPDATED(10003, "Cart item updated successfully"),
+    CART_ITEM_INCREASED(10004, "Cart item quantity increased successfully"),
+    CART_ITEM_DECREASED(10005, "Cart item quantity decreased successfully"),
+    CART_ITEM_REMOVED(10006, "Cart item removed successfully"),
+    CART_CLEARED(10007, "Cart cleared successfully");
 
     private final int code;
     private final String message;

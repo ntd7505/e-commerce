@@ -132,7 +132,18 @@ public enum ErrorCode {
     DEFAULT_ADDRESS_CANNOT_BE_DELETED(
             9016,
             "Default address cannot be deleted. Please set another address as default first.",
-            HttpStatus.BAD_REQUEST);
+            HttpStatus.BAD_REQUEST),
+
+    // cart
+    CART_NOT_FOUND(10000, "Cart not found", HttpStatus.NOT_FOUND),
+    CART_EMPTY(10001, "Cart is empty", HttpStatus.BAD_REQUEST),
+    CART_ITEM_NOT_FOUND(10002, "Cart item not found", HttpStatus.NOT_FOUND),
+    CART_ITEM_NOT_BELONG_TO_USER(10003, "Cart item does not belong to current user", HttpStatus.FORBIDDEN),
+    CART_ITEM_QUANTITY_REQUIRED(10004, "Cart item quantity is required", HttpStatus.BAD_REQUEST),
+    CART_ITEM_QUANTITY_INVALID(10005, "Cart item quantity must be greater than 0", HttpStatus.BAD_REQUEST),
+    CART_ITEM_QUANTITY_EXCEEDS_STOCK(10006, "Cart item quantity exceeds available stock", HttpStatus.BAD_REQUEST),
+    PRODUCT_VARIANT_OUT_OF_STOCK(10007, "Product variant is out of stock", HttpStatus.BAD_REQUEST),
+    CART_PRODUCT_VARIANT_REQUIRED(10008, "Product variant is required", HttpStatus.BAD_REQUEST);
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {
         this.code = code;
