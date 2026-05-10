@@ -98,7 +98,9 @@ public enum ResponseCode {
     CART_ITEM_INCREASED(10004, "Cart item quantity increased successfully"),
     CART_ITEM_DECREASED(10005, "Cart item quantity decreased successfully"),
     CART_ITEM_REMOVED(10006, "Cart item removed successfully"),
-    CART_CLEARED(10007, "Cart cleared successfully");
+    CART_CLEARED(10007, "Cart cleared successfully"),
+
+    PAYMENT_METHODS_FETCHED(11000, "Payment methods fetched successfully");
 
     private final int code;
     private final String message;
