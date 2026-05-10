@@ -1,8 +1,7 @@
 package com.NguyenDat.ecommerce.service.impl;
 
-import com.NguyenDat.ecommerce.entity.CartItem;
-import com.NguyenDat.ecommerce.mapper.CartMapper;
-import com.NguyenDat.ecommerce.repository.CartItemRepository;
+import java.math.BigDecimal;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -13,9 +12,12 @@ import com.NguyenDat.ecommerce.common.exception.ErrorCode;
 import com.NguyenDat.ecommerce.dto.request.CartItemRequest;
 import com.NguyenDat.ecommerce.dto.response.CartResponse;
 import com.NguyenDat.ecommerce.entity.Cart;
+import com.NguyenDat.ecommerce.entity.CartItem;
 import com.NguyenDat.ecommerce.entity.ProductVariant;
 import com.NguyenDat.ecommerce.entity.User;
 import com.NguyenDat.ecommerce.enums.CartStatus;
+import com.NguyenDat.ecommerce.mapper.CartMapper;
+import com.NguyenDat.ecommerce.repository.CartItemRepository;
 import com.NguyenDat.ecommerce.repository.CartRepository;
 import com.NguyenDat.ecommerce.repository.ProductVariantRepository;
 import com.NguyenDat.ecommerce.repository.UserRepository;
@@ -24,8 +26,6 @@ import com.NguyenDat.ecommerce.service.CartService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-
-import java.math.BigDecimal;
 
 @Service
 @RequiredArgsConstructor
@@ -50,16 +50,17 @@ public class CartServiceImpl implements CartService {
         if (productVariant.getStockQuantity() == 0) {
             throw new AppException(ErrorCode.PRODUCT_VARIANT_OUT_OF_STOCK);
         }
-        CartItem cartItem = cartItemRepository.findByCartIdAndProductVariantId(cart.getId(), productVariant.getId()).orElseGet(() -> {
-            CartItem item = new CartItem();
-            item.setCart(cart);
-            cart.getItems().add(item);
-            item.setProductVariant(productVariant);
-            item.setQuantity(0);
-            item.setUnitPrice(BigDecimal.valueOf(getCurrentPrice(productVariant)));
-            return item;
-
-        });
+        CartItem cartItem = cartItemRepository
+                .findByCartIdAndProductVariantId(cart.getId(), productVariant.getId())
+                .orElseGet(() -> {
+                    CartItem item = new CartItem();
+                    item.setCart(cart);
+                    cart.getItems().add(item);
+                    item.setProductVariant(productVariant);
+                    item.setQuantity(0);
+                    item.setUnitPrice(BigDecimal.valueOf(getCurrentPrice(productVariant)));
+                    return item;
+                });
         int newQuantity = cartItem.getQuantity() + cartItemRequest.getQuantity();
         if (newQuantity > productVariant.getStockQuantity()) {
             throw new AppException(ErrorCode.CART_ITEM_QUANTITY_EXCEEDS_STOCK);
@@ -89,7 +90,6 @@ public class CartServiceImpl implements CartService {
 
         cart.getItems().remove(cartItem);
     }
-
 
     private double getCurrentPrice(ProductVariant productVariant) {
         if (productVariant.getSalePrice() > 0) {

@@ -107,10 +107,8 @@ class CartServiceTest {
         productVariant.setActive(true);
         productVariant.setDeleted(false);
 
-        cartItemRequest = CartItemRequest.builder()
-                .productVariantId(1L)
-                .quantity(2)
-                .build();
+        cartItemRequest =
+                CartItemRequest.builder().productVariantId(1L).quantity(2).build();
 
         cartResponse = CartResponse.builder()
                 .id(1L)

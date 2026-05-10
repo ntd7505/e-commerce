@@ -11,4 +11,3 @@ public interface CartService {
 
     void deleteCartItemInCart(Long itemId);
 }
-

@@ -19,15 +19,16 @@ public interface ProductVariantRepository extends JpaRepository<ProductVariant, 
 
     Optional<ProductVariant> findByIdAndDeletedFalseAndProductDeletedFalse(Long id);
 
-    @Query("""
-                      select pv
-                      from ProductVariant pv
-                      join pv.product p
-                      where pv.id = :id
-                          and pv.deleted = false 
-                          and pv.active = true
-                          and p.deleted = false 
-                          and p.active = true
-            """)
+    @Query(
+            """
+					select pv
+					from ProductVariant pv
+					join pv.product p
+					where pv.id = :id
+						and pv.deleted = false
+						and pv.active = true
+						and p.deleted = false
+						and p.active = true
+			""")
     Optional<ProductVariant> findSellableVariantById(@Param("id") Long id);
 }

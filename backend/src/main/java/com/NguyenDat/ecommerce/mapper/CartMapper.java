@@ -1,13 +1,13 @@
 package com.NguyenDat.ecommerce.mapper;
 
-import com.NguyenDat.ecommerce.entity.CartItem;
+import java.math.BigDecimal;
+
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 import com.NguyenDat.ecommerce.dto.response.CartResponse;
 import com.NguyenDat.ecommerce.entity.Cart;
-
-import java.math.BigDecimal;
+import com.NguyenDat.ecommerce.entity.CartItem;
 
 @Mapper(componentModel = "spring", uses = CartItemMapper.class)
 public interface CartMapper {
@@ -21,9 +21,7 @@ public interface CartMapper {
             return 0;
         }
 
-        return cart.getItems().stream()
-                .mapToInt(CartItem::getQuantity)
-                .sum();
+        return cart.getItems().stream().mapToInt(CartItem::getQuantity).sum();
     }
 
     default BigDecimal calculateSubtotalAmount(Cart cart) {
@@ -32,9 +30,7 @@ public interface CartMapper {
         }
 
         return cart.getItems().stream()
-                .map(item -> item.getUnitPrice()
-                        .multiply(BigDecimal.valueOf(item.getQuantity())))
+                .map(item -> item.getUnitPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
-
 }

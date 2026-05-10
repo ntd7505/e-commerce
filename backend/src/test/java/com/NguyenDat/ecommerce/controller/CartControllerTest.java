@@ -56,10 +56,8 @@ class CartControllerTest {
 
     @BeforeEach
     void setUp() {
-        cartItemRequest = CartItemRequest.builder()
-                .productVariantId(1L)
-                .quantity(2)
-                .build();
+        cartItemRequest =
+                CartItemRequest.builder().productVariantId(1L).quantity(2).build();
 
         CartItemResponse cartItemResponse = CartItemResponse.builder()
                 .id(1L)
