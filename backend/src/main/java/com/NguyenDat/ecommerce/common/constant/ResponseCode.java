@@ -100,7 +100,19 @@ public enum ResponseCode {
     CART_ITEM_REMOVED(10006, "Cart item removed successfully"),
     CART_CLEARED(10007, "Cart cleared successfully"),
 
-    PAYMENT_METHODS_FETCHED(11000, "Payment methods fetched successfully");
+    // 11000 - Payment
+    PAYMENT_METHODS_FETCHED(11000, "Payment methods fetched successfully"),
+
+    // 12000 - Order & Checkout
+    CHECKOUT_PREVIEW_CREATED(12000, "Checkout preview created successfully"),
+    ORDER_CREATED(12001, "Order created successfully"),
+    ORDER_FETCHED(12002, "Order fetched successfully"),
+    ORDERS_FETCHED(12003, "Orders fetched successfully"),
+    ORDER_CANCELLED(12004, "Order cancelled successfully"),
+    ORDER_STATUS_UPDATED(12005, "Order status updated successfully"),
+    ORDER_SHIPPING_STATUS_UPDATED(12006, "Order shipping status updated successfully"),
+    ORDER_PAYMENT_STATUS_UPDATED(12007, "Order payment status updated successfully"),
+    ORDER_STATUS_HISTORY_FETCHED(12008, "Order status history fetched successfully");
 
     private final int code;
     private final String message;

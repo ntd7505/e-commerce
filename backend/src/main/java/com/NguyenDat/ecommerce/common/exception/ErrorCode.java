@@ -143,7 +143,31 @@ public enum ErrorCode {
     CART_ITEM_QUANTITY_INVALID(10005, "Cart item quantity must be greater than 0", HttpStatus.BAD_REQUEST),
     CART_ITEM_QUANTITY_EXCEEDS_STOCK(10006, "Cart item quantity exceeds available stock", HttpStatus.BAD_REQUEST),
     PRODUCT_VARIANT_OUT_OF_STOCK(10007, "Product variant is out of stock", HttpStatus.BAD_REQUEST),
-    CART_PRODUCT_VARIANT_REQUIRED(10008, "Product variant is required", HttpStatus.BAD_REQUEST);
+    CART_PRODUCT_VARIANT_REQUIRED(10008, "Product variant is required", HttpStatus.BAD_REQUEST),
+
+    // order & checkout
+    ORDER_NOT_FOUND(12000, "Order not found", HttpStatus.NOT_FOUND),
+    ORDER_NOT_BELONG_TO_USER(12001, "Order does not belong to current user", HttpStatus.FORBIDDEN),
+    ORDER_STATUS_REQUIRED(12002, "Order status is required", HttpStatus.BAD_REQUEST),
+    ORDER_STATUS_INVALID(12003, "Order status is invalid", HttpStatus.BAD_REQUEST),
+    ORDER_STATUS_TRANSITION_INVALID(12004, "Order status transition is invalid", HttpStatus.BAD_REQUEST),
+    SHIPPING_STATUS_REQUIRED(12005, "Shipping status is required", HttpStatus.BAD_REQUEST),
+    SHIPPING_STATUS_INVALID(12006, "Shipping status is invalid", HttpStatus.BAD_REQUEST),
+    PAYMENT_STATUS_REQUIRED(12007, "Payment status is required", HttpStatus.BAD_REQUEST),
+    PAYMENT_STATUS_INVALID(12008, "Payment status is invalid", HttpStatus.BAD_REQUEST),
+    PAYMENT_METHOD_REQUIRED(12009, "Payment method is required", HttpStatus.BAD_REQUEST),
+    PAYMENT_METHOD_UNSUPPORTED(12010, "Payment method is not supported", HttpStatus.BAD_REQUEST),
+    CART_ITEMS_REQUIRED(12011, "Cart items are required", HttpStatus.BAD_REQUEST),
+    CHECKOUT_CART_ITEM_INVALID(12012, "One or more cart items are invalid", HttpStatus.BAD_REQUEST),
+    CHECKOUT_CART_ITEM_NOT_BELONG_TO_USER(
+            12013, "One or more cart items do not belong to current user", HttpStatus.FORBIDDEN),
+    CHECKOUT_CART_ITEM_OUT_OF_STOCK(12014, "One or more cart items exceed available stock", HttpStatus.BAD_REQUEST),
+    ORDER_ADDRESS_REQUIRED(12015, "Shipping address is required", HttpStatus.BAD_REQUEST),
+    ORDER_ADDRESS_INVALID(12016, "Shipping address is invalid", HttpStatus.BAD_REQUEST),
+    ORDER_NOTE_INVALID(12017, "Order note must not exceed 500 characters", HttpStatus.BAD_REQUEST),
+    ORDER_CANCEL_NOT_ALLOWED(12018, "Order cannot be cancelled in current status", HttpStatus.BAD_REQUEST),
+    ORDER_CANCEL_REASON_INVALID(
+            12019, "Order cancellation reason must not exceed 500 characters", HttpStatus.BAD_REQUEST);
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {
         this.code = code;
