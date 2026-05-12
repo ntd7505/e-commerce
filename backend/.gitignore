@@ -48,6 +48,7 @@ application-prod.properties
 *.db
 *.sqlite
 *.sqlite3
+src/main/resources/db/seed_mysql.sql
 
 ### OS ###
 .DS_Store
