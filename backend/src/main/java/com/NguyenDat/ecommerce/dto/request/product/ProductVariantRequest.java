@@ -1,4 +1,4 @@
-package com.NguyenDat.ecommerce.dto.request;
+package com.NguyenDat.ecommerce.dto.request.product;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;

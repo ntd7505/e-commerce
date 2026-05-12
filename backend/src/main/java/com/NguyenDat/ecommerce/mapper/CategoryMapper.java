@@ -4,10 +4,10 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 import com.NguyenDat.ecommerce.dto.request.CategoryRequest;
-import com.NguyenDat.ecommerce.dto.response.CategoryChildResponse;
-import com.NguyenDat.ecommerce.dto.response.CategoryParentResponse;
-import com.NguyenDat.ecommerce.dto.response.CategoryResponse;
-import com.NguyenDat.ecommerce.dto.response.CategorySummaryResponse;
+import com.NguyenDat.ecommerce.dto.response.category.CategoryChildResponse;
+import com.NguyenDat.ecommerce.dto.response.category.CategoryParentResponse;
+import com.NguyenDat.ecommerce.dto.response.category.CategoryResponse;
+import com.NguyenDat.ecommerce.dto.response.category.CategorySummaryResponse;
 import com.NguyenDat.ecommerce.entity.Category;
 
 @Mapper(componentModel = "spring")

@@ -1,5 +1,7 @@
 package com.NguyenDat.ecommerce.dto.response;
 
+import com.NguyenDat.ecommerce.enums.ReviewMediaType;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -9,8 +11,9 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CategoryParentResponse {
+public class ProductReviewMediaResponse {
     Long id;
-    String name;
-    String slug;
+    String url;
+    ReviewMediaType mediaType;
+    Integer sortOrder;
 }

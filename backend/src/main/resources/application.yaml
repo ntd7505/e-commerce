@@ -3,7 +3,7 @@ spring:
     name: e-commerce
 
   datasource:
-    url: jdbc:mysql://localhost:3306/ecommerce_db
+    url: jdbc:mysql://localhost:3306/ecommerce_db?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
     username: ${DB_USERNAME:root}
     password: ${DB_PASSWORD:root}
     driver-class-name: com.mysql.cj.jdbc.Driver

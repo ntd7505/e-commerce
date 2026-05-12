@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import com.NguyenDat.ecommerce.common.constant.ApiConstant;
 import com.NguyenDat.ecommerce.common.constant.ResponseCode;
 import com.NguyenDat.ecommerce.common.dto.response.ApiResponse;
-import com.NguyenDat.ecommerce.dto.request.*;
+import com.NguyenDat.ecommerce.dto.request.product.*;
 import com.NguyenDat.ecommerce.dto.response.ProductMediaResponse;
 import com.NguyenDat.ecommerce.dto.response.ProductResponse;
 import com.NguyenDat.ecommerce.dto.response.ProductVariantResponse;

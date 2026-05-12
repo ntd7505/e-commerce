@@ -1,4 +1,4 @@
-package com.NguyenDat.ecommerce.dto.request;
+package com.NguyenDat.ecommerce.dto.request.product;
 
 import java.util.List;
 

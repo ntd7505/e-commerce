@@ -1,4 +1,4 @@
-package com.NguyenDat.ecommerce.dto.response;
+package com.NguyenDat.ecommerce.dto.response.category;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -9,9 +9,8 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CategoryChildResponse {
+public class CategoryParentResponse {
     Long id;
     String name;
     String slug;
-    boolean active;
 }

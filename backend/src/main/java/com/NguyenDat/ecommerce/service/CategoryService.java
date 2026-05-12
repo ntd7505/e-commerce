@@ -3,7 +3,7 @@ package com.NguyenDat.ecommerce.service;
 import java.util.List;
 
 import com.NguyenDat.ecommerce.dto.request.CategoryRequest;
-import com.NguyenDat.ecommerce.dto.response.CategoryResponse;
+import com.NguyenDat.ecommerce.dto.response.category.CategoryResponse;
 
 public interface CategoryService {
     CategoryResponse createCategory(CategoryRequest categoryRequest);

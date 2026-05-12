@@ -2,8 +2,8 @@ package com.NguyenDat.ecommerce.mapper;
 
 import org.mapstruct.*;
 
-import com.NguyenDat.ecommerce.dto.request.ProductMediaRequest;
-import com.NguyenDat.ecommerce.dto.request.ProductMediaUpdateRequest;
+import com.NguyenDat.ecommerce.dto.request.product.ProductMediaRequest;
+import com.NguyenDat.ecommerce.dto.request.product.ProductMediaUpdateRequest;
 import com.NguyenDat.ecommerce.dto.response.ProductMediaResponse;
 import com.NguyenDat.ecommerce.entity.ProductMedia;
 

@@ -2,12 +2,12 @@ package com.NguyenDat.ecommerce.service;
 
 import java.util.List;
 
-import com.NguyenDat.ecommerce.dto.request.ProductCreateRequest;
-import com.NguyenDat.ecommerce.dto.request.ProductMediaRequest;
-import com.NguyenDat.ecommerce.dto.request.ProductMediaUpdateRequest;
-import com.NguyenDat.ecommerce.dto.request.ProductUpdateRequest;
-import com.NguyenDat.ecommerce.dto.request.ProductVariantRequest;
-import com.NguyenDat.ecommerce.dto.request.ProductVariantUpdateRequest;
+import com.NguyenDat.ecommerce.dto.request.product.ProductCreateRequest;
+import com.NguyenDat.ecommerce.dto.request.product.ProductMediaRequest;
+import com.NguyenDat.ecommerce.dto.request.product.ProductMediaUpdateRequest;
+import com.NguyenDat.ecommerce.dto.request.product.ProductUpdateRequest;
+import com.NguyenDat.ecommerce.dto.request.product.ProductVariantRequest;
+import com.NguyenDat.ecommerce.dto.request.product.ProductVariantUpdateRequest;
 import com.NguyenDat.ecommerce.dto.response.ProductMediaResponse;
 import com.NguyenDat.ecommerce.dto.response.ProductResponse;
 import com.NguyenDat.ecommerce.dto.response.ProductVariantResponse;

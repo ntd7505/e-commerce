@@ -9,8 +9,8 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CategorySummaryResponse {
+public class ReviewUserResponse {
     Long id;
-    String name;
-    String slug;
+    String fullName;
+    String avatarUrl;
 }

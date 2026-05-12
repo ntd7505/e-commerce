@@ -2,8 +2,8 @@ package com.NguyenDat.ecommerce.mapper;
 
 import org.mapstruct.*;
 
-import com.NguyenDat.ecommerce.dto.request.ProductCreateRequest;
-import com.NguyenDat.ecommerce.dto.request.ProductUpdateRequest;
+import com.NguyenDat.ecommerce.dto.request.product.ProductCreateRequest;
+import com.NguyenDat.ecommerce.dto.request.product.ProductUpdateRequest;
 import com.NguyenDat.ecommerce.dto.response.ProductResponse;
 import com.NguyenDat.ecommerce.entity.Product;
 

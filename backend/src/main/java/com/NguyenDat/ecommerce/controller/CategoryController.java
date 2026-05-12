@@ -12,7 +12,7 @@ import com.NguyenDat.ecommerce.common.constant.ApiConstant;
 import com.NguyenDat.ecommerce.common.constant.ResponseCode;
 import com.NguyenDat.ecommerce.common.dto.response.ApiResponse;
 import com.NguyenDat.ecommerce.dto.request.CategoryRequest;
-import com.NguyenDat.ecommerce.dto.response.CategoryResponse;
+import com.NguyenDat.ecommerce.dto.response.category.CategoryResponse;
 import com.NguyenDat.ecommerce.service.CategoryService;
 
 import lombok.AccessLevel;

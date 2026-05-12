@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.NguyenDat.ecommerce.common.exception.AppException;
 import com.NguyenDat.ecommerce.common.exception.ErrorCode;
 import com.NguyenDat.ecommerce.dto.request.CategoryRequest;
-import com.NguyenDat.ecommerce.dto.response.CategoryResponse;
+import com.NguyenDat.ecommerce.dto.response.category.CategoryResponse;
 import com.NguyenDat.ecommerce.entity.Category;
 import com.NguyenDat.ecommerce.mapper.CategoryMapper;
 import com.NguyenDat.ecommerce.repository.CategoryRepository;

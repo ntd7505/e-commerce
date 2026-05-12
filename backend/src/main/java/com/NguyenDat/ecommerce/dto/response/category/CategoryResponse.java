@@ -1,4 +1,4 @@
-package com.NguyenDat.ecommerce.dto.response;
+package com.NguyenDat.ecommerce.dto.response.category;
 
 import java.util.List;
 

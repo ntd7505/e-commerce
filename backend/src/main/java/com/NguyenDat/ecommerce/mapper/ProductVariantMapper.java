@@ -2,8 +2,8 @@ package com.NguyenDat.ecommerce.mapper;
 
 import org.mapstruct.*;
 
-import com.NguyenDat.ecommerce.dto.request.ProductVariantRequest;
-import com.NguyenDat.ecommerce.dto.request.ProductVariantUpdateRequest;
+import com.NguyenDat.ecommerce.dto.request.product.ProductVariantRequest;
+import com.NguyenDat.ecommerce.dto.request.product.ProductVariantUpdateRequest;
 import com.NguyenDat.ecommerce.dto.response.ProductVariantResponse;
 import com.NguyenDat.ecommerce.entity.ProductVariant;
 

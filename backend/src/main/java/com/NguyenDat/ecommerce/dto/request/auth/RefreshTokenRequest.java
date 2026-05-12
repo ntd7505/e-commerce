@@ -1,4 +1,4 @@
-package com.NguyenDat.ecommerce.dto.request;
+package com.NguyenDat.ecommerce.dto.request.auth;
 
 import jakarta.validation.constraints.NotBlank;
 
@@ -10,8 +10,7 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class LogoutRequest {
-
+public class RefreshTokenRequest {
     @NotBlank(message = "FIELD_REQUIRED")
-    String token;
+    String refreshToken;
 }
