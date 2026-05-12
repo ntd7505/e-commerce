@@ -1,4 +1,4 @@
-package com.NguyenDat.ecommerce.dto.response;
+package com.NguyenDat.ecommerce.dto.response.product_review;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;

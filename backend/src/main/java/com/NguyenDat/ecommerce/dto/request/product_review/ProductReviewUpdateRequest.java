@@ -1,11 +1,10 @@
-package com.NguyenDat.ecommerce.dto.request;
+package com.NguyenDat.ecommerce.dto.request.product_review;
 
 import java.util.List;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import lombok.*;
@@ -17,12 +16,8 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ProductReviewCreateRequest {
+public class ProductReviewUpdateRequest {
 
-    @NotNull(message = "FIELD_REQUIRED")
-    Long orderItemId;
-
-    @NotNull(message = "FIELD_REQUIRED")
     @Min(value = 1, message = "REVIEW_RATING_INVALID")
     @Max(value = 5, message = "REVIEW_RATING_INVALID")
     Integer rating;
