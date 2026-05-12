@@ -1,14 +1,16 @@
 package com.NguyenDat.ecommerce.entity;
 
-import jakarta.persistence.*;
-import lombok.*;
-import lombok.experimental.FieldDefaults;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import jakarta.persistence.*;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Entity
 @Getter
@@ -18,11 +20,7 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(
         name = "product_reviews",
-        uniqueConstraints = {
-                @UniqueConstraint(
-                        name = "uk_product_review_order_item",
-                        columnNames = "order_item_id")
-        })
+        uniqueConstraints = {@UniqueConstraint(name = "uk_product_review_order_item", columnNames = "order_item_id")})
 public class ProductReview {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

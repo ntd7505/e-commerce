@@ -112,7 +112,16 @@ public enum ResponseCode {
     ORDER_STATUS_UPDATED(12005, "Order status updated successfully"),
     ORDER_SHIPPING_STATUS_UPDATED(12006, "Order shipping status updated successfully"),
     ORDER_PAYMENT_STATUS_UPDATED(12007, "Order payment status updated successfully"),
-    ORDER_STATUS_HISTORY_FETCHED(12008, "Order status history fetched successfully");
+    ORDER_STATUS_HISTORY_FETCHED(12008, "Order status history fetched successfully"),
+
+    // 13000 - Product Review
+    PRODUCT_REVIEW_CREATED(13000, "Product review created successfully"),
+    PRODUCT_REVIEW_FETCHED(13001, "Product review fetched successfully"),
+    PRODUCT_REVIEWS_FETCHED(13002, "Product reviews fetched successfully"),
+    PRODUCT_REVIEW_UPDATED(13003, "Product review updated successfully"),
+    PRODUCT_REVIEW_DELETED(13004, "Product review deleted successfully"),
+    PRODUCT_REVIEW_STATUS_UPDATED(13005, "Product review status updated successfully"),
+    PRODUCT_REVIEW_SUMMARY_FETCHED(13006, "Product review summary fetched successfully");
 
     private final int code;
     private final String message;

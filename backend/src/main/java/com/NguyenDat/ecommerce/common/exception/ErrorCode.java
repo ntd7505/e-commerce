@@ -167,7 +167,25 @@ public enum ErrorCode {
     ORDER_NOTE_INVALID(12017, "Order note must not exceed 500 characters", HttpStatus.BAD_REQUEST),
     ORDER_CANCEL_NOT_ALLOWED(12018, "Order cannot be cancelled in current status", HttpStatus.BAD_REQUEST),
     ORDER_CANCEL_REASON_INVALID(
-            12019, "Order cancellation reason must not exceed 500 characters", HttpStatus.BAD_REQUEST);
+            12019, "Order cancellation reason must not exceed 500 characters", HttpStatus.BAD_REQUEST),
+
+    // product review
+    REVIEW_NOT_FOUND(13000, "Review not found", HttpStatus.NOT_FOUND),
+    REVIEW_ALREADY_EXISTS(13001, "This order item has already been reviewed", HttpStatus.BAD_REQUEST),
+    REVIEW_ORDER_ITEM_INVALID(13002, "Order item is invalid for review", HttpStatus.BAD_REQUEST),
+    REVIEW_NOT_BELONG_TO_USER(13003, "Review does not belong to current user", HttpStatus.FORBIDDEN),
+    REVIEW_RATING_INVALID(13004, "Rating must be between 1 and 5", HttpStatus.BAD_REQUEST),
+    REVIEW_TITLE_INVALID(13005, "Review title must not exceed 150 characters", HttpStatus.BAD_REQUEST),
+    REVIEW_CONTENT_INVALID(13006, "Review content must not exceed 2000 characters", HttpStatus.BAD_REQUEST),
+    REVIEW_MEDIA_LIMIT_EXCEEDED(13007, "Review media must not exceed 5 items", HttpStatus.BAD_REQUEST),
+    REVIEW_MEDIA_URL_INVALID(13008, "Review media URL must not exceed 500 characters", HttpStatus.BAD_REQUEST),
+    REVIEW_MEDIA_SORT_ORDER_INVALID(
+            13009, "Review media sort order must be greater than or equal to 0", HttpStatus.BAD_REQUEST),
+    REVIEW_MEDIA_TYPE_REQUIRED(13010, "Review media type is required", HttpStatus.BAD_REQUEST),
+    REVIEW_MEDIA_TYPE_INVALID(13011, "Review media type must be one of: IMAGE, VIDEO", HttpStatus.BAD_REQUEST),
+    REVIEW_ORDER_NOT_COMPLETED(13012, "Order must be completed before reviewing", HttpStatus.BAD_REQUEST),
+    REVIEW_DELETED(13013, "Review has been deleted", HttpStatus.NOT_FOUND),
+    REVIEW_INACTIVE(13014, "Review is inactive", HttpStatus.FORBIDDEN);
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {
         this.code = code;

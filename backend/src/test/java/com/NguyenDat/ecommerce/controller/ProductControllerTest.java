@@ -33,10 +33,10 @@ import com.NguyenDat.ecommerce.dto.request.product.ProductUpdateRequest;
 import com.NguyenDat.ecommerce.dto.request.product.ProductVariantRequest;
 import com.NguyenDat.ecommerce.dto.request.product.ProductVariantUpdateRequest;
 import com.NguyenDat.ecommerce.dto.response.BrandSummaryResponse;
-import com.NguyenDat.ecommerce.dto.response.category.CategorySummaryResponse;
 import com.NguyenDat.ecommerce.dto.response.ProductMediaResponse;
 import com.NguyenDat.ecommerce.dto.response.ProductResponse;
 import com.NguyenDat.ecommerce.dto.response.ProductVariantResponse;
+import com.NguyenDat.ecommerce.dto.response.category.CategorySummaryResponse;
 import com.NguyenDat.ecommerce.service.ProductService;
 
 import lombok.AccessLevel;
