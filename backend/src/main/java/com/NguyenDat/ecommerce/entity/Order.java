@@ -2,6 +2,8 @@ package com.NguyenDat.ecommerce.entity;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import jakarta.persistence.*;
 
@@ -40,6 +42,12 @@ public class Order {
     @JoinColumn(name = "coupon_id")
     Coupon coupon;
 
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    List<OrderItem> items = new ArrayList<>();
+
+    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
+    OrderCancelRequest cancelRequest;
+
     @Column(name = "recipient_name", nullable = false, length = 100)
     String recipientName;
 
@@ -75,6 +83,9 @@ public class Order {
 
     @Column(name = "note", length = 500)
     String note;
+
+    @Column(name = "cancelled_at")
+    LocalDateTime cancelledAt;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
