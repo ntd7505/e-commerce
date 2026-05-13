@@ -1,0 +1,11 @@
+package com.NguyenDat.ecommerce.repository;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import com.NguyenDat.ecommerce.entity.OrderCancelRequest;
+
+@Repository
+public interface OrderCancelRequestRepository extends JpaRepository<OrderCancelRequest, Long> {
+    boolean existsByOrderId(Long orderId);
+}
