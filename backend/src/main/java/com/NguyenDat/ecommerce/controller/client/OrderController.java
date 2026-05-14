@@ -15,6 +15,7 @@ import com.NguyenDat.ecommerce.dto.request.CheckoutPreviewRequest;
 import com.NguyenDat.ecommerce.dto.request.CheckoutRequest;
 import com.NguyenDat.ecommerce.dto.request.OrderCancelRequestRequest;
 import com.NguyenDat.ecommerce.dto.response.CheckoutPreviewResponse;
+import com.NguyenDat.ecommerce.dto.response.OrderCancelRequestResponse;
 import com.NguyenDat.ecommerce.dto.response.OrderResponse;
 import com.NguyenDat.ecommerce.service.OrderService;
 
@@ -64,5 +65,13 @@ public class OrderController {
     public ResponseEntity<ApiResponse<OrderResponse>> confirmReceived(@PathVariable Long orderId) {
         return ResponseEntity.ok(
                 ApiResponse.of(ResponseCode.ORDER_STATUS_UPDATED, orderService.confirmReceived(orderId)));
+    }
+
+    @PostMapping("/orders/{orderId}/cancel-request")
+    public ResponseEntity<ApiResponse<OrderCancelRequestResponse>> requestOrderCancellation(
+            @RequestBody @Valid OrderCancelRequestRequest orderCancelRequestRequest, @PathVariable Long orderId) {
+        return ResponseEntity.ok(ApiResponse.of(
+                ResponseCode.ORDER_CANCEL_REQUEST_CREATED,
+                orderService.requestOrderCancellation(orderCancelRequestRequest, orderId)));
     }
 }

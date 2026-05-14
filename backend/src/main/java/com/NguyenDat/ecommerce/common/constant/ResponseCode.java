@@ -113,6 +113,11 @@ public enum ResponseCode {
     ORDER_SHIPPING_STATUS_UPDATED(12006, "Order shipping status updated successfully"),
     ORDER_PAYMENT_STATUS_UPDATED(12007, "Order payment status updated successfully"),
     ORDER_STATUS_HISTORY_FETCHED(12008, "Order status history fetched successfully"),
+    ORDER_CANCEL_REQUEST_CREATED(12009, "Order cancellation request created successfully"),
+    ORDER_CANCEL_REQUESTS_FETCHED(12010, "Order cancellation requests fetched successfully"),
+    ORDER_CANCEL_REQUEST_FETCHED(12011, "Order cancellation request fetched successfully"),
+    ORDER_CANCEL_REQUEST_APPROVED(12012, "Order cancellation request approved successfully"),
+    ORDER_CANCEL_REQUEST_REJECTED(12013, "Order cancellation request rejected successfully"),
 
     // 13000 - Product Review
     PRODUCT_REVIEW_CREATED(13000, "Product review created successfully"),

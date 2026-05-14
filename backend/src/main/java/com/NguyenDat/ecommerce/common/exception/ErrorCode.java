@@ -169,6 +169,13 @@ public enum ErrorCode {
     ORDER_CANCEL_REASON_INVALID(
             12019, "Order cancellation reason must not exceed 500 characters", HttpStatus.BAD_REQUEST),
     ORDER_CANCEL_REQUEST_EXISTED(12020, "Order cancellation request already exists", HttpStatus.BAD_REQUEST),
+    ORDER_CANCEL_REQUEST_NOT_FOUND(12021, "Order cancellation request not found", HttpStatus.NOT_FOUND),
+    ORDER_CANCEL_REQUEST_NOT_ALLOWED(
+            12022, "Order cancellation request is not allowed in current status", HttpStatus.BAD_REQUEST),
+    ORDER_CANCEL_REQUEST_ALREADY_REVIEWED(
+            12023, "Order cancellation request has already been reviewed", HttpStatus.BAD_REQUEST),
+    ORDER_CANCEL_REVIEW_NOTE_INVALID(
+            12024, "Order cancellation review note must not exceed 500 characters", HttpStatus.BAD_REQUEST),
 
     // product review
     REVIEW_NOT_FOUND(13000, "Review not found", HttpStatus.NOT_FOUND),

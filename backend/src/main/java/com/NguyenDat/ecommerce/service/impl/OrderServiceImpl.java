@@ -2,6 +2,7 @@ package com.NguyenDat.ecommerce.service.impl;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,6 +18,7 @@ import com.NguyenDat.ecommerce.dto.request.CheckoutRequest;
 import com.NguyenDat.ecommerce.dto.request.OrderCancelRequestRequest;
 import com.NguyenDat.ecommerce.dto.response.CheckoutItemResponse;
 import com.NguyenDat.ecommerce.dto.response.CheckoutPreviewResponse;
+import com.NguyenDat.ecommerce.dto.response.OrderCancelRequestResponse;
 import com.NguyenDat.ecommerce.dto.response.OrderResponse;
 import com.NguyenDat.ecommerce.entity.*;
 import com.NguyenDat.ecommerce.enums.*;
@@ -187,7 +189,7 @@ public class OrderServiceImpl implements OrderService {
         return orderMapper.toOrderResponse(savedOrder);
     }
 
-    @Override
+    @Transactional
     public OrderResponse confirmReceived(Long orderId) {
         User user = getCurrentUser();
         Order order = orderRepository
@@ -196,6 +198,139 @@ public class OrderServiceImpl implements OrderService {
         order.setStatus(OrderStatus.COMPLETED);
         order.setPaymentStatus(PaymentStatus.PAID);
         return orderMapper.toOrderResponse(orderRepository.save(order));
+    }
+
+    @Override
+    public List<OrderResponse> getAllOrders() {
+        return orderRepository.findAll().stream()
+                .map(orderMapper::toOrderResponse)
+                .toList();
+    }
+
+    @Override
+    public OrderResponse getOrderById(Long orderId) {
+        Order order = orderRepository.findById(orderId).orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
+        return orderMapper.toOrderResponse(order);
+    }
+
+    @Transactional
+    public OrderResponse confirmOrder(Long orderId) {
+        Order order = orderRepository.findById(orderId).orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
+
+        if (order.getStatus() != OrderStatus.PENDING) {
+            throw new AppException(ErrorCode.ORDER_STATUS_TRANSITION_INVALID);
+        }
+
+        order.setStatus(OrderStatus.CONFIRMED);
+        order.setShippingStatus(ShippingStatus.PREPARING);
+
+        return orderMapper.toOrderResponse(orderRepository.save(order));
+    }
+
+    @Transactional
+    public OrderResponse processOrder(Long orderId) {
+        Order order = orderRepository.findById(orderId).orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
+
+        if (order.getStatus() != OrderStatus.CONFIRMED) {
+            throw new AppException(ErrorCode.ORDER_STATUS_TRANSITION_INVALID);
+        }
+
+        order.setStatus(OrderStatus.PROCESSING);
+        order.setShippingStatus(ShippingStatus.PREPARING);
+
+        return orderMapper.toOrderResponse(orderRepository.save(order));
+    }
+
+    @Transactional
+    public OrderResponse shipOrder(Long orderId) {
+        Order order = orderRepository.findById(orderId).orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
+
+        if (order.getStatus() != OrderStatus.PROCESSING) {
+            throw new AppException(ErrorCode.ORDER_STATUS_TRANSITION_INVALID);
+        }
+
+        order.setStatus(OrderStatus.SHIPPING);
+        order.setShippingStatus(ShippingStatus.SHIPPING);
+
+        return orderMapper.toOrderResponse(orderRepository.save(order));
+    }
+
+    @Transactional
+    public OrderResponse deliverOrder(Long orderId) {
+        Order order = orderRepository.findById(orderId).orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
+
+        if (order.getStatus() != OrderStatus.SHIPPING) {
+            throw new AppException(ErrorCode.ORDER_STATUS_TRANSITION_INVALID);
+        }
+
+        order.setStatus(OrderStatus.DELIVERED);
+        order.setShippingStatus(ShippingStatus.DELIVERED);
+
+        return orderMapper.toOrderResponse(orderRepository.save(order));
+    }
+
+    @Override
+    public OrderCancelRequestResponse requestOrderCancellation(
+            OrderCancelRequestRequest orderCancelRequestRequest, Long orderId) {
+        User user = getCurrentUser();
+        Order order = orderRepository
+                .findDeliveredOrder(orderId, user.getId())
+                .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
+        OrderCancelRequest orderCancelRequest = new OrderCancelRequest();
+        orderCancelRequest.setStatus(CancelRequestStatus.PENDING);
+        orderCancelRequest.setReason(orderCancelRequestRequest.getReason());
+        orderCancelRequest.setRequestedAt(LocalDateTime.now());
+        orderCancelRequest.setOrder(order);
+        orderCancelRequest.setRequestedBy(user);
+        return orderMapper.toOrderCancelRequestResponse(orderCancelRequestRepository.save(orderCancelRequest));
+    }
+
+    @Override
+    public List<OrderCancelRequestResponse> getAllOrderCancelRequests() {
+        return orderCancelRequestRepository.findAll().stream()
+                .map(orderMapper::toOrderCancelRequestResponse)
+                .toList();
+    }
+
+    @Transactional
+    public OrderCancelRequestResponse approveCancelOrder(long requestId) {
+        User user = getCurrentUser();
+        OrderCancelRequest orderCancelRequest = orderCancelRequestRepository
+                .findPendingCancelRequestById(requestId)
+                .orElseThrow(() -> new AppException(ErrorCode.ORDER_CANCEL_REQUEST_NOT_FOUND));
+
+        Order order = orderCancelRequest.getOrder();
+
+        if (order.getStatus() == OrderStatus.CANCELLED
+                || order.getStatus() == OrderStatus.COMPLETED
+                || order.getStatus() == OrderStatus.DELIVERED) {
+            throw new AppException(ErrorCode.ORDER_CANCEL_REQUEST_NOT_ALLOWED);
+        }
+
+        order.setStatus(OrderStatus.CANCELLED);
+        order.setShippingStatus(ShippingStatus.CANCELLED);
+        order.setPaymentStatus(PaymentStatus.CANCELLED);
+
+        orderCancelRequest.setStatus(CancelRequestStatus.APPROVED);
+        orderCancelRequest.setReviewedAt(LocalDateTime.now());
+        orderCancelRequest.setReviewedBy(user);
+
+        orderCancelRequest.setStatus(CancelRequestStatus.APPROVED);
+        orderCancelRequest.setReviewedAt(LocalDateTime.now());
+        orderCancelRequest.setReviewedBy(user);
+        return orderMapper.toOrderCancelRequestResponse(orderCancelRequestRepository.save(orderCancelRequest));
+    }
+
+    @Transactional
+    public OrderCancelRequestResponse rejectCancelOrder(long requestId) {
+        User user = getCurrentUser();
+        OrderCancelRequest orderCancelRequest = orderCancelRequestRepository
+                .findPendingCancelRequestById(requestId)
+                .orElseThrow(() -> new AppException(ErrorCode.ORDER_CANCEL_REQUEST_NOT_FOUND));
+        orderCancelRequest.setStatus(CancelRequestStatus.REJECTED);
+        orderCancelRequest.setReviewedAt(LocalDateTime.now());
+        orderCancelRequest.setReviewedBy(user);
+        return orderMapper.toOrderCancelRequestResponse(orderCancelRequestRepository.save(orderCancelRequest));
     }
 
     private CheckoutCalculation calculateCheckout(
