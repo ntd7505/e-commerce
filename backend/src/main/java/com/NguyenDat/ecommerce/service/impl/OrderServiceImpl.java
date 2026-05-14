@@ -103,7 +103,7 @@ public class OrderServiceImpl implements OrderService {
 
         order.setStatus(OrderStatus.PENDING);
         order.setPaymentStatus(PaymentStatus.UNPAID);
-        order.setShippingStatus(ShippingStatus.PENDING);
+        order.setShippingStatus(ShippingStatus.NOT_SHIPPED);
 
         order.setSubtotalAmount(checkoutCalculation.getSubtotalAmount());
         order.setShippingFee(checkoutCalculation.getShippingFee());
@@ -178,6 +178,7 @@ public class OrderServiceImpl implements OrderService {
         order.setStatus(OrderStatus.CANCELLED);
         order.setShippingStatus(ShippingStatus.CANCELLED);
         order.setPaymentStatus(PaymentStatus.CANCELLED);
+        order.setCancelledAt(LocalDateTime.now());
 
         Order savedOrder = orderRepository.save(order);
 
