@@ -1,5 +1,7 @@
 package com.NguyenDat.ecommerce.service.impl;
 
+import static com.NguyenDat.ecommerce.enums.OrderStatus.*;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
@@ -155,6 +157,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public OrderResponse cancelMyOrder(OrderCancelRequestRequest orderCancelRequestRequest, Long orderId) {
         User user = getCurrentUser();
         Order order = orderRepository
@@ -183,6 +186,9 @@ public class OrderServiceImpl implements OrderService {
         orderCancelRequest.setRequestedBy(user);
         orderCancelRequest.setReason(normalizedReason);
         orderCancelRequest.setStatus(CancelRequestStatus.APPROVED);
+        orderCancelRequest.setRequestedAt(LocalDateTime.now());
+        orderCancelRequest.setReviewedAt(LocalDateTime.now());
+        orderCancelRequest.setReviewedBy(user);
 
         orderCancelRequestRepository.save(orderCancelRequest);
 
@@ -221,7 +227,7 @@ public class OrderServiceImpl implements OrderService {
             throw new AppException(ErrorCode.ORDER_STATUS_TRANSITION_INVALID);
         }
 
-        order.setStatus(OrderStatus.CONFIRMED);
+        order.setStatus(CONFIRMED);
         order.setShippingStatus(ShippingStatus.PREPARING);
 
         return orderMapper.toOrderResponse(orderRepository.save(order));
@@ -231,11 +237,11 @@ public class OrderServiceImpl implements OrderService {
     public OrderResponse processOrder(Long orderId) {
         Order order = orderRepository.findById(orderId).orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
 
-        if (order.getStatus() != OrderStatus.CONFIRMED) {
+        if (order.getStatus() != CONFIRMED) {
             throw new AppException(ErrorCode.ORDER_STATUS_TRANSITION_INVALID);
         }
 
-        order.setStatus(OrderStatus.PROCESSING);
+        order.setStatus(PROCESSING);
         order.setShippingStatus(ShippingStatus.PREPARING);
 
         return orderMapper.toOrderResponse(orderRepository.save(order));
@@ -245,11 +251,11 @@ public class OrderServiceImpl implements OrderService {
     public OrderResponse shipOrder(Long orderId) {
         Order order = orderRepository.findById(orderId).orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
 
-        if (order.getStatus() != OrderStatus.PROCESSING) {
+        if (order.getStatus() != PROCESSING) {
             throw new AppException(ErrorCode.ORDER_STATUS_TRANSITION_INVALID);
         }
 
-        order.setStatus(OrderStatus.SHIPPING);
+        order.setStatus(SHIPPING);
         order.setShippingStatus(ShippingStatus.SHIPPING);
 
         return orderMapper.toOrderResponse(orderRepository.save(order));
@@ -259,7 +265,7 @@ public class OrderServiceImpl implements OrderService {
     public OrderResponse deliverOrder(Long orderId) {
         Order order = orderRepository.findById(orderId).orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
 
-        if (order.getStatus() != OrderStatus.SHIPPING) {
+        if (order.getStatus() != SHIPPING) {
             throw new AppException(ErrorCode.ORDER_STATUS_TRANSITION_INVALID);
         }
 
@@ -270,15 +276,30 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public OrderCancelRequestResponse requestOrderCancellation(
             OrderCancelRequestRequest orderCancelRequestRequest, Long orderId) {
         User user = getCurrentUser();
         Order order = orderRepository
-                .findDeliveredOrder(orderId, user.getId())
+                .findByIdAndUserId(orderId, user.getId())
                 .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
+
+        if (order.getStatus() != CONFIRMED && order.getStatus() != PROCESSING && order.getStatus() != SHIPPING) {
+            throw new AppException(ErrorCode.ORDER_CANCEL_REQUEST_NOT_ALLOWED);
+        }
+
+        if (orderCancelRequestRepository.existsByOrderId(orderId)) {
+            throw new AppException(ErrorCode.ORDER_CANCEL_REQUEST_EXISTED);
+        }
+
+        String normalizedReason = orderCancelRequestRequest.getReason().trim();
+        if (normalizedReason.isBlank()) {
+            throw new AppException(ErrorCode.ORDER_CANCEL_REASON_INVALID);
+        }
+
         OrderCancelRequest orderCancelRequest = new OrderCancelRequest();
         orderCancelRequest.setStatus(CancelRequestStatus.PENDING);
-        orderCancelRequest.setReason(orderCancelRequestRequest.getReason());
+        orderCancelRequest.setReason(normalizedReason);
         orderCancelRequest.setRequestedAt(LocalDateTime.now());
         orderCancelRequest.setOrder(order);
         orderCancelRequest.setRequestedBy(user);
@@ -310,14 +331,12 @@ public class OrderServiceImpl implements OrderService {
         order.setStatus(OrderStatus.CANCELLED);
         order.setShippingStatus(ShippingStatus.CANCELLED);
         order.setPaymentStatus(PaymentStatus.CANCELLED);
+        orderRepository.save(order);
 
         orderCancelRequest.setStatus(CancelRequestStatus.APPROVED);
         orderCancelRequest.setReviewedAt(LocalDateTime.now());
         orderCancelRequest.setReviewedBy(user);
 
-        orderCancelRequest.setStatus(CancelRequestStatus.APPROVED);
-        orderCancelRequest.setReviewedAt(LocalDateTime.now());
-        orderCancelRequest.setReviewedBy(user);
         return orderMapper.toOrderCancelRequestResponse(orderCancelRequestRepository.save(orderCancelRequest));
     }
 

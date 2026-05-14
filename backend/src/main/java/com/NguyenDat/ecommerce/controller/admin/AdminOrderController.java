@@ -71,6 +71,6 @@ public class AdminOrderController {
     @PatchMapping("/order-cancel-requests/{requestId}/reject")
     public ResponseEntity<ApiResponse<OrderCancelRequestResponse>> rejectCancelOrder(@PathVariable long requestId) {
         return ResponseEntity.ok(
-                ApiResponse.of(ResponseCode.ORDER_CANCEL_REQUEST_APPROVED, orderService.rejectCancelOrder(requestId)));
+                ApiResponse.of(ResponseCode.ORDER_CANCEL_REQUEST_REJECTED, orderService.rejectCancelOrder(requestId)));
     }
 }
