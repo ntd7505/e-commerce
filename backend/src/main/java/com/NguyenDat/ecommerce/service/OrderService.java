@@ -21,4 +21,6 @@ public interface OrderService {
     List<OrderResponse> getMyOrder();
 
     OrderResponse cancelMyOrder(OrderCancelRequestRequest orderCancelRequestRequest, Long orderId);
+
+    OrderResponse confirmReceived(Long orderId);
 }

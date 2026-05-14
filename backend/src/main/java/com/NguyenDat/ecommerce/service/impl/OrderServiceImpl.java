@@ -187,6 +187,17 @@ public class OrderServiceImpl implements OrderService {
         return orderMapper.toOrderResponse(savedOrder);
     }
 
+    @Override
+    public OrderResponse confirmReceived(Long orderId) {
+        User user = getCurrentUser();
+        Order order = orderRepository
+                .findDeliveredOrder(orderId, user.getId())
+                .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
+        order.setStatus(OrderStatus.COMPLETED);
+        order.setPaymentStatus(PaymentStatus.PAID);
+        return orderMapper.toOrderResponse(orderRepository.save(order));
+    }
+
     private CheckoutCalculation calculateCheckout(
             User user, List<Long> cartItemIds, Long addressId, String couponCode) {
         Cart cart =
