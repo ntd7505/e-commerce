@@ -51,9 +51,9 @@ public class OrderServiceImpl implements OrderService {
     CouponRepository couponRepository;
     OrderMapper orderMapper;
     OrderRepository orderRepository;
-    OrderItemRepository orderItemRepository;
     OrderCancelRequestRepository orderCancelRequestRepository;
     InventoryTransactionRepository inventoryTransactionRepository;
+    OrderStatusHistoryRepository orderStatusHistoryRepository;
 
     public CheckoutPreviewResponse createCheckoutPreview(CheckoutPreviewRequest checkoutPreviewRequest) {
         User user = getCurrentUser();
@@ -179,11 +179,16 @@ public class OrderServiceImpl implements OrderService {
         if (normalizedReason.isBlank()) {
             throw new AppException(ErrorCode.ORDER_CANCEL_REASON_INVALID);
         }
+
+        OrderStatus oldStatus = order.getStatus();
+
         order.setStatus(OrderStatus.CANCELLED);
         order.setShippingStatus(ShippingStatus.CANCELLED);
         order.setPaymentStatus(PaymentStatus.CANCELLED);
         order.setCancelledAt(LocalDateTime.now());
         markPaymentCancelled(order);
+
+        recordOrderStatusHistory(order, user, oldStatus, OrderStatus.CANCELLED, "User cancelled pending order");
 
         Order savedOrder = orderRepository.save(order);
 
@@ -207,9 +212,15 @@ public class OrderServiceImpl implements OrderService {
         Order order = orderRepository
                 .findDeliveredOrder(orderId, user.getId())
                 .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
+
+        OrderStatus oldStatus = order.getStatus();
+
         order.setStatus(OrderStatus.COMPLETED);
         order.setPaymentStatus(PaymentStatus.PAID);
         markPaymentPaid(order);
+
+        recordOrderStatusHistory(order, user, oldStatus, OrderStatus.COMPLETED, "User confirmed received order");
+
         return orderMapper.toOrderResponse(orderRepository.save(order));
     }
 
@@ -235,10 +246,14 @@ public class OrderServiceImpl implements OrderService {
             throw new AppException(ErrorCode.ORDER_STATUS_TRANSITION_INVALID);
         }
 
+        OrderStatus oldStatus = order.getStatus();
+
         decreaseStockForOrder(order, admin);
 
         order.setStatus(CONFIRMED);
         order.setShippingStatus(ShippingStatus.PREPARING);
+
+        recordOrderStatusHistory(order, admin, oldStatus, CONFIRMED, "Admin confirmed order");
 
         return orderMapper.toOrderResponse(orderRepository.save(order));
     }
@@ -251,8 +266,13 @@ public class OrderServiceImpl implements OrderService {
             throw new AppException(ErrorCode.ORDER_STATUS_TRANSITION_INVALID);
         }
 
+        User admin = getCurrentUser();
+        OrderStatus oldStatus = order.getStatus();
+
         order.setStatus(PROCESSING);
         order.setShippingStatus(ShippingStatus.PREPARING);
+
+        recordOrderStatusHistory(order, admin, oldStatus, PROCESSING, "Admin processed order");
 
         return orderMapper.toOrderResponse(orderRepository.save(order));
     }
@@ -265,8 +285,13 @@ public class OrderServiceImpl implements OrderService {
             throw new AppException(ErrorCode.ORDER_STATUS_TRANSITION_INVALID);
         }
 
+        User admin = getCurrentUser();
+        OrderStatus oldStatus = order.getStatus();
+
         order.setStatus(SHIPPING);
         order.setShippingStatus(ShippingStatus.SHIPPING);
+
+        recordOrderStatusHistory(order, admin, oldStatus, SHIPPING, "Admin shipped order");
 
         return orderMapper.toOrderResponse(orderRepository.save(order));
     }
@@ -279,8 +304,13 @@ public class OrderServiceImpl implements OrderService {
             throw new AppException(ErrorCode.ORDER_STATUS_TRANSITION_INVALID);
         }
 
+        User admin = getCurrentUser();
+        OrderStatus oldStatus = order.getStatus();
+
         order.setStatus(OrderStatus.DELIVERED);
         order.setShippingStatus(ShippingStatus.DELIVERED);
+
+        recordOrderStatusHistory(order, admin, oldStatus, OrderStatus.DELIVERED, "Admin delivered order");
 
         return orderMapper.toOrderResponse(orderRepository.save(order));
     }
@@ -336,6 +366,8 @@ public class OrderServiceImpl implements OrderService {
             throw new AppException(ErrorCode.ORDER_CANCEL_REQUEST_NOT_ALLOWED);
         }
 
+        OrderStatus oldStatus = order.getStatus();
+
         restoreStockForOrder(order, user);
 
         order.setStatus(OrderStatus.CANCELLED);
@@ -343,6 +375,9 @@ public class OrderServiceImpl implements OrderService {
         order.setPaymentStatus(PaymentStatus.CANCELLED);
         order.setCancelledAt(LocalDateTime.now());
         markPaymentCancelled(order);
+
+        recordOrderStatusHistory(order, user, oldStatus, OrderStatus.CANCELLED, "Admin approved cancellation request");
+
         orderRepository.save(order);
 
         orderCancelRequest.setStatus(CancelRequestStatus.APPROVED);
@@ -557,6 +592,18 @@ public class OrderServiceImpl implements OrderService {
 
             inventoryTransactionRepository.save(transaction);
         }
+    }
+
+    private void recordOrderStatusHistory(
+            Order order, User changedBy, OrderStatus oldStatus, OrderStatus newStatus, String note) {
+        OrderStatusHistory history = new OrderStatusHistory();
+        history.setOrder(order);
+        history.setChangedBy(changedBy);
+        history.setOldStatus(oldStatus);
+        history.setNewStatus(newStatus);
+        history.setNote(note);
+
+        orderStatusHistoryRepository.save(history);
     }
 
     @Getter
