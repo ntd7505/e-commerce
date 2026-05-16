@@ -1,18 +1,21 @@
 package com.NguyenDat.ecommerce.entity;
 
-import com.NguyenDat.ecommerce.enums.OrderStatus;
-import com.NguyenDat.ecommerce.enums.PaymentStatus;
-import com.NguyenDat.ecommerce.enums.ShippingStatus;
-import jakarta.persistence.*;
-import lombok.*;
-import lombok.experimental.FieldDefaults;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import jakarta.persistence.*;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import com.NguyenDat.ecommerce.enums.OrderStatus;
+import com.NguyenDat.ecommerce.enums.PaymentStatus;
+import com.NguyenDat.ecommerce.enums.ShippingStatus;
+
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Entity
 @Getter

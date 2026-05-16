@@ -1,5 +1,18 @@
 package com.NguyenDat.ecommerce.service.impl;
 
+import static com.NguyenDat.ecommerce.enums.OrderStatus.*;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.NguyenDat.ecommerce.common.exception.AppException;
 import com.NguyenDat.ecommerce.common.exception.ErrorCode;
 import com.NguyenDat.ecommerce.dto.request.CheckoutPreviewRequest;
@@ -16,23 +29,12 @@ import com.NguyenDat.ecommerce.mapper.CheckoutItemMapper;
 import com.NguyenDat.ecommerce.mapper.OrderMapper;
 import com.NguyenDat.ecommerce.repository.*;
 import com.NguyenDat.ecommerce.service.OrderService;
+
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
-import static com.NguyenDat.ecommerce.enums.OrderStatus.*;
 
 @Service
 @RequiredArgsConstructor
@@ -51,6 +53,7 @@ public class OrderServiceImpl implements OrderService {
     OrderRepository orderRepository;
     OrderItemRepository orderItemRepository;
     OrderCancelRequestRepository orderCancelRequestRepository;
+    InventoryTransactionRepository inventoryTransactionRepository;
 
     public CheckoutPreviewResponse createCheckoutPreview(CheckoutPreviewRequest checkoutPreviewRequest) {
         User user = getCurrentUser();
@@ -225,11 +228,14 @@ public class OrderServiceImpl implements OrderService {
 
     @Transactional
     public OrderResponse confirmOrder(Long orderId) {
+        User admin = getCurrentUser();
         Order order = orderRepository.findById(orderId).orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
 
         if (order.getStatus() != OrderStatus.PENDING) {
             throw new AppException(ErrorCode.ORDER_STATUS_TRANSITION_INVALID);
         }
+
+        decreaseStockForOrder(order, admin);
 
         order.setStatus(CONFIRMED);
         order.setShippingStatus(ShippingStatus.PREPARING);
@@ -326,11 +332,11 @@ public class OrderServiceImpl implements OrderService {
 
         Order order = orderCancelRequest.getOrder();
 
-        if (order.getStatus() == OrderStatus.CANCELLED
-                || order.getStatus() == OrderStatus.COMPLETED
-                || order.getStatus() == OrderStatus.DELIVERED) {
+        if (order.getStatus() != CONFIRMED && order.getStatus() != PROCESSING && order.getStatus() != SHIPPING) {
             throw new AppException(ErrorCode.ORDER_CANCEL_REQUEST_NOT_ALLOWED);
         }
+
+        restoreStockForOrder(order, user);
 
         order.setStatus(OrderStatus.CANCELLED);
         order.setShippingStatus(ShippingStatus.CANCELLED);
@@ -471,7 +477,7 @@ public class OrderServiceImpl implements OrderService {
         return authentication.getName();
     }
 
-    //Payment Helper ============================================
+    // Payment Helper ============================================
     private Payment createCodPayment(Order order) {
         Payment payment = new Payment();
         payment.setOrder(order);
@@ -500,6 +506,58 @@ public class OrderServiceImpl implements OrderService {
         payment.setStatus(PaymentStatus.CANCELLED);
     }
 
+    private void decreaseStockForOrder(Order order, User admin) {
+        for (OrderItem item : order.getItems()) {
+            ProductVariant variant = item.getProductVariant();
+            int beforeQuantity = variant.getStockQuantity();
+            int quantity = item.getQuantity();
+
+            if (beforeQuantity < quantity) {
+                throw new AppException(ErrorCode.PRODUCT_VARIANT_OUT_OF_STOCK);
+            }
+
+            int afterQuantity = beforeQuantity - quantity;
+            variant.setStockQuantity(afterQuantity);
+
+            InventoryTransaction transaction = new InventoryTransaction();
+            transaction.setProductVariant(variant);
+            transaction.setOrder(order);
+            transaction.setOrderItem(item);
+            transaction.setCreatedBy(admin);
+            transaction.setType(InventoryTransactionType.SALE);
+            transaction.setQuantityChange(-quantity);
+            transaction.setBeforeQuantity(beforeQuantity);
+            transaction.setAfterQuantity(afterQuantity);
+            transaction.setNote("Stock decreased when order confirmed");
+
+            inventoryTransactionRepository.save(transaction);
+        }
+    }
+
+    private void restoreStockForOrder(Order order, User admin) {
+        for (OrderItem item : order.getItems()) {
+            ProductVariant variant = item.getProductVariant();
+
+            int beforeQuantity = variant.getStockQuantity();
+            int quantity = item.getQuantity();
+            int afterQuantity = beforeQuantity + quantity;
+
+            variant.setStockQuantity(afterQuantity);
+
+            InventoryTransaction transaction = new InventoryTransaction();
+            transaction.setProductVariant(variant);
+            transaction.setOrder(order);
+            transaction.setOrderItem(item);
+            transaction.setCreatedBy(admin);
+            transaction.setType(InventoryTransactionType.RESTOCK);
+            transaction.setQuantityChange(quantity);
+            transaction.setBeforeQuantity(beforeQuantity);
+            transaction.setAfterQuantity(afterQuantity);
+            transaction.setNote("Stock restored when order cancelled");
+
+            inventoryTransactionRepository.save(transaction);
+        }
+    }
 
     @Getter
     @Builder
