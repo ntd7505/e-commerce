@@ -157,25 +157,26 @@ public enum ErrorCode {
     PAYMENT_STATUS_INVALID(12008, "Payment status is invalid", HttpStatus.BAD_REQUEST),
     PAYMENT_METHOD_REQUIRED(12009, "Payment method is required", HttpStatus.BAD_REQUEST),
     PAYMENT_METHOD_UNSUPPORTED(12010, "Payment method is not supported", HttpStatus.BAD_REQUEST),
-    CART_ITEMS_REQUIRED(12011, "Cart items are required", HttpStatus.BAD_REQUEST),
-    CHECKOUT_CART_ITEM_INVALID(12012, "One or more cart items are invalid", HttpStatus.BAD_REQUEST),
+    PAYMENT_NOT_FOUND(12011, "Payment not found", HttpStatus.NOT_FOUND),
+    CART_ITEMS_REQUIRED(12012, "Cart items are required", HttpStatus.BAD_REQUEST),
+    CHECKOUT_CART_ITEM_INVALID(12013, "One or more cart items are invalid", HttpStatus.BAD_REQUEST),
     CHECKOUT_CART_ITEM_NOT_BELONG_TO_USER(
-            12013, "One or more cart items do not belong to current user", HttpStatus.FORBIDDEN),
-    CHECKOUT_CART_ITEM_OUT_OF_STOCK(12014, "One or more cart items exceed available stock", HttpStatus.BAD_REQUEST),
-    ORDER_ADDRESS_REQUIRED(12015, "Shipping address is required", HttpStatus.BAD_REQUEST),
-    ORDER_ADDRESS_INVALID(12016, "Shipping address is invalid", HttpStatus.BAD_REQUEST),
-    ORDER_NOTE_INVALID(12017, "Order note must not exceed 500 characters", HttpStatus.BAD_REQUEST),
-    ORDER_CANCEL_NOT_ALLOWED(12018, "Order cannot be cancelled in current status", HttpStatus.BAD_REQUEST),
+            12014, "One or more cart items do not belong to current user", HttpStatus.FORBIDDEN),
+    CHECKOUT_CART_ITEM_OUT_OF_STOCK(12015, "One or more cart items exceed available stock", HttpStatus.BAD_REQUEST),
+    ORDER_ADDRESS_REQUIRED(12016, "Shipping address is required", HttpStatus.BAD_REQUEST),
+    ORDER_ADDRESS_INVALID(12017, "Shipping address is invalid", HttpStatus.BAD_REQUEST),
+    ORDER_NOTE_INVALID(12018, "Order note must not exceed 500 characters", HttpStatus.BAD_REQUEST),
+    ORDER_CANCEL_NOT_ALLOWED(12019, "Order cannot be cancelled in current status", HttpStatus.BAD_REQUEST),
     ORDER_CANCEL_REASON_INVALID(
-            12019, "Order cancellation reason must not exceed 500 characters", HttpStatus.BAD_REQUEST),
-    ORDER_CANCEL_REQUEST_EXISTED(12020, "Order cancellation request already exists", HttpStatus.BAD_REQUEST),
-    ORDER_CANCEL_REQUEST_NOT_FOUND(12021, "Order cancellation request not found", HttpStatus.NOT_FOUND),
+            12020, "Order cancellation reason must not exceed 500 characters", HttpStatus.BAD_REQUEST),
+    ORDER_CANCEL_REQUEST_EXISTED(12021, "Order cancellation request already exists", HttpStatus.BAD_REQUEST),
+    ORDER_CANCEL_REQUEST_NOT_FOUND(12022, "Order cancellation request not found", HttpStatus.NOT_FOUND),
     ORDER_CANCEL_REQUEST_NOT_ALLOWED(
-            12022, "Order cancellation request is not allowed in current status", HttpStatus.BAD_REQUEST),
+            12023, "Order cancellation request is not allowed in current status", HttpStatus.BAD_REQUEST),
     ORDER_CANCEL_REQUEST_ALREADY_REVIEWED(
-            12023, "Order cancellation request has already been reviewed", HttpStatus.BAD_REQUEST),
+            12024, "Order cancellation request has already been reviewed", HttpStatus.BAD_REQUEST),
     ORDER_CANCEL_REVIEW_NOTE_INVALID(
-            12024, "Order cancellation review note must not exceed 500 characters", HttpStatus.BAD_REQUEST),
+            12025, "Order cancellation review note must not exceed 500 characters", HttpStatus.BAD_REQUEST),
 
     // product review
     REVIEW_NOT_FOUND(13000, "Review not found", HttpStatus.NOT_FOUND),

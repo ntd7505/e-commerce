@@ -1,18 +1,5 @@
 package com.NguyenDat.ecommerce.service.impl;
 
-import static com.NguyenDat.ecommerce.enums.OrderStatus.*;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.NguyenDat.ecommerce.common.exception.AppException;
 import com.NguyenDat.ecommerce.common.exception.ErrorCode;
 import com.NguyenDat.ecommerce.dto.request.CheckoutPreviewRequest;
@@ -29,12 +16,23 @@ import com.NguyenDat.ecommerce.mapper.CheckoutItemMapper;
 import com.NguyenDat.ecommerce.mapper.OrderMapper;
 import com.NguyenDat.ecommerce.repository.*;
 import com.NguyenDat.ecommerce.service.OrderService;
-
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.NguyenDat.ecommerce.enums.OrderStatus.*;
 
 @Service
 @RequiredArgsConstructor
@@ -114,6 +112,9 @@ public class OrderServiceImpl implements OrderService {
 
         Order savedOrder = orderRepository.save(order);
 
+        Payment payment = createCodPayment(savedOrder);
+        savedOrder.setPayment(payment);
+
         for (CartItem selectedCartItem : checkoutCalculation.getSelectedCartItems()) {
             ProductVariant variant = selectedCartItem.getProductVariant();
             BigDecimal unitPrice = getCurrentPrice(variant);
@@ -179,6 +180,7 @@ public class OrderServiceImpl implements OrderService {
         order.setShippingStatus(ShippingStatus.CANCELLED);
         order.setPaymentStatus(PaymentStatus.CANCELLED);
         order.setCancelledAt(LocalDateTime.now());
+        markPaymentCancelled(order);
 
         Order savedOrder = orderRepository.save(order);
 
@@ -204,6 +206,7 @@ public class OrderServiceImpl implements OrderService {
                 .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
         order.setStatus(OrderStatus.COMPLETED);
         order.setPaymentStatus(PaymentStatus.PAID);
+        markPaymentPaid(order);
         return orderMapper.toOrderResponse(orderRepository.save(order));
     }
 
@@ -332,6 +335,8 @@ public class OrderServiceImpl implements OrderService {
         order.setStatus(OrderStatus.CANCELLED);
         order.setShippingStatus(ShippingStatus.CANCELLED);
         order.setPaymentStatus(PaymentStatus.CANCELLED);
+        order.setCancelledAt(LocalDateTime.now());
+        markPaymentCancelled(order);
         orderRepository.save(order);
 
         orderCancelRequest.setStatus(CancelRequestStatus.APPROVED);
@@ -465,6 +470,36 @@ public class OrderServiceImpl implements OrderService {
         }
         return authentication.getName();
     }
+
+    //Payment Helper ============================================
+    private Payment createCodPayment(Order order) {
+        Payment payment = new Payment();
+        payment.setOrder(order);
+        payment.setMethod(PaymentMethod.COD);
+        payment.setStatus(PaymentStatus.UNPAID);
+        payment.setAmount(order.getTotalAmount());
+        return payment;
+    }
+
+    private void markPaymentPaid(Order order) {
+        Payment payment = order.getPayment();
+        if (payment == null) {
+            throw new AppException(ErrorCode.PAYMENT_NOT_FOUND);
+        }
+
+        payment.setStatus(PaymentStatus.PAID);
+        payment.setPaidAt(LocalDateTime.now());
+    }
+
+    private void markPaymentCancelled(Order order) {
+        Payment payment = order.getPayment();
+        if (payment == null) {
+            throw new AppException(ErrorCode.PAYMENT_NOT_FOUND);
+        }
+
+        payment.setStatus(PaymentStatus.CANCELLED);
+    }
+
 
     @Getter
     @Builder
