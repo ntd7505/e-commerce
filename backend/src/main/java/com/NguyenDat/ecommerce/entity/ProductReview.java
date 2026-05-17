@@ -39,9 +39,6 @@ public class ProductReview {
     @JoinColumn(name = "order_item_id", nullable = false, unique = true)
     OrderItem orderItem;
 
-    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
-    List<ProductReviewMedia> media = new ArrayList<>();
-
     @Column(nullable = false)
     Integer rating;
 
@@ -61,7 +58,7 @@ public class ProductReview {
     boolean deleted = false;
 
     @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
-    List<ProductReviewMedia> mediaReview = new ArrayList<>();
+    List<ProductReviewMedia> media = new ArrayList<>();
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)

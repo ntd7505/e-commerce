@@ -177,6 +177,7 @@ public enum ErrorCode {
             12024, "Order cancellation request has already been reviewed", HttpStatus.BAD_REQUEST),
     ORDER_CANCEL_REVIEW_NOTE_INVALID(
             12025, "Order cancellation review note must not exceed 500 characters", HttpStatus.BAD_REQUEST),
+    ORDER_ITEM_NOT_FOUND(12026, "Order item not found", HttpStatus.NOT_FOUND),
 
     // product review
     REVIEW_NOT_FOUND(13000, "Review not found", HttpStatus.NOT_FOUND),
