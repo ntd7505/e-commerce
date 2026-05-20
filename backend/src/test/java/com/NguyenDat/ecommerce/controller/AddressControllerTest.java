@@ -9,8 +9,8 @@ import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -117,7 +117,7 @@ class AddressControllerTest {
     void updateAddress_shouldReturnUpdatedResponse_whenRequestIsValid() throws Exception {
         when(addressService.updateAddress(eq(1L), any(AddressRequest.class))).thenReturn(addressResponse);
 
-        mockMvc.perform(put("/api/v1/client/addresses/{id}", 1L)
+        mockMvc.perform(patch("/api/v1/client/addresses/{id}", 1L)
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(addressRequest)))
                 .andExpect(status().isOk())

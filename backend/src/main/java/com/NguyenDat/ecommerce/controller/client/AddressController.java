@@ -34,7 +34,7 @@ public class AddressController {
                 .body(ApiResponse.of(ResponseCode.ADDRESS_CREATED, addressService.createAddress(addressRequest)));
     }
 
-    @PutMapping("/addresses/{id}")
+    @PatchMapping("/addresses/{id}")
     public ResponseEntity<ApiResponse<AddressResponse>> updateAddresses(
             @RequestBody @Valid AddressRequest addressRequest, @PathVariable Long id) {
         return ResponseEntity.ok(

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.NguyenDat.ecommerce.common.constant.ApiConstant;
 import com.NguyenDat.ecommerce.common.constant.ResponseCode;
 import com.NguyenDat.ecommerce.common.dto.response.ApiResponse;
 import com.NguyenDat.ecommerce.dto.request.auth.AuthenticationRequest;
@@ -23,7 +24,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
 @RestController
-@RequestMapping(value = "/auth")
+@RequestMapping(value = ApiConstant.AUTH_PREFIX)
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AuthenticationController {
@@ -44,7 +45,7 @@ public class AuthenticationController {
     @PostMapping("/refresh")
     ResponseEntity<ApiResponse<AuthenticationResponse>> refreshToken(@RequestBody @Valid RefreshTokenRequest request) {
         return ResponseEntity.ok(
-                ApiResponse.of(ResponseCode.LOGIN_SUCCESS, authenticationService.refreshToken(request)));
+                ApiResponse.of(ResponseCode.REFRESH_TOKEN_SUCCESS, authenticationService.refreshToken(request)));
     }
 
     @PostMapping(value = "/introspect")

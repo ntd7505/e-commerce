@@ -57,7 +57,7 @@ public class AdminBrandController {
                 ApiResponse.ofList(ResponseCode.DELETED_BRANDS_FETCHED, brandService.getDeletedBrands()));
     }
 
-    @PutMapping("/brands/{id}")
+    @PatchMapping("/brands/{id}")
     public ResponseEntity<ApiResponse<BrandResponse>> updateBrandById(
             @PathVariable Long id, @RequestBody @Valid BrandRequest brandRequest) {
         return ResponseEntity.ok(

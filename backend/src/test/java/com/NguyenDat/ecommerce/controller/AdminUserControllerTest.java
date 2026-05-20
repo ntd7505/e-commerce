@@ -240,7 +240,7 @@ public class AdminUserControllerTest {
                 .roles(Set.of())
                 .build();
         when(userService.updateUserById(eq(1L), any(UserUpdateRequest.class))).thenReturn(updatedUserResponse);
-        mockMvc.perform(put("/api/v1/admin/users/{id}", 1L)
+        mockMvc.perform(patch("/api/v1/admin/users/{id}", 1L)
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(userUpdateRequest)))
                 .andExpect(status().isOk())
@@ -259,7 +259,7 @@ public class AdminUserControllerTest {
                 .phoneNumber("0987654321")
                 .avatarUrl("updated-avatar.png")
                 .build();
-        mockMvc.perform(put("/api/v1/admin/users/{id}", 1L)
+        mockMvc.perform(patch("/api/v1/admin/users/{id}", 1L)
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(userUpdateRequest)))
                 .andExpect(status().isBadRequest())
@@ -276,7 +276,7 @@ public class AdminUserControllerTest {
                 .avatarUrl("updated-avatar.png")
                 .build();
 
-        mockMvc.perform(put("/api/v1/admin/users/{userId}", 1)
+        mockMvc.perform(patch("/api/v1/admin/users/{userId}", 1)
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(userUpdateRequest)))
                 .andExpect(status().isBadRequest())
@@ -291,7 +291,7 @@ public class AdminUserControllerTest {
         when(userService.updateUserById(anyLong(), any(UserUpdateRequest.class)))
                 .thenThrow(new AppException(ErrorCode.PHONE_EXISTED));
 
-        mockMvc.perform(put("/api/v1/admin/users/{userId}", 1)
+        mockMvc.perform(patch("/api/v1/admin/users/{userId}", 1)
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(userUpdateRequest)))
                 .andExpect(status().is(ErrorCode.PHONE_EXISTED.getStatusCode().value()))
@@ -305,7 +305,7 @@ public class AdminUserControllerTest {
     void updateUserById_shouldReturnErrorResponse_whenUserNotFound() throws Exception {
         when(userService.updateUserById(anyLong(), any(UserUpdateRequest.class)))
                 .thenThrow(new AppException(ErrorCode.USER_NOT_EXISTED));
-        mockMvc.perform(put("/api/v1/admin/users/{userId}", 1)
+        mockMvc.perform(patch("/api/v1/admin/users/{userId}", 1)
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(userUpdateRequest)))
                 .andExpect(

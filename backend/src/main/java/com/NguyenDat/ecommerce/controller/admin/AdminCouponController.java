@@ -50,7 +50,7 @@ public class AdminCouponController {
                 ApiResponse.ofList(ResponseCode.DELETED_COUPONS_FETCHED, couponService.getAllCouponDeleted()));
     }
 
-    @PutMapping("/coupons/{id}")
+    @PatchMapping("/coupons/{id}")
     public ResponseEntity<ApiResponse<CouponResponse>> updateCouponById(
             @RequestBody @Valid CouponRequest couponRequest, @PathVariable Long id) {
         return ResponseEntity.ok(

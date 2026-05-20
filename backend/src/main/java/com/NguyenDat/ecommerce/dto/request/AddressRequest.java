@@ -19,8 +19,8 @@ public class AddressRequest {
     @Size(max = 100, message = "RECIPIENT_NAME_INVALID")
     String recipientName;
 
-    @NotBlank(message = "PHONE_NUMBER_REQUIRED")
-    @Size(max = 20, message = "PHONE_NUMBER_INVALID")
+    @NotBlank(message = "ADDRESS_PHONE_REQUIRED")
+    @Size(max = 20, message = "ADDRESS_PHONE_INVALID")
     String phoneNumber;
 
     @NotBlank(message = "PROVINCE_NAME_REQUIRED")

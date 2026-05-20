@@ -111,6 +111,7 @@ public enum ErrorCode {
             8020, "Maximum discount amount must be greater than or equal to 0", HttpStatus.BAD_REQUEST),
     USAGE_LIMIT_INVALID(8021, "Usage limit must be greater than 0", HttpStatus.BAD_REQUEST),
     PER_USER_LIMIT_INVALID(8022, "Per-user limit must be greater than 0", HttpStatus.BAD_REQUEST),
+    COUPON_STATUS_REQUIRED(8023, "Coupon status is required", HttpStatus.BAD_REQUEST),
 
     // address
     ADDRESS_NOT_FOUND(9000, "Address not found", HttpStatus.NOT_FOUND),
@@ -167,6 +168,7 @@ public enum ErrorCode {
     ORDER_ADDRESS_INVALID(12017, "Shipping address is invalid", HttpStatus.BAD_REQUEST),
     ORDER_NOTE_INVALID(12018, "Order note must not exceed 500 characters", HttpStatus.BAD_REQUEST),
     ORDER_CANCEL_NOT_ALLOWED(12019, "Order cannot be cancelled in current status", HttpStatus.BAD_REQUEST),
+    ORDER_CANCEL_REASON_REQUIRED(12027, "Order cancellation reason is required", HttpStatus.BAD_REQUEST),
     ORDER_CANCEL_REASON_INVALID(
             12020, "Order cancellation reason must not exceed 500 characters", HttpStatus.BAD_REQUEST),
     ORDER_CANCEL_REQUEST_EXISTED(12021, "Order cancellation request already exists", HttpStatus.BAD_REQUEST),

@@ -54,20 +54,20 @@ public class OrderController {
         return ResponseEntity.ok(ApiResponse.ofList(ResponseCode.ORDERS_FETCHED, orderService.getMyOrder()));
     }
 
-    @PostMapping("/orders/{orderId}/cancel")
+    @PostMapping("/orders/{orderId}/cancellations")
     public ResponseEntity<ApiResponse<OrderResponse>> cancelMyOrder(
             @RequestBody @Valid OrderCancelRequestRequest orderCancelRequestRequest, @PathVariable Long orderId) {
         return ResponseEntity.ok(ApiResponse.of(
                 ResponseCode.ORDER_CANCELLED, orderService.cancelMyOrder(orderCancelRequestRequest, orderId)));
     }
 
-    @PostMapping("/orders/{orderId}/confirm-received")
+    @PostMapping("/orders/{orderId}/receipts")
     public ResponseEntity<ApiResponse<OrderResponse>> confirmReceived(@PathVariable Long orderId) {
         return ResponseEntity.ok(
                 ApiResponse.of(ResponseCode.ORDER_STATUS_UPDATED, orderService.confirmReceived(orderId)));
     }
 
-    @PostMapping("/orders/{orderId}/cancel-request")
+    @PostMapping("/orders/{orderId}/cancellation-requests")
     public ResponseEntity<ApiResponse<OrderCancelRequestResponse>> requestOrderCancellation(
             @RequestBody @Valid OrderCancelRequestRequest orderCancelRequestRequest, @PathVariable Long orderId) {
         return ResponseEntity.ok(ApiResponse.of(

@@ -44,7 +44,7 @@ public class CategoryController {
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.CATEGORY_FETCHED, categoryService.getCategoryById(id)));
     }
 
-    @PutMapping("/categories/{id}")
+    @PatchMapping("/categories/{id}")
     public ResponseEntity<ApiResponse<CategoryResponse>> updateCategory(
             @RequestBody @Valid CategoryRequest categoryRequest, @PathVariable Long id) {
         return ResponseEntity.ok(

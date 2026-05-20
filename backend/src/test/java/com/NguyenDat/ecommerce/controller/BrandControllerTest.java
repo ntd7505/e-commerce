@@ -170,7 +170,7 @@ public class BrandControllerTest {
     @Test
     void updateBrandById_shouldReturnUpdatedResponse_whenRequestIsValid() throws Exception {
         when(brandService.updateBrandById(eq(1L), any(BrandRequest.class))).thenReturn(response);
-        mockMvc.perform(put("/api/v1/admin/brands/{id}", 1L)
+        mockMvc.perform(patch("/api/v1/admin/brands/{id}", 1L)
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(brandRequest)))
                 .andExpect(status().isOk())
@@ -206,7 +206,7 @@ public class BrandControllerTest {
         when(brandService.updateBrandById(eq(1L), any(BrandRequest.class)))
                 .thenThrow(new AppException(ErrorCode.BRAND_EXISTED));
 
-        mockMvc.perform(put("/api/v1/admin/brands/{id}", 1L)
+        mockMvc.perform(patch("/api/v1/admin/brands/{id}", 1L)
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(brandRequest)))
                 .andExpect(status().is(ErrorCode.BRAND_EXISTED.getStatusCode().value()))
@@ -220,7 +220,7 @@ public class BrandControllerTest {
     void updateBrandById_shouldReturnErrorResponse_whenBrandNotFound() throws Exception {
         when(brandService.updateBrandById(eq(1L), any(BrandRequest.class)))
                 .thenThrow(new AppException(ErrorCode.BRAND_NOT_FOUND));
-        mockMvc.perform(put("/api/v1/admin/brands/{id}", 1L)
+        mockMvc.perform(patch("/api/v1/admin/brands/{id}", 1L)
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(brandRequest)))
                 .andExpect(status().is(ErrorCode.BRAND_NOT_FOUND.getStatusCode().value()))

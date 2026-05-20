@@ -295,7 +295,7 @@ public class ProductControllerTest {
         when(productService.updateProductById(any(ProductUpdateRequest.class), eq(10L)))
                 .thenReturn(productResponse);
 
-        mockMvc.perform(put("/api/v1/admin/products/{id}", 10L)
+        mockMvc.perform(patch("/api/v1/admin/products/{id}", 10L)
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(productUpdateRequest)))
                 .andExpect(status().isOk())
@@ -325,7 +325,7 @@ public class ProductControllerTest {
         when(productService.updateVariantById(any(ProductVariantUpdateRequest.class), eq(100L)))
                 .thenReturn(productVariantResponse);
 
-        mockMvc.perform(put("/api/v1/admin/products/variants/{id}", 100L)
+        mockMvc.perform(patch("/api/v1/admin/products/variants/{id}", 100L)
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(productVariantUpdateRequest)))
                 .andExpect(status().isOk())
@@ -400,7 +400,7 @@ public class ProductControllerTest {
         when(productService.updateProductMediaById(eq(200L), any(ProductMediaUpdateRequest.class)))
                 .thenReturn(productMediaResponse);
 
-        mockMvc.perform(put("/api/v1/admin/products/media/{mediaId}", 200L)
+        mockMvc.perform(patch("/api/v1/admin/products/media/{mediaId}", 200L)
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(productMediaUpdateRequest)))
                 .andExpect(status().isOk())

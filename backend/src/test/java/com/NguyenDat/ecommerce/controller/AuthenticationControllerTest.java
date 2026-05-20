@@ -72,7 +72,7 @@ public class AuthenticationControllerTest {
     void login_shouldReturnSuccessResponse_whenRequestIsValid() throws Exception {
         when(authenticationService.authenticate(any(AuthenticationRequest.class)))
                 .thenReturn(response);
-        mockMvc.perform(post("/auth/login")
+        mockMvc.perform(post("/api/v1/auth/login")
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
@@ -88,7 +88,7 @@ public class AuthenticationControllerTest {
     @Test
     void login_shouldReturnBadRequest_whenEmailIsBlank() throws Exception {
         request = AuthenticationRequest.builder().email("").password("123456").build();
-        mockMvc.perform(post("/auth/login")
+        mockMvc.perform(post("/api/v1/auth/login")
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())
@@ -103,7 +103,7 @@ public class AuthenticationControllerTest {
                 .email("admin@gmail.com")
                 .password("")
                 .build();
-        mockMvc.perform(post("/auth/login")
+        mockMvc.perform(post("/api/v1/auth/login")
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())
@@ -117,7 +117,7 @@ public class AuthenticationControllerTest {
     void login_shouldReturnErrorResponse_whenUserNotFound() throws Exception {
         when(authenticationService.authenticate(any(AuthenticationRequest.class)))
                 .thenThrow(new AppException(ErrorCode.USER_NOT_EXISTED));
-        mockMvc.perform(post("/auth/login")
+        mockMvc.perform(post("/api/v1/auth/login")
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(
@@ -132,7 +132,7 @@ public class AuthenticationControllerTest {
     void login_shouldReturnErrorResponse_whenPasswordIsWrong() throws Exception {
         when(authenticationService.authenticate(any(AuthenticationRequest.class)))
                 .thenThrow(new AppException(ErrorCode.UNAUTHENTICATED));
-        mockMvc.perform(post("/auth/login")
+        mockMvc.perform(post("/api/v1/auth/login")
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().is(ErrorCode.UNAUTHENTICATED.getStatusCode().value()))
@@ -145,7 +145,7 @@ public class AuthenticationControllerTest {
     @Test
     void introspect_shouldReturnSuccessResponse_whenTokenIsValid() throws Exception {
         when(authenticationService.introspect(any(IntrospectRequest.class))).thenReturn(introspectResponse);
-        mockMvc.perform(post("/auth/introspect")
+        mockMvc.perform(post("/api/v1/auth/introspect")
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(introspectRequest)))
                 .andExpect(status().isOk())
@@ -160,7 +160,7 @@ public class AuthenticationControllerTest {
     void introspect_shouldReturnErrorResponse_whenTokenIsInvalid() throws Exception {
         when(authenticationService.introspect(any(IntrospectRequest.class)))
                 .thenThrow(new AppException(ErrorCode.TOKEN_INVALID));
-        mockMvc.perform(post("/auth/introspect")
+        mockMvc.perform(post("/api/v1/auth/introspect")
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(introspectRequest)))
                 .andExpect(status().is(ErrorCode.TOKEN_INVALID.getStatusCode().value()))
@@ -173,7 +173,7 @@ public class AuthenticationControllerTest {
     @Test
     void introspect_shouldReturnBadRequest_whenTokenIsBlank() throws Exception {
         introspectRequest = IntrospectRequest.builder().token("").build();
-        mockMvc.perform(post("/auth/introspect")
+        mockMvc.perform(post("/api/v1/auth/introspect")
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(introspectRequest)))
                 .andExpect(status().isBadRequest())
@@ -186,12 +186,12 @@ public class AuthenticationControllerTest {
     void refreshToken_shouldReturnSuccessResponse_whenRefreshTokenIsValid() throws Exception {
         when(authenticationService.refreshToken(any(RefreshTokenRequest.class))).thenReturn(response);
 
-        mockMvc.perform(post("/auth/refresh")
+        mockMvc.perform(post("/api/v1/auth/refresh")
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(refreshTokenRequest)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").value(ResponseCode.LOGIN_SUCCESS.getCode()))
-                .andExpect(jsonPath("$.message").value(ResponseCode.LOGIN_SUCCESS.getMessage()))
+                .andExpect(jsonPath("$.code").value(ResponseCode.REFRESH_TOKEN_SUCCESS.getCode()))
+                .andExpect(jsonPath("$.message").value(ResponseCode.REFRESH_TOKEN_SUCCESS.getMessage()))
                 .andExpect(jsonPath("$.data.accessToken").value("access-token"))
                 .andExpect(jsonPath("$.data.refreshToken").value("refresh-token"))
                 .andExpect(jsonPath("$.data.authenticated").value(true));
@@ -204,7 +204,7 @@ public class AuthenticationControllerTest {
         when(authenticationService.refreshToken(any(RefreshTokenRequest.class)))
                 .thenThrow(new AppException(ErrorCode.TOKEN_BLACKLISTED));
 
-        mockMvc.perform(post("/auth/refresh")
+        mockMvc.perform(post("/api/v1/auth/refresh")
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(refreshTokenRequest)))
                 .andExpect(
@@ -219,7 +219,7 @@ public class AuthenticationControllerTest {
     void refreshToken_shouldReturnBadRequest_whenRefreshTokenIsBlank() throws Exception {
         refreshTokenRequest = RefreshTokenRequest.builder().refreshToken("").build();
 
-        mockMvc.perform(post("/auth/refresh")
+        mockMvc.perform(post("/api/v1/auth/refresh")
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(refreshTokenRequest)))
                 .andExpect(status().isBadRequest())
@@ -233,7 +233,7 @@ public class AuthenticationControllerTest {
     void login_shouldReturnErrorResponse_whenUserIsInactive() throws Exception {
         when(authenticationService.authenticate(any(AuthenticationRequest.class)))
                 .thenThrow(new AppException(ErrorCode.USER_INACTIVE));
-        mockMvc.perform(post("/auth/login")
+        mockMvc.perform(post("/api/v1/auth/login")
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().is(ErrorCode.USER_INACTIVE.getStatusCode().value()))
@@ -247,7 +247,7 @@ public class AuthenticationControllerTest {
     void login_shouldReturnErrorResponse_whenUserIsDeleted() throws Exception {
         when(authenticationService.authenticate(any(AuthenticationRequest.class)))
                 .thenThrow(new AppException(ErrorCode.USER_DELETED));
-        mockMvc.perform(post("/auth/login")
+        mockMvc.perform(post("/api/v1/auth/login")
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().is(ErrorCode.USER_DELETED.getStatusCode().value()))

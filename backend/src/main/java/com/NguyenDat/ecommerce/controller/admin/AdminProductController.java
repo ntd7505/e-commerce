@@ -88,7 +88,7 @@ public class AdminProductController {
             tags = "Admin Products",
             summary = "Update product",
             description = "Update product information such as name, description, brand, category, or active status.")
-    @PutMapping("/products/{id}")
+    @PatchMapping("/products/{id}")
     public ResponseEntity<ApiResponse<ProductResponse>> updateProductById(
             @RequestBody @Valid ProductUpdateRequest productUpdateRequest, @PathVariable Long id) {
         return ResponseEntity.ok(ApiResponse.of(
@@ -120,7 +120,7 @@ public class AdminProductController {
             tags = "Admin Product Variants",
             summary = "Update product variant",
             description = "Update a non-deleted product variant.")
-    @PutMapping("/products/variants/{id}")
+    @PatchMapping("/products/variants/{id}")
     public ResponseEntity<ApiResponse<ProductVariantResponse>> updateVariantById(
             @RequestBody @Valid ProductVariantUpdateRequest productVariantUpdateRequest, @PathVariable Long id) {
         return ResponseEntity.ok(ApiResponse.of(
@@ -157,7 +157,7 @@ public class AdminProductController {
             tags = "Admin Product Media",
             summary = "Update product media",
             description = "Update a non-deleted product media item.")
-    @PutMapping("/products/media/{mediaId}")
+    @PatchMapping("/products/media/{mediaId}")
     public ResponseEntity<ApiResponse<ProductMediaResponse>> updateProductMediaById(
             @PathVariable Long mediaId, @RequestBody @Valid ProductMediaUpdateRequest productMediaUpdateRequest) {
         return ResponseEntity.ok(ApiResponse.of(

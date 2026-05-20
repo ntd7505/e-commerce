@@ -34,23 +34,23 @@ public class AdminOrderController {
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.ORDER_FETCHED, orderService.getOrderById(orderId)));
     }
 
-    @PatchMapping("/orders/{orderId}/confirm")
+    @PostMapping("/orders/{orderId}/confirmations")
     public ResponseEntity<ApiResponse<OrderResponse>> confirmOrder(@PathVariable Long orderId) {
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.ORDER_STATUS_UPDATED, orderService.confirmOrder(orderId)));
     }
 
-    @PatchMapping("/orders/{orderId}/process")
+    @PostMapping("/orders/{orderId}/processing-events")
     public ResponseEntity<ApiResponse<OrderResponse>> processOrder(@PathVariable Long orderId) {
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.ORDER_STATUS_UPDATED, orderService.processOrder(orderId)));
     }
 
-    @PatchMapping("/orders/{orderId}/ship")
+    @PostMapping("/orders/{orderId}/shipments")
     public ResponseEntity<ApiResponse<OrderResponse>> shipOrder(@PathVariable Long orderId) {
         return ResponseEntity.ok(
                 ApiResponse.of(ResponseCode.ORDER_SHIPPING_STATUS_UPDATED, orderService.shipOrder(orderId)));
     }
 
-    @PatchMapping("/orders/{orderId}/deliver")
+    @PostMapping("/orders/{orderId}/deliveries")
     public ResponseEntity<ApiResponse<OrderResponse>> deliverOrder(@PathVariable Long orderId) {
         return ResponseEntity.ok(
                 ApiResponse.of(ResponseCode.ORDER_SHIPPING_STATUS_UPDATED, orderService.deliverOrder(orderId)));
@@ -62,13 +62,13 @@ public class AdminOrderController {
                 ResponseCode.ORDER_CANCEL_REQUESTS_FETCHED, orderService.getAllOrderCancelRequests()));
     }
 
-    @PatchMapping("/order-cancel-requests/{requestId}/approve")
+    @PostMapping("/order-cancel-requests/{requestId}/approvals")
     public ResponseEntity<ApiResponse<OrderCancelRequestResponse>> approveCancelOrder(@PathVariable long requestId) {
         return ResponseEntity.ok(
                 ApiResponse.of(ResponseCode.ORDER_CANCEL_REQUEST_APPROVED, orderService.approveCancelOrder(requestId)));
     }
 
-    @PatchMapping("/order-cancel-requests/{requestId}/reject")
+    @PostMapping("/order-cancel-requests/{requestId}/rejections")
     public ResponseEntity<ApiResponse<OrderCancelRequestResponse>> rejectCancelOrder(@PathVariable long requestId) {
         return ResponseEntity.ok(
                 ApiResponse.of(ResponseCode.ORDER_CANCEL_REQUEST_REJECTED, orderService.rejectCancelOrder(requestId)));

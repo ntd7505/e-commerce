@@ -9,8 +9,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -288,7 +288,7 @@ public class CategoryControllerTest {
 
         when(categoryService.updateCategoryById(any(CategoryRequest.class), eq(1L)))
                 .thenReturn(categoryResponse);
-        mockMvc.perform(put("/api/v1/admin/categories/{id}", 1L)
+        mockMvc.perform(patch("/api/v1/admin/categories/{id}", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(categoryRequest)))
                 .andExpect(status().isOk())
@@ -315,7 +315,7 @@ public class CategoryControllerTest {
                 .parentCategoryId(null)
                 .build();
 
-        mockMvc.perform(put("/api/v1/admin/categories/{id}", 1L)
+        mockMvc.perform(patch("/api/v1/admin/categories/{id}", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(categoryRequest)))
                 .andExpect(status().isBadRequest())
@@ -329,7 +329,7 @@ public class CategoryControllerTest {
     void updateCategory_shouldReturnErrorResponse_whenCategoryNotFound() throws Exception {
         when(categoryService.updateCategoryById(any(CategoryRequest.class), eq(1L)))
                 .thenThrow(new AppException(ErrorCode.CATEGORY_NOT_FOUND));
-        mockMvc.perform(put("/api/v1/admin/categories/{id}", 1L)
+        mockMvc.perform(patch("/api/v1/admin/categories/{id}", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(categoryRequest)))
                 .andExpect(
@@ -344,7 +344,7 @@ public class CategoryControllerTest {
     void updateCategory_shouldReturnErrorResponse_whenParentCategoryNotFound() throws Exception {
         when(categoryService.updateCategoryById(any(CategoryRequest.class), eq(1L)))
                 .thenThrow(new AppException(ErrorCode.PARENT_CATEGORY_NOT_FOUND));
-        mockMvc.perform(put("/api/v1/admin/categories/{id}", 1L)
+        mockMvc.perform(patch("/api/v1/admin/categories/{id}", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(categoryRequest)))
                 .andExpect(status().is(ErrorCode.PARENT_CATEGORY_NOT_FOUND
@@ -360,7 +360,7 @@ public class CategoryControllerTest {
     void updateCategory_shouldReturnErrorResponse_whenCategoryAlreadyExists() throws Exception {
         when(categoryService.updateCategoryById(any(CategoryRequest.class), eq(1L)))
                 .thenThrow(new AppException(ErrorCode.CATEGORY_EXISTED));
-        mockMvc.perform(put("/api/v1/admin/categories/{id}", 1L)
+        mockMvc.perform(patch("/api/v1/admin/categories/{id}", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(categoryRequest)))
                 .andExpect(
@@ -375,7 +375,7 @@ public class CategoryControllerTest {
     void updateCategory_shouldReturnErrorResponse_whenCircularReference() throws Exception {
         when(categoryService.updateCategoryById(any(CategoryRequest.class), eq(1L)))
                 .thenThrow(new AppException(ErrorCode.CATEGORY_CIRCULAR_REFERENCE));
-        mockMvc.perform(put("/api/v1/admin/categories/{id}", 1L)
+        mockMvc.perform(patch("/api/v1/admin/categories/{id}", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(categoryRequest)))
                 .andExpect(status().is(ErrorCode.CATEGORY_CIRCULAR_REFERENCE

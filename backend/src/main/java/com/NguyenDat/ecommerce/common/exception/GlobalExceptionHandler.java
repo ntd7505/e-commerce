@@ -75,12 +75,7 @@ public class GlobalExceptionHandler {
         });
 
         ErrorCode errorCode = ErrorCode.INVALID_KEY;
-        return ResponseEntity.status(errorCode.getStatusCode())
-                .body(ApiResponse.<Map<String, String>>builder()
-                        .code(errorCode.getCode())
-                        .message(errorCode.getMessage())
-                        .data(errors)
-                        .build());
+        return ResponseEntity.status(errorCode.getStatusCode()).body(ApiResponse.error(errorCode, errors));
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
@@ -90,12 +85,7 @@ public class GlobalExceptionHandler {
                 && invalidFormatException.getTargetType() == Active.class) {
             ErrorCode errorCode = ErrorCode.INVALID_KEY;
             Map<String, String> errors = Map.of("status", ErrorCode.INVALID_USER_STATUS.getMessage());
-            return ResponseEntity.status(errorCode.getStatusCode())
-                    .body(ApiResponse.<Map<String, String>>builder()
-                            .code(errorCode.getCode())
-                            .message(errorCode.getMessage())
-                            .data(errors)
-                            .build());
+            return ResponseEntity.status(errorCode.getStatusCode()).body(ApiResponse.error(errorCode, errors));
         }
 
         return ResponseEntity.status(ErrorCode.INVALID_KEY.getStatusCode()).body(ApiResponse.of(ErrorCode.INVALID_KEY));

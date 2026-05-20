@@ -56,7 +56,7 @@ public class AdminUserController {
         return ResponseEntity.ok(ApiResponse.ofList(ResponseCode.DELETED_USERS_FETCHED, userService.getDeletedUsers()));
     }
 
-    @PutMapping(value = "/users/{userId}")
+    @PatchMapping(value = "/users/{userId}")
     public ResponseEntity<ApiResponse<UserResponse>> updateUserById(
             @PathVariable Long userId, @RequestBody @Valid UserUpdateRequest userUpdateRequest) {
         return ResponseEntity.ok(

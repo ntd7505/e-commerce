@@ -11,7 +11,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -174,7 +173,7 @@ class CouponControllerTest {
     void updateCouponById_shouldReturnUpdatedResponse_whenRequestIsValid() throws Exception {
         when(couponService.updateCouponById(any(CouponRequest.class), eq(1L))).thenReturn(couponResponse);
 
-        mockMvc.perform(put("/api/v1/admin/coupons/{id}", 1L)
+        mockMvc.perform(patch("/api/v1/admin/coupons/{id}", 1L)
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(couponRequest)))
                 .andExpect(status().isOk())
