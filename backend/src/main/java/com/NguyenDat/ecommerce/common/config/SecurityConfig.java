@@ -34,6 +34,12 @@ public class SecurityConfig {
     };
     private final String[] SWAGGER_ENDPOINTS = {"/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html"};
 
+    private final String[] PUBLIC_GET_ENDPOINTS = {
+        ApiConstant.CLIENT_PREFIX + "/products/**",
+        ApiConstant.CLIENT_PREFIX + "/categories/**",
+        ApiConstant.CLIENT_PREFIX + "/brands/**",
+    };
+
     private static final String ADMIN_PREFIX = ApiConstant.ADMIN_PREFIX;
     private static final String AUTH_PREFIX = ApiConstant.AUTH_PREFIX;
 
@@ -45,6 +51,8 @@ public class SecurityConfig {
         httpSecurity.cors(cors -> cors.configurationSource(corsConfigurationSource()));
 
         httpSecurity.authorizeHttpRequests(request -> request.requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINT)
+                .permitAll()
+                .requestMatchers(HttpMethod.GET, PUBLIC_GET_ENDPOINTS)
                 .permitAll()
                 .requestMatchers(SWAGGER_ENDPOINTS)
                 .permitAll()

@@ -20,5 +20,9 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     List<Product> findAllByDeletedFalse();
 
+    List<Product> findAllByDeletedFalseAndActiveTrue();
+
     Optional<Product> findByIdAndDeletedFalse(Long id);
+
+    Optional<Product> findBySlugAndDeletedFalseAndActiveTrue(String slug);
 }

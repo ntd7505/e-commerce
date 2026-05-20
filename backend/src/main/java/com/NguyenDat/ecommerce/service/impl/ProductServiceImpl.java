@@ -15,19 +15,11 @@ import com.NguyenDat.ecommerce.dto.request.product.*;
 import com.NguyenDat.ecommerce.dto.response.ProductMediaResponse;
 import com.NguyenDat.ecommerce.dto.response.ProductResponse;
 import com.NguyenDat.ecommerce.dto.response.ProductVariantResponse;
-import com.NguyenDat.ecommerce.entity.Brand;
-import com.NguyenDat.ecommerce.entity.Category;
-import com.NguyenDat.ecommerce.entity.Product;
-import com.NguyenDat.ecommerce.entity.ProductMedia;
-import com.NguyenDat.ecommerce.entity.ProductVariant;
+import com.NguyenDat.ecommerce.entity.*;
 import com.NguyenDat.ecommerce.mapper.ProductMapper;
 import com.NguyenDat.ecommerce.mapper.ProductMediaMapper;
 import com.NguyenDat.ecommerce.mapper.ProductVariantMapper;
-import com.NguyenDat.ecommerce.repository.BrandRepository;
-import com.NguyenDat.ecommerce.repository.CategoryRepository;
-import com.NguyenDat.ecommerce.repository.ProductMediaRepository;
-import com.NguyenDat.ecommerce.repository.ProductRepository;
-import com.NguyenDat.ecommerce.repository.ProductVariantRepository;
+import com.NguyenDat.ecommerce.repository.*;
 import com.NguyenDat.ecommerce.service.ProductService;
 import com.NguyenDat.ecommerce.util.SkuUtil;
 import com.NguyenDat.ecommerce.util.SlugUtil;
@@ -290,5 +282,21 @@ public class ProductServiceImpl implements ProductService {
         productMedia.setDeleted(true);
         productMedia.setActive(false);
         productMediaRepository.save(productMedia);
+    }
+
+    @Override
+    public List<ProductResponse> showAllProducts() {
+        return productRepository.findAllByDeletedFalseAndActiveTrue().stream()
+                .map(productMapper::toProductResponse)
+                .toList();
+    }
+
+    @Override
+    public ProductResponse showProductBySlug(String slug) {
+        String normalizedSlug = slug.trim();
+        Product product = productRepository
+                .findBySlugAndDeletedFalseAndActiveTrue(normalizedSlug)
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+        return productMapper.toProductResponse(product);
     }
 }

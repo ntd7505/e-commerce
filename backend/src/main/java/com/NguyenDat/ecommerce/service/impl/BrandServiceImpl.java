@@ -111,4 +111,19 @@ public class BrandServiceImpl implements BrandService {
         brand.setActive(brandStatusUpdateRequest.getActive());
         return brandMapper.toBrandResponse(brandRepository.save(brand));
     }
+
+    @Override
+    public List<BrandResponse> showAllBrands() {
+        return brandRepository.findAllByDeletedFalseAndActiveTrue().stream()
+                .map(brandMapper::toBrandResponse)
+                .toList();
+    }
+
+    @Override
+    public BrandResponse showBrandById(Long id) {
+        Brand brand = brandRepository
+                .findByIdAndDeletedFalseAndActiveTrue(id)
+                .orElseThrow(() -> new AppException(ErrorCode.BRAND_NOT_FOUND));
+        return brandMapper.toBrandResponse(brand);
+    }
 }

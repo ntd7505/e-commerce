@@ -137,6 +137,21 @@ public class CategoryServiceImpl implements CategoryService {
         categoryRepository.save(category);
     }
 
+    @Override
+    public List<CategoryResponse> showAllCategories() {
+        return categoryRepository.findAllByDeletedFalseAndActiveTrue().stream()
+                .map(categoryMapper::toCategoryResponse)
+                .toList();
+    }
+
+    @Override
+    public CategoryResponse showCategoryById(Long id) {
+        Category category = categoryRepository
+                .findByIdAndDeletedFalseAndActiveTrue(id)
+                .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
+        return categoryMapper.toCategoryResponse(category);
+    }
+
     private boolean isDescendant(Category category, Category parentCategory) {
         Category currentParent = parentCategory;
         while (currentParent != null) {

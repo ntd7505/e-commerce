@@ -20,4 +20,8 @@ public interface BrandService {
     List<BrandResponse> getDeletedBrands();
 
     BrandResponse updateBrandStatusById(BrandStatusUpdateRequest brandStatusUpdateRequest, Long id);
+
+    List<BrandResponse> showAllBrands();
+
+    BrandResponse showBrandById(Long id);
 }

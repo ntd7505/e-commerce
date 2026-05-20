@@ -15,4 +15,8 @@ public interface CategoryService {
     CategoryResponse getCategoryById(Long id);
 
     void deleteCategoryById(Long id);
+
+    List<CategoryResponse> showAllCategories();
+
+    CategoryResponse showCategoryById(Long id);
 }
