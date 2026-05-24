@@ -20,6 +20,7 @@ import com.NguyenDat.ecommerce.common.exception.ErrorCode;
 import com.NguyenDat.ecommerce.dto.request.UserCreationRequest;
 import com.NguyenDat.ecommerce.dto.request.UserUpdateRequest;
 import com.NguyenDat.ecommerce.dto.request.UserUpdateStatusRequest;
+import com.NguyenDat.ecommerce.dto.request.auth.UserRegisterRequest;
 import com.NguyenDat.ecommerce.dto.response.UserResponse;
 import com.NguyenDat.ecommerce.entity.Role;
 import com.NguyenDat.ecommerce.entity.User;
@@ -44,34 +45,13 @@ public class UserServiceImpl implements UserService {
     PasswordEncoder passwordEncoder;
 
     @Transactional
-    public UserResponse createUser(UserCreationRequest userCreationRequest) {
-        if (userRepository.existsByEmail(userCreationRequest.getEmail())) {
-            throw new AppException(ErrorCode.EMAIL_EXISTED);
-        }
+    public UserResponse createUser(UserCreationRequest request) {
+        User user = userMapper.toUser(request);
 
-        if (userRepository.existsByPhoneNumber(userCreationRequest.getPhoneNumber())) {
-            throw new AppException(ErrorCode.PHONE_EXISTED);
-        }
-        User user = userMapper.toUser(userCreationRequest);
-        user.setPassword(passwordEncoder.encode(userCreationRequest.getPassword()));
-        if (userCreationRequest.getRoles() == null
-                || userCreationRequest.getRoles().isEmpty()) {
-            Role role = roleRepository.findById("USER").orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
-            user.setRoles(Set.of(role));
-        } else {
-            Set<Role> roles = userCreationRequest.getRoles().stream()
-                    .map(roleName -> roleRepository
-                            .findById(roleName)
-                            .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND)))
-                    .collect(Collectors.toSet());
-            user.setRoles(roles);
-        }
-        try {
-            user = userRepository.save(user);
-        } catch (DataIntegrityViolationException ex) {
-            throw new AppException(ErrorCode.USER_EXISTED);
-        }
-        return userMapper.toUserResponse(user);
+        Set<String> roleNames =
+                request.getRoles() == null || request.getRoles().isEmpty() ? Set.of("USER") : request.getRoles();
+
+        return createUserInternal(user, request.getPassword(), roleNames);
     }
 
     public UserResponse getMyInfo() {
@@ -133,5 +113,55 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         user.setStatus(userUpdateStatusRequest.getStatus());
         return userMapper.toUserResponse(userRepository.save(user));
+    }
+
+    @Transactional
+    @Override
+    public UserResponse register(UserRegisterRequest request) {
+        User user = userMapper.toUser(request);
+        return createUserInternal(user, request.getPassword(), Set.of("USER"));
+    }
+
+    @Override
+    @Transactional
+    public UserResponse updateMyInfo(UserUpdateRequest userUpdateRequest) {
+        var context = SecurityContextHolder.getContext();
+        String email = Objects.requireNonNull(context.getAuthentication()).getName();
+        User user = userRepository
+                .findByEmailAndDeletedFalse(email)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+        if (userRepository.existsByPhoneNumberAndIdNot(userUpdateRequest.getPhoneNumber(), user.getId())) {
+            throw new AppException(ErrorCode.PHONE_EXISTED);
+        }
+
+        userMapper.updateUserMapper(user, userUpdateRequest);
+        return userMapper.toUserResponse(userRepository.save(user));
+    }
+
+    private UserResponse createUserInternal(User user, String rawPassword, Set<String> roleNames) {
+        if (userRepository.existsByEmail(user.getEmail())) {
+            throw new AppException(ErrorCode.EMAIL_EXISTED);
+        }
+
+        if (userRepository.existsByPhoneNumber(user.getPhoneNumber())) {
+            throw new AppException(ErrorCode.PHONE_EXISTED);
+        }
+
+        Set<Role> roles = roleNames.stream()
+                .map(roleName ->
+                        roleRepository.findById(roleName).orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND)))
+                .collect(Collectors.toSet());
+
+        user.setPassword(passwordEncoder.encode(rawPassword));
+        user.setRoles(roles);
+        user.setStatus(Active.ACTIVE);
+        user.setDeleted(false);
+
+        try {
+            return userMapper.toUserResponse(userRepository.save(user));
+        } catch (DataIntegrityViolationException ex) {
+            throw new AppException(ErrorCode.USER_EXISTED);
+        }
     }
 }

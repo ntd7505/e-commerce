@@ -30,7 +30,7 @@ import com.NguyenDat.ecommerce.common.constant.ApiConstant;
 @EnableMethodSecurity
 public class SecurityConfig {
     private final String[] PUBLIC_ENDPOINT = {
-        AUTH_PREFIX + "/login", AUTH_PREFIX + "/introspect",
+        AUTH_PREFIX + "/login", AUTH_PREFIX + "/introspect", ApiConstant.CLIENT_PREFIX + "/users"
     };
     private final String[] SWAGGER_ENDPOINTS = {"/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html"};
 

@@ -10,6 +10,7 @@ import org.mapstruct.MappingTarget;
 
 import com.NguyenDat.ecommerce.dto.request.UserCreationRequest;
 import com.NguyenDat.ecommerce.dto.request.UserUpdateRequest;
+import com.NguyenDat.ecommerce.dto.request.auth.UserRegisterRequest;
 import com.NguyenDat.ecommerce.dto.response.UserResponse;
 import com.NguyenDat.ecommerce.entity.Role;
 import com.NguyenDat.ecommerce.entity.User;
@@ -26,6 +27,16 @@ public interface UserMapper {
     User toUser(UserCreationRequest userCreationRequest);
 
     UserResponse toUserResponse(User user);
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "password", ignore = true)
+    @Mapping(target = "status", ignore = true)
+    @Mapping(target = "roles", ignore = true)
+    @Mapping(target = "deleted", ignore = true)
+    @Mapping(target = "avatarUrl", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
+    User toUser(UserRegisterRequest request);
 
     // update mapper
     @Mapping(target = "roles", ignore = true)

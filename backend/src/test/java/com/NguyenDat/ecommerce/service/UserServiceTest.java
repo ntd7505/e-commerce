@@ -119,6 +119,7 @@ public class UserServiceTest {
 
     @Test
     void createUser_shouldThrowException_whenEmailAlreadyExists() {
+        when(userMapper.toUser(userCreationRequest)).thenReturn(user);
         when(userRepository.existsByEmail("dat@gmail.com")).thenReturn(true);
         AppException exception = assertThrows(AppException.class, () -> userService.createUser(userCreationRequest));
         assertEquals(ErrorCode.EMAIL_EXISTED, exception.getErrorCode());
@@ -127,6 +128,8 @@ public class UserServiceTest {
 
     @Test
     void createUser_shouldThrowException_whenPhoneAlreadyExists() {
+        when(userMapper.toUser(userCreationRequest)).thenReturn(user);
+        when(userRepository.existsByEmail("dat@gmail.com")).thenReturn(false);
         when(userRepository.existsByPhoneNumber("0912345678")).thenReturn(true);
         AppException exception = assertThrows(AppException.class, () -> userService.createUser(userCreationRequest));
         assertEquals(ErrorCode.PHONE_EXISTED, exception.getErrorCode());
@@ -164,7 +167,6 @@ public class UserServiceTest {
         when(userRepository.existsByEmail("dat@gmail.com")).thenReturn(false);
         when(userRepository.existsByPhoneNumber("0912345678")).thenReturn(false);
         when(userMapper.toUser(userCreationRequest)).thenReturn(user);
-        when(passwordEncoder.encode("Dat@1234")).thenReturn("encoded-password");
         when(roleRepository.findById("USER")).thenReturn(Optional.empty());
         AppException exception = assertThrows(AppException.class, () -> userService.createUser(userCreationRequest));
         assertEquals(ErrorCode.ROLE_NOT_FOUND, exception.getErrorCode());
