@@ -174,4 +174,10 @@ public class AdminProductController {
         productService.deleteProductMediaById(mediaId);
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.PRODUCT_MEDIA_DELETED, null));
     }
+
+    @DeleteMapping("/products/{id}")
+    public ResponseEntity<ApiResponse<Void>> deleteProductById(@PathVariable Long id) {
+        productService.deleteProductById(id);
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.PRODUCT_DELETED, null));
+    }
 }

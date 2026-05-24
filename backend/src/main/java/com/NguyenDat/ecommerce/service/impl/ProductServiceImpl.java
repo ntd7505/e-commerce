@@ -299,4 +299,27 @@ public class ProductServiceImpl implements ProductService {
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
         return productMapper.toProductResponse(product);
     }
+
+    @Override
+    @Transactional
+    public void deleteProductById(Long id) {
+        Product product = productRepository
+                .findByIdAndDeletedFalse(id)
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+
+        product.setDeleted(true);
+        product.setActive(false);
+
+        product.getVariants().forEach(variant -> {
+            variant.setDeleted(true);
+            variant.setActive(false);
+        });
+
+        product.getMedia().forEach(media -> {
+            media.setDeleted(true);
+            media.setActive(false);
+        });
+
+        productRepository.save(product);
+    }
 }

@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.NguyenDat.ecommerce.common.exception.AppException;
 import com.NguyenDat.ecommerce.common.exception.ErrorCode;
 import com.NguyenDat.ecommerce.dto.request.CartItemRequest;
+import com.NguyenDat.ecommerce.dto.request.CartItemUpdateRequest;
 import com.NguyenDat.ecommerce.dto.response.CartResponse;
 import com.NguyenDat.ecommerce.entity.Cart;
 import com.NguyenDat.ecommerce.entity.CartItem;
@@ -80,15 +81,55 @@ public class CartServiceImpl implements CartService {
         return cartMapper.toCartResponse(cart);
     }
 
+    @Override
     @Transactional
-    public void deleteCartItemInCart(Long itemId) {
+    public CartResponse updateCartItemInCart(Long itemId, CartItemUpdateRequest request) {
         User user = getCurrentUser();
         Cart cart = getOrCreateCart(user);
+
         CartItem cartItem = cartItemRepository
                 .findByIdAndCartId(itemId, cart.getId())
                 .orElseThrow(() -> new AppException(ErrorCode.CART_ITEM_NOT_FOUND));
 
-        cart.getItems().remove(cartItem);
+        ProductVariant productVariant = productVariantRepository
+                .findSellableVariantById(cartItem.getProductVariant().getId())
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_VARIANT_NOT_FOUND));
+
+        int newQuantity = request.getQuantity();
+
+        if (newQuantity > productVariant.getStockQuantity()) {
+            throw new AppException(ErrorCode.CART_ITEM_QUANTITY_EXCEEDS_STOCK);
+        }
+
+        cartItem.setQuantity(newQuantity);
+        cartItem.setUnitPrice(BigDecimal.valueOf(getCurrentPrice(productVariant)));
+
+        cartItemRepository.save(cartItem);
+
+        return cartMapper.toCartResponse(cart);
+    }
+
+    @Override
+    @Transactional
+    public void clearCart() {
+        User user = getCurrentUser();
+        Cart cart = getOrCreateCart(user);
+
+        cartItemRepository.deleteByCartId(cart.getId());
+        cart.getItems().clear();
+    }
+
+    @Override
+    @Transactional
+    public void deleteCartItem(Long itemId) {
+        User user = getCurrentUser();
+        Cart cart = getOrCreateCart(user);
+
+        CartItem cartItem = cartItemRepository
+                .findByIdAndCartId(itemId, cart.getId())
+                .orElseThrow(() -> new AppException(ErrorCode.CART_ITEM_NOT_FOUND));
+
+        cartItemRepository.delete(cartItem);
     }
 
     private double getCurrentPrice(ProductVariant productVariant) {

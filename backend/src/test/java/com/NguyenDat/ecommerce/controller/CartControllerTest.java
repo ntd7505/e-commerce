@@ -129,27 +129,27 @@ class CartControllerTest {
 
     @Test
     void deleteCartItem_shouldReturnRemovedResponse_whenItemExists() throws Exception {
-        doNothing().when(cartService).deleteCartItemInCart(1L);
+        doNothing().when(cartService).deleteCartItem(1L);
 
         mockMvc.perform(delete("/api/v1/client/cart/items/{itemId}", 1L))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(ResponseCode.CART_ITEM_REMOVED.getCode()))
                 .andExpect(jsonPath("$.message").value(ResponseCode.CART_ITEM_REMOVED.getMessage()));
 
-        verify(cartService).deleteCartItemInCart(1L);
+        verify(cartService).deleteCartItem(1L);
     }
 
     @Test
     void deleteCartItem_shouldReturnErrorResponse_whenItemNotFound() throws Exception {
         doThrow(new AppException(ErrorCode.CART_ITEM_NOT_FOUND))
                 .when(cartService)
-                .deleteCartItemInCart(1L);
+                .deleteCartItem(1L);
 
         mockMvc.perform(delete("/api/v1/client/cart/items/{itemId}", 1L))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.code").value(ErrorCode.CART_ITEM_NOT_FOUND.getCode()))
                 .andExpect(jsonPath("$.message").value(ErrorCode.CART_ITEM_NOT_FOUND.getMessage()));
 
-        verify(cartService).deleteCartItemInCart(1L);
+        verify(cartService).deleteCartItem(1L);
     }
 }

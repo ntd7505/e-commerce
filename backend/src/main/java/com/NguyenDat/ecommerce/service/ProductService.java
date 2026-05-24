@@ -37,4 +37,6 @@ public interface ProductService {
     List<ProductResponse> showAllProducts();
 
     ProductResponse showProductBySlug(String slug);
+
+    void deleteProductById(Long id);
 }

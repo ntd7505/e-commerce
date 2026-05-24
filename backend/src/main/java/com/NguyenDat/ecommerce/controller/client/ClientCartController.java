@@ -10,6 +10,7 @@ import com.NguyenDat.ecommerce.common.constant.ApiConstant;
 import com.NguyenDat.ecommerce.common.constant.ResponseCode;
 import com.NguyenDat.ecommerce.common.dto.response.ApiResponse;
 import com.NguyenDat.ecommerce.dto.request.CartItemRequest;
+import com.NguyenDat.ecommerce.dto.request.CartItemUpdateRequest;
 import com.NguyenDat.ecommerce.dto.response.CartResponse;
 import com.NguyenDat.ecommerce.service.CartService;
 
@@ -37,9 +38,22 @@ public class ClientCartController {
                 .body(ApiResponse.of(ResponseCode.CART_ITEM_ADDED, cartService.addItemToCart(cartItemRequest)));
     }
 
+    @PatchMapping("/cart/items/{itemId}")
+    public ResponseEntity<ApiResponse<CartResponse>> updateCartItemInCart(
+            @PathVariable Long itemId, @RequestBody @Valid CartItemUpdateRequest cartItemUpdateRequest) {
+        return ResponseEntity.ok(ApiResponse.of(
+                ResponseCode.CART_ITEM_UPDATED, cartService.updateCartItemInCart(itemId, cartItemUpdateRequest)));
+    }
+
+    @DeleteMapping("/cart/items")
+    public ResponseEntity<ApiResponse<Void>> clearCart() {
+        cartService.clearCart();
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.CART_CLEARED, null));
+    }
+
     @DeleteMapping("/cart/items/{itemId}")
-    public ResponseEntity<ApiResponse<CartResponse>> deleteCartItemInCart(@PathVariable Long itemId) {
-        cartService.deleteCartItemInCart(itemId);
+    public ResponseEntity<ApiResponse<Void>> deleteCartItem(@PathVariable Long itemId) {
+        cartService.deleteCartItem(itemId);
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.CART_ITEM_REMOVED, null));
     }
 }

@@ -2,7 +2,6 @@ package com.NguyenDat.ecommerce.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -181,11 +180,17 @@ class CartServiceTest {
 
     @Test
     void addItemToCart_shouldThrowException_whenQuantityExceedsStock() {
-        cartItemRequest.setQuantity(11);
+        CartItem existingItem = new CartItem();
+        existingItem.setId(1L);
+        existingItem.setCart(cart);
+        existingItem.setProductVariant(productVariant);
+        existingItem.setQuantity(9);
+        cart.getItems().add(existingItem);
+
         when(userRepository.findByEmailAndDeletedFalse("dat@gmail.com")).thenReturn(Optional.of(user));
         when(cartRepository.findByUserId(1L)).thenReturn(Optional.of(cart));
         when(productVariantRepository.findSellableVariantById(1L)).thenReturn(Optional.of(productVariant));
-        when(cartItemRepository.findByCartIdAndProductVariantId(1L, 1L)).thenReturn(Optional.empty());
+        when(cartItemRepository.findByCartIdAndProductVariantId(1L, 1L)).thenReturn(Optional.of(existingItem));
 
         AppException exception = assertThrows(AppException.class, () -> cartService.addItemToCart(cartItemRequest));
 
@@ -194,7 +199,7 @@ class CartServiceTest {
     }
 
     @Test
-    void deleteCartItemInCart_shouldRemoveItem_whenItemBelongsToCurrentUserCart() {
+    void deleteCartItem_shouldRemoveItem_whenItemBelongsToCurrentUserCart() {
         CartItem cartItem = new CartItem();
         cartItem.setId(1L);
         cartItem.setCart(cart);
@@ -204,19 +209,19 @@ class CartServiceTest {
         when(cartRepository.findByUserId(1L)).thenReturn(Optional.of(cart));
         when(cartItemRepository.findByIdAndCartId(1L, 1L)).thenReturn(Optional.of(cartItem));
 
-        cartService.deleteCartItemInCart(1L);
+        cartService.deleteCartItem(1L);
 
-        assertTrue(cart.getItems().isEmpty());
         verify(cartItemRepository).findByIdAndCartId(1L, 1L);
+        verify(cartItemRepository).delete(cartItem);
     }
 
     @Test
-    void deleteCartItemInCart_shouldThrowException_whenItemDoesNotBelongToCurrentUserCart() {
+    void deleteCartItem_shouldThrowException_whenItemDoesNotBelongToCurrentUserCart() {
         when(userRepository.findByEmailAndDeletedFalse("dat@gmail.com")).thenReturn(Optional.of(user));
         when(cartRepository.findByUserId(1L)).thenReturn(Optional.of(cart));
         when(cartItemRepository.findByIdAndCartId(1L, 1L)).thenReturn(Optional.empty());
 
-        AppException exception = assertThrows(AppException.class, () -> cartService.deleteCartItemInCart(1L));
+        AppException exception = assertThrows(AppException.class, () -> cartService.deleteCartItem(1L));
 
         assertEquals(ErrorCode.CART_ITEM_NOT_FOUND, exception.getErrorCode());
     }
