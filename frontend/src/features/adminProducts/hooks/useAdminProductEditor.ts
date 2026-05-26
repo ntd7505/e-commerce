@@ -32,6 +32,10 @@ import type { BrandResponse } from "../../brands/adminBrandTypes";
 import { getCategories } from "../../categories/adminCategoryApi";
 import type { CategoryResponse } from "../../categories/adminCategoryTypes";
 
+function getErrorMessage(error: unknown, fallback: string) {
+    return error instanceof Error && error.message ? error.message : fallback;
+}
+
 export function useAdminProductEditor() {
     const navigate = useNavigate();
     const { id } = useParams();
@@ -93,8 +97,8 @@ export function useAdminProductEditor() {
         const product = await getProductById(currentProductId);
         setFormValues(toProductFormValues(product));
         setProductActive(product.active);
-        setVariants(product.variants.map(variantToDraft));
-        setMediaItems(product.media.map(mediaToDraft));
+        setVariants((product.variants ?? []).map(variantToDraft));
+        setMediaItems((product.media ?? []).map(mediaToDraft));
     };
 
     useEffect(() => {
@@ -113,8 +117,8 @@ export function useAdminProductEditor() {
                 if (!ignore) {
                     setFormValues(toProductFormValues(product));
                     setProductActive(product.active);
-                    setVariants(product.variants.map(variantToDraft));
-                    setMediaItems(product.media.map(mediaToDraft));
+                    setVariants((product.variants ?? []).map(variantToDraft));
+                    setMediaItems((product.media ?? []).map(mediaToDraft));
                 }
             } catch (error) {
                 console.error("Failed to load product:", error);
@@ -203,7 +207,7 @@ export function useAdminProductEditor() {
             return await uploadProductImage(file);
         } catch (error) {
             console.error("Failed to upload image:", error);
-            alert("Cannot upload image. Check Cloudinary configuration or try again.");
+            alert(getErrorMessage(error, "Cannot upload image. Check Cloudinary configuration or try again."));
             return "";
         } finally {
             setUploadingKey(null);
@@ -240,7 +244,7 @@ export function useAdminProductEditor() {
             });
         } catch (error) {
             console.error("Failed to upload product images:", error);
-            alert("Cannot upload images. Check Cloudinary configuration or try again.");
+            alert(getErrorMessage(error, "Cannot upload images. Check Cloudinary configuration or try again."));
         } finally {
             setUploadingKey(null);
         }
@@ -327,7 +331,7 @@ export function useAdminProductEditor() {
             setMediaItems((prev) => [...prev, ...createdMedia]);
         } catch (error) {
             console.error("Failed to upload product media:", error);
-            alert("Cannot upload and save product images.");
+            alert(getErrorMessage(error, "Cannot upload and save product images."));
         } finally {
             setUploadingKey(null);
         }

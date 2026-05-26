@@ -7,13 +7,17 @@ export const currencyFormatter = new Intl.NumberFormat("vi-VN", {
 });
 
 export function getProductThumbnail(product: ProductResponse) {
-    return product.media.find((item) => item.thumbnail && item.active)?.url
-        ?? product.media.find((item) => item.active)?.url
+    const media = product.media ?? [];
+
+    return media.find((item) => item.thumbnail && item.active)?.url
+        ?? media.find((item) => item.active)?.url
         ?? "";
 }
 
 export function getPrimaryVariant(product: ProductResponse) {
-    return product.variants.find((variant) => variant.active) ?? product.variants[0];
+    const variants = product.variants ?? [];
+
+    return variants.find((variant) => variant.active) ?? variants[0];
 }
 
 export function formatProductDate(value: string) {

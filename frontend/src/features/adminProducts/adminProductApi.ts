@@ -52,7 +52,7 @@ export async function updateProduct(
     id: number,
     payload: ProductUpdateRequest
 ): Promise<ProductResponse> {
-    const response = await adminClient.put<ApiResponse<ProductResponse>>(
+    const response = await adminClient.patch<ApiResponse<ProductResponse>>(
         `/api/v1/admin/products/${id}`,
         payload
     );
@@ -84,7 +84,7 @@ export async function updateProductVariant(
     id: number,
     payload: ProductVariantUpdateRequest
 ): Promise<ProductVariantResponse> {
-    const response = await adminClient.put<ApiResponse<ProductVariantResponse>>(
+    const response = await adminClient.patch<ApiResponse<ProductVariantResponse>>(
         `/api/v1/admin/products/variants/${id}`,
         payload
     );
@@ -120,7 +120,7 @@ export async function updateProductMedia(
     mediaId: number,
     payload: ProductMediaUpdateRequest
 ): Promise<ProductMediaResponse> {
-    const response = await adminClient.put<ApiResponse<ProductMediaResponse>>(
+    const response = await adminClient.patch<ApiResponse<ProductMediaResponse>>(
         `/api/v1/admin/products/media/${mediaId}`,
         payload
     );

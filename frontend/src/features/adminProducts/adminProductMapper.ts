@@ -48,8 +48,10 @@ export function toProductUpdateRequest(
 }
 
 export function toProductFormValues(product: ProductResponse): ProductCreateFormValues {
-    const primaryVariant = product.variants.find((variant) => variant.active) ?? product.variants[0];
-    const mediaUrls = product.media
+    const variants = product.variants ?? [];
+    const media = product.media ?? [];
+    const primaryVariant = variants.find((variant) => variant.active) ?? variants[0];
+    const mediaUrls = media
         .filter((media) => media.active)
         .sort((first, second) => first.sortOrder - second.sortOrder)
         .map((media) => media.url);

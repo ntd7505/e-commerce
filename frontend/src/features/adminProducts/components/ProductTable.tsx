@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-import { Edit, Filter, Image as ImageIcon, MoreHorizontal, Search } from "lucide-react";
+import { Edit, Filter, MoreHorizontal, Search } from "lucide-react";
+import { AdminImage } from "../../../components/AdminImage";
 import type { ProductResponse } from "../adminProductTypes";
 import {
     currencyFormatter,
@@ -106,15 +107,13 @@ export function ProductTable({
                                         <td className="px-4 py-4">
                                             <div className="flex items-center gap-4">
                                                 <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg border border-gray-100 bg-gray-50 p-1.5">
-                                                    {thumbnail ? (
-                                                        <img
-                                                            src={thumbnail}
-                                                            alt={product.name}
-                                                            className="max-h-full max-w-full object-contain mix-blend-multiply"
-                                                        />
-                                                    ) : (
-                                                        <ImageIcon className="h-5 w-5 text-gray-400" />
-                                                    )}
+                                                    <AdminImage
+                                                        src={thumbnail}
+                                                        alt={product.name}
+                                                        fallbackLabel={product.name}
+                                                        className="max-h-full max-w-full object-contain mix-blend-multiply"
+                                                        fallbackClassName="h-full w-full rounded-md"
+                                                    />
                                                 </div>
                                                 <div>
                                                     <p className="font-bold leading-snug text-gray-900 transition-colors group-hover:text-emerald-600">

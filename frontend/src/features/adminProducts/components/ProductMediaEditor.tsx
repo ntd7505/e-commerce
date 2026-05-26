@@ -1,4 +1,5 @@
 import { Image as ImageIcon, PlusCircle, Trash2, Upload } from "lucide-react";
+import { AdminImage } from "../../../components/AdminImage";
 import type { MediaDraft } from "../adminProductFormTypes";
 
 type ProductMediaEditorProps = {
@@ -62,10 +63,11 @@ export function ProductMediaEditor({
                     <div key={media.id ?? `new-${index}`} className="rounded-lg border border-gray-200 p-4">
                         <div className="mb-3 flex aspect-video items-center justify-center rounded-lg border border-gray-200 bg-[#f8f9fa] p-4">
                             {media.url ? (
-                                <img
+                                <AdminImage
                                     src={media.url}
                                     alt={media.altText || "Product media"}
                                     className="max-h-full max-w-full object-contain mix-blend-multiply"
+                                    fallbackClassName="h-full w-full"
                                 />
                             ) : (
                                 <ImageIcon className="h-8 w-8 text-gray-400" />

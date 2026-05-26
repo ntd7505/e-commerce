@@ -1,11 +1,17 @@
 type CloudinaryUploadResponse = {
-    secure_url: string;
+    secure_url?: string;
+    url?: string;
+    public_id?: string;
+    error?: {
+        message?: string;
+    };
 };
 
 const MAX_SOURCE_IMAGE_SIZE = 15 * 1024 * 1024;
 const MAX_UPLOAD_IMAGE_SIZE = 5 * 1024 * 1024;
 const MAX_UPLOAD_IMAGE_DIMENSION = 1600;
 const UPLOAD_IMAGE_QUALITY = 0.82;
+const DEFAULT_CLOUDINARY_FOLDER = "ecommerce/products";
 
 export function validateProductImageFile(file: File): string | null {
     if (!file.type.startsWith("image/")) {
@@ -80,6 +86,18 @@ async function optimizeProductImageFile(file: File): Promise<File> {
     }
 }
 
+function getCloudinaryConfig() {
+    const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME?.trim();
+    const uploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET?.trim();
+    const folder = import.meta.env.VITE_CLOUDINARY_FOLDER?.trim() || DEFAULT_CLOUDINARY_FOLDER;
+
+    if (!cloudName || !uploadPreset) {
+        throw new Error("Missing Cloudinary config: VITE_CLOUDINARY_CLOUD_NAME or VITE_CLOUDINARY_UPLOAD_PRESET");
+    }
+
+    return { cloudName, uploadPreset, folder };
+}
+
 export async function uploadProductImage(file: File): Promise<string> {
     const validationError = validateProductImageFile(file);
 
@@ -93,29 +111,30 @@ export async function uploadProductImage(file: File): Promise<string> {
         throw new Error("Image is still larger than 5MB after optimization");
     }
 
-    const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
-    const uploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
-
-    if (!cloudName || !uploadPreset) {
-        throw new Error("Missing Cloudinary upload configuration");
-    }
+    const { cloudName, uploadPreset, folder } = getCloudinaryConfig();
 
     const formData = new FormData();
     formData.append("file", uploadFile);
     formData.append("upload_preset", uploadPreset);
-    formData.append("folder", "ecommerce/products");
+    formData.append("folder", folder);
 
     const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
         method: "POST",
         body: formData,
     });
+    const data = await response.json() as CloudinaryUploadResponse;
 
     if (!response.ok) {
-        throw new Error("Failed to upload image");
+        throw new Error(data.error?.message ?? "Cloudinary upload failed");
     }
 
-    const data = await response.json() as CloudinaryUploadResponse;
-    return data.secure_url;
+    const imageUrl = data.secure_url ?? data.url;
+
+    if (!imageUrl) {
+        throw new Error("Cloudinary did not return an image URL");
+    }
+
+    return imageUrl;
 }
 
 export async function uploadProductImages(files: File[]): Promise<string[]> {

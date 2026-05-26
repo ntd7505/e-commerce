@@ -1,4 +1,5 @@
 import { Image as ImageIcon, PlusCircle, Trash2, Upload } from "lucide-react";
+import { AdminImage } from "../../../components/AdminImage";
 import type { ProductCreateFormValues } from "../adminProductFormTypes";
 
 type ProductCreateImagesPanelProps = {
@@ -55,10 +56,11 @@ export function ProductCreateImagesPanel({
 
             <div className="mb-5 flex aspect-video items-center justify-center rounded-xl border border-gray-200 bg-[#f8f9fa] p-6">
                 {formValues.mediaUrls[0]?.trim() ? (
-                    <img
+                    <AdminImage
                         src={formValues.mediaUrls[0]}
                         alt="Product thumbnail preview"
                         className="max-h-full max-w-full object-contain mix-blend-multiply"
+                        fallbackClassName="h-full w-full"
                     />
                 ) : (
                     <div className="flex flex-col items-center gap-2 text-gray-400">
