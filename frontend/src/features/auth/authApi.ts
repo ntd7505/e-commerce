@@ -6,7 +6,7 @@ import type {
 } from "./authTypes";
 export async function signIn(payload: LoginCredentials): Promise<LoginResponse> {
     const response = await publicClient.post<ApiResponse<LoginResponse>>(
-        "/auth/login",
+        "/api/v1/auth/login",
         payload
     );
 
