@@ -1,5 +1,5 @@
-import AdminProfileOverview from "../../features/adminProfile/components/AdminProfileOverview";
+import AdminProfilePageContent from "../../features/adminProfile/components/AdminProfilePageContent";
 
 export default function Profile() {
-  return <AdminProfileOverview />;
+  return <AdminProfilePageContent />;
 }
