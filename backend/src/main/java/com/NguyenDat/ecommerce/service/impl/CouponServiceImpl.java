@@ -3,9 +3,12 @@ package com.NguyenDat.ecommerce.service.impl;
 import java.math.BigDecimal;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.NguyenDat.ecommerce.common.dto.response.PageResponse;
 import com.NguyenDat.ecommerce.common.exception.AppException;
 import com.NguyenDat.ecommerce.common.exception.ErrorCode;
 import com.NguyenDat.ecommerce.dto.request.CouponRequest;
@@ -57,10 +60,22 @@ public class CouponServiceImpl implements CouponService {
                 .toList();
     }
 
+    @Override
+    public PageResponse<CouponResponse> getCouponsInPage(Pageable pageable) {
+        Page<Coupon> page = couponRepository.findAllByDeletedFalse(pageable);
+        return PageResponse.from(page.map(couponMapper::toCouponResponse));
+    }
+
     public List<CouponResponse> getAllCouponDeleted() {
         return couponRepository.findAllByDeletedTrue().stream()
                 .map(couponMapper::toCouponResponse)
                 .toList();
+    }
+
+    @Override
+    public PageResponse<CouponResponse> getDeletedCouponsInPage(Pageable pageable) {
+        Page<Coupon> page = couponRepository.findAllByDeletedTrue(pageable);
+        return PageResponse.from(page.map(couponMapper::toCouponResponse));
     }
 
     @Transactional

@@ -16,6 +16,7 @@ public interface ProductVariantMapper {
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "deleted", ignore = true)
     @Mapping(target = "active", ignore = true)
+    @Mapping(target = "sku", ignore = true)
     ProductVariant toProductVariant(ProductVariantRequest productVariantRequest);
 
     ProductVariantResponse toProductVariantResponse(ProductVariant productVariant);
@@ -26,6 +27,7 @@ public interface ProductVariantMapper {
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "deleted", ignore = true)
+    @Mapping(target = "sku", ignore = true)
     void updateProductVariant(
             @MappingTarget ProductVariant productVariant, ProductVariantUpdateRequest productVariantUpdateRequest);
 }

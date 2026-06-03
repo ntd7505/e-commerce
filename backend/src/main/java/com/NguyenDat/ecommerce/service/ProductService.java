@@ -2,6 +2,9 @@ package com.NguyenDat.ecommerce.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Pageable;
+
+import com.NguyenDat.ecommerce.common.dto.response.PageResponse;
 import com.NguyenDat.ecommerce.dto.request.product.*;
 import com.NguyenDat.ecommerce.dto.response.ProductMediaResponse;
 import com.NguyenDat.ecommerce.dto.response.ProductResponse;
@@ -36,7 +39,11 @@ public interface ProductService {
 
     List<ProductResponse> showAllProducts();
 
+    PageResponse<ProductResponse> showProductsInPage(Pageable pageable);
+
     ProductResponse showProductBySlug(String slug);
 
     void deleteProductById(Long id);
+
+    PageResponse<ProductResponse> getAllProductsInPage(Pageable pageable);
 }

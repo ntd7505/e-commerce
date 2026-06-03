@@ -14,7 +14,7 @@ public interface CheckoutItemMapper {
     @Mapping(target = "cartItemId", source = "id")
     @Mapping(target = "productId", source = "productVariant.product.id")
     @Mapping(target = "productName", source = "productVariant.product.name")
-    //    @Mapping(target = "thumbnailUrl", source = "productVariant.product.productMedia.")
+    @Mapping(target = "thumbnailUrl", ignore = true)
     @Mapping(target = "productVariantId", source = "productVariant.id")
     @Mapping(target = "variantName", source = "productVariant.variantName")
     @Mapping(target = "sku", source = "productVariant.sku")

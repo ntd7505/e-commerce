@@ -200,7 +200,7 @@ public class ProductControllerTest {
         productResponses.add(productResponse);
         when(productService.getAllProducts()).thenReturn(productResponses);
 
-        mockMvc.perform(get("/api/v1/admin/products"))
+        mockMvc.perform(get("/api/v1/admin/products/all"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(ResponseCode.PRODUCTS_FETCHED.getCode()))
                 .andExpect(jsonPath("$.message").value(ResponseCode.PRODUCTS_FETCHED.getMessage()))
@@ -215,7 +215,7 @@ public class ProductControllerTest {
     void getAllProducts_shouldReturnNoDataFound_whenListIsEmpty() throws Exception {
         when(productService.getAllProducts()).thenReturn(List.of());
 
-        mockMvc.perform(get("/api/v1/admin/products"))
+        mockMvc.perform(get("/api/v1/admin/products/all"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(ResponseCode.PRODUCTS_FETCHED.getCode()))
                 .andExpect(jsonPath("$.message").value(ResponseCode.PRODUCTS_FETCHED.getMessage()))

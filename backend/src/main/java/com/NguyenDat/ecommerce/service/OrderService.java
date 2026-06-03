@@ -4,6 +4,9 @@ import java.util.List;
 
 import jakarta.validation.Valid;
 
+import org.springframework.data.domain.Pageable;
+
+import com.NguyenDat.ecommerce.common.dto.response.PageResponse;
 import com.NguyenDat.ecommerce.dto.request.CheckoutPreviewRequest;
 import com.NguyenDat.ecommerce.dto.request.CheckoutRequest;
 import com.NguyenDat.ecommerce.dto.request.OrderCancelRequestRequest;
@@ -21,11 +24,15 @@ public interface OrderService {
 
     List<OrderResponse> getMyOrder();
 
+    PageResponse<OrderResponse> getMyOrdersInPage(Pageable pageable);
+
     OrderResponse cancelMyOrder(OrderCancelRequestRequest orderCancelRequestRequest, Long orderId);
 
     OrderResponse confirmReceived(Long orderId);
 
     List<OrderResponse> getAllOrders();
+
+    PageResponse<OrderResponse> getOrdersInPage(Pageable pageable);
 
     OrderResponse getOrderById(Long orderId);
 
@@ -41,6 +48,8 @@ public interface OrderService {
             @Valid OrderCancelRequestRequest orderCancelRequestRequest, Long orderId);
 
     List<OrderCancelRequestResponse> getAllOrderCancelRequests();
+
+    PageResponse<OrderCancelRequestResponse> getOrderCancelRequestsInPage(Pageable pageable);
 
     OrderCancelRequestResponse approveCancelOrder(long requestId);
 

@@ -11,9 +11,11 @@ import org.springframework.web.bind.annotation.*;
 import com.NguyenDat.ecommerce.common.constant.ApiConstant;
 import com.NguyenDat.ecommerce.common.constant.ResponseCode;
 import com.NguyenDat.ecommerce.common.dto.response.ApiResponse;
+import com.NguyenDat.ecommerce.common.dto.response.PageResponse;
 import com.NguyenDat.ecommerce.dto.request.CheckoutPreviewRequest;
 import com.NguyenDat.ecommerce.dto.request.CheckoutRequest;
 import com.NguyenDat.ecommerce.dto.request.OrderCancelRequestRequest;
+import com.NguyenDat.ecommerce.dto.request.PageRequest;
 import com.NguyenDat.ecommerce.dto.response.CheckoutPreviewResponse;
 import com.NguyenDat.ecommerce.dto.response.OrderCancelRequestResponse;
 import com.NguyenDat.ecommerce.dto.response.OrderResponse;
@@ -50,6 +52,12 @@ public class OrderController {
     }
 
     @GetMapping("/orders")
+    public ResponseEntity<ApiResponse<PageResponse<OrderResponse>>> getMyOrdersPage(@Valid PageRequest pageRequest) {
+        return ResponseEntity.ok(
+                ApiResponse.of(ResponseCode.ORDERS_FETCHED, orderService.getMyOrdersInPage(pageRequest.toPageable())));
+    }
+
+    @GetMapping("/orders/all")
     public ResponseEntity<ApiResponse<List<OrderResponse>>> getMyOrder() {
         return ResponseEntity.ok(ApiResponse.ofList(ResponseCode.ORDERS_FETCHED, orderService.getMyOrder()));
     }

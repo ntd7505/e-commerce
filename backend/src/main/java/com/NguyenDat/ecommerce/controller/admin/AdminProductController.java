@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import com.NguyenDat.ecommerce.common.constant.ApiConstant;
 import com.NguyenDat.ecommerce.common.constant.ResponseCode;
 import com.NguyenDat.ecommerce.common.dto.response.ApiResponse;
+import com.NguyenDat.ecommerce.common.dto.response.PageResponse;
+import com.NguyenDat.ecommerce.dto.request.PageRequest;
 import com.NguyenDat.ecommerce.dto.request.product.*;
 import com.NguyenDat.ecommerce.dto.response.ProductMediaResponse;
 import com.NguyenDat.ecommerce.dto.response.ProductResponse;
@@ -47,7 +49,7 @@ public class AdminProductController {
             tags = "Admin Products",
             summary = "Get all products",
             description = "Fetch all non-deleted products for admin management.")
-    @GetMapping("/products")
+    @GetMapping("/products/all")
     public ResponseEntity<ApiResponse<List<ProductResponse>>> getAllProducts() {
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.PRODUCTS_FETCHED, productService.getAllProducts()));
     }
@@ -179,5 +181,11 @@ public class AdminProductController {
     public ResponseEntity<ApiResponse<Void>> deleteProductById(@PathVariable Long id) {
         productService.deleteProductById(id);
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.PRODUCT_DELETED, null));
+    }
+
+    @GetMapping("/products")
+    public ResponseEntity<ApiResponse<PageResponse<ProductResponse>>> getProductsPage(@Valid PageRequest pageRequest) {
+        return ResponseEntity.ok(ApiResponse.of(
+                ResponseCode.PRODUCTS_FETCHED, productService.getAllProductsInPage(pageRequest.toPageable())));
     }
 }

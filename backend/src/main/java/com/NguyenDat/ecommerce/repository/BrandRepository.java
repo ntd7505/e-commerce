@@ -3,6 +3,8 @@ package com.NguyenDat.ecommerce.repository;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -19,9 +21,13 @@ public interface BrandRepository extends JpaRepository<Brand, Long> {
 
     List<Brand> findAllByDeletedFalse();
 
+    Page<Brand> findAllByDeletedFalse(Pageable pageable);
+
     List<Brand> findAllByDeletedFalseAndActiveTrue();
 
     List<Brand> findAllByDeletedTrue();
+
+    Page<Brand> findAllByDeletedTrue(Pageable pageable);
 
     Optional<Brand> findByIdAndDeletedFalse(Long id);
 

@@ -8,11 +8,14 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.NguyenDat.ecommerce.common.dto.response.PageResponse;
 import com.NguyenDat.ecommerce.common.exception.AppException;
 import com.NguyenDat.ecommerce.common.exception.ErrorCode;
 import com.NguyenDat.ecommerce.dto.request.CheckoutPreviewRequest;
@@ -161,6 +164,13 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public PageResponse<OrderResponse> getMyOrdersInPage(Pageable pageable) {
+        User user = getCurrentUser();
+        Page<Order> page = orderRepository.findAllByUserId(user.getId(), pageable);
+        return PageResponse.from(page.map(orderMapper::toOrderResponse));
+    }
+
+    @Override
     @Transactional
     public OrderResponse cancelMyOrder(OrderCancelRequestRequest orderCancelRequestRequest, Long orderId) {
         User user = getCurrentUser();
@@ -229,6 +239,12 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository.findAll().stream()
                 .map(orderMapper::toOrderResponse)
                 .toList();
+    }
+
+    @Override
+    public PageResponse<OrderResponse> getOrdersInPage(Pageable pageable) {
+        Page<Order> page = orderRepository.findAll(pageable);
+        return PageResponse.from(page.map(orderMapper::toOrderResponse));
     }
 
     @Override
@@ -351,6 +367,12 @@ public class OrderServiceImpl implements OrderService {
         return orderCancelRequestRepository.findAll().stream()
                 .map(orderMapper::toOrderCancelRequestResponse)
                 .toList();
+    }
+
+    @Override
+    public PageResponse<OrderCancelRequestResponse> getOrderCancelRequestsInPage(Pageable pageable) {
+        Page<OrderCancelRequest> page = orderCancelRequestRepository.findAll(pageable);
+        return PageResponse.from(page.map(orderMapper::toOrderCancelRequestResponse));
     }
 
     @Transactional

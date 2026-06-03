@@ -4,9 +4,12 @@ import java.util.List;
 
 import jakarta.validation.Valid;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.NguyenDat.ecommerce.common.dto.response.PageResponse;
 import com.NguyenDat.ecommerce.common.exception.AppException;
 import com.NguyenDat.ecommerce.common.exception.ErrorCode;
 import com.NguyenDat.ecommerce.dto.request.CategoryRequest;
@@ -67,6 +70,12 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryRepository.findAllByDeletedFalse().stream()
                 .map(categoryMapper::toCategoryResponse)
                 .toList();
+    }
+
+    @Override
+    public PageResponse<CategoryResponse> getCategoriesInPage(Pageable pageable) {
+        Page<Category> page = categoryRepository.findAllByDeletedFalse(pageable);
+        return PageResponse.from(page.map(categoryMapper::toCategoryResponse));
     }
 
     @Transactional

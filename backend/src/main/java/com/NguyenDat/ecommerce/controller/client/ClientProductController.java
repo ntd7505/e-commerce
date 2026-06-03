@@ -2,15 +2,16 @@ package com.NguyenDat.ecommerce.controller.client;
 
 import java.util.List;
 
+import jakarta.validation.Valid;
+
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.NguyenDat.ecommerce.common.constant.ApiConstant;
 import com.NguyenDat.ecommerce.common.constant.ResponseCode;
 import com.NguyenDat.ecommerce.common.dto.response.ApiResponse;
+import com.NguyenDat.ecommerce.common.dto.response.PageResponse;
+import com.NguyenDat.ecommerce.dto.request.PageRequest;
 import com.NguyenDat.ecommerce.dto.response.ProductResponse;
 import com.NguyenDat.ecommerce.service.ProductService;
 
@@ -27,6 +28,12 @@ public class ClientProductController {
     ProductService productService;
 
     @GetMapping("/products")
+    public ResponseEntity<ApiResponse<PageResponse<ProductResponse>>> showProductsPage(@Valid PageRequest pageRequest) {
+        return ResponseEntity.ok(ApiResponse.of(
+                ResponseCode.PRODUCTS_FETCHED, productService.showProductsInPage(pageRequest.toPageable())));
+    }
+
+    @GetMapping("/products/all")
     public ResponseEntity<ApiResponse<List<ProductResponse>>> showAllProducts() {
         return ResponseEntity.ok(ApiResponse.ofList(ResponseCode.PRODUCTS_FETCHED, productService.showAllProducts()));
     }

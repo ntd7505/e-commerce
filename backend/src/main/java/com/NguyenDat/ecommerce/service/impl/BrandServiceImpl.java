@@ -5,9 +5,12 @@ import java.util.List;
 import jakarta.validation.Valid;
 
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.NguyenDat.ecommerce.common.dto.response.PageResponse;
 import com.NguyenDat.ecommerce.common.exception.AppException;
 import com.NguyenDat.ecommerce.common.exception.ErrorCode;
 import com.NguyenDat.ecommerce.dto.request.BrandRequest;
@@ -57,6 +60,12 @@ public class BrandServiceImpl implements BrandService {
                 .toList();
     }
 
+    @Override
+    public PageResponse<BrandResponse> getBrandsInPage(Pageable pageable) {
+        Page<Brand> page = brandRepository.findAllByDeletedFalse(pageable);
+        return PageResponse.from(page.map(brandMapper::toBrandResponse));
+    }
+
     @Transactional
     public void deleteBrand(Long id) {
         Brand brand = brandRepository
@@ -101,6 +110,12 @@ public class BrandServiceImpl implements BrandService {
         return brandRepository.findAllByDeletedTrue().stream()
                 .map(brandMapper::toBrandResponse)
                 .toList();
+    }
+
+    @Override
+    public PageResponse<BrandResponse> getDeletedBrandsInPage(Pageable pageable) {
+        Page<Brand> page = brandRepository.findAllByDeletedTrue(pageable);
+        return PageResponse.from(page.map(brandMapper::toBrandResponse));
     }
 
     @Transactional

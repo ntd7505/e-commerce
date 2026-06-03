@@ -196,7 +196,7 @@ public class CategoryControllerTest {
         List<CategoryResponse> categoryResponseList = new ArrayList<>();
         categoryResponseList.add(categoryResponse);
         when(categoryService.getAllCategories()).thenReturn(categoryResponseList);
-        mockMvc.perform(get("/api/v1/admin/categories"))
+        mockMvc.perform(get("/api/v1/admin/categories/all"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(ResponseCode.CATEGORIES_FETCHED.getCode()))
                 .andExpect(jsonPath("$.message").value(ResponseCode.CATEGORIES_FETCHED.getMessage()))
@@ -216,7 +216,7 @@ public class CategoryControllerTest {
     @Test
     void getAllCategories_shouldReturnNoDataFound_whenListIsEmpty() throws Exception {
         when(categoryService.getAllCategories()).thenReturn(List.of());
-        mockMvc.perform(get("/api/v1/admin/categories"))
+        mockMvc.perform(get("/api/v1/admin/categories/all"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(ResponseCode.NO_DATA_FOUND.getCode()))
                 .andExpect(jsonPath("$.message").value(ResponseCode.NO_DATA_FOUND.getMessage()))

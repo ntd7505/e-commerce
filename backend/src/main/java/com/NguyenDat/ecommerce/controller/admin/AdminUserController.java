@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import com.NguyenDat.ecommerce.common.constant.ApiConstant;
 import com.NguyenDat.ecommerce.common.constant.ResponseCode;
 import com.NguyenDat.ecommerce.common.dto.response.ApiResponse;
+import com.NguyenDat.ecommerce.common.dto.response.PageResponse;
+import com.NguyenDat.ecommerce.dto.request.PageRequest;
 import com.NguyenDat.ecommerce.dto.request.UserCreationRequest;
 import com.NguyenDat.ecommerce.dto.request.UserUpdateRequest;
 import com.NguyenDat.ecommerce.dto.request.UserUpdateStatusRequest;
@@ -47,11 +49,23 @@ public class AdminUserController {
     }
 
     @GetMapping("/users")
+    public ResponseEntity<ApiResponse<PageResponse<UserResponse>>> getUsersPage(@Valid PageRequest pageRequest) {
+        return ResponseEntity.ok(
+                ApiResponse.of(ResponseCode.USERS_FETCHED, userService.getUsersInPage(pageRequest.toPageable())));
+    }
+
+    @GetMapping("/users/deleted")
+    public ResponseEntity<ApiResponse<PageResponse<UserResponse>>> getDeletedUsersPage(@Valid PageRequest pageRequest) {
+        return ResponseEntity.ok(ApiResponse.of(
+                ResponseCode.DELETED_USERS_FETCHED, userService.getDeletedUsersInPage(pageRequest.toPageable())));
+    }
+
+    @GetMapping("/users/all")
     public ResponseEntity<ApiResponse<List<UserResponse>>> getAllUsers() {
         return ResponseEntity.ok(ApiResponse.ofList(ResponseCode.USERS_FETCHED, userService.getAllUsers()));
     }
 
-    @GetMapping("/users/deleted")
+    @GetMapping("/users/deleted/all")
     public ResponseEntity<ApiResponse<List<UserResponse>>> getDeletedUsers() {
         return ResponseEntity.ok(ApiResponse.ofList(ResponseCode.DELETED_USERS_FETCHED, userService.getDeletedUsers()));
     }

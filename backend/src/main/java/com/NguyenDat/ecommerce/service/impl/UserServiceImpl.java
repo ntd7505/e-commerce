@@ -8,6 +8,8 @@ import java.util.stream.Collectors;
 import jakarta.validation.Valid;
 
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -15,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.NguyenDat.ecommerce.common.dto.response.PageResponse;
 import com.NguyenDat.ecommerce.common.exception.AppException;
 import com.NguyenDat.ecommerce.common.exception.ErrorCode;
 import com.NguyenDat.ecommerce.dto.request.UserCreationRequest;
@@ -106,6 +109,12 @@ public class UserServiceImpl implements UserService {
                 .toList();
     }
 
+    @Override
+    public PageResponse<UserResponse> getDeletedUsersInPage(Pageable pageable) {
+        Page<User> page = userRepository.findAllByDeletedTrue(pageable);
+        return PageResponse.from(page.map(userMapper::toUserResponse));
+    }
+
     @Transactional
     public UserResponse updateUserStatusById(Long id, @Valid UserUpdateStatusRequest userUpdateStatusRequest) {
         User user = this.userRepository
@@ -137,6 +146,12 @@ public class UserServiceImpl implements UserService {
 
         userMapper.updateUserMapper(user, userUpdateRequest);
         return userMapper.toUserResponse(userRepository.save(user));
+    }
+
+    @Override
+    public PageResponse<UserResponse> getUsersInPage(Pageable pageable) {
+        Page<User> page = userRepository.findAllByDeletedFalse(pageable);
+        return PageResponse.from(page.map(userMapper::toUserResponse));
     }
 
     private UserResponse createUserInternal(User user, String rawPassword, Set<String> roleNames) {

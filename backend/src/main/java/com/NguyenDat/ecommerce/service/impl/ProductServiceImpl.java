@@ -6,9 +6,12 @@ import java.util.List;
 
 import jakarta.validation.Valid;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.NguyenDat.ecommerce.common.dto.response.PageResponse;
 import com.NguyenDat.ecommerce.common.exception.AppException;
 import com.NguyenDat.ecommerce.common.exception.ErrorCode;
 import com.NguyenDat.ecommerce.dto.request.product.*;
@@ -292,6 +295,12 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public PageResponse<ProductResponse> showProductsInPage(Pageable pageable) {
+        Page<Product> page = productRepository.findAllByDeletedFalseAndActiveTrue(pageable);
+        return PageResponse.from(page.map(productMapper::toProductResponse));
+    }
+
+    @Override
     public ProductResponse showProductBySlug(String slug) {
         String normalizedSlug = slug.trim();
         Product product = productRepository
@@ -321,5 +330,11 @@ public class ProductServiceImpl implements ProductService {
         });
 
         productRepository.save(product);
+    }
+
+    @Override
+    public PageResponse<ProductResponse> getAllProductsInPage(Pageable pageable) {
+        Page<Product> page = productRepository.findAllByDeletedFalse(pageable);
+        return PageResponse.from(page.map(this::toProductResponse));
     }
 }

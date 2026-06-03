@@ -206,7 +206,7 @@ public class AdminUserControllerTest {
         List<UserResponse> userResponseList = new ArrayList<>();
         userResponseList.add(userResponse);
         when(userService.getAllUsers()).thenReturn(userResponseList);
-        mockMvc.perform(get("/api/v1/admin/users"))
+        mockMvc.perform(get("/api/v1/admin/users/all"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(ResponseCode.USERS_FETCHED.getCode()))
                 .andExpect(jsonPath("$.message").value(ResponseCode.USERS_FETCHED.getMessage()))
@@ -222,7 +222,7 @@ public class AdminUserControllerTest {
     void getAllUsers_shouldReturnNoDataFound_whenListIsEmpty() throws Exception {
         List<UserResponse> userResponseList = new ArrayList<>();
         when(userService.getAllUsers()).thenReturn(userResponseList);
-        mockMvc.perform(get("/api/v1/admin/users"))
+        mockMvc.perform(get("/api/v1/admin/users/all"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(ResponseCode.NO_DATA_FOUND.getCode()))
                 .andExpect(jsonPath("$.message").value(ResponseCode.NO_DATA_FOUND.getMessage()))

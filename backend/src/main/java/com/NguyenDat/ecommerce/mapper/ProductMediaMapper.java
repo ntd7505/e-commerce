@@ -11,6 +11,10 @@ import com.NguyenDat.ecommerce.entity.ProductMedia;
 public interface ProductMediaMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "product", ignore = true)
+    @Mapping(target = "active", ignore = true)
+    @Mapping(target = "deleted", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
     ProductMedia toProductMedia(ProductMediaRequest request);
 
     ProductMediaResponse toProductMediaResponse(ProductMedia media);
@@ -18,6 +22,7 @@ public interface ProductMediaMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "product", ignore = true)
+    @Mapping(target = "deleted", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     void updateProductMedia(

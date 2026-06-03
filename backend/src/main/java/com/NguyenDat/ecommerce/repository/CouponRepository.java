@@ -3,6 +3,8 @@ package com.NguyenDat.ecommerce.repository;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -22,7 +24,11 @@ public interface CouponRepository extends JpaRepository<Coupon, Long> {
 
     List<Coupon> findAllByDeletedFalse();
 
+    Page<Coupon> findAllByDeletedFalse(Pageable pageable);
+
     List<Coupon> findAllByDeletedTrue();
+
+    Page<Coupon> findAllByDeletedTrue(Pageable pageable);
 
     boolean existsByCodeAndIdNot(String code, Long id);
 }

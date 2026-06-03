@@ -87,7 +87,7 @@ public class BrandControllerTest {
         brandResponseList.add(response);
         when(brandService.getDeletedBrands()).thenReturn(brandResponseList);
 
-        mockMvc.perform(get("/api/v1/admin/brands/deleted"))
+        mockMvc.perform(get("/api/v1/admin/brands/deleted/all"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(ResponseCode.DELETED_BRANDS_FETCHED.getCode()))
                 .andExpect(jsonPath("$.message").value(ResponseCode.DELETED_BRANDS_FETCHED.getMessage()))
@@ -115,7 +115,7 @@ public class BrandControllerTest {
         List<BrandResponse> brandResponseList = new ArrayList<>();
         brandResponseList.add(response);
         when(brandService.getAllBrands()).thenReturn(brandResponseList);
-        mockMvc.perform(get("/api/v1/admin/brands"))
+        mockMvc.perform(get("/api/v1/admin/brands/all"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(ResponseCode.BRANDS_FETCHED.getCode()))
                 .andExpect(jsonPath("$.message").value(ResponseCode.BRANDS_FETCHED.getMessage()))
@@ -133,7 +133,7 @@ public class BrandControllerTest {
     void getAllBrands_shouldReturnNoDataFound_whenListIsEmpty() throws Exception {
         List<BrandResponse> brandResponseList = new ArrayList<>();
         when(brandService.getAllBrands()).thenReturn(brandResponseList);
-        mockMvc.perform(get("/api/v1/admin/brands"))
+        mockMvc.perform(get("/api/v1/admin/brands/all"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(ResponseCode.NO_DATA_FOUND.getCode()))
                 .andExpect(jsonPath("$.message").value(ResponseCode.NO_DATA_FOUND.getMessage()))

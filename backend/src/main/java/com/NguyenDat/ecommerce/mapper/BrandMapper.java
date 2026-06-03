@@ -12,6 +12,8 @@ import com.NguyenDat.ecommerce.entity.Brand;
 public interface BrandMapper {
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "slug", ignore = true)
+    @Mapping(target = "productList", ignore = true)
     @Mapping(target = "deleted", ignore = true)
     @Mapping(target = "active", ignore = true)
     @Mapping(target = "createdAt", ignore = true)

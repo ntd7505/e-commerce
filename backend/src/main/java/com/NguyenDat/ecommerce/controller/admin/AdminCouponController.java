@@ -11,8 +11,10 @@ import org.springframework.web.bind.annotation.*;
 import com.NguyenDat.ecommerce.common.constant.ApiConstant;
 import com.NguyenDat.ecommerce.common.constant.ResponseCode;
 import com.NguyenDat.ecommerce.common.dto.response.ApiResponse;
+import com.NguyenDat.ecommerce.common.dto.response.PageResponse;
 import com.NguyenDat.ecommerce.dto.request.CouponRequest;
 import com.NguyenDat.ecommerce.dto.request.CouponStatusUpdateRequest;
+import com.NguyenDat.ecommerce.dto.request.PageRequest;
 import com.NguyenDat.ecommerce.dto.response.CouponResponse;
 import com.NguyenDat.ecommerce.service.CouponService;
 
@@ -40,11 +42,24 @@ public class AdminCouponController {
     }
 
     @GetMapping("/coupons")
+    public ResponseEntity<ApiResponse<PageResponse<CouponResponse>>> getCouponsPage(@Valid PageRequest pageRequest) {
+        return ResponseEntity.ok(
+                ApiResponse.of(ResponseCode.COUPONS_FETCHED, couponService.getCouponsInPage(pageRequest.toPageable())));
+    }
+
+    @GetMapping("/coupons/all")
     public ResponseEntity<ApiResponse<List<CouponResponse>>> getAllCoupon() {
         return ResponseEntity.ok(ApiResponse.ofList(ResponseCode.COUPONS_FETCHED, couponService.getAllCoupons()));
     }
 
     @GetMapping("/coupons/deleted")
+    public ResponseEntity<ApiResponse<PageResponse<CouponResponse>>> getDeletedCouponsPage(
+            @Valid PageRequest pageRequest) {
+        return ResponseEntity.ok(ApiResponse.of(
+                ResponseCode.DELETED_COUPONS_FETCHED, couponService.getDeletedCouponsInPage(pageRequest.toPageable())));
+    }
+
+    @GetMapping("/coupons/deleted/all")
     public ResponseEntity<ApiResponse<List<CouponResponse>>> getAllCouponDeleted() {
         return ResponseEntity.ok(
                 ApiResponse.ofList(ResponseCode.DELETED_COUPONS_FETCHED, couponService.getAllCouponDeleted()));

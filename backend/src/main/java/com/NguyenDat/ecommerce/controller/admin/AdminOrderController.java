@@ -2,12 +2,16 @@ package com.NguyenDat.ecommerce.controller.admin;
 
 import java.util.List;
 
+import jakarta.validation.Valid;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.NguyenDat.ecommerce.common.constant.ApiConstant;
 import com.NguyenDat.ecommerce.common.constant.ResponseCode;
 import com.NguyenDat.ecommerce.common.dto.response.ApiResponse;
+import com.NguyenDat.ecommerce.common.dto.response.PageResponse;
+import com.NguyenDat.ecommerce.dto.request.PageRequest;
 import com.NguyenDat.ecommerce.dto.response.OrderCancelRequestResponse;
 import com.NguyenDat.ecommerce.dto.response.OrderResponse;
 import com.NguyenDat.ecommerce.service.OrderService;
@@ -25,6 +29,12 @@ public class AdminOrderController {
     OrderService orderService;
 
     @GetMapping("/orders")
+    public ResponseEntity<ApiResponse<PageResponse<OrderResponse>>> getOrdersPage(@Valid PageRequest pageRequest) {
+        return ResponseEntity.ok(
+                ApiResponse.of(ResponseCode.ORDERS_FETCHED, orderService.getOrdersInPage(pageRequest.toPageable())));
+    }
+
+    @GetMapping("/orders/all")
     public ResponseEntity<ApiResponse<List<OrderResponse>>> getAllOrders() {
         return ResponseEntity.ok(ApiResponse.ofList(ResponseCode.ORDERS_FETCHED, orderService.getAllOrders()));
     }
@@ -57,6 +67,14 @@ public class AdminOrderController {
     }
 
     @GetMapping("/order-cancel-requests")
+    public ResponseEntity<ApiResponse<PageResponse<OrderCancelRequestResponse>>> getOrderCancelRequestsPage(
+            @Valid PageRequest pageRequest) {
+        return ResponseEntity.ok(ApiResponse.of(
+                ResponseCode.ORDER_CANCEL_REQUESTS_FETCHED,
+                orderService.getOrderCancelRequestsInPage(pageRequest.toPageable())));
+    }
+
+    @GetMapping("/order-cancel-requests/all")
     public ResponseEntity<ApiResponse<List<OrderCancelRequestResponse>>> getAllOrderCancelRequest() {
         return ResponseEntity.ok(ApiResponse.ofList(
                 ResponseCode.ORDER_CANCEL_REQUESTS_FETCHED, orderService.getAllOrderCancelRequests()));

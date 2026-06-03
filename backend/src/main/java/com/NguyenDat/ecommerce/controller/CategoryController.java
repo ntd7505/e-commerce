@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.*;
 import com.NguyenDat.ecommerce.common.constant.ApiConstant;
 import com.NguyenDat.ecommerce.common.constant.ResponseCode;
 import com.NguyenDat.ecommerce.common.dto.response.ApiResponse;
+import com.NguyenDat.ecommerce.common.dto.response.PageResponse;
 import com.NguyenDat.ecommerce.dto.request.CategoryRequest;
+import com.NguyenDat.ecommerce.dto.request.PageRequest;
 import com.NguyenDat.ecommerce.dto.response.category.CategoryResponse;
 import com.NguyenDat.ecommerce.service.CategoryService;
 
@@ -34,6 +36,13 @@ public class CategoryController {
     }
 
     @GetMapping("/categories")
+    public ResponseEntity<ApiResponse<PageResponse<CategoryResponse>>> getCategoriesPage(
+            @Valid PageRequest pageRequest) {
+        return ResponseEntity.ok(ApiResponse.of(
+                ResponseCode.CATEGORIES_FETCHED, categoryService.getCategoriesInPage(pageRequest.toPageable())));
+    }
+
+    @GetMapping("/categories/all")
     public ResponseEntity<ApiResponse<List<CategoryResponse>>> getAllCategories() {
         return ResponseEntity.ok(
                 ApiResponse.ofList(ResponseCode.CATEGORIES_FETCHED, categoryService.getAllCategories()));

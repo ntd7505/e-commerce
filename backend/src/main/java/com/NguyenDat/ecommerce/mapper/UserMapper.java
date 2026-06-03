@@ -39,7 +39,14 @@ public interface UserMapper {
     User toUser(UserRegisterRequest request);
 
     // update mapper
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "email", ignore = true)
+    @Mapping(target = "password", ignore = true)
+    @Mapping(target = "status", ignore = true)
     @Mapping(target = "roles", ignore = true)
+    @Mapping(target = "deleted", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
     void updateUserMapper(@MappingTarget User user, UserUpdateRequest userUpdateRequest);
 
     default Set<String> mapRoles(Set<Role> roles) {

@@ -145,7 +145,7 @@ class CouponControllerTest {
     void getAllCoupons_shouldReturnFetchedResponse_whenDataExists() throws Exception {
         when(couponService.getAllCoupons()).thenReturn(List.of(couponResponse));
 
-        mockMvc.perform(get("/api/v1/admin/coupons"))
+        mockMvc.perform(get("/api/v1/admin/coupons/all"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(ResponseCode.COUPONS_FETCHED.getCode()))
                 .andExpect(jsonPath("$.message").value(ResponseCode.COUPONS_FETCHED.getMessage()))
@@ -159,7 +159,7 @@ class CouponControllerTest {
     void getAllDeletedCoupons_shouldReturnFetchedResponse_whenDataExists() throws Exception {
         when(couponService.getAllCouponDeleted()).thenReturn(List.of(couponResponse));
 
-        mockMvc.perform(get("/api/v1/admin/coupons/deleted"))
+        mockMvc.perform(get("/api/v1/admin/coupons/deleted/all"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(ResponseCode.DELETED_COUPONS_FETCHED.getCode()))
                 .andExpect(jsonPath("$.message").value(ResponseCode.DELETED_COUPONS_FETCHED.getMessage()))

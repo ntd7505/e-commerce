@@ -11,8 +11,10 @@ import org.springframework.web.bind.annotation.*;
 import com.NguyenDat.ecommerce.common.constant.ApiConstant;
 import com.NguyenDat.ecommerce.common.constant.ResponseCode;
 import com.NguyenDat.ecommerce.common.dto.response.ApiResponse;
+import com.NguyenDat.ecommerce.common.dto.response.PageResponse;
 import com.NguyenDat.ecommerce.dto.request.BrandRequest;
 import com.NguyenDat.ecommerce.dto.request.BrandStatusUpdateRequest;
+import com.NguyenDat.ecommerce.dto.request.PageRequest;
 import com.NguyenDat.ecommerce.dto.response.BrandResponse;
 import com.NguyenDat.ecommerce.service.BrandService;
 
@@ -36,6 +38,12 @@ public class AdminBrandController {
     }
 
     @GetMapping("/brands")
+    public ResponseEntity<ApiResponse<PageResponse<BrandResponse>>> getBrandsPage(@Valid PageRequest pageRequest) {
+        return ResponseEntity.ok(
+                ApiResponse.of(ResponseCode.BRANDS_FETCHED, brandService.getBrandsInPage(pageRequest.toPageable())));
+    }
+
+    @GetMapping("/brands/all")
     public ResponseEntity<ApiResponse<List<BrandResponse>>> getAllBrands() {
         return ResponseEntity.ok(ApiResponse.ofList(ResponseCode.BRANDS_FETCHED, brandService.getAllBrands()));
     }
@@ -52,6 +60,13 @@ public class AdminBrandController {
     }
 
     @GetMapping("/brands/deleted")
+    public ResponseEntity<ApiResponse<PageResponse<BrandResponse>>> getDeletedBrandsPage(
+            @Valid PageRequest pageRequest) {
+        return ResponseEntity.ok(ApiResponse.of(
+                ResponseCode.DELETED_BRANDS_FETCHED, brandService.getDeletedBrandsInPage(pageRequest.toPageable())));
+    }
+
+    @GetMapping("/brands/deleted/all")
     public ResponseEntity<ApiResponse<List<BrandResponse>>> getDeletedBrands() {
         return ResponseEntity.ok(
                 ApiResponse.ofList(ResponseCode.DELETED_BRANDS_FETCHED, brandService.getDeletedBrands()));
