@@ -1,5 +1,5 @@
 import { adminClient } from "../../api/adminClient";
-import type { ApiResponse } from "../../types/api";
+import { unwrapApiList, type ApiResponse } from "../../types/api";
 
 import type {
     ProductCreateRequest,
@@ -15,10 +15,10 @@ import type {
 
 export async function getProducts(): Promise<ProductResponse[]> {
     const response = await adminClient.get<ApiResponse<ProductResponse[]>>(
-        "/api/v1/admin/products"
+        "/api/v1/admin/products/all"
     );
 
-    return response.data.data;
+    return unwrapApiList(response.data.data);
 }
 
 export async function getProductById(id: number): Promise<ProductResponse> {

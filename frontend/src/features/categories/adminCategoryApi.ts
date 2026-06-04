@@ -1,12 +1,12 @@
 import { adminClient } from "../../api/adminClient";
-import type { ApiResponse } from "../../types/api";
+import { unwrapApiList, type ApiResponse } from "../../types/api";
 import type { CategoryRequest, CategoryResponse } from "./adminCategoryTypes";
 
 export async function getCategories(): Promise<CategoryResponse[]> {
     const response = await adminClient.get<ApiResponse<CategoryResponse[]>>(
-        "/api/v1/admin/categories"
+        "/api/v1/admin/categories/all"
     );
-    return response.data.data;
+    return unwrapApiList(response.data.data);
 }
 
 export async function getCategoryById(id: number): Promise<CategoryResponse> {
@@ -27,7 +27,7 @@ export async function createCategory(
 }
 
 export async function updateCategory(id: number, payload: CategoryRequest): Promise<CategoryResponse> {
-    const response = await adminClient.put<ApiResponse<CategoryResponse>>(
+    const response = await adminClient.patch<ApiResponse<CategoryResponse>>(
         `/api/v1/admin/categories/${id}`,
         payload
     );

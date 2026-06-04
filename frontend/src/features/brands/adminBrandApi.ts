@@ -1,13 +1,13 @@
 import { adminClient } from "../../api/adminClient";
-import type { ApiResponse } from "../../types/api";
+import { unwrapApiList, type ApiResponse } from "../../types/api";
 import type { BrandCreateRequest, BrandRequest, BrandResponse, BrandStatusUpdateRequest } from "./adminBrandTypes";
 
 export async function getBrands(): Promise<BrandResponse[]> {
     const response = await adminClient.get<ApiResponse<BrandResponse[]>>(
-        "/api/v1/admin/brands"
+        "/api/v1/admin/brands/all"
     );
 
-    return response.data.data;
+    return unwrapApiList(response.data.data);
 }
 
 export async function getBrandById(id: number): Promise<BrandResponse> {
@@ -20,10 +20,10 @@ export async function getBrandById(id: number): Promise<BrandResponse> {
 
 export async function getDeletedBrands(): Promise<BrandResponse[]> {
     const response = await adminClient.get<ApiResponse<BrandResponse[]>>(
-        "/api/v1/admin/brands/deleted"
+        "/api/v1/admin/brands/deleted/all"
     );
 
-    return response.data.data;
+    return unwrapApiList(response.data.data);
 }
 
 export async function createBrand(payload: BrandCreateRequest): Promise<BrandResponse> {
@@ -36,7 +36,7 @@ export async function createBrand(payload: BrandCreateRequest): Promise<BrandRes
 }
 
 export async function updateBrand(id: number, payload: BrandRequest): Promise<BrandResponse> {
-    const response = await adminClient.put<ApiResponse<BrandResponse>>(
+    const response = await adminClient.patch<ApiResponse<BrandResponse>>(
         `/api/v1/admin/brands/${id}`,
         payload
     );

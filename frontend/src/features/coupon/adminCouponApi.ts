@@ -1,19 +1,19 @@
 import { adminClient } from "../../api/adminClient";
-import type { ApiResponse } from "../../types/api";
+import { unwrapApiList, type ApiResponse } from "../../types/api";
 import type { CouponRequest, CouponResponse } from "./adminCouponTypes";
 
 export async function getCoupons(): Promise<CouponResponse[]> {
     const response = await adminClient.get<ApiResponse<CouponResponse[]>>(
-        "/api/v1/admin/coupons"
+        "/api/v1/admin/coupons/all"
     );
-    return response.data.data;
+    return unwrapApiList(response.data.data);
 }
 
 export async function getDeletedCoupons(): Promise<CouponResponse[]> {
     const response = await adminClient.get<ApiResponse<CouponResponse[]>>(
-        "/api/v1/admin/coupons/deleted"
+        "/api/v1/admin/coupons/deleted/all"
     );
-    return response.data.data;
+    return unwrapApiList(response.data.data);
 }
 
 export async function createCoupon(payload: CouponRequest): Promise<CouponResponse> {

@@ -1,13 +1,13 @@
 import { adminClient } from "../../api/adminClient";
-import type { ApiResponse } from "../../types/api";
+import { unwrapApiList, type ApiResponse } from "../../types/api";
 import type { OrderResponse } from "./adminOrderTypes";
 
 export async function getOrders(): Promise<OrderResponse[]> {
     const response = await adminClient.get<ApiResponse<OrderResponse[]>>(
-        "/api/v1/admin/orders"
+        "/api/v1/admin/orders/all"
     );
 
-    return response.data.data;
+    return unwrapApiList(response.data.data);
 }
 
 export async function getOrderById(orderId: number): Promise<OrderResponse> {

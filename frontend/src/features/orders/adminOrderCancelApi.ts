@@ -1,13 +1,13 @@
 import { adminClient } from "../../api/adminClient";
-import type { ApiResponse } from "../../types/api";
+import { unwrapApiList, type ApiResponse } from "../../types/api";
 import type { OrderCancelRequestResponse } from "./adminOrderCancelTypes";
 
 export async function getOrderCancelRequests(): Promise<OrderCancelRequestResponse[]> {
     const response = await adminClient.get<ApiResponse<OrderCancelRequestResponse[]>>(
-        "/api/v1/admin/order-cancel-requests"
+        "/api/v1/admin/order-cancel-requests/all"
     );
 
-    return response.data.data;
+    return unwrapApiList(response.data.data);
 }
 
 export async function approveOrderCancelRequest(requestId: number): Promise<OrderCancelRequestResponse> {

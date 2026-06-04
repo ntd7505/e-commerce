@@ -1,13 +1,13 @@
 import { adminClient } from "../../api/adminClient";
-import type { ApiResponse } from "../../types/api";
+import { unwrapApiList, type ApiResponse } from "../../types/api";
 import type { AdminUserResponse, UserStatus } from "./adminUserTypes";
 
 export async function getAdminUsers(): Promise<AdminUserResponse[]> {
   const response = await adminClient.get<ApiResponse<AdminUserResponse[]>>(
-    "/api/v1/admin/users"
+    "/api/v1/admin/users/all"
   );
 
-  return response.data.data;
+  return unwrapApiList(response.data.data);
 }
 
 export async function getCurrentAdminUser(): Promise<AdminUserResponse> {
