@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { Mail, Phone, ShieldCheck, UserCircle } from "lucide-react";
+import { Mail, Phone, ShieldCheck } from "lucide-react";
+import { AdminImage } from "../../../components/AdminImage";
 import { getCurrentAdminUser } from "../../customers/adminUserApi";
 import type { AdminUserResponse } from "../../customers/adminUserTypes";
 
@@ -43,11 +44,13 @@ export default function AdminProfileOverview() {
       <section className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
         <div className="flex flex-wrap items-center gap-5">
           <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-full bg-emerald-50 text-emerald-600">
-            {user.avatarUrl ? (
-              <img src={user.avatarUrl} alt={user.fullName} className="h-full w-full object-cover" />
-            ) : (
-              <UserCircle className="h-12 w-12" />
-            )}
+            <AdminImage
+              src={user.avatarUrl}
+              alt={user.fullName}
+              fallbackLabel={user.fullName}
+              className="h-full w-full object-cover"
+              fallbackClassName="h-full w-full rounded-full"
+            />
           </div>
           <div>
             <h3 className="text-xl font-extrabold text-gray-900">{user.fullName}</h3>

@@ -1,6 +1,9 @@
 import { Link } from "react-router-dom";
-import { Edit, Filter, MoreHorizontal, Search } from "lucide-react";
+import { ChevronLeft, ChevronRight, Edit, Filter, MoreHorizontal, Package, Search } from "lucide-react";
+import { AdminBadge } from "../../../components/AdminBadge";
+import { AdminEmptyState } from "../../../components/AdminEmptyState";
 import { AdminImage } from "../../../components/AdminImage";
+import { AdminSkeletonTable } from "../../../components/AdminSkeletonTable";
 import type { ProductResponse } from "../adminProductTypes";
 import {
     currencyFormatter,
@@ -12,36 +15,60 @@ import {
 type ProductTableProps = {
     products: ProductResponse[];
     filteredProducts: ProductResponse[];
+    paginatedProducts: ProductResponse[];
     loading: boolean;
     error: string;
     searchTerm: string;
+    statusFilter: "all" | "active" | "inactive";
     updatingId: number | null;
+    page: number;
+    pageSize: number;
+    totalPages: number;
     onSearchChange: (value: string) => void;
+    onStatusFilterChange: (value: "all" | "active" | "inactive") => void;
+    onPageChange: (page: number) => void;
     onToggleStatus: (product: ProductResponse) => void;
 };
 
 export function ProductTable({
     products,
     filteredProducts,
+    paginatedProducts,
     loading,
     error,
     searchTerm,
+    statusFilter,
     updatingId,
+    page,
+    pageSize,
+    totalPages,
     onSearchChange,
+    onStatusFilterChange,
+    onPageChange,
     onToggleStatus,
 }: ProductTableProps) {
+    const activeCount = products.filter((p) => p.active).length;
+    const inactiveCount = products.filter((p) => !p.active).length;
+    const startItem = (page - 1) * pageSize + 1;
+    const endItem = Math.min(page * pageSize, filteredProducts.length);
+
+    const tabClass = (tab: "all" | "active" | "inactive") =>
+        statusFilter === tab
+            ? "rounded-md border border-gray-200/60 bg-white px-5 py-2 text-[13px] font-bold text-emerald-800 shadow-sm"
+            : "rounded-md px-5 py-2 text-[13px] font-bold text-gray-500 transition-colors hover:text-gray-900";
+
     return (
         <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
             <div className="flex flex-wrap items-center justify-between gap-4 border-b border-gray-100 p-4">
                 <div className="flex items-center gap-1 rounded-lg border border-gray-100 bg-gray-50 p-1.5 shadow-inner">
-                    <button className="rounded-md border border-gray-200/60 bg-white px-5 py-2 text-[13px] font-bold text-emerald-800 shadow-sm">
+                    <button className={tabClass("all")} onClick={() => onStatusFilterChange("all")}>
                         All Products ({products.length})
                     </button>
-                    <button className="rounded-md px-5 py-2 text-[13px] font-bold text-gray-500 transition-colors hover:text-gray-900">
-                        Active
+                    <button className={tabClass("active")} onClick={() => onStatusFilterChange("active")}>
+                        Active ({activeCount})
                     </button>
-                    <button className="rounded-md px-5 py-2 text-[13px] font-bold text-gray-500 transition-colors hover:text-gray-900">
-                        Inactive
+                    <button className={tabClass("inactive")} onClick={() => onStatusFilterChange("inactive")}>
+                        Inactive ({inactiveCount})
                     </button>
                 </div>
 
@@ -65,21 +92,29 @@ export function ProductTable({
                 </div>
             </div>
 
-            {loading && (
-                <div className="p-6 text-center text-sm font-semibold text-gray-500">Loading products...</div>
-            )}
+            {loading && <AdminSkeletonTable columns={8} rows={4} />}
 
             {!loading && error && (
                 <div className="p-6 text-center text-sm font-semibold text-red-600">{error}</div>
             )}
 
             {!loading && !error && filteredProducts.length === 0 && (
-                <div className="p-6 text-center text-sm font-semibold text-gray-500">
-                    Chưa có sản phẩm phù hợp.
-                </div>
+                <AdminEmptyState
+                    icon={Package}
+                    title={
+                        statusFilter === "all"
+                            ? "Chưa có sản phẩm nào"
+                            : statusFilter === "active"
+                                ? "Không có sản phẩm active"
+                                : "Không có sản phẩm inactive"
+                    }
+                    description="Sản phẩm sẽ xuất hiện ở đây sau khi được tạo."
+                    compact
+                />
             )}
 
             {!loading && !error && filteredProducts.length > 0 && (
+                <>
                 <div className="overflow-x-auto px-5 py-4">
                     <table className="w-full text-left text-[14px]">
                         <thead>
@@ -95,7 +130,7 @@ export function ProductTable({
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-100">
-                            {filteredProducts.map((product) => {
+                            {paginatedProducts.map((product) => {
                                 const thumbnail = getProductThumbnail(product);
                                 const variant = getPrimaryVariant(product);
                                 const salePrice = variant?.salePrice ?? 0;
@@ -146,18 +181,13 @@ export function ProductTable({
                                             {formatProductDate(product.createdAt)}
                                         </td>
                                         <td className="px-4 py-4">
-                                            <button
-                                                type="button"
+                                            <AdminBadge
+                                                variant={product.active ? "success" : "neutral"}
                                                 onClick={() => onToggleStatus(product)}
                                                 disabled={updatingId === product.id}
-                                                className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold disabled:cursor-not-allowed disabled:opacity-60 ${
-                                                    product.active
-                                                        ? "bg-emerald-50 text-emerald-700"
-                                                        : "bg-gray-100 text-gray-600"
-                                                }`}
                                             >
                                                 {product.active ? "Active" : "Inactive"}
-                                            </button>
+                                            </AdminBadge>
                                         </td>
                                         <td className="px-4 py-4">
                                             <div className="flex items-center justify-end gap-3">
@@ -175,6 +205,38 @@ export function ProductTable({
                         </tbody>
                     </table>
                 </div>
+
+                <div className="flex items-center justify-between border-t border-gray-100 px-5 py-3">
+                    <p className="text-[12px] font-medium text-gray-500">
+                        {filteredProducts.length > 0
+                            ? `Showing ${startItem}-${endItem} of ${filteredProducts.length}`
+                            : "No results"}
+                    </p>
+                    <div className="flex items-center gap-2">
+                        <button
+                            type="button"
+                            onClick={() => onPageChange(page - 1)}
+                            disabled={page <= 1}
+                            className="flex items-center gap-1 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-[12px] font-bold text-gray-600 shadow-sm hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
+                        >
+                            <ChevronLeft className="h-3.5 w-3.5" />
+                            Previous
+                        </button>
+                        <span className="text-[12px] font-bold text-gray-700">
+                            Page {page} of {totalPages}
+                        </span>
+                        <button
+                            type="button"
+                            onClick={() => onPageChange(page + 1)}
+                            disabled={page >= totalPages}
+                            className="flex items-center gap-1 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-[12px] font-bold text-gray-600 shadow-sm hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
+                        >
+                            Next
+                            <ChevronRight className="h-3.5 w-3.5" />
+                        </button>
+                    </div>
+                </div>
+                </>
             )}
         </div>
     );

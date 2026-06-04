@@ -18,11 +18,18 @@ export default function Products() {
       <ProductTable
         products={productsList.products}
         filteredProducts={productsList.filteredProducts}
+        paginatedProducts={productsList.paginatedProducts}
         loading={productsList.loading}
         error={productsList.error}
         searchTerm={productsList.searchTerm}
+        statusFilter={productsList.statusFilter}
         updatingId={productsList.updatingId}
+        page={productsList.page}
+        pageSize={productsList.pageSize}
+        totalPages={productsList.totalPages}
         onSearchChange={productsList.setSearchTerm}
+        onStatusFilterChange={productsList.setStatusFilter}
+        onPageChange={productsList.setPage}
         onToggleStatus={productsList.toggleStatus}
       />
     </div>

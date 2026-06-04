@@ -8,7 +8,20 @@ export function useAdminProductsList() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     const [searchTerm, setSearchTerm] = useState("");
+    const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive">("all");
     const [updatingId, setUpdatingId] = useState<number | null>(null);
+    const [page, setPage] = useState(1);
+    const pageSize = 10;
+
+    const handleSearchChange = (value: string) => {
+        setSearchTerm(value);
+        setPage(1);
+    };
+
+    const handleStatusFilterChange = (value: "all" | "active" | "inactive") => {
+        setStatusFilter(value);
+        setPage(1);
+    };
 
     const loadProducts = async () => {
         setLoading(true);
@@ -17,8 +30,8 @@ export function useAdminProductsList() {
         try {
             const data = await getProducts();
             setProducts(data);
-        } catch (error) {
-            console.error("Failed to load products:", error);
+        } catch (err) {
+            console.error("Failed to load products:", err);
             setError("Không thể tải danh sách sản phẩm");
         } finally {
             setLoading(false);
@@ -36,8 +49,8 @@ export function useAdminProductsList() {
                     setProducts(data);
                     setError("");
                 }
-            } catch (error) {
-                console.error("Failed to load products:", error);
+            } catch (err) {
+                console.error("Failed to load products:", err);
 
                 if (!ignore) {
                     setError("Không thể tải danh sách sản phẩm");
@@ -59,11 +72,19 @@ export function useAdminProductsList() {
     const filteredProducts = useMemo(() => {
         const keyword = searchTerm.trim().toLowerCase();
 
-        if (!keyword) {
-            return products;
+        let result = products;
+
+        if (statusFilter === "active") {
+            result = result.filter((product) => product.active);
+        } else if (statusFilter === "inactive") {
+            result = result.filter((product) => !product.active);
         }
 
-        return products.filter((product) =>
+        if (!keyword) {
+            return result;
+        }
+
+        return result.filter((product) =>
             [
                 product.name,
                 product.slug,
@@ -74,7 +95,14 @@ export function useAdminProductsList() {
                 .filter(Boolean)
                 .some((value) => value!.toLowerCase().includes(keyword))
         );
-    }, [products, searchTerm]);
+    }, [products, searchTerm, statusFilter]);
+
+    const totalPages = Math.max(1, Math.ceil(filteredProducts.length / pageSize));
+
+    const paginatedProducts = useMemo(() => {
+        const startIndex = (page - 1) * pageSize;
+        return filteredProducts.slice(startIndex, startIndex + pageSize);
+    }, [filteredProducts, page, pageSize]);
 
     const toggleStatus = async (product: ProductResponse) => {
         try {
@@ -83,8 +111,8 @@ export function useAdminProductsList() {
             setProducts((prev) =>
                 prev.map((item) => (item.id === updatedProduct.id ? updatedProduct : item))
             );
-        } catch (error) {
-            console.error("Failed to update product status:", error);
+        } catch (err) {
+            console.error("Failed to update product status:", err);
             alert("Không thể cập nhật trạng thái sản phẩm");
         } finally {
             setUpdatingId(null);
@@ -94,11 +122,18 @@ export function useAdminProductsList() {
     return {
         products,
         filteredProducts,
+        paginatedProducts,
         loading,
         error,
         searchTerm,
+        statusFilter,
         updatingId,
-        setSearchTerm,
+        page,
+        pageSize,
+        totalPages,
+        setSearchTerm: handleSearchChange,
+        setStatusFilter: handleStatusFilterChange,
+        setPage,
         loadProducts,
         toggleStatus,
     };

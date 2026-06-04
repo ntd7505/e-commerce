@@ -1,30 +1,41 @@
 import { useEffect, useState } from "react";
 import {
-  DollarSign, Package, ShoppingCart, Users, ArrowUpRight,
+  DollarSign, Package, ShoppingCart, Users, ArrowUpRight, Clock,
   LayoutGrid, Award, Ticket, MessageSquare
 } from "lucide-react";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, Legend
 } from "recharts";
+import { AdminSpinner } from "../../../components/AdminSpinner";
 import { getProducts } from "../../adminProducts/adminProductApi";
 import { getAdminUsers } from "../../customers/adminUserApi";
 import { getOrders } from "../../orders/adminOrderApi";
+import { getBrands } from "../../brands/adminBrandApi";
+import { getCategories } from "../../categories/adminCategoryApi";
 import type { OrderResponse } from "../../orders/adminOrderTypes";
 import { OrderStatusBadge } from "../../orders/components/OrderStatusBadge";
 
 type DashboardMetrics = {
   products: number;
   activeProducts: number;
+  inStockProducts: number;
+  outOfStockProducts: number;
   users: number;
   orders: number;
   revenue: number;
   paidOrders: number;
+  brands: number;
+  categories: number;
 };
 
+type RevenueDataPoint = { date: string; revenue: number };
+
+type StatusDataPoint = { name: string; value: number; color: string };
+
 const emptyMetrics: DashboardMetrics = {
-  products: 0, activeProducts: 0, users: 0,
-  orders: 0, revenue: 0, paidOrders: 0,
+  products: 0, activeProducts: 0, inStockProducts: 0, outOfStockProducts: 0,
+  users: 0, orders: 0, revenue: 0, paidOrders: 0, brands: 0, categories: 0,
 };
 
 function formatMoney(value: number) {
@@ -43,8 +54,12 @@ function formatDate(value: string) {
   });
 }
 
-// Build daily revenue data from orders
-function buildRevenueData(orders: OrderResponse[]) {
+/**
+ * Build daily revenue chart data from paid orders.
+ * Source: GET /api/v1/admin/orders (client-side aggregation by createdAt date).
+ * Falls back to order.totalAmount when payment.amount is unavailable.
+ */
+function buildRevenueData(orders: OrderResponse[]): RevenueDataPoint[] {
   const map = new Map<string, number>();
   orders
     .filter((o) => o.paymentStatus === "PAID")
@@ -61,8 +76,11 @@ function buildRevenueData(orders: OrderResponse[]) {
     }));
 }
 
-// Build order status distribution
-function buildStatusData(orders: OrderResponse[]) {
+/**
+ * Build order status distribution for the donut chart.
+ * Source: GET /api/v1/admin/orders (client-side count by status field).
+ */
+function buildStatusData(orders: OrderResponse[]): StatusDataPoint[] {
   const statusColors: Record<string, string> = {
     PENDING: "#f59e0b",
     CONFIRMED: "#3b82f6",
@@ -94,16 +112,28 @@ const QUICK_LINKS = [
 export default function AdminDashboardSummary() {
   const [metrics, setMetrics] = useState<DashboardMetrics>(emptyMetrics);
   const [recentOrders, setRecentOrders] = useState<OrderResponse[]>([]);
-  const [revenueData, setRevenueData] = useState<{ date: string; revenue: number }[]>([]);
-  const [statusData, setStatusData] = useState<{ name: string; value: number; color: string }[]>([]);
+  const [revenueData, setRevenueData] = useState<RevenueDataPoint[]>([]);
+  const [statusData, setStatusData] = useState<StatusDataPoint[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
+    /**
+     * Dashboard data sources (all real API):
+     * - Products:  GET /api/v1/admin/products   → total, active, stock
+     * - Users:     GET /api/v1/admin/users       → total
+     * - Orders:    GET /api/v1/admin/orders      → total, revenue, status distribution, recent
+     * - Brands:    GET /api/v1/admin/brands      → total
+     * - Categories: GET /api/v1/admin/categories → total
+     *
+     * Charts are computed client-side from the full orders list.
+     * No dedicated /statistics or /dashboard-summary endpoint exists yet.
+     * Features needing backend aggregation (best sellers, growth %, geo) are marked as Pending API.
+     */
     async function loadMetrics() {
       try {
-        const [products, users, orders] = await Promise.all([
-          getProducts(), getAdminUsers(), getOrders(),
+        const [products, users, orders, brands, categories] = await Promise.all([
+          getProducts(), getAdminUsers(), getOrders(), getBrands(), getCategories(),
         ]);
 
         const paidOrdersList = orders.filter((o) => o.paymentStatus === "PAID");
@@ -111,13 +141,26 @@ export default function AdminDashboardSummary() {
           (acc, order) => acc + (order.payment?.amount ?? order.totalAmount), 0
         );
 
+        const stockMap = new Map<number, number>();
+        products.forEach((product) => {
+          (product.variants ?? []).forEach((variant) => {
+            stockMap.set(product.id, (stockMap.get(product.id) ?? 0) + (variant.stockQuantity ?? 0));
+          });
+        });
+        const inStockProducts = Array.from(stockMap.values()).filter((qty) => qty > 0).length;
+        const outOfStockProducts = Array.from(stockMap.values()).filter((qty) => qty <= 0).length;
+
         setMetrics({
           products: products.length,
           activeProducts: products.filter((p) => p.active).length,
+          inStockProducts,
+          outOfStockProducts,
           users: users.length,
           orders: orders.length,
           revenue,
           paidOrders: paidOrdersList.length,
+          brands: brands.length,
+          categories: categories.length,
         });
 
         setRecentOrders(orders.slice(0, 5));
@@ -157,7 +200,7 @@ export default function AdminDashboardSummary() {
       label: "Products",
       value: loading ? "—" : metrics.products,
       icon: Package,
-      detail: `${metrics.activeProducts} active`,
+      detail: `${metrics.activeProducts} active · ${metrics.inStockProducts} in stock`,
       color: "text-violet-600",
       bg: "bg-gradient-to-br from-violet-50 to-violet-100/60",
       iconBg: "bg-violet-100 text-violet-600",
@@ -170,6 +213,24 @@ export default function AdminDashboardSummary() {
       color: "text-orange-600",
       bg: "bg-gradient-to-br from-orange-50 to-orange-100/60",
       iconBg: "bg-orange-100 text-orange-600",
+    },
+    {
+      label: "Brands",
+      value: loading ? "—" : metrics.brands,
+      icon: Award,
+      detail: "Registered brands",
+      color: "text-sky-600",
+      bg: "bg-gradient-to-br from-sky-50 to-sky-100/60",
+      iconBg: "bg-sky-100 text-sky-600",
+    },
+    {
+      label: "Categories",
+      value: loading ? "—" : metrics.categories,
+      icon: LayoutGrid,
+      detail: "Product categories",
+      color: "text-rose-600",
+      bg: "bg-gradient-to-br from-rose-50 to-rose-100/60",
+      iconBg: "bg-rose-100 text-rose-600",
     },
   ];
 
@@ -188,7 +249,7 @@ export default function AdminDashboardSummary() {
       )}
 
       {/* Stat cards */}
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6">
         {cards.map((card) => (
           <article
             key={card.label}
@@ -212,8 +273,8 @@ export default function AdminDashboardSummary() {
         <section className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm lg:col-span-2">
           <h3 className="mb-4 text-[15px] font-bold text-gray-900">Doanh thu theo ngày</h3>
           {loading ? (
-            <div className="flex h-48 items-center justify-center text-sm text-gray-400">
-              Loading chart...
+            <div className="flex h-48 items-center justify-center">
+              <AdminSpinner className="h-8 w-8" />
             </div>
           ) : revenueData.length === 0 ? (
             <div className="flex h-48 items-center justify-center text-sm text-gray-400">
@@ -237,7 +298,7 @@ export default function AdminDashboardSummary() {
                   width={70}
                 />
                 <Tooltip
-                  formatter={(value: number) => [formatMoneyFull(value), "Doanh thu"]}
+                  formatter={(value) => [formatMoneyFull(Number(value ?? 0)), "Doanh thu"]}
                   contentStyle={{
                     borderRadius: 8,
                     border: "1px solid #e2e8f0",
@@ -255,7 +316,9 @@ export default function AdminDashboardSummary() {
         <section className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
           <h3 className="mb-4 text-[15px] font-bold text-gray-900">Trạng thái đơn hàng</h3>
           {loading ? (
-            <div className="flex h-48 items-center justify-center text-sm text-gray-400">Loading...</div>
+            <div className="flex h-48 items-center justify-center">
+              <AdminSpinner className="h-8 w-8" />
+            </div>
           ) : statusData.length === 0 ? (
             <div className="flex h-48 items-center justify-center text-sm text-gray-400">No data</div>
           ) : (
@@ -275,7 +338,7 @@ export default function AdminDashboardSummary() {
                   ))}
                 </Pie>
                 <Tooltip
-                  formatter={(value: number, name: string) => [value, name]}
+                  formatter={(value, name) => [Number(value ?? 0), String(name)]}
                   contentStyle={{ borderRadius: 8, border: "1px solid #e2e8f0", fontSize: 12 }}
                 />
                 <Legend
@@ -318,8 +381,8 @@ export default function AdminDashboardSummary() {
               <tbody className="divide-y divide-gray-100">
                 {loading ? (
                   <tr>
-                    <td colSpan={5} className="px-5 py-8 text-center text-gray-400">
-                      Loading orders...
+                    <td colSpan={5} className="px-5 py-8 text-center">
+                      <AdminSpinner className="mx-auto h-6 w-6" />
                     </td>
                   </tr>
                 ) : recentOrders.length === 0 ? (
@@ -376,6 +439,20 @@ export default function AdminDashboardSummary() {
               {loading ? "—" : formatMoneyFull(metrics.revenue)}
             </p>
             <p className="mt-1 text-[11px] text-emerald-600">{metrics.paidOrders} paid orders</p>
+          </div>
+
+          {/* Pending: needs dedicated backend endpoints */}
+          <div className="mt-5 rounded-lg border border-dashed border-amber-200 bg-amber-50/60 p-4">
+            <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-wider text-amber-700">
+              <Clock className="h-3.5 w-3.5" />
+              Backend needed
+            </div>
+            <ul className="mt-2 space-y-1.5 text-[11px] text-amber-700">
+              <li>· GET /api/v1/admin/statistics/revenue</li>
+              <li>· GET /api/v1/admin/statistics/top-products</li>
+              <li>· GET /api/v1/admin/statistics/geo</li>
+              <li>· GET /api/v1/admin/statistics/aov</li>
+            </ul>
           </div>
         </section>
       </div>

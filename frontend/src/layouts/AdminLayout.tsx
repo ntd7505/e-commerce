@@ -3,9 +3,9 @@ import {
   LayoutDashboard, ShoppingCart, Users, Ticket, LayoutGrid, CreditCard, Award,
   PlusSquare, Image as ImageIcon, ClipboardList, MessageSquare,
   UserCog, ShieldCheck, Bell, LogOut, ExternalLink, Menu,
-  ChevronLeft, Settings, X, Package
+  ChevronLeft, ChevronDown, Settings, X, Package
 } from 'lucide-react';
-import { Outlet, NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { clearAuthSession, getStoredUser } from '../features/auth/authStorage';
 
 type SidebarItemProps = {
@@ -13,27 +13,89 @@ type SidebarItemProps = {
   label: string;
   to: string;
   collapsed?: boolean;
+  alsoMatch?: RegExp;
 };
 
-const SidebarItem: React.FC<SidebarItemProps> = ({ icon: Icon, label, to, collapsed }) => {
+const SidebarItem: React.FC<SidebarItemProps> = ({ icon: Icon, label, to, collapsed, alsoMatch }) => {
+  const location = useLocation();
+  const isActive = location.pathname === to || (alsoMatch ? alsoMatch.test(location.pathname) : false);
+
   return (
-    <NavLink
-      end
+    <Link
       to={to}
       title={collapsed ? label : undefined}
-      className={({ isActive }) =>
-        `flex items-center rounded-lg mb-0.5 transition-all duration-200 ${
-          collapsed ? 'justify-center px-2 py-2.5' : 'px-3 py-2.5'
-        } ${
-          isActive
-            ? 'bg-emerald-500 text-white shadow-sm shadow-emerald-200'
-            : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'
-        }`
-      }
+      className={`flex items-center rounded-lg mb-0.5 transition-all duration-200 ${
+        collapsed ? 'justify-center px-2 py-2.5' : 'px-3 py-2.5'
+      } ${
+        isActive
+          ? 'bg-emerald-500 text-white shadow-sm shadow-emerald-200'
+          : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'
+      }`}
     >
       <Icon className={`shrink-0 ${collapsed ? 'w-5 h-5' : 'w-4 h-4 mr-3'}`} />
       {!collapsed && <span className="text-[13px] font-semibold truncate">{label}</span>}
-    </NavLink>
+    </Link>
+  );
+};
+
+type SidebarGroupProps = {
+  icon: React.ElementType;
+  label: string;
+  groupPrefix: string;
+  children: React.ReactNode;
+  collapsed?: boolean;
+};
+
+const SidebarGroup: React.FC<SidebarGroupProps> = ({ icon: Icon, label, groupPrefix, children, collapsed }) => {
+  const location = useLocation();
+  const isGroupActive = location.pathname.startsWith(groupPrefix);
+  const [manualExpanded, setManualExpanded] = useState(true);
+  const expanded = isGroupActive || manualExpanded;
+
+  if (collapsed) {
+    return (
+      <div className="relative group mb-0.5">
+        <button
+          type="button"
+          onClick={() => setManualExpanded((e) => !e)}
+          title={label}
+          className={`w-full flex items-center justify-center px-2 py-2.5 rounded-lg transition-all duration-200 ${
+            isGroupActive
+              ? 'bg-emerald-500 text-white shadow-sm shadow-emerald-200'
+              : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'
+          }`}
+        >
+          <Icon className="w-5 h-5 shrink-0" />
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mb-0.5">
+      <button
+        type="button"
+        onClick={() => setManualExpanded((e) => !e)}
+        className={`w-full flex items-center px-3 py-2.5 rounded-lg transition-all duration-200 ${
+          isGroupActive
+            ? 'bg-emerald-500 text-white shadow-sm shadow-emerald-200'
+            : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'
+        }`}
+      >
+        <Icon className="w-4 h-4 mr-3 shrink-0" />
+        <span className="text-[13px] font-semibold truncate flex-1 text-left">{label}</span>
+        <ChevronDown
+          className={`w-4 h-4 shrink-0 transition-transform duration-200 ${
+            expanded ? 'rotate-180' : ''
+          }`}
+        />
+      </button>
+      {expanded && (
+        <div className="ml-3 mt-1 border-l-2 border-slate-100 pl-2">
+          {children}
+        </div>
+      )}
+    </div>
   );
 };
 
@@ -132,10 +194,23 @@ export default function AdminLayout() {
                 Products
               </p>
             )}
-            <SidebarItem collapsed={collapsed} to="/admin/products/add" icon={PlusSquare} label="Add Product" />
-            <SidebarItem collapsed={collapsed} to="/admin/products/media" icon={ImageIcon} label="Media" />
-            <SidebarItem collapsed={collapsed} to="/admin/products" icon={ClipboardList} label="Product List" />
-            <SidebarItem collapsed={collapsed} to="/admin/products/reviews" icon={MessageSquare} label="Reviews" />
+            <SidebarGroup
+              collapsed={collapsed}
+              icon={Package}
+              label="Products"
+              groupPrefix="/admin/products"
+            >
+              <SidebarItem collapsed={collapsed} to="/admin/products/add" icon={PlusSquare} label="Add Product" />
+              <SidebarItem collapsed={collapsed} to="/admin/products/media" icon={ImageIcon} label="Media" />
+              <SidebarItem
+                collapsed={collapsed}
+                to="/admin/products"
+                icon={ClipboardList}
+                label="Product List"
+                alsoMatch={/^\/admin\/products\/\d+\/edit$/}
+              />
+              <SidebarItem collapsed={collapsed} to="/admin/products/reviews" icon={MessageSquare} label="Reviews" />
+            </SidebarGroup>
           </nav>
 
           <nav className="mb-4">

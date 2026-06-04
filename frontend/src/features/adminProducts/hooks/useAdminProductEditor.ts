@@ -101,6 +101,21 @@ export function useAdminProductEditor() {
         setMediaItems((product.media ?? []).map(mediaToDraft));
     };
 
+    const reloadMediaOnly = async (currentProductId: number) => {
+        const product = await getProductById(currentProductId);
+        const freshMedia = (product.media ?? []).map(mediaToDraft);
+        setMediaItems(freshMedia);
+        const activeMedia = (product.media ?? [])
+            .filter((m) => m.active)
+            .sort((a, b) => a.sortOrder - b.sortOrder);
+        const activeUrls = activeMedia.map((m) => m.url);
+        setFormValues((prev) => ({
+            ...prev,
+            imageUrl: activeMedia[0]?.url ?? "",
+            mediaUrls: activeUrls.length > 0 ? activeUrls : [""],
+        }));
+    };
+
     useEffect(() => {
         if (!isEditMode || !productId) {
             return;
@@ -284,12 +299,12 @@ export function useAdminProductEditor() {
             setSavingMediaIndex(index);
 
             if (media.id) {
-                const updated = await updateProductMedia(media.id, payload);
-                updateMediaDraft(index, mediaToDraft(updated));
+                await updateProductMedia(media.id, payload);
             } else {
-                const created = await createProductMedia(productId, payload);
-                updateMediaDraft(index, mediaToDraft(created));
+                await createProductMedia(productId, payload);
             }
+
+            await reloadMediaOnly(productId);
         } catch (error) {
             console.error("Failed to save uploaded media:", error);
             alert("Image uploaded, but product media could not be saved.");
@@ -314,21 +329,18 @@ export function useAdminProductEditor() {
             setUploadingKey("edit-bulk");
             const uploadedUrls = await uploadProductImages(imageFiles);
             const startIndex = mediaItems.length;
-            const createdMedia: MediaDraft[] = [];
 
             for (const [offset, url] of uploadedUrls.entries()) {
-                const created = await createProductMedia(productId, {
+                await createProductMedia(productId, {
                     url,
                     mediaType: "image",
                     thumbnail: mediaItems.length === 0 && offset === 0,
                     sortOrder: startIndex + offset,
                     altText: formValues.name.trim(),
                 });
-
-                createdMedia.push(mediaToDraft(created));
             }
 
-            setMediaItems((prev) => [...prev, ...createdMedia]);
+            await reloadMediaOnly(productId);
         } catch (error) {
             console.error("Failed to upload product media:", error);
             alert(getErrorMessage(error, "Cannot upload and save product images."));
@@ -481,12 +493,12 @@ export function useAdminProductEditor() {
             };
 
             if (media.id) {
-                const updated = await updateProductMedia(media.id, payload);
-                updateMediaDraft(index, mediaToDraft(updated));
+                await updateProductMedia(media.id, payload);
             } else {
-                const created = await createProductMedia(productId, payload);
-                updateMediaDraft(index, mediaToDraft(created));
+                await createProductMedia(productId, payload);
             }
+
+            await reloadMediaOnly(productId);
         } catch (error) {
             console.error("Failed to save media:", error);
             alert("Không thể lưu ảnh sản phẩm");
@@ -516,6 +528,12 @@ export function useAdminProductEditor() {
         }
     };
 
+    const DUMMY_DOMAINS = ["example.com", "placeholder.com"];
+
+    const hasExampleMedia =
+        mediaItems.some((m) => m.url && DUMMY_DOMAINS.some((d) => m.url.includes(d))) ||
+        formValues.mediaUrls.some((u) => u && DUMMY_DOMAINS.some((d) => u.includes(d)));
+
     return {
         brands,
         brandsLoading,
@@ -527,6 +545,7 @@ export function useAdminProductEditor() {
         productActive,
         variants,
         mediaItems,
+        hasExampleMedia,
         loading,
         loadingProduct,
         savingVariantIndex,

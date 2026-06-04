@@ -1,6 +1,12 @@
-import { Image as ImageIcon, PlusCircle, Trash2, Upload } from "lucide-react";
+import { AlertTriangle, Image as ImageIcon, PlusCircle, Trash2, Upload } from "lucide-react";
 import { AdminImage } from "../../../components/AdminImage";
 import type { MediaDraft } from "../adminProductFormTypes";
+
+const DUMMY_DOMAINS = ["example.com", "placeholder.com"];
+
+function hasDummyUrl(url: string) {
+    return DUMMY_DOMAINS.some((domain) => url.includes(domain));
+}
 
 type ProductMediaEditorProps = {
     mediaItems: MediaDraft[];
@@ -77,8 +83,15 @@ export function ProductMediaEditor({
                             value={media.url}
                             onChange={(event) => onChange(index, { url: event.target.value })}
                             placeholder="Image URL"
-                            className="mb-3 w-full rounded-lg border border-gray-200 bg-[#f8f9fa] px-3 py-2.5 text-[12px] focus:border-emerald-500 focus:outline-none"
+                            className="mb-1 w-full rounded-lg border border-gray-200 bg-[#f8f9fa] px-3 py-2.5 text-[12px] focus:border-emerald-500 focus:outline-none"
                         />
+                        {hasDummyUrl(media.url) && (
+                            <p className="mb-3 flex items-center gap-1 text-[11px] font-bold text-amber-600">
+                                <AlertTriangle className="h-3.5 w-3.5" />
+                                URL chứa example.com — upload ảnh thật để thay thế
+                            </p>
+                        )}
+                        {!hasDummyUrl(media.url) && <div className="mb-3" />}
                         <div className="grid grid-cols-2 gap-3">
                             <input
                                 value={media.altText}

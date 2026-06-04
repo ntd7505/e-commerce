@@ -1,3 +1,4 @@
+import { AlertTriangle } from 'lucide-react';
 import { ProductBasicDetails } from '../../features/adminProducts/components/ProductBasicDetails';
 import { ProductClassificationPanel } from '../../features/adminProducts/components/ProductClassificationPanel';
 import { ProductCreateImagesPanel } from '../../features/adminProducts/components/ProductCreateImagesPanel';
@@ -18,6 +19,13 @@ export default function AddProduct() {
         loadingProduct={editor.loadingProduct}
         onSave={editor.handleSaveProduct}
       />
+
+      {editor.hasExampleMedia && (
+        <div className="flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-[13px] font-bold text-amber-800">
+          <AlertTriangle className="h-5 w-5 flex-shrink-0" />
+          Sản phẩm đang có ảnh mẫu (example.com). Upload ảnh thật qua Cloudinary để thay thế, sau đó nhấn Save cho từng ảnh.
+        </div>
+      )}
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_420px]">
         <div className="space-y-6">

@@ -1,7 +1,7 @@
 import { Edit, RefreshCw, Search } from "lucide-react";
-import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { AdminBadge } from "../../components/AdminBadge";
 import { AdminImage } from "../../components/AdminImage";
 import { AdminStatCard } from "../../components/AdminStatCard";
 import { getProducts } from "../../features/adminProducts/adminProductApi";
@@ -141,9 +141,9 @@ export default function ProductMedia() {
                     <p className="mt-1 truncate text-xs text-gray-500">{item.url}</p>
                   </div>
                   <div className="flex flex-wrap gap-2">
-                    <Badge active={item.thumbnail}>Thumbnail</Badge>
-                    <Badge active={item.active}>{item.active ? "Active" : "Inactive"}</Badge>
-                    <Badge active>{item.mediaType}</Badge>
+                    <AdminBadge variant={item.thumbnail ? "success" : "neutral"}>Thumbnail</AdminBadge>
+                    <AdminBadge variant={item.active ? "success" : "neutral"}>{item.active ? "Active" : "Inactive"}</AdminBadge>
+                    <AdminBadge variant="info">{item.mediaType}</AdminBadge>
                   </div>
                   <div className="flex items-center justify-between">
                     <p className="text-xs font-medium text-gray-500">Sort order {item.sortOrder}</p>
@@ -162,13 +162,5 @@ export default function ProductMedia() {
         )}
       </div>
     </div>
-  );
-}
-
-function Badge({ active, children }: { active: boolean; children: ReactNode }) {
-  return (
-    <span className={`rounded-full px-3 py-1 text-xs font-bold ${active ? "bg-emerald-50 text-emerald-700" : "bg-gray-100 text-gray-500"}`}>
-      {children}
-    </span>
   );
 }

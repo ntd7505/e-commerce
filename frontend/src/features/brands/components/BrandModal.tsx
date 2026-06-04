@@ -1,4 +1,5 @@
-import { Image as ImageIcon, X } from "lucide-react";
+import { X } from "lucide-react";
+import { AdminImage } from "../../../components/AdminImage";
 import type { BrandResponse } from "../adminBrandTypes";
 
 type BrandModalProps = {
@@ -62,20 +63,22 @@ export function BrandModal({
                     <div>
                         <label className="mb-2 block text-[13px] font-bold text-[#0B2113]">Logo URL</label>
                         <div className="flex items-center gap-4">
-                            <div className="flex h-16 w-16 flex-shrink-0 items-center justify-center overflow-hidden rounded-full border border-gray-200 bg-[#f8f9fa]">
-                                {logoUrl ? (
-                                    <img src={logoUrl} alt="Brand logo preview" className="max-h-full max-w-full object-contain" />
-                                ) : (
-                                    <ImageIcon className="h-6 w-6 text-gray-400" />
-                                )}
-                            </div>
-                            <input
-                                type="text"
-                                placeholder="https://example.com/logo.png"
-                                value={logoUrl}
-                                onChange={(event) => onLogoChange(event.target.value)}
-                                className="min-w-0 flex-1 rounded-lg border border-gray-200 bg-[#f8f9fa] px-4 py-3 text-[13px] font-medium text-gray-900 focus:border-emerald-500 focus:outline-none"
+                        <div className="flex h-16 w-16 flex-shrink-0 items-center justify-center overflow-hidden rounded-full border border-gray-200 bg-[#f8f9fa]">
+                            <AdminImage
+                                src={logoUrl}
+                                alt="Brand logo preview"
+                                fallbackLabel={brandName}
+                                className="max-h-full max-w-full object-contain"
+                                fallbackClassName="h-full w-full rounded-full"
                             />
+                        </div>
+                        <input
+                            type="text"
+                            placeholder="Enter logo URL"
+                            value={logoUrl}
+                            onChange={(event) => onLogoChange(event.target.value)}
+                            className="min-w-0 flex-1 rounded-lg border border-gray-200 bg-[#f8f9fa] px-4 py-3 text-[13px] font-medium text-gray-900 focus:border-emerald-500 focus:outline-none"
+                        />
                         </div>
                     </div>
                 </div>

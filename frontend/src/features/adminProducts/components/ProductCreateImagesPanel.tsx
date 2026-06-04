@@ -1,4 +1,4 @@
-import { Image as ImageIcon, PlusCircle, Trash2, Upload } from "lucide-react";
+import { AlertTriangle, Image as ImageIcon, PlusCircle, Trash2, Upload } from "lucide-react";
 import { AdminImage } from "../../../components/AdminImage";
 import type { ProductCreateFormValues } from "../adminProductFormTypes";
 
@@ -77,9 +77,14 @@ export function ProductCreateImagesPanel({
                             type="text"
                             value={url}
                             onChange={(event) => onUrlChange(index, event.target.value)}
-                            placeholder="https://example.com/image.jpg"
+                            placeholder="Enter image URL or upload"
                             className="min-w-0 flex-1 rounded-lg border border-gray-200 bg-[#f8f9fa] px-4 py-2.5 text-[12px] focus:border-emerald-500 focus:outline-none"
                         />
+                        {(url.includes("example.com") || url.includes("placeholder.com")) && (
+                            <span className="text-[11px] font-bold text-amber-600" title="Cần upload ảnh thật">
+                                <AlertTriangle className="inline h-3.5 w-3.5" /> Ảnh mẫu
+                            </span>
+                        )}
                         <label className="flex cursor-pointer items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-[12px] font-bold text-gray-600 hover:bg-gray-50">
                             <Upload className="h-4 w-4" />
                             {uploadingKey === `create-${index}` ? "Uploading..." : "Upload"}
