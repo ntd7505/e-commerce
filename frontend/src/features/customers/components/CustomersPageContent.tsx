@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { RefreshCw, Search, Users, Ban, CheckCircle, ChevronLeft, ChevronRight } from "lucide-react";
+import { AdminBadge } from "../../../components/AdminBadge";
 import { getAdminUsers, updateAdminUserStatus } from "../adminUserApi";
 import type { AdminUserResponse } from "../adminUserTypes";
 
@@ -239,17 +240,12 @@ export default function CustomersPageContent() {
                         </div>
                       </td>
                       <td className="px-5 py-4">
-                        <span
-                          className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-bold ${isActive
-                              ? "bg-emerald-50 text-emerald-700"
-                              : "bg-red-50 text-red-600"
-                            }`}
+                        <AdminBadge
+                          variant={isActive ? "success" : "danger"}
+                          dot
                         >
-                          <span
-                            className={`h-1.5 w-1.5 rounded-full ${isActive ? "bg-emerald-500" : "bg-red-400"}`}
-                          />
                           {user.status}
-                        </span>
+                        </AdminBadge>
                       </td>
                       <td className="px-5 py-4 text-right">
                         <button

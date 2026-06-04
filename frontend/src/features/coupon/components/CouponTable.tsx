@@ -1,5 +1,8 @@
 import { useState } from "react";
-import { Edit, RotateCcw, Search, Trash2 } from "lucide-react";
+import { Edit, RotateCcw, Search, Tag, Trash2 } from "lucide-react";
+import { AdminBadge } from "../../../components/AdminBadge";
+import { AdminEmptyState } from "../../../components/AdminEmptyState";
+import { AdminSkeletonTable } from "../../../components/AdminSkeletonTable";
 import type { CouponViewMode } from "../hook/useAdminCoupons";
 import type { CouponResponse } from "../adminCouponTypes";
 
@@ -182,14 +185,19 @@ export function CouponTable({
                 </div>
             </div>
 
-            {loading && <div className="p-6 text-sm text-gray-500">Loading coupons...</div>}
+            {loading && <AdminSkeletonTable columns={8} rows={4} />}
 
             {!loading && error && (
                 <div className="p-6 text-sm font-semibold text-red-600">{error}</div>
             )}
 
             {!loading && !error && filteredCoupons.length === 0 && (
-                <div className="p-6 text-sm text-gray-500">No coupons found.</div>
+                <AdminEmptyState
+                    icon={Tag}
+                    title="No coupons found"
+                    description="Coupons will appear here once created."
+                    compact
+                />
             )}
 
             {!loading && !error && filteredCoupons.length > 0 && (
@@ -241,22 +249,15 @@ export function CouponTable({
                                         </td>
                                         <td className="px-5 py-4">
                                             {viewMode === "DELETED" ? (
-                                                <span className="rounded-full bg-red-50 px-3 py-1 text-xs font-bold text-red-600">
-                                                    Deleted
-                                                </span>
+                                                <AdminBadge variant="danger">Deleted</AdminBadge>
                                             ) : (
-                                                <button
-                                                    type="button"
+                                                <AdminBadge
+                                                    variant={coupon.active ? "success" : "neutral"}
                                                     onClick={() => onToggleStatus(coupon.id, !coupon.active)}
                                                     disabled={busy}
-                                                    className={`rounded-full px-3 py-1 text-xs font-bold disabled:cursor-not-allowed disabled:opacity-60 ${
-                                                        coupon.active
-                                                            ? "bg-emerald-50 text-emerald-700"
-                                                            : "bg-gray-100 text-gray-500"
-                                                    }`}
                                                 >
                                                     {coupon.active ? "Active" : "Inactive"}
-                                                </button>
+                                                </AdminBadge>
                                             )}
                                             {isExpired(coupon) && (
                                                 <p className="mt-2 text-xs font-semibold text-amber-600">Expired</p>

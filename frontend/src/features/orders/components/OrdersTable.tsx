@@ -1,5 +1,7 @@
-import { Eye, Search } from "lucide-react";
+import { Eye, Search, ShoppingBag } from "lucide-react";
 import { useState } from "react";
+import { AdminEmptyState } from "../../../components/AdminEmptyState";
+import { AdminSkeletonTable } from "../../../components/AdminSkeletonTable";
 import type { OrderResponse, OrderStatus } from "../adminOrderTypes";
 import { OrderStatusBadge } from "./OrderStatusBadge";
 
@@ -141,10 +143,15 @@ export function OrdersTable({
                 </div>
             </div>
 
-            {loading && <div className="p-6 text-sm text-gray-500">Loading orders...</div>}
+            {loading && <AdminSkeletonTable columns={8} rows={4} />}
             {!loading && error && <div className="p-6 text-sm font-semibold text-red-600">{error}</div>}
             {!loading && !error && filteredOrders.length === 0 && (
-                <div className="p-6 text-sm text-gray-500">No orders found.</div>
+                <AdminEmptyState
+                    icon={ShoppingBag}
+                    title="No orders found"
+                    description="Orders will appear here once placed."
+                    compact
+                />
             )}
 
             {!loading && !error && filteredOrders.length > 0 && (

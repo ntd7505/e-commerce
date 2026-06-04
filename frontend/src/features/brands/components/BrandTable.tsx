@@ -1,4 +1,6 @@
-import { Edit, Filter, Image as ImageIcon, MoreHorizontal, Search, Trash2 } from "lucide-react";
+import { Edit, Filter, MoreHorizontal, Search, Trash2 } from "lucide-react";
+import { AdminBadge } from "../../../components/AdminBadge";
+import { AdminImage } from "../../../components/AdminImage";
 import type { BrandResponse } from "../adminBrandTypes";
 
 type BrandTableProps = {
@@ -94,15 +96,13 @@ export function BrandTable({
                   <td className="px-4 py-4">
                     <div className="flex items-center gap-4">
                       <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center overflow-hidden rounded-full border border-gray-200 bg-white p-2 shadow-sm">
-                        {brand.logoUrl ? (
-                          <img
-                            src={brand.logoUrl}
-                            alt={brand.name}
-                            className="max-h-full max-w-full object-contain mix-blend-multiply"
-                          />
-                        ) : (
-                          <ImageIcon className="h-5 w-5 text-gray-400" />
-                        )}
+                        <AdminImage
+                          src={brand.logoUrl}
+                          alt={brand.name}
+                          fallbackLabel={brand.name}
+                          className="max-h-full max-w-full object-contain mix-blend-multiply"
+                          fallbackClassName="h-full w-full rounded-full"
+                        />
                       </div>
                       <span className="font-bold text-gray-900 transition-colors group-hover:text-emerald-600">
                         {brand.name}
@@ -113,16 +113,13 @@ export function BrandTable({
                     {brand.slug}
                   </td>
                   <td className="px-4 py-4">
-                    <button
-                      type="button"
+                    <AdminBadge
+                      variant={brand.active ? "success" : "neutral"}
                       onClick={() => onToggleStatus(brand)}
                       disabled={updatingId === brand.id}
-                      className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold disabled:cursor-not-allowed disabled:opacity-60 ${
-                        brand.active ? "bg-emerald-50 text-emerald-700" : "bg-gray-100 text-gray-600"
-                      }`}
                     >
                       {brand.active ? "Active" : "Inactive"}
-                    </button>
+                    </AdminBadge>
                   </td>
                   <td className="px-4 py-4">
                     <div className="flex items-center justify-end gap-3">

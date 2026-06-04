@@ -4,17 +4,18 @@ type AdminEmptyStateProps = {
   icon: LucideIcon;
   title: string;
   description: string;
+  compact?: boolean;
 };
 
-export function AdminEmptyState({ icon: Icon, title, description }: AdminEmptyStateProps) {
+export function AdminEmptyState({ icon: Icon, title, description, compact = false }: AdminEmptyStateProps) {
   return (
-    <div className="mx-auto flex min-h-[420px] max-w-[900px] items-center justify-center">
-      <div className="w-full rounded-xl border border-gray-200 bg-white p-10 text-center shadow-sm">
-        <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
-          <Icon className="h-7 w-7" />
+    <div className="flex items-center justify-center">
+      <div className={`w-full rounded-xl border border-gray-200 bg-white text-center shadow-sm ${compact ? "px-6 py-8" : "min-h-[300px] p-10"}`}>
+        <div className={`mx-auto mb-4 flex items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 ${compact ? "h-10 w-10" : "h-14 w-14"}`}>
+          <Icon className={compact ? "h-5 w-5" : "h-7 w-7"} />
         </div>
-        <h2 className="text-xl font-bold text-gray-900">{title}</h2>
-        <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-gray-500">{description}</p>
+        <h2 className={compact ? "text-base font-bold text-gray-900" : "text-xl font-bold text-gray-900"}>{title}</h2>
+        <p className={`mx-auto mt-2 text-gray-500 ${compact ? "max-w-md text-[13px]" : "max-w-xl text-sm"}`}>{description}</p>
       </div>
     </div>
   );

@@ -1,5 +1,7 @@
 import { CheckCircle2, Search, XCircle } from "lucide-react";
 import { useState } from "react";
+import { AdminBadge } from "../../../components/AdminBadge";
+import { badgeVariantForStatus } from "../../../utils/badgeUtils";
 import type { CancelRequestStatus, OrderCancelRequestResponse } from "../adminOrderCancelTypes";
 
 type OrderCancelRequestsTableProps = {
@@ -16,12 +18,6 @@ const statusFilters: Array<{ label: string; value: "ALL" | CancelRequestStatus }
     { label: "Approved", value: "APPROVED" },
     { label: "Rejected", value: "REJECTED" },
 ];
-
-const statusClass: Record<CancelRequestStatus, string> = {
-    PENDING: "bg-amber-50 text-amber-700",
-    APPROVED: "bg-emerald-50 text-emerald-700",
-    REJECTED: "bg-red-50 text-red-600",
-};
 
 function formatDate(value: string | null) {
     if (!value) {
@@ -156,9 +152,9 @@ export function OrderCancelRequestsTable({
                                             <p className="mt-1 text-xs text-gray-500">Requested by user #{request.requestedBy}</p>
                                         </td>
                                         <td className="px-5 py-4">
-                                            <span className={`rounded-full px-3 py-1 text-xs font-bold ${statusClass[request.status]}`}>
+                                            <AdminBadge variant={badgeVariantForStatus(request.status)}>
                                                 {request.status}
-                                            </span>
+                                            </AdminBadge>
                                         </td>
                                         <td className="px-5 py-4 text-gray-600">{formatDate(request.requestedAt)}</td>
                                         <td className="px-5 py-4 text-gray-600">

@@ -31,6 +31,7 @@ export default function RoleManagementPageContent() {
     }
   };
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { loadData(); }, []);
 
   const selectedPermissionSet = useMemo(() => new Set(formValues.permissions), [formValues.permissions]);
@@ -113,19 +114,17 @@ export default function RoleManagementPageContent() {
             key={tab.value}
             type="button"
             onClick={() => setActiveTab(tab.value)}
-            className={`flex items-center gap-2 rounded-lg px-5 py-2.5 text-[13px] font-bold transition-all ${
-              activeTab === tab.value
+            className={`flex items-center gap-2 rounded-lg px-5 py-2.5 text-[13px] font-bold transition-all ${activeTab === tab.value
                 ? "bg-white text-emerald-700 shadow-sm"
                 : "text-gray-500 hover:text-gray-800"
-            }`}
+              }`}
           >
             <tab.icon className="h-4 w-4" />
             {tab.label}
             {tab.count !== undefined && (
               <span
-                className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${
-                  activeTab === tab.value ? "bg-emerald-100 text-emerald-700" : "bg-gray-200 text-gray-500"
-                }`}
+                className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${activeTab === tab.value ? "bg-emerald-100 text-emerald-700" : "bg-gray-200 text-gray-500"
+                  }`}
               >
                 {tab.count}
               </span>

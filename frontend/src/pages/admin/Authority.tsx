@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { RefreshCw, Search, ShieldCheck, Users } from "lucide-react";
+import { AdminBadge } from "../../components/AdminBadge";
 import { getAdminUsers } from "../../features/customers/adminUserApi";
 import { getRoles } from "../../features/roles/adminRoleApi";
 import type { AdminUserResponse } from "../../features/customers/adminUserTypes";
@@ -140,18 +141,12 @@ export default function Authority() {
                     </td>
                     <td className="px-5 py-4 text-gray-500">{user.email}</td>
                     <td className="px-5 py-4">
-                      <span
-                        className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-bold ${user.status === "ACTIVE"
-                            ? "bg-emerald-50 text-emerald-700"
-                            : "bg-red-50 text-red-600"
-                          }`}
+                      <AdminBadge
+                        variant={user.status === "ACTIVE" ? "success" : "danger"}
+                        dot
                       >
-                        <span
-                          className={`h-1.5 w-1.5 rounded-full ${user.status === "ACTIVE" ? "bg-emerald-500" : "bg-red-400"
-                            }`}
-                        />
                         {user.status}
-                      </span>
+                      </AdminBadge>
                     </td>
                     <td className="px-5 py-4">
                       <div className="flex flex-wrap gap-1">

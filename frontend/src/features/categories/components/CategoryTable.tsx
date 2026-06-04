@@ -1,4 +1,5 @@
 import { Edit, Filter, MoreHorizontal, Search, Trash2 } from "lucide-react";
+import { AdminBadge } from "../../../components/AdminBadge";
 import type { CategoryResponse } from "../adminCategoryTypes";
 
 type CategoryTableProps = {
@@ -111,15 +112,9 @@ export function CategoryTable({
                     {category.children?.length ?? 0}
                   </td>
                   <td className="px-4 py-4">
-                    <span
-                      className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${
-                        category.active
-                          ? "bg-emerald-50 text-emerald-700"
-                          : "bg-gray-100 text-gray-600"
-                      }`}
-                    >
+                    <AdminBadge variant={category.active ? "success" : "neutral"}>
                       {category.active ? "Active" : "Inactive"}
-                    </span>
+                    </AdminBadge>
                   </td>
                   <td className="px-4 py-4">
                     <div className="flex items-center justify-end gap-3">

@@ -1,5 +1,5 @@
-import { Image as ImageIcon } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { AlertTriangle } from "lucide-react";
+import { useMemo, useState } from "react";
 
 type AdminImageProps = {
   src?: string | null;
@@ -8,6 +8,13 @@ type AdminImageProps = {
   fallbackClassName?: string;
   fallbackLabel?: string;
 };
+
+const DUMMY_IMAGE_DOMAINS = ["example.com", "placeholder.com"];
+
+function isDummyUrl(url?: string | null) {
+    if (!url) return false;
+    return DUMMY_IMAGE_DOMAINS.some((domain) => url.includes(domain));
+}
 
 function hasUsableSrc(src?: string | null) {
     return Boolean(src && src.trim());
@@ -61,21 +68,28 @@ export function AdminImage({
     fallbackClassName = "h-full w-full",
     fallbackLabel,
 }: AdminImageProps) {
-    const [failed, setFailed] = useState(false);
+    const [failedSrcs, setFailedSrcs] = useState<Record<string, boolean>>({});
     const imageSrc = useMemo(() => resolveImageSrc(src), [src]);
     const fallbackText = getFallbackText(fallbackLabel ?? alt);
+    const fallbackDisplay = fallbackText || (alt?.trim() ? alt.trim()[0].toUpperCase() : "");
+    const isDummy = isDummyUrl(src);
+    const failed = imageSrc ? (failedSrcs[imageSrc] ?? false) : true;
 
-    useEffect(() => {
-        setFailed(false);
-    }, [imageSrc]);
-
-    if (!hasUsableSrc(imageSrc) || failed) {
+    if (!hasUsableSrc(imageSrc) || failed || isDummy) {
         return (
-            <div className={`flex items-center justify-center bg-emerald-50 text-emerald-700 ${fallbackClassName}`}>
-                {fallbackText ? (
-                    <span className="text-xs font-extrabold leading-none">{fallbackText}</span>
+            <div
+                className={`flex flex-col items-center justify-center gap-1 ${
+                    isDummy ? "bg-amber-50 text-amber-700" : "bg-emerald-50 text-emerald-700"
+                } ${fallbackClassName}`}
+                title={isDummy ? "URL chứa example.com — cần upload ảnh thật" : undefined}
+            >
+                {isDummy ? (
+                    <AlertTriangle className="h-5 w-5" />
                 ) : (
-                    <ImageIcon className="h-6 w-6" />
+                    <span className="text-xs font-extrabold leading-none">{fallbackDisplay}</span>
+                )}
+                {isDummy && (
+                    <span className="text-[10px] font-bold leading-none">Upload ảnh</span>
                 )}
             </div>
         );
@@ -87,7 +101,7 @@ export function AdminImage({
             alt={alt}
             className={className}
             loading="lazy"
-            onError={() => setFailed(true)}
+            onError={() => setFailedSrcs((prev) => ({ ...prev, [imageSrc]: true }))}
         />
   );
 }
