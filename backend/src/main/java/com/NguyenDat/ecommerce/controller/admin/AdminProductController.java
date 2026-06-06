@@ -184,8 +184,10 @@ public class AdminProductController {
     }
 
     @GetMapping("/products")
-    public ResponseEntity<ApiResponse<PageResponse<ProductResponse>>> getProductsPage(@Valid PageRequest pageRequest) {
+    public ResponseEntity<ApiResponse<PageResponse<ProductResponse>>> getProductsPage(
+            @Valid PageRequest pageRequest, @Valid ProductFilterRequest filterRequest) {
         return ResponseEntity.ok(ApiResponse.of(
-                ResponseCode.PRODUCTS_FETCHED, productService.getAllProductsInPage(pageRequest.toPageable())));
+                ResponseCode.PRODUCTS_FETCHED,
+                productService.getAllProductsInPage(filterRequest, pageRequest.toPageable())));
     }
 }

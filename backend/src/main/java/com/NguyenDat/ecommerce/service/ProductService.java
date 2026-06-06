@@ -39,11 +39,13 @@ public interface ProductService {
 
     List<ProductResponse> showAllProducts();
 
-    PageResponse<ProductResponse> showProductsInPage(Pageable pageable);
-
     ProductResponse showProductBySlug(String slug);
 
     void deleteProductById(Long id);
 
-    PageResponse<ProductResponse> getAllProductsInPage(Pageable pageable);
+    PageResponse<ProductResponse> getAllProductsInPage(ProductFilterRequest filterRequest, Pageable pageable);
+
+    PageResponse<ProductResponse> showProductsInPage(ProductFilterRequest filterRequest, Pageable pageable);
+
+    PageResponse<ProductResponse> showRelatedProducts(String slug, Pageable pageable);
 }

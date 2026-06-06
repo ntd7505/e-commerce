@@ -23,6 +23,7 @@ import com.NguyenDat.ecommerce.mapper.ProductMapper;
 import com.NguyenDat.ecommerce.mapper.ProductMediaMapper;
 import com.NguyenDat.ecommerce.mapper.ProductVariantMapper;
 import com.NguyenDat.ecommerce.repository.*;
+import com.NguyenDat.ecommerce.repository.specification.ProductSpecification;
 import com.NguyenDat.ecommerce.service.ProductService;
 import com.NguyenDat.ecommerce.util.SkuUtil;
 import com.NguyenDat.ecommerce.util.SlugUtil;
@@ -295,18 +296,11 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public PageResponse<ProductResponse> showProductsInPage(Pageable pageable) {
-        Page<Product> page = productRepository.findAllByDeletedFalseAndActiveTrue(pageable);
-        return PageResponse.from(page.map(productMapper::toProductResponse));
-    }
-
-    @Override
     public ProductResponse showProductBySlug(String slug) {
-        String normalizedSlug = slug.trim();
         Product product = productRepository
-                .findBySlugAndDeletedFalseAndActiveTrue(normalizedSlug)
+                .findBySlugAndDeletedFalseAndActiveTrue(slug.trim())
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
-        return productMapper.toProductResponse(product);
+        return toClientProductResponse(product);
     }
 
     @Override
@@ -333,8 +327,43 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public PageResponse<ProductResponse> getAllProductsInPage(Pageable pageable) {
-        Page<Product> page = productRepository.findAllByDeletedFalse(pageable);
+    public PageResponse<ProductResponse> getAllProductsInPage(ProductFilterRequest filterRequest, Pageable pageable) {
+        Page<Product> page = productRepository.findAll(ProductSpecification.withFilter(filterRequest, false), pageable);
         return PageResponse.from(page.map(this::toProductResponse));
+    }
+
+    @Override
+    public PageResponse<ProductResponse> showProductsInPage(ProductFilterRequest filterRequest, Pageable pageable) {
+        Page<Product> page = productRepository.findAll(ProductSpecification.withFilter(filterRequest, true), pageable);
+        return PageResponse.from(page.map(this::toClientProductResponse));
+    }
+
+    @Override
+    public PageResponse<ProductResponse> showRelatedProducts(String slug, Pageable pageable) {
+        Product currentProduct = productRepository
+                .findBySlugAndDeletedFalseAndActiveTrue(slug.trim())
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+
+        Page<Product> relatedProducts = productRepository.findAllByCategoryIdAndIdNotAndActiveTrueAndDeletedFalse(
+                currentProduct.getCategory().getId(), currentProduct.getId(), pageable);
+
+        return PageResponse.from(relatedProducts.map(this::toClientProductResponse));
+    }
+
+    private ProductResponse toClientProductResponse(Product product) {
+        ProductResponse response = productMapper.toProductResponse(product);
+
+        response.setVariants(product.getVariants().stream()
+                .filter(variant -> !variant.isDeleted() && variant.isActive())
+                .map(productVariantMapper::toProductVariantResponse)
+                .toList());
+
+        response.setMedia(product.getMedia().stream()
+                .filter(media -> !media.isDeleted() && media.isActive())
+                .sorted(Comparator.comparingInt(ProductMedia::getSortOrder))
+                .map(productMediaMapper::toProductMediaResponse)
+                .toList());
+
+        return response;
     }
 }

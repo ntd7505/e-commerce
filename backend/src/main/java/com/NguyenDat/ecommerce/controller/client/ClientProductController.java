@@ -12,6 +12,7 @@ import com.NguyenDat.ecommerce.common.constant.ResponseCode;
 import com.NguyenDat.ecommerce.common.dto.response.ApiResponse;
 import com.NguyenDat.ecommerce.common.dto.response.PageResponse;
 import com.NguyenDat.ecommerce.dto.request.PageRequest;
+import com.NguyenDat.ecommerce.dto.request.product.ProductFilterRequest;
 import com.NguyenDat.ecommerce.dto.response.ProductResponse;
 import com.NguyenDat.ecommerce.service.ProductService;
 
@@ -28,9 +29,11 @@ public class ClientProductController {
     ProductService productService;
 
     @GetMapping("/products")
-    public ResponseEntity<ApiResponse<PageResponse<ProductResponse>>> showProductsPage(@Valid PageRequest pageRequest) {
+    public ResponseEntity<ApiResponse<PageResponse<ProductResponse>>> showProductsPage(
+            @Valid @ModelAttribute PageRequest pageRequest, @Valid @ModelAttribute ProductFilterRequest filterRequest) {
         return ResponseEntity.ok(ApiResponse.of(
-                ResponseCode.PRODUCTS_FETCHED, productService.showProductsInPage(pageRequest.toPageable())));
+                ResponseCode.PRODUCTS_FETCHED,
+                productService.showProductsInPage(filterRequest, pageRequest.toPageable())));
     }
 
     @GetMapping("/products/all")
@@ -41,5 +44,13 @@ public class ClientProductController {
     @GetMapping("/products/{slug}")
     public ResponseEntity<ApiResponse<ProductResponse>> showProductBySlug(@PathVariable String slug) {
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.PRODUCT_FETCHED, productService.showProductBySlug(slug)));
+    }
+
+    @GetMapping("/products/{slug}/related")
+    public ResponseEntity<ApiResponse<PageResponse<ProductResponse>>> showRelatedProducts(
+            @PathVariable String slug, @Valid @ModelAttribute PageRequest pageRequest) {
+
+        return ResponseEntity.ok(ApiResponse.of(
+                ResponseCode.PRODUCTS_FETCHED, productService.showRelatedProducts(slug, pageRequest.toPageable())));
     }
 }
