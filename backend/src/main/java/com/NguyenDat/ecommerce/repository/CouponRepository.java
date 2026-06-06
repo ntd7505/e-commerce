@@ -1,14 +1,17 @@
 package com.NguyenDat.ecommerce.repository;
 
-import java.util.List;
-import java.util.Optional;
-
+import com.NguyenDat.ecommerce.entity.Coupon;
+import jakarta.persistence.LockModeType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.NguyenDat.ecommerce.entity.Coupon;
+import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface CouponRepository extends JpaRepository<Coupon, Long> {
@@ -31,4 +34,23 @@ public interface CouponRepository extends JpaRepository<Coupon, Long> {
     Page<Coupon> findAllByDeletedTrue(Pageable pageable);
 
     boolean existsByCodeAndIdNot(String code, Long id);
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query(
+            """
+				SELECT c
+				FROM Coupon c
+				WHERE c.code = :code
+					AND c.deleted = false
+					AND c.active = true
+			""")
+    Optional<Coupon> findActiveCouponByCodeForUpdate(@Param("code") String code);
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("""
+                SELECT c
+                FROM Coupon c
+                WHERE c.id = :id
+            """)
+    Optional<Coupon> findByIdForUpdate(@Param("id") Long id);
 }
