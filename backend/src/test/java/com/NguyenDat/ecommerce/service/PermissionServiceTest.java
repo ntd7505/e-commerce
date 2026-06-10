@@ -3,6 +3,8 @@ package com.NguyenDat.ecommerce.service;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -36,9 +38,11 @@ class PermissionServiceTest {
 
     @Test
     void createPermission_shouldSaveAndMapNewPermission() {
-        PermissionRequest request = PermissionRequest.builder().name("PRODUCT_READ").build();
+        PermissionRequest request =
+                PermissionRequest.builder().name("PRODUCT_READ").build();
         Permission permission = Permission.builder().name("PRODUCT_READ").build();
-        PermissionResponse response = PermissionResponse.builder().name("PRODUCT_READ").build();
+        PermissionResponse response =
+                PermissionResponse.builder().name("PRODUCT_READ").build();
         when(permissionMapper.toPermission(request)).thenReturn(permission);
         when(permissionMapper.toPermissionResponse(permission)).thenReturn(response);
 
@@ -50,7 +54,8 @@ class PermissionServiceTest {
 
     @Test
     void createPermission_shouldRejectDuplicateName() {
-        PermissionRequest request = PermissionRequest.builder().name("PRODUCT_READ").build();
+        PermissionRequest request =
+                PermissionRequest.builder().name("PRODUCT_READ").build();
         when(permissionRepository.existsById("PRODUCT_READ")).thenReturn(true);
 
         AppException exception = assertThrows(AppException.class, () -> permissionService.createPermission(request));
@@ -69,5 +74,34 @@ class PermissionServiceTest {
 
         assertEquals(ErrorCode.PERMISSION_IN_USE, exception.getErrorCode());
         verify(permissionRepository, never()).deleteById(any());
+    }
+
+    @Test
+    void deletePermission_shouldDeleteUnusedPermission() {
+        when(permissionRepository.existsById("PRODUCT_READ")).thenReturn(true);
+
+        permissionService.deletePermissionById("PRODUCT_READ");
+
+        verify(permissionRepository).deleteById("PRODUCT_READ");
+    }
+
+    @Test
+    void deletePermission_shouldRejectMissingPermission() {
+        AppException exception =
+                assertThrows(AppException.class, () -> permissionService.deletePermissionById("PRODUCT_READ"));
+
+        assertEquals(ErrorCode.PERMISSION_NOT_FOUND, exception.getErrorCode());
+        verifyNoInteractions(roleRepository);
+    }
+
+    @Test
+    void getAllPermissions_shouldMapRepositoryResults() {
+        Permission permission = Permission.builder().name("PRODUCT_READ").build();
+        PermissionResponse response =
+                PermissionResponse.builder().name("PRODUCT_READ").build();
+        when(permissionRepository.findAll()).thenReturn(List.of(permission));
+        when(permissionMapper.toPermissionResponse(permission)).thenReturn(response);
+
+        assertEquals(List.of(response), permissionService.getAllPermissions());
     }
 }

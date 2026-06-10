@@ -1,0 +1,95 @@
+package com.NguyenDat.ecommerce.controller;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.List;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.web.servlet.MockMvc;
+
+import com.NguyenDat.ecommerce.common.constant.ResponseCode;
+import com.NguyenDat.ecommerce.controller.client.ProductReviewController;
+import com.NguyenDat.ecommerce.dto.request.product_review.ProductReviewCreateRequest;
+import com.NguyenDat.ecommerce.dto.response.product_review.ProductReviewResponse;
+import com.NguyenDat.ecommerce.dto.response.product_review.ProductReviewSummaryResponse;
+import com.NguyenDat.ecommerce.service.ProductReviewService;
+
+import tools.jackson.databind.ObjectMapper;
+
+@WebMvcTest(ProductReviewController.class)
+@AutoConfigureMockMvc(addFilters = false)
+class ProductReviewControllerTest {
+
+    @Autowired
+    MockMvc mockMvc;
+
+    @Autowired
+    ObjectMapper objectMapper;
+
+    @MockitoBean
+    ProductReviewService productReviewService;
+
+    @Test
+    void createProductReview_shouldReturnCreatedResponse() throws Exception {
+        ProductReviewCreateRequest request = ProductReviewCreateRequest.builder()
+                .orderItemId(10L)
+                .rating(5)
+                .anonymous(false)
+                .build();
+        ProductReviewResponse response =
+                ProductReviewResponse.builder().id(1L).rating(5).build();
+        when(productReviewService.createProductReview(any(ProductReviewCreateRequest.class)))
+                .thenReturn(response);
+
+        mockMvc.perform(post("/api/v1/client/reviews")
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.code").value(ResponseCode.PRODUCT_REVIEW_CREATED.getCode()))
+                .andExpect(jsonPath("$.data.rating").value(5));
+    }
+
+    @Test
+    void createProductReview_shouldRejectInvalidRating() throws Exception {
+        ProductReviewCreateRequest request =
+                ProductReviewCreateRequest.builder().orderItemId(10L).rating(6).build();
+
+        mockMvc.perform(post("/api/v1/client/reviews")
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void getReviewsAndSummary_shouldReturnProductReviewData() throws Exception {
+        when(productReviewService.getAllReviewsProduct(1L))
+                .thenReturn(
+                        List.of(ProductReviewResponse.builder().id(2L).rating(4).build()));
+        when(productReviewService.getReviewSummaryByProductId(1L))
+                .thenReturn(ProductReviewSummaryResponse.builder()
+                        .averageRating(4.0)
+                        .totalReviews(1L)
+                        .build());
+
+        mockMvc.perform(get("/api/v1/client/products/{productId}/reviews", 1L))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data[0].rating").value(4));
+        mockMvc.perform(get("/api/v1/client/products/{productId}/review-summary", 1L))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.averageRating").value(4.0));
+
+        verify(productReviewService).getAllReviewsProduct(1L);
+        verify(productReviewService).getReviewSummaryByProductId(1L);
+    }
+}
