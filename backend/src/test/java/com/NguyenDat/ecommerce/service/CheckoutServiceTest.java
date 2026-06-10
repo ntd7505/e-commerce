@@ -77,8 +77,10 @@ class CheckoutServiceTest {
 
     @Test
     void calculateForPreview_shouldCalculateAmountsWithoutCoupon() {
-        CheckoutPreviewRequest request =
-                CheckoutPreviewRequest.builder().cartItemIds(List.of(4L)).addressId(5L).build();
+        CheckoutPreviewRequest request = CheckoutPreviewRequest.builder()
+                .cartItemIds(List.of(4L))
+                .addressId(5L)
+                .build();
         mockCheckoutData();
         mockAddress();
 
@@ -115,7 +117,10 @@ class CheckoutServiceTest {
     @Test
     void calculateForPreview_shouldRejectInactiveVariant() {
         cartItem.getProductVariant().setActive(false);
-        CheckoutPreviewRequest request = CheckoutPreviewRequest.builder().cartItemIds(List.of(4L)).addressId(5L).build();
+        CheckoutPreviewRequest request = CheckoutPreviewRequest.builder()
+                .cartItemIds(List.of(4L))
+                .addressId(5L)
+                .build();
         mockCheckoutData();
 
         AppException exception =
@@ -127,7 +132,10 @@ class CheckoutServiceTest {
     @Test
     void calculateForPreview_shouldRejectOutOfStockItem() {
         cartItem.setQuantity(6);
-        CheckoutPreviewRequest request = CheckoutPreviewRequest.builder().cartItemIds(List.of(4L)).addressId(5L).build();
+        CheckoutPreviewRequest request = CheckoutPreviewRequest.builder()
+                .cartItemIds(List.of(4L))
+                .addressId(5L)
+                .build();
         mockCheckoutData();
 
         AppException exception =

@@ -19,7 +19,8 @@ class PaymentMethodServiceTest {
         List<PaymentMethodResponse> result = paymentMethodService.getPaymentMethods();
 
         assertEquals(PaymentMethod.values().length, result.size());
-        assertTrue(result.stream().filter(PaymentMethodResponse::isEnabled)
+        assertTrue(result.stream()
+                .filter(PaymentMethodResponse::isEnabled)
                 .allMatch(method -> method.getMethod() == PaymentMethod.COD));
         assertEquals(1, result.stream().filter(PaymentMethodResponse::isEnabled).count());
     }

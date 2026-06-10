@@ -17,15 +17,16 @@ import org.junit.jupiter.api.Test;
 
 import com.NguyenDat.ecommerce.dto.request.product.ProductFilterRequest;
 import com.NguyenDat.ecommerce.entity.Product;
-import com.NguyenDat.ecommerce.entity.ProductVariant;
 
 class ProductSpecificationTest {
 
     Root<Product> root = mock(Root.class);
     CriteriaQuery<?> query = mock(CriteriaQuery.class);
     CriteriaBuilder criteriaBuilder = mock(CriteriaBuilder.class);
+
     @SuppressWarnings("rawtypes")
     Join variants = mock(Join.class);
+
     Path<Boolean> deletedPath = mock(Path.class);
     Path<BigDecimal> pricePath = mock(Path.class);
     Predicate predicate = mock(Predicate.class);
@@ -56,7 +57,10 @@ class ProductSpecificationTest {
     void withFilter_shouldApplyMinimumAndMaximumPrice() {
         BigDecimal minimum = BigDecimal.valueOf(100_000);
         BigDecimal maximum = BigDecimal.valueOf(500_000);
-        ProductFilterRequest filter = ProductFilterRequest.builder().minPrice(minimum).maxPrice(maximum).build();
+        ProductFilterRequest filter = ProductFilterRequest.builder()
+                .minPrice(minimum)
+                .maxPrice(maximum)
+                .build();
         when(criteriaBuilder.greaterThanOrEqualTo(pricePath, minimum)).thenReturn(predicate);
         when(criteriaBuilder.lessThanOrEqualTo(pricePath, maximum)).thenReturn(predicate);
 

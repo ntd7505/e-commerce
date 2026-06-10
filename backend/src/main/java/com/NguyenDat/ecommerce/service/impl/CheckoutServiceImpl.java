@@ -15,7 +15,6 @@ import com.NguyenDat.ecommerce.dto.request.CheckoutRequest;
 import com.NguyenDat.ecommerce.entity.Address;
 import com.NguyenDat.ecommerce.entity.Cart;
 import com.NguyenDat.ecommerce.entity.CartItem;
-import com.NguyenDat.ecommerce.entity.Coupon;
 import com.NguyenDat.ecommerce.entity.Product;
 import com.NguyenDat.ecommerce.entity.ProductVariant;
 import com.NguyenDat.ecommerce.entity.User;
@@ -41,22 +40,12 @@ public class CheckoutServiceImpl implements CheckoutService {
 
     @Override
     public CheckoutCalculation calculateForPreview(User user, CheckoutPreviewRequest request) {
-        return calculate(
-                user,
-                request.getCartItemIds(),
-                request.getAddressId(),
-                request.getCouponCode(),
-                false);
+        return calculate(user, request.getCartItemIds(), request.getAddressId(), request.getCouponCode(), false);
     }
 
     @Override
     public CheckoutCalculation calculateForOrder(User user, CheckoutRequest request) {
-        return calculate(
-                user,
-                request.getCartItemIds(),
-                request.getAddressId(),
-                request.getCouponCode(),
-                true);
+        return calculate(user, request.getCartItemIds(), request.getAddressId(), request.getCouponCode(), true);
     }
 
     private CheckoutCalculation calculate(

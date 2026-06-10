@@ -49,9 +49,7 @@ public class OrderCreationServiceImpl implements OrderCreationService {
         }
 
         couponApplicationService.recordUsage(
-                savedOrder,
-                user,
-                new CouponCalculation(checkout.getCoupon(), checkout.getDiscountAmount()));
+                savedOrder, user, new CouponCalculation(checkout.getCoupon(), checkout.getDiscountAmount()));
 
         return orderRepository.save(savedOrder);
     }

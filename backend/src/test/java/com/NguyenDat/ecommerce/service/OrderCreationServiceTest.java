@@ -79,7 +79,10 @@ class OrderCreationServiceTest {
                 .totalAmount(BigDecimal.valueOf(210_000))
                 .totalItems(2)
                 .build();
-        request = CheckoutRequest.builder().paymentMethod(PaymentMethod.COD).note("Call before delivery").build();
+        request = CheckoutRequest.builder()
+                .paymentMethod(PaymentMethod.COD)
+                .note("Call before delivery")
+                .build();
     }
 
     @Test
