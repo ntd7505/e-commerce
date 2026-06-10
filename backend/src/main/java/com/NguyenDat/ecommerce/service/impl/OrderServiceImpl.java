@@ -1,5 +1,15 @@
 package com.NguyenDat.ecommerce.service.impl;
 
+import static com.NguyenDat.ecommerce.enums.OrderStatus.*;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.NguyenDat.ecommerce.common.dto.response.PageResponse;
 import com.NguyenDat.ecommerce.common.exception.AppException;
 import com.NguyenDat.ecommerce.common.exception.ErrorCode;
@@ -17,26 +27,18 @@ import com.NguyenDat.ecommerce.mapper.AddressMapper;
 import com.NguyenDat.ecommerce.mapper.CheckoutItemMapper;
 import com.NguyenDat.ecommerce.mapper.OrderMapper;
 import com.NguyenDat.ecommerce.repository.*;
-import com.NguyenDat.ecommerce.service.CouponApplicationService;
 import com.NguyenDat.ecommerce.service.CheckoutService;
+import com.NguyenDat.ecommerce.service.CouponApplicationService;
 import com.NguyenDat.ecommerce.service.CurrentUserService;
 import com.NguyenDat.ecommerce.service.InventoryService;
-import com.NguyenDat.ecommerce.service.OrderPaymentService;
 import com.NguyenDat.ecommerce.service.OrderCreationService;
+import com.NguyenDat.ecommerce.service.OrderPaymentService;
 import com.NguyenDat.ecommerce.service.OrderService;
 import com.NguyenDat.ecommerce.service.OrderStatusHistoryService;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
-import java.util.List;
-
-import static com.NguyenDat.ecommerce.enums.OrderStatus.*;
 
 @Service
 @RequiredArgsConstructor
@@ -86,7 +88,9 @@ public class OrderServiceImpl implements OrderService {
         }
         User user = currentUserService.getCurrentUser();
         CheckoutCalculation checkoutCalculation = checkoutService.calculateForOrder(user, checkoutRequest);
-        return orderMapper.toOrderResponse(orderCreationService.create(user, checkoutRequest, checkoutCalculation));
+        Order order = orderCreationService.create(user, checkoutRequest, checkoutCalculation);
+        inventoryService.decreaseForOrder(order, user);
+        return orderMapper.toOrderResponse(order);
     }
 
     @Override
@@ -120,7 +124,7 @@ public class OrderServiceImpl implements OrderService {
     public OrderResponse cancelMyOrder(OrderCancelRequestRequest orderCancelRequestRequest, Long orderId) {
         User user = currentUserService.getCurrentUser();
         Order order = orderRepository
-                .findByIdAndUserId(orderId, user.getId())
+                .findByIdAndUserIdForUpdate(orderId, user.getId())
                 .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
         if (order.getStatus() != OrderStatus.PENDING) {
             throw new AppException(ErrorCode.ORDER_CANCEL_NOT_ALLOWED);
@@ -136,6 +140,7 @@ public class OrderServiceImpl implements OrderService {
         }
 
         couponApplicationService.reverseUsage(order);
+        inventoryService.restoreForOrder(order, user);
 
         OrderStatus oldStatus = order.getStatus();
 
@@ -167,7 +172,7 @@ public class OrderServiceImpl implements OrderService {
     public OrderResponse confirmReceived(Long orderId) {
         User user = currentUserService.getCurrentUser();
         Order order = orderRepository
-                .findDeliveredOrder(orderId, user.getId())
+                .findDeliveredOrderForUpdate(orderId, user.getId())
                 .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
 
         OrderStatus oldStatus = order.getStatus();
@@ -176,7 +181,8 @@ public class OrderServiceImpl implements OrderService {
         order.setPaymentStatus(PaymentStatus.PAID);
         orderPaymentService.markPaid(order);
 
-        orderStatusHistoryService.record(order, user, oldStatus, OrderStatus.COMPLETED, "User confirmed received order");
+        orderStatusHistoryService.record(
+                order, user, oldStatus, OrderStatus.COMPLETED, "User confirmed received order");
 
         return orderMapper.toOrderResponse(orderRepository.save(order));
     }
@@ -203,15 +209,15 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public OrderResponse confirmOrder(Long orderId) {
         User admin = currentUserService.getCurrentUser();
-        Order order = orderRepository.findById(orderId).orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
+        Order order = orderRepository
+                .findByIdForUpdate(orderId)
+                .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
 
         if (order.getStatus() != OrderStatus.PENDING) {
             throw new AppException(ErrorCode.ORDER_STATUS_TRANSITION_INVALID);
         }
 
         OrderStatus oldStatus = order.getStatus();
-
-        inventoryService.decreaseForOrder(order, admin);
 
         order.setStatus(CONFIRMED);
         order.setShippingStatus(ShippingStatus.PREPARING);
@@ -223,7 +229,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Transactional
     public OrderResponse processOrder(Long orderId) {
-        Order order = orderRepository.findById(orderId).orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
+        Order order = orderRepository
+                .findByIdForUpdate(orderId)
+                .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
 
         if (order.getStatus() != CONFIRMED) {
             throw new AppException(ErrorCode.ORDER_STATUS_TRANSITION_INVALID);
@@ -242,7 +250,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Transactional
     public OrderResponse shipOrder(Long orderId) {
-        Order order = orderRepository.findById(orderId).orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
+        Order order = orderRepository
+                .findByIdForUpdate(orderId)
+                .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
 
         if (order.getStatus() != PROCESSING) {
             throw new AppException(ErrorCode.ORDER_STATUS_TRANSITION_INVALID);
@@ -261,7 +271,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Transactional
     public OrderResponse deliverOrder(Long orderId) {
-        Order order = orderRepository.findById(orderId).orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
+        Order order = orderRepository
+                .findByIdForUpdate(orderId)
+                .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
 
         if (order.getStatus() != SHIPPING) {
             throw new AppException(ErrorCode.ORDER_STATUS_TRANSITION_INVALID);
@@ -284,7 +296,7 @@ public class OrderServiceImpl implements OrderService {
             OrderCancelRequestRequest orderCancelRequestRequest, Long orderId) {
         User user = currentUserService.getCurrentUser();
         Order order = orderRepository
-                .findByIdAndUserId(orderId, user.getId())
+                .findByIdAndUserIdForUpdate(orderId, user.getId())
                 .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
 
         if (order.getStatus() != CONFIRMED && order.getStatus() != PROCESSING && order.getStatus() != SHIPPING) {
@@ -329,7 +341,9 @@ public class OrderServiceImpl implements OrderService {
                 .findPendingCancelRequestById(requestId)
                 .orElseThrow(() -> new AppException(ErrorCode.ORDER_CANCEL_REQUEST_NOT_FOUND));
 
-        Order order = orderCancelRequest.getOrder();
+        Order order = orderRepository
+                .findByIdForUpdate(orderCancelRequest.getOrder().getId())
+                .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
 
         if (order.getStatus() != CONFIRMED && order.getStatus() != PROCESSING && order.getStatus() != SHIPPING) {
             throw new AppException(ErrorCode.ORDER_CANCEL_REQUEST_NOT_ALLOWED);
@@ -370,5 +384,4 @@ public class OrderServiceImpl implements OrderService {
         orderCancelRequest.setReviewedBy(user);
         return orderMapper.toOrderCancelRequestResponse(orderCancelRequestRepository.save(orderCancelRequest));
     }
-
 }

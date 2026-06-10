@@ -20,6 +20,7 @@ import com.NguyenDat.ecommerce.entity.ProductVariant;
 import com.NguyenDat.ecommerce.entity.User;
 import com.NguyenDat.ecommerce.enums.InventoryTransactionType;
 import com.NguyenDat.ecommerce.repository.InventoryTransactionRepository;
+import com.NguyenDat.ecommerce.repository.ProductVariantRepository;
 import com.NguyenDat.ecommerce.service.impl.InventoryServiceImpl;
 
 @ExtendWith(MockitoExtension.class)
@@ -27,6 +28,9 @@ class InventoryServiceTest {
 
     @Mock
     InventoryTransactionRepository inventoryTransactionRepository;
+
+    @Mock
+    ProductVariantRepository productVariantRepository;
 
     @InjectMocks
     InventoryServiceImpl inventoryService;
@@ -38,6 +42,7 @@ class InventoryServiceTest {
     @BeforeEach
     void setUp() {
         variant = new ProductVariant();
+        variant.setId(10L);
         variant.setStockQuantity(5);
 
         OrderItem item = new OrderItem();
@@ -47,6 +52,9 @@ class InventoryServiceTest {
         order = new Order();
         order.getItems().add(item);
         changedBy = User.builder().id(1L).build();
+        lenient()
+                .when(productVariantRepository.findAllByIdForUpdate(java.util.List.of(10L)))
+                .thenReturn(java.util.List.of(variant));
     }
 
     @Test
@@ -66,7 +74,8 @@ class InventoryServiceTest {
     void decreaseForOrder_shouldRejectInsufficientStock() {
         variant.setStockQuantity(1);
 
-        AppException exception = assertThrows(AppException.class, () -> inventoryService.decreaseForOrder(order, changedBy));
+        AppException exception =
+                assertThrows(AppException.class, () -> inventoryService.decreaseForOrder(order, changedBy));
 
         assertEquals(ErrorCode.PRODUCT_VARIANT_OUT_OF_STOCK, exception.getErrorCode());
         verifyNoInteractions(inventoryTransactionRepository);

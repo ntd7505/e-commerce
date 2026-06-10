@@ -1,5 +1,10 @@
 package com.NguyenDat.ecommerce.service.impl;
 
+import java.util.Collection;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 import org.springframework.stereotype.Service;
 
 import com.NguyenDat.ecommerce.common.exception.AppException;
@@ -11,6 +16,7 @@ import com.NguyenDat.ecommerce.entity.ProductVariant;
 import com.NguyenDat.ecommerce.entity.User;
 import com.NguyenDat.ecommerce.enums.InventoryTransactionType;
 import com.NguyenDat.ecommerce.repository.InventoryTransactionRepository;
+import com.NguyenDat.ecommerce.repository.ProductVariantRepository;
 import com.NguyenDat.ecommerce.service.InventoryService;
 
 import lombok.AccessLevel;
@@ -23,11 +29,13 @@ import lombok.experimental.FieldDefaults;
 public class InventoryServiceImpl implements InventoryService {
 
     InventoryTransactionRepository inventoryTransactionRepository;
+    ProductVariantRepository productVariantRepository;
 
     @Override
     public void decreaseForOrder(Order order, User changedBy) {
+        Map<Long, ProductVariant> lockedVariants = lockOrderVariants(order);
         for (OrderItem item : order.getItems()) {
-            ProductVariant variant = item.getProductVariant();
+            ProductVariant variant = lockedVariants.get(item.getProductVariant().getId());
             int beforeQuantity = variant.getStockQuantity();
             int quantity = item.getQuantity();
 
@@ -47,14 +55,15 @@ public class InventoryServiceImpl implements InventoryService {
                     -quantity,
                     beforeQuantity,
                     afterQuantity,
-                    "Stock decreased when order confirmed");
+                    "Stock reserved when order created");
         }
     }
 
     @Override
     public void restoreForOrder(Order order, User changedBy) {
+        Map<Long, ProductVariant> lockedVariants = lockOrderVariants(order);
         for (OrderItem item : order.getItems()) {
-            ProductVariant variant = item.getProductVariant();
+            ProductVariant variant = lockedVariants.get(item.getProductVariant().getId());
             int beforeQuantity = variant.getStockQuantity();
             int quantity = item.getQuantity();
             int afterQuantity = beforeQuantity + quantity;
@@ -72,6 +81,22 @@ public class InventoryServiceImpl implements InventoryService {
                     afterQuantity,
                     "Stock restored when order cancelled");
         }
+    }
+
+    private Map<Long, ProductVariant> lockOrderVariants(Order order) {
+        Collection<Long> variantIds = order.getItems().stream()
+                .map(item -> item.getProductVariant().getId())
+                .distinct()
+                .sorted()
+                .toList();
+
+        Map<Long, ProductVariant> lockedVariants = productVariantRepository.findAllByIdForUpdate(variantIds).stream()
+                .collect(Collectors.toMap(ProductVariant::getId, Function.identity()));
+
+        if (lockedVariants.size() != variantIds.size()) {
+            throw new AppException(ErrorCode.PRODUCT_VARIANT_NOT_FOUND);
+        }
+        return lockedVariants;
     }
 
     private void saveTransaction(

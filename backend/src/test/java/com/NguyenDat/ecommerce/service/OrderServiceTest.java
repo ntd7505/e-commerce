@@ -79,7 +79,8 @@ class OrderServiceTest {
 
     @Test
     void createOrder_shouldRejectUnsupportedPaymentMethod() {
-        CheckoutRequest request = CheckoutRequest.builder().paymentMethod(PaymentMethod.VNPAY).build();
+        CheckoutRequest request =
+                CheckoutRequest.builder().paymentMethod(PaymentMethod.VNPAY).build();
 
         AppException exception = assertThrows(AppException.class, () -> orderService.createOrder(request));
 
@@ -90,7 +91,8 @@ class OrderServiceTest {
     @Test
     void createOrder_shouldDelegateCheckoutAndOrderCreationForCod() {
         User user = User.builder().id(1L).build();
-        CheckoutRequest request = CheckoutRequest.builder().paymentMethod(PaymentMethod.COD).build();
+        CheckoutRequest request =
+                CheckoutRequest.builder().paymentMethod(PaymentMethod.COD).build();
         CheckoutCalculation checkout = CheckoutCalculation.builder().build();
         Order order = new Order();
         OrderResponse response = OrderResponse.builder().id(10L).build();
@@ -102,18 +104,19 @@ class OrderServiceTest {
         OrderResponse result = orderService.createOrder(request);
 
         assertEquals(response, result);
+        verify(inventoryService).decreaseForOrder(order, user);
         verify(checkoutService).calculateForOrder(user, request);
         verify(orderCreationService).create(user, request, checkout);
     }
 
     @Test
-    void confirmOrder_shouldDecreaseStockAndTransitionPendingOrder() {
+    void confirmOrder_shouldTransitionPendingOrderWithoutDecreasingStockAgain() {
         User admin = User.builder().id(1L).build();
         Order order = new Order();
         order.setStatus(OrderStatus.PENDING);
         OrderResponse response = OrderResponse.builder().id(10L).build();
         when(currentUserService.getCurrentUser()).thenReturn(admin);
-        when(orderRepository.findById(10L)).thenReturn(java.util.Optional.of(order));
+        when(orderRepository.findByIdForUpdate(10L)).thenReturn(java.util.Optional.of(order));
         when(orderRepository.save(order)).thenReturn(order);
         when(orderMapper.toOrderResponse(order)).thenReturn(response);
 
@@ -122,7 +125,7 @@ class OrderServiceTest {
         assertEquals(response, result);
         assertEquals(OrderStatus.CONFIRMED, order.getStatus());
         assertEquals(ShippingStatus.PREPARING, order.getShippingStatus());
-        verify(inventoryService).decreaseForOrder(order, admin);
+        verifyNoInteractions(inventoryService);
         verify(orderStatusHistoryService)
                 .record(order, admin, OrderStatus.PENDING, OrderStatus.CONFIRMED, "Admin confirmed order");
     }
@@ -210,9 +213,11 @@ class OrderServiceTest {
         User user = User.builder().id(1L).build();
         Order order = orderWithStatus(OrderStatus.PENDING);
         OrderResponse response = OrderResponse.builder().id(10L).build();
-        OrderCancelRequestRequest request = OrderCancelRequestRequest.builder().reason("  Changed my mind  ").build();
+        OrderCancelRequestRequest request = OrderCancelRequestRequest.builder()
+                .reason("  Changed my mind  ")
+                .build();
         when(currentUserService.getCurrentUser()).thenReturn(user);
-        when(orderRepository.findByIdAndUserId(10L, 1L)).thenReturn(Optional.of(order));
+        when(orderRepository.findByIdAndUserIdForUpdate(10L, 1L)).thenReturn(Optional.of(order));
         when(orderRepository.save(order)).thenReturn(order);
         when(orderMapper.toOrderResponse(order)).thenReturn(response);
 
@@ -224,9 +229,10 @@ class OrderServiceTest {
         assertEquals(PaymentStatus.CANCELLED, order.getPaymentStatus());
         assertNotNull(order.getCancelledAt());
         verify(couponApplicationService).reverseUsage(order);
+        verify(inventoryService).restoreForOrder(order, user);
         verify(orderPaymentService).markCancelled(order);
-        verify(orderCancelRequestRepository).save(argThat(cancelRequest ->
-                cancelRequest.getStatus() == CancelRequestStatus.APPROVED
+        verify(orderCancelRequestRepository)
+                .save(argThat(cancelRequest -> cancelRequest.getStatus() == CancelRequestStatus.APPROVED
                         && cancelRequest.getReason().equals("Changed my mind")
                         && cancelRequest.getRequestedBy() == user));
     }
@@ -236,11 +242,12 @@ class OrderServiceTest {
         User user = User.builder().id(1L).build();
         Order order = orderWithStatus(OrderStatus.CONFIRMED);
         when(currentUserService.getCurrentUser()).thenReturn(user);
-        when(orderRepository.findByIdAndUserId(10L, 1L)).thenReturn(Optional.of(order));
+        when(orderRepository.findByIdAndUserIdForUpdate(10L, 1L)).thenReturn(Optional.of(order));
 
         assertError(
                 ErrorCode.ORDER_CANCEL_NOT_ALLOWED,
-                () -> orderService.cancelMyOrder(OrderCancelRequestRequest.builder().reason("reason").build(), 10L));
+                () -> orderService.cancelMyOrder(
+                        OrderCancelRequestRequest.builder().reason("reason").build(), 10L));
         verifyNoInteractions(couponApplicationService, orderPaymentService);
     }
 
@@ -248,7 +255,8 @@ class OrderServiceTest {
     void cancelMyOrder_shouldRejectDuplicateCancelRequest() {
         User user = User.builder().id(1L).build();
         when(currentUserService.getCurrentUser()).thenReturn(user);
-        when(orderRepository.findByIdAndUserId(10L, 1L)).thenReturn(Optional.of(orderWithStatus(OrderStatus.PENDING)));
+        when(orderRepository.findByIdAndUserIdForUpdate(10L, 1L))
+                .thenReturn(Optional.of(orderWithStatus(OrderStatus.PENDING)));
         when(orderCancelRequestRepository.existsByOrderId(10L)).thenReturn(true);
 
         assertError(
@@ -261,11 +269,13 @@ class OrderServiceTest {
     void cancelMyOrder_shouldRejectBlankReason() {
         User user = User.builder().id(1L).build();
         when(currentUserService.getCurrentUser()).thenReturn(user);
-        when(orderRepository.findByIdAndUserId(10L, 1L)).thenReturn(Optional.of(orderWithStatus(OrderStatus.PENDING)));
+        when(orderRepository.findByIdAndUserIdForUpdate(10L, 1L))
+                .thenReturn(Optional.of(orderWithStatus(OrderStatus.PENDING)));
 
         assertError(
                 ErrorCode.ORDER_CANCEL_REASON_INVALID,
-                () -> orderService.cancelMyOrder(OrderCancelRequestRequest.builder().reason("   ").build(), 10L));
+                () -> orderService.cancelMyOrder(
+                        OrderCancelRequestRequest.builder().reason("   ").build(), 10L));
     }
 
     @Test
@@ -274,7 +284,7 @@ class OrderServiceTest {
         Order order = orderWithStatus(OrderStatus.DELIVERED);
         OrderResponse response = OrderResponse.builder().id(10L).build();
         when(currentUserService.getCurrentUser()).thenReturn(user);
-        when(orderRepository.findDeliveredOrder(10L, 1L)).thenReturn(Optional.of(order));
+        when(orderRepository.findDeliveredOrderForUpdate(10L, 1L)).thenReturn(Optional.of(order));
         when(orderRepository.save(order)).thenReturn(order);
         when(orderMapper.toOrderResponse(order)).thenReturn(response);
 
@@ -290,7 +300,7 @@ class OrderServiceTest {
     void confirmReceived_shouldRejectMissingDeliveredOrder() {
         User user = User.builder().id(1L).build();
         when(currentUserService.getCurrentUser()).thenReturn(user);
-        when(orderRepository.findDeliveredOrder(10L, 1L)).thenReturn(Optional.empty());
+        when(orderRepository.findDeliveredOrderForUpdate(10L, 1L)).thenReturn(Optional.empty());
 
         assertError(ErrorCode.ORDER_NOT_FOUND, () -> orderService.confirmReceived(10L));
     }
@@ -358,7 +368,7 @@ class OrderServiceTest {
 
     @Test
     void processOrder_shouldRejectInvalidTransition() {
-        when(orderRepository.findById(10L)).thenReturn(Optional.of(orderWithStatus(OrderStatus.PENDING)));
+        when(orderRepository.findByIdForUpdate(10L)).thenReturn(Optional.of(orderWithStatus(OrderStatus.PENDING)));
 
         assertError(ErrorCode.ORDER_STATUS_TRANSITION_INVALID, () -> orderService.processOrder(10L));
         verifyNoInteractions(currentUserService, orderStatusHistoryService);
@@ -366,8 +376,9 @@ class OrderServiceTest {
 
     @Test
     void confirmOrder_shouldRejectInvalidTransitionBeforeChangingInventory() {
-        when(currentUserService.getCurrentUser()).thenReturn(User.builder().id(1L).build());
-        when(orderRepository.findById(10L)).thenReturn(Optional.of(orderWithStatus(OrderStatus.CONFIRMED)));
+        when(currentUserService.getCurrentUser())
+                .thenReturn(User.builder().id(1L).build());
+        when(orderRepository.findByIdForUpdate(10L)).thenReturn(Optional.of(orderWithStatus(OrderStatus.CONFIRMED)));
 
         assertError(ErrorCode.ORDER_STATUS_TRANSITION_INVALID, () -> orderService.confirmOrder(10L));
         verifyNoInteractions(inventoryService);
@@ -377,19 +388,21 @@ class OrderServiceTest {
     void requestOrderCancellation_shouldCreatePendingRequestForConfirmedOrder() {
         User user = User.builder().id(1L).build();
         Order order = orderWithStatus(OrderStatus.CONFIRMED);
-        OrderCancelRequestResponse response = OrderCancelRequestResponse.builder().id(20L).build();
+        OrderCancelRequestResponse response =
+                OrderCancelRequestResponse.builder().id(20L).build();
         when(currentUserService.getCurrentUser()).thenReturn(user);
-        when(orderRepository.findByIdAndUserId(10L, 1L)).thenReturn(Optional.of(order));
+        when(orderRepository.findByIdAndUserIdForUpdate(10L, 1L)).thenReturn(Optional.of(order));
         when(orderCancelRequestRepository.save(any(OrderCancelRequest.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
-        when(orderMapper.toOrderCancelRequestResponse(any(OrderCancelRequest.class))).thenReturn(response);
+        when(orderMapper.toOrderCancelRequestResponse(any(OrderCancelRequest.class)))
+                .thenReturn(response);
 
         OrderCancelRequestResponse result = orderService.requestOrderCancellation(
                 OrderCancelRequestRequest.builder().reason("  Wrong address  ").build(), 10L);
 
         assertEquals(response, result);
-        verify(orderCancelRequestRepository).save(argThat(cancelRequest ->
-                cancelRequest.getStatus() == CancelRequestStatus.PENDING
+        verify(orderCancelRequestRepository)
+                .save(argThat(cancelRequest -> cancelRequest.getStatus() == CancelRequestStatus.PENDING
                         && cancelRequest.getReason().equals("Wrong address")
                         && cancelRequest.getOrder() == order));
     }
@@ -398,7 +411,8 @@ class OrderServiceTest {
     void requestOrderCancellation_shouldRejectBlankReason() {
         User user = User.builder().id(1L).build();
         when(currentUserService.getCurrentUser()).thenReturn(user);
-        when(orderRepository.findByIdAndUserId(10L, 1L)).thenReturn(Optional.of(orderWithStatus(OrderStatus.CONFIRMED)));
+        when(orderRepository.findByIdAndUserIdForUpdate(10L, 1L))
+                .thenReturn(Optional.of(orderWithStatus(OrderStatus.CONFIRMED)));
 
         assertError(
                 ErrorCode.ORDER_CANCEL_REASON_INVALID,
@@ -411,7 +425,8 @@ class OrderServiceTest {
     void requestOrderCancellation_shouldRejectPendingOrder() {
         User user = User.builder().id(1L).build();
         when(currentUserService.getCurrentUser()).thenReturn(user);
-        when(orderRepository.findByIdAndUserId(10L, 1L)).thenReturn(Optional.of(orderWithStatus(OrderStatus.PENDING)));
+        when(orderRepository.findByIdAndUserIdForUpdate(10L, 1L))
+                .thenReturn(Optional.of(orderWithStatus(OrderStatus.PENDING)));
 
         assertError(
                 ErrorCode.ORDER_CANCEL_REQUEST_NOT_ALLOWED,
@@ -423,7 +438,8 @@ class OrderServiceTest {
     void requestOrderCancellation_shouldRejectDuplicateRequest() {
         User user = User.builder().id(1L).build();
         when(currentUserService.getCurrentUser()).thenReturn(user);
-        when(orderRepository.findByIdAndUserId(10L, 1L)).thenReturn(Optional.of(orderWithStatus(OrderStatus.SHIPPING)));
+        when(orderRepository.findByIdAndUserIdForUpdate(10L, 1L))
+                .thenReturn(Optional.of(orderWithStatus(OrderStatus.SHIPPING)));
         when(orderCancelRequestRepository.existsByOrderId(10L)).thenReturn(true);
 
         assertError(
@@ -438,9 +454,11 @@ class OrderServiceTest {
         Order order = orderWithStatus(OrderStatus.PROCESSING);
         OrderCancelRequest cancelRequest = new OrderCancelRequest();
         cancelRequest.setOrder(order);
-        OrderCancelRequestResponse response = OrderCancelRequestResponse.builder().id(20L).build();
+        OrderCancelRequestResponse response =
+                OrderCancelRequestResponse.builder().id(20L).build();
         when(currentUserService.getCurrentUser()).thenReturn(admin);
         when(orderCancelRequestRepository.findPendingCancelRequestById(20L)).thenReturn(Optional.of(cancelRequest));
+        when(orderRepository.findByIdForUpdate(10L)).thenReturn(Optional.of(order));
         when(orderCancelRequestRepository.save(cancelRequest)).thenReturn(cancelRequest);
         when(orderMapper.toOrderCancelRequestResponse(cancelRequest)).thenReturn(response);
 
@@ -457,8 +475,10 @@ class OrderServiceTest {
     void approveCancelOrder_shouldRejectCompletedOrder() {
         OrderCancelRequest cancelRequest = new OrderCancelRequest();
         cancelRequest.setOrder(orderWithStatus(OrderStatus.COMPLETED));
-        when(currentUserService.getCurrentUser()).thenReturn(User.builder().id(1L).build());
+        when(currentUserService.getCurrentUser())
+                .thenReturn(User.builder().id(1L).build());
         when(orderCancelRequestRepository.findPendingCancelRequestById(20L)).thenReturn(Optional.of(cancelRequest));
+        when(orderRepository.findByIdForUpdate(10L)).thenReturn(Optional.of(cancelRequest.getOrder()));
 
         assertError(ErrorCode.ORDER_CANCEL_REQUEST_NOT_ALLOWED, () -> orderService.approveCancelOrder(20L));
         verifyNoInteractions(inventoryService, couponApplicationService, orderPaymentService);
@@ -466,7 +486,8 @@ class OrderServiceTest {
 
     @Test
     void approveCancelOrder_shouldRejectMissingPendingRequest() {
-        when(currentUserService.getCurrentUser()).thenReturn(User.builder().id(1L).build());
+        when(currentUserService.getCurrentUser())
+                .thenReturn(User.builder().id(1L).build());
         when(orderCancelRequestRepository.findPendingCancelRequestById(20L)).thenReturn(Optional.empty());
 
         assertError(ErrorCode.ORDER_CANCEL_REQUEST_NOT_FOUND, () -> orderService.approveCancelOrder(20L));
@@ -476,7 +497,8 @@ class OrderServiceTest {
     void rejectCancelOrder_shouldMarkRequestRejected() {
         User admin = User.builder().id(1L).build();
         OrderCancelRequest cancelRequest = new OrderCancelRequest();
-        OrderCancelRequestResponse response = OrderCancelRequestResponse.builder().id(20L).build();
+        OrderCancelRequestResponse response =
+                OrderCancelRequestResponse.builder().id(20L).build();
         when(currentUserService.getCurrentUser()).thenReturn(admin);
         when(orderCancelRequestRepository.findPendingCancelRequestById(20L)).thenReturn(Optional.of(cancelRequest));
         when(orderCancelRequestRepository.save(cancelRequest)).thenReturn(cancelRequest);
@@ -497,7 +519,7 @@ class OrderServiceTest {
         User admin = User.builder().id(1L).build();
         Order order = orderWithStatus(oldStatus);
         OrderResponse response = OrderResponse.builder().id(10L).build();
-        when(orderRepository.findById(10L)).thenReturn(Optional.of(order));
+        when(orderRepository.findByIdForUpdate(10L)).thenReturn(Optional.of(order));
         when(currentUserService.getCurrentUser()).thenReturn(admin);
         when(orderRepository.save(order)).thenReturn(order);
         when(orderMapper.toOrderResponse(order)).thenReturn(response);
@@ -510,6 +532,7 @@ class OrderServiceTest {
 
     private Order orderWithStatus(OrderStatus status) {
         Order order = new Order();
+        order.setId(10L);
         order.setStatus(status);
         return order;
     }
