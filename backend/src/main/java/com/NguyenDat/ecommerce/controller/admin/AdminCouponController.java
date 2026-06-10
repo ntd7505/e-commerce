@@ -6,8 +6,10 @@ import jakarta.validation.Valid;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import com.NguyenDat.ecommerce.common.constant.AdminPermission;
 import com.NguyenDat.ecommerce.common.constant.ApiConstant;
 import com.NguyenDat.ecommerce.common.constant.ResponseCode;
 import com.NguyenDat.ecommerce.common.dto.response.ApiResponse;
@@ -26,6 +28,7 @@ import lombok.experimental.FieldDefaults;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequestMapping(ApiConstant.ADMIN_PREFIX)
+@PreAuthorize(AdminPermission.COUPON_ACCESS)
 public class AdminCouponController {
 
     CouponService couponService;

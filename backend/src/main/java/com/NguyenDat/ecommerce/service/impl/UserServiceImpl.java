@@ -52,7 +52,7 @@ public class UserServiceImpl implements UserService {
         User user = userMapper.toUser(request);
 
         Set<String> roleNames =
-                request.getRoles() == null || request.getRoles().isEmpty() ? Set.of("USER") : request.getRoles();
+                request.getRoles() == null || request.getRoles().isEmpty() ? Set.of("CUSTOMER") : request.getRoles();
 
         return createUserInternal(user, request.getPassword(), roleNames);
     }
@@ -128,7 +128,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse register(UserRegisterRequest request) {
         User user = userMapper.toUser(request);
-        return createUserInternal(user, request.getPassword(), Set.of("USER"));
+        return createUserInternal(user, request.getPassword(), Set.of("CUSTOMER"));
     }
 
     @Override

@@ -57,7 +57,7 @@ public class SecurityConfig {
                 .requestMatchers(SWAGGER_ENDPOINTS)
                 .permitAll()
                 .requestMatchers(ADMIN_PREFIX + "/**")
-                .hasRole("ADMIN")
+                .authenticated()
                 .anyRequest()
                 .authenticated());
 

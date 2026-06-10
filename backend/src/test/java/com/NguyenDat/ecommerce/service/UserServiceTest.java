@@ -19,6 +19,7 @@ import com.NguyenDat.ecommerce.common.exception.AppException;
 import com.NguyenDat.ecommerce.common.exception.ErrorCode;
 import com.NguyenDat.ecommerce.dto.request.UserCreationRequest;
 import com.NguyenDat.ecommerce.dto.request.UserUpdateRequest;
+import com.NguyenDat.ecommerce.dto.request.auth.UserRegisterRequest;
 import com.NguyenDat.ecommerce.dto.response.UserResponse;
 import com.NguyenDat.ecommerce.entity.Role;
 import com.NguyenDat.ecommerce.entity.User;
@@ -71,7 +72,10 @@ public class UserServiceTest {
                 .avatarUrl("updated-avatar.png")
                 .build();
 
-        role = Role.builder().name("USER").description("Default user role").build();
+        role = Role.builder()
+                .name("CUSTOMER")
+                .description("Default customer role")
+                .build();
 
         user = User.builder()
                 .id(1L)
@@ -100,7 +104,7 @@ public class UserServiceTest {
         when(userRepository.existsByPhoneNumber("0912345678")).thenReturn(false);
         when(userMapper.toUser(userCreationRequest)).thenReturn(user);
         when(passwordEncoder.encode("Dat@1234")).thenReturn("encoded-password");
-        when(roleRepository.findById("USER")).thenReturn(Optional.of(role));
+        when(roleRepository.findById("CUSTOMER")).thenReturn(Optional.of(role));
         when(userRepository.save(user)).thenReturn(user);
         when(userMapper.toUserResponse(user)).thenReturn(userResponse);
 
@@ -113,7 +117,7 @@ public class UserServiceTest {
         verify(userRepository).existsByEmail("dat@gmail.com");
         verify(userRepository).existsByPhoneNumber("0912345678");
         verify(passwordEncoder).encode("Dat@1234");
-        verify(roleRepository).findById("USER");
+        verify(roleRepository).findById("CUSTOMER");
         verify(userRepository).save(user);
     }
 
@@ -137,13 +141,13 @@ public class UserServiceTest {
     }
 
     @Test
-    void createUser_shouldAssignUserRole_whenRolesIsNull() {
+    void createUser_shouldAssignCustomerRole_whenRolesIsNull() {
         userCreationRequest.setRoles(null);
         when(userRepository.existsByEmail("dat@gmail.com")).thenReturn(false);
         when(userRepository.existsByPhoneNumber("0912345678")).thenReturn(false);
         when(userMapper.toUser(userCreationRequest)).thenReturn(user);
         when(passwordEncoder.encode("Dat@1234")).thenReturn("encoded-password");
-        when(roleRepository.findById("USER")).thenReturn(Optional.of(role));
+        when(roleRepository.findById("CUSTOMER")).thenReturn(Optional.of(role));
         when(userRepository.save(user)).thenReturn(user);
         when(userMapper.toUserResponse(user)).thenReturn(userResponse);
 
@@ -158,8 +162,29 @@ public class UserServiceTest {
         verify(userRepository).existsByEmail("dat@gmail.com");
         verify(userRepository).existsByPhoneNumber("0912345678");
         verify(passwordEncoder).encode("Dat@1234");
-        verify(roleRepository).findById("USER");
+        verify(roleRepository).findById("CUSTOMER");
         verify(userRepository).save(user);
+    }
+
+    @Test
+    void register_shouldAssignCustomerRole() {
+        UserRegisterRequest request = UserRegisterRequest.builder()
+                .email("dat@gmail.com")
+                .password("Dat@1234")
+                .fullName("Nguyen Dat")
+                .phoneNumber("0912345678")
+                .build();
+        when(userMapper.toUser(request)).thenReturn(user);
+        when(roleRepository.findById("CUSTOMER")).thenReturn(Optional.of(role));
+        when(passwordEncoder.encode("Dat@1234")).thenReturn("encoded-password");
+        when(userRepository.save(user)).thenReturn(user);
+        when(userMapper.toUserResponse(user)).thenReturn(userResponse);
+
+        UserResponse result = userService.register(request);
+
+        assertEquals(userResponse, result);
+        assertEquals(Set.of(role), user.getRoles());
+        verify(roleRepository).findById("CUSTOMER");
     }
 
     @Test
@@ -167,10 +192,10 @@ public class UserServiceTest {
         when(userRepository.existsByEmail("dat@gmail.com")).thenReturn(false);
         when(userRepository.existsByPhoneNumber("0912345678")).thenReturn(false);
         when(userMapper.toUser(userCreationRequest)).thenReturn(user);
-        when(roleRepository.findById("USER")).thenReturn(Optional.empty());
+        when(roleRepository.findById("CUSTOMER")).thenReturn(Optional.empty());
         AppException exception = assertThrows(AppException.class, () -> userService.createUser(userCreationRequest));
         assertEquals(ErrorCode.ROLE_NOT_FOUND, exception.getErrorCode());
-        verify(roleRepository).findById("USER");
+        verify(roleRepository).findById("CUSTOMER");
         verify(userRepository, never()).save(any());
     }
 
