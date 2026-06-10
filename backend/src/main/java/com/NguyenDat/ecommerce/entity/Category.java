@@ -34,9 +34,11 @@ public class Category {
     String description;
 
     @Column(nullable = false)
+    @Builder.Default
     boolean active = true;
 
     @Column(nullable = false)
+    @Builder.Default
     boolean deleted = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -44,9 +46,11 @@ public class Category {
     Category parentCategory;
 
     @OneToMany(mappedBy = "parentCategory")
+    @Builder.Default
     List<Category> children = new ArrayList<>();
 
     @OneToMany(mappedBy = "category")
+    @Builder.Default
     List<Product> products = new ArrayList<>();
 
     @CreationTimestamp

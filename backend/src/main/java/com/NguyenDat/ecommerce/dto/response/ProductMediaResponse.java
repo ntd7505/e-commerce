@@ -16,5 +16,7 @@ public class ProductMediaResponse {
     boolean thumbnail;
     int sortOrder;
     String altText;
+
+    @Builder.Default
     boolean active = true;
 }

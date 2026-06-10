@@ -22,6 +22,7 @@ public class ProductVariantRequest {
     String variantName;
 
     @Min(value = 0, message = "STOCK_MUST_BE_POSITIVE")
+    @Builder.Default
     int stockQuantity = 0;
 
     @Positive(message = "PRICE_MUST_BE_POSITIVE")

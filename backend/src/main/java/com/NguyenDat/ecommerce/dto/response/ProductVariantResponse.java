@@ -12,7 +12,10 @@ import lombok.experimental.FieldDefaults;
 public class ProductVariantResponse {
     private Long id;
     String variantName;
+
+    @Builder.Default
     int stockQuantity = 0;
+
     double price;
     double salePrice;
     String currency;

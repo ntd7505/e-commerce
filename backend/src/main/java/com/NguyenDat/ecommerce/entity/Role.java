@@ -22,6 +22,7 @@ public class Role {
 
     String description;
 
+    @Builder.Default
     @ManyToMany(mappedBy = "roles")
     Set<User> userSet = new HashSet<>();
 
