@@ -3,15 +3,43 @@ spring:
     name: e-commerce
 
   datasource:
-    url: jdbc:mysql://localhost:3306/ecommerce_db?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
+    url: ${DB_URL:jdbc:mysql://localhost:3306/ecommerce_db?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC}
     username: ${DB_USERNAME:root}
     password: ${DB_PASSWORD:root}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
     hibernate:
-      ddl-auto: update
-    show-sql: true
+      ddl-auto: validate
+    show-sql: ${JPA_SHOW_SQL:false}
+    open-in-view: false
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    baseline-version: 1
+
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      database: ${REDIS_DATABASE:1}
+      timeout: 2s
+      repositories:
+        enabled: false
+
+  cache:
+    type: redis
+    cache-names:
+      - product-details
+      - brands
+      - categories
+    redis:
+      cache-null-values: false
+
+app:
+  cache:
+    key-prefix: "ecommerce:${APP_ENV:dev}:cache:"
 
 springdoc:
   api-docs:
@@ -27,10 +55,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: beans, health, mappings
-  endpoint:
-    beans:
-      enabled: true
+        include: health
 
 jwt:
-  signerKey: "6af1bf3113085cdd2b80529060f888899aedf307965920c68d6111c18f959558"
+  signerKey: ${JWT_SIGNER_KEY}

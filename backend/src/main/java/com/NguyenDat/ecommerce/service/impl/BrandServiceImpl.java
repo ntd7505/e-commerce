@@ -4,12 +4,15 @@ import java.util.List;
 
 import jakarta.validation.Valid;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.NguyenDat.ecommerce.common.constant.CacheName;
 import com.NguyenDat.ecommerce.common.dto.response.PageResponse;
 import com.NguyenDat.ecommerce.common.exception.AppException;
 import com.NguyenDat.ecommerce.common.exception.ErrorCode;
@@ -67,6 +70,7 @@ public class BrandServiceImpl implements BrandService {
     }
 
     @Transactional
+    @CacheEvict(cacheNames = CacheName.BRANDS, allEntries = true)
     public void deleteBrand(Long id) {
         Brand brand = brandRepository
                 .findByIdAndDeletedFalse(id)
@@ -87,6 +91,7 @@ public class BrandServiceImpl implements BrandService {
     }
 
     @Transactional
+    @CacheEvict(cacheNames = CacheName.BRANDS, allEntries = true)
     public BrandResponse updateBrandById(Long id, BrandRequest brandRequest) {
         Brand brand = brandRepository
                 .findByIdAndDeletedFalse(id)
@@ -119,6 +124,7 @@ public class BrandServiceImpl implements BrandService {
     }
 
     @Transactional
+    @CacheEvict(cacheNames = CacheName.BRANDS, allEntries = true)
     public BrandResponse updateBrandStatusById(@Valid BrandStatusUpdateRequest brandStatusUpdateRequest, Long id) {
         Brand brand = brandRepository
                 .findByIdAndDeletedFalse(id)
@@ -128,6 +134,7 @@ public class BrandServiceImpl implements BrandService {
     }
 
     @Override
+    @Cacheable(cacheNames = CacheName.BRANDS, key = "'all'")
     public List<BrandResponse> showAllBrands() {
         return brandRepository.findAllByDeletedFalseAndActiveTrue().stream()
                 .map(brandMapper::toBrandResponse)

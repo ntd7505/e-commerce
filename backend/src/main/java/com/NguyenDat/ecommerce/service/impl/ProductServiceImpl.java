@@ -6,11 +6,14 @@ import java.util.List;
 
 import jakarta.validation.Valid;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.NguyenDat.ecommerce.common.constant.CacheName;
 import com.NguyenDat.ecommerce.common.dto.response.PageResponse;
 import com.NguyenDat.ecommerce.common.exception.AppException;
 import com.NguyenDat.ecommerce.common.exception.ErrorCode;
@@ -94,6 +97,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Transactional
+    @CacheEvict(cacheNames = CacheName.PRODUCT_DETAILS, allEntries = true)
     public ProductVariantResponse addNewProductVariants(
             Long productId, @Valid ProductVariantRequest productVariantRequest) {
         Product product = productRepository
@@ -135,6 +139,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Transactional
+    @CacheEvict(cacheNames = CacheName.PRODUCT_DETAILS, allEntries = true)
     public ProductResponse updateProductById(@Valid ProductUpdateRequest productUpdateRequest, Long id) {
         Product product = productRepository
                 .findByIdAndDeletedFalse(id)
@@ -169,6 +174,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Transactional
+    @CacheEvict(cacheNames = CacheName.PRODUCT_DETAILS, allEntries = true)
     public ProductResponse updateProductStatus(Long id) {
         Product product = productRepository
                 .findByIdAndDeletedFalse(id)
@@ -179,6 +185,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Transactional
+    @CacheEvict(cacheNames = CacheName.PRODUCT_DETAILS, allEntries = true)
     public ProductVariantResponse updateVariantById(
             @Valid ProductVariantUpdateRequest productVariantUpdateRequest, Long id) {
         ProductVariant productVariant = productVariantRepository
@@ -206,6 +213,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Transactional
+    @CacheEvict(cacheNames = CacheName.PRODUCT_DETAILS, allEntries = true)
     public ProductVariantResponse updateProductVariantStatus(Long variantId) {
         ProductVariant productVariant = productVariantRepository
                 .findByIdAndDeletedFalseAndProductDeletedFalse(variantId)
@@ -216,6 +224,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Transactional
+    @CacheEvict(cacheNames = CacheName.PRODUCT_DETAILS, allEntries = true)
     public void deleteProductVariantsById(Long id) {
         ProductVariant productVariant = productVariantRepository
                 .findByIdAndDeletedFalseAndProductDeletedFalse(id)
@@ -241,6 +250,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Transactional
+    @CacheEvict(cacheNames = CacheName.PRODUCT_DETAILS, allEntries = true)
     public ProductMediaResponse createProductMedia(Long productId, ProductMediaRequest productMediaRequest) {
         Product product = productRepository
                 .findByIdAndDeletedFalse(productId)
@@ -258,6 +268,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Transactional
+    @CacheEvict(cacheNames = CacheName.PRODUCT_DETAILS, allEntries = true)
     public ProductMediaResponse updateProductMediaById(
             Long mediaId, @Valid ProductMediaUpdateRequest productMediaUpdateRequest) {
         ProductMedia productMedia = productMediaRepository
@@ -279,6 +290,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Transactional
+    @CacheEvict(cacheNames = CacheName.PRODUCT_DETAILS, allEntries = true)
     public void deleteProductMediaById(Long mediaId) {
         ProductMedia productMedia = productMediaRepository
                 .findByIdAndDeletedFalseAndProductDeletedFalse(mediaId)
@@ -296,6 +308,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Cacheable(cacheNames = CacheName.PRODUCT_DETAILS, key = "#slug.trim().toLowerCase()", sync = true)
     public ProductResponse showProductBySlug(String slug) {
         Product product = productRepository
                 .findBySlugAndDeletedFalseAndActiveTrue(slug.trim())
@@ -305,6 +318,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
+    @CacheEvict(cacheNames = CacheName.PRODUCT_DETAILS, allEntries = true)
     public void deleteProductById(Long id) {
         Product product = productRepository
                 .findByIdAndDeletedFalse(id)

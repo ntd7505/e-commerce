@@ -4,11 +4,14 @@ import java.util.List;
 
 import jakarta.validation.Valid;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.NguyenDat.ecommerce.common.constant.CacheName;
 import com.NguyenDat.ecommerce.common.dto.response.PageResponse;
 import com.NguyenDat.ecommerce.common.exception.AppException;
 import com.NguyenDat.ecommerce.common.exception.ErrorCode;
@@ -79,6 +82,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Transactional
+    @CacheEvict(cacheNames = CacheName.CATEGORIES, allEntries = true)
     public CategoryResponse updateCategoryById(@Valid CategoryRequest categoryRequest, Long id) {
         Category category = categoryRepository
                 .findByIdAndDeletedFalse(id)
@@ -129,6 +133,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Transactional
+    @CacheEvict(cacheNames = CacheName.CATEGORIES, allEntries = true)
     public void deleteCategoryById(Long id) {
         Category category = categoryRepository
                 .findByIdAndDeletedFalse(id)
@@ -147,6 +152,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Cacheable(cacheNames = CacheName.CATEGORIES, key = "'all'")
     public List<CategoryResponse> showAllCategories() {
         return categoryRepository.findAllByDeletedFalseAndActiveTrue().stream()
                 .map(categoryMapper::toCategoryResponse)
