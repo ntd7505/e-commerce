@@ -1,8 +1,8 @@
-import { BrandHeader } from "../../features/brands/components/BrandHeader";
-import { BrandModal } from "../../features/brands/components/BrandModal";
-import { BrandStats } from "../../features/brands/components/BrandStats";
-import { BrandTable } from "../../features/brands/components/BrandTable";
-import { useAdminBrands } from "../../features/brands/hooks/useAdminBrands";
+import { BrandHeader } from "../../features/admin/brands/components/BrandHeader";
+import { BrandModal } from "../../features/admin/brands/components/BrandModal";
+import { BrandStats } from "../../features/admin/brands/components/BrandStats";
+import { BrandTable } from "../../features/admin/brands/components/BrandTable";
+import { useAdminBrands } from "../../features/admin/brands/hooks/useAdminBrands";
 
 export default function Brands() {
   const brandsPage = useAdminBrands();

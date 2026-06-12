@@ -1,7 +1,7 @@
 import { Save } from "lucide-react";
 import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
-import { AdminAlert } from "../../components/AdminAlert";
+import { AdminAlert } from "../../components/admin/AdminAlert";
 
 type AdminSettings = {
   shopName: string;

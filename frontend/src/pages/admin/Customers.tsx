@@ -1,4 +1,4 @@
-import CustomersPageContent from "../../features/customers/components/CustomersPageContent";
+import CustomersPageContent from "../../features/admin/customers/components/CustomersPageContent";
 
 export default function Customers() {
   return <CustomersPageContent />;

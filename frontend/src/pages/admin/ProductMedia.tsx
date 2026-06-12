@@ -1,11 +1,11 @@
 import { Edit, RefreshCw, Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { AdminBadge } from "../../components/AdminBadge";
-import { AdminImage } from "../../components/AdminImage";
-import { AdminStatCard } from "../../components/AdminStatCard";
-import { getProducts } from "../../features/adminProducts/adminProductApi";
-import type { ProductMediaResponse, ProductResponse } from "../../features/adminProducts/adminProductTypes";
+import { AdminBadge } from "../../components/admin/AdminBadge";
+import { AdminImage } from "../../components/admin/AdminImage";
+import { AdminStatCard } from "../../components/admin/AdminStatCard";
+import { getProducts } from "../../features/admin/products/adminProductApi";
+import type { ProductMediaResponse, ProductResponse } from "../../features/admin/products/adminProductTypes";
 
 type ProductMediaItem = ProductMediaResponse & {
   productId: number;

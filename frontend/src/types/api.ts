@@ -5,7 +5,7 @@ export type ApiResponse<T> = {
     timestamp?: string;
 };
 
-type PageResponse<T> = {
+export type PageResponse<T> = {
     content?: T[];
 };
 

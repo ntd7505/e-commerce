@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { AdminAlert } from "../../components/AdminAlert";
-import { OrderDetailModal } from "../../features/orders/components/OrderDetailModal";
-import { OrderCancelRequestsTable } from "../../features/orders/components/OrderCancelRequestsTable";
-import { OrderStats } from "../../features/orders/components/OrderStats";
-import { OrdersHeader } from "../../features/orders/components/OrdersHeader";
-import { OrdersTable } from "../../features/orders/components/OrdersTable";
-import { useAdminOrderCancelRequests } from "../../features/orders/hooks/useAdminOrderCancelRequests";
-import { useAdminOrders } from "../../features/orders/hooks/useAdminOrders";
+import { AdminAlert } from "../../components/admin/AdminAlert";
+import { OrderDetailModal } from "../../features/admin/orders/components/OrderDetailModal";
+import { OrderCancelRequestsTable } from "../../features/admin/orders/components/OrderCancelRequestsTable";
+import { OrderStats } from "../../features/admin/orders/components/OrderStats";
+import { OrdersHeader } from "../../features/admin/orders/components/OrdersHeader";
+import { OrdersTable } from "../../features/admin/orders/components/OrdersTable";
+import { useAdminOrderCancelRequests } from "../../features/admin/orders/hooks/useAdminOrderCancelRequests";
+import { useAdminOrders } from "../../features/admin/orders/hooks/useAdminOrders";
 
 type OrdersPageTab = "ORDERS" | "CANCEL_REQUESTS";
 

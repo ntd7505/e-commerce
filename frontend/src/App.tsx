@@ -1,7 +1,9 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import AdminLayout from './layouts/AdminLayout';
+import AdminLayout from './layouts/admin/AdminLayout';
+import ClientLayout from './layouts/client/ClientLayout';
 
 // Pages
+import Home from './pages/client/Home';
 import Dashboard from './pages/admin/Dashboard';
 import Orders from './pages/admin/Orders';
 import Customers from './pages/admin/Customers';
@@ -24,7 +26,10 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Navigate to="/login" replace />} />
+        {/* Client Routes (Trang dành cho khách hàng) */}
+        <Route path="/" element={<ClientLayout />}>
+          <Route index element={<Home />} />
+        </Route>
         <Route path="/login" element={<Login />} />
 
         {/* Admin Routes */}

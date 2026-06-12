@@ -1,8 +1,8 @@
-import { CategoryHeader } from "../../features/categories/components/CategoryHeader";
-import { CategoryModal } from "../../features/categories/components/CategoryModal";
-import { CategoryStats } from "../../features/categories/components/CategoryStats";
-import { CategoryTable } from "../../features/categories/components/CategoryTable";
-import { useAdminCategories } from "../../features/categories/hooks/useAdminCategories";
+import { CategoryHeader } from "../../features/admin/categories/components/CategoryHeader";
+import { CategoryModal } from "../../features/admin/categories/components/CategoryModal";
+import { CategoryStats } from "../../features/admin/categories/components/CategoryStats";
+import { CategoryTable } from "../../features/admin/categories/components/CategoryTable";
+import { useAdminCategories } from "../../features/admin/categories/hooks/useAdminCategories";
 
 export default function Categories() {
   const categoriesPage = useAdminCategories();

@@ -1,4 +1,4 @@
-import type { BadgeVariant } from "../components/AdminBadge";
+import type { BadgeVariant } from "../components/admin/AdminBadge";
 
 export function badgeVariantForStatus(status: string): BadgeVariant {
     switch (status.toUpperCase()) {

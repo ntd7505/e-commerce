@@ -1,9 +1,9 @@
-import { AdminAlert } from "../../components/AdminAlert";
-import { CouponHeader } from "../../features/coupon/components/CouponHeader";
-import { useAdminCoupons } from "../../features/coupon/hook/useAdminCoupons";
-import { CouponStats } from "../../features/coupon/components/CouponStats";
-import { CouponTable } from "../../features/coupon/components/CouponTable";
-import { CouponModal } from "../../features/coupon/components/CouponModal";
+import { AdminAlert } from "../../components/admin/AdminAlert";
+import { CouponHeader } from "../../features/admin/coupons/components/CouponHeader";
+import { useAdminCoupons } from "../../features/admin/coupons/hook/useAdminCoupons";
+import { CouponStats } from "../../features/admin/coupons/components/CouponStats";
+import { CouponTable } from "../../features/admin/coupons/components/CouponTable";
+import { CouponModal } from "../../features/admin/coupons/components/CouponModal";
 export default function Coupons() {
   const couponsPage = useAdminCoupons();
 

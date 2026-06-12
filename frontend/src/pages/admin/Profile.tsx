@@ -1,4 +1,4 @@
-import AdminProfilePageContent from "../../features/adminProfile/components/AdminProfilePageContent";
+import AdminProfilePageContent from "../../features/admin/profile/components/AdminProfilePageContent";
 
 export default function Profile() {
   return <AdminProfilePageContent />;

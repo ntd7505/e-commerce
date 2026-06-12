@@ -1,10 +1,10 @@
 import { RefreshCw, Search, Star } from "lucide-react";
 import { useEffect, useState } from "react";
-import { AdminImage } from "../../components/AdminImage";
-import { AdminStatCard } from "../../components/AdminStatCard";
-import { getProducts } from "../../features/adminProducts/adminProductApi";
-import { getProductReviews } from "../../features/reviews/adminProductReviewApi";
-import type { ProductReviewResponse } from "../../features/reviews/adminProductReviewTypes";
+import { AdminImage } from "../../components/admin/AdminImage";
+import { AdminStatCard } from "../../components/admin/AdminStatCard";
+import { getProducts } from "../../features/admin/products/adminProductApi";
+import { getProductReviews } from "../../features/admin/reviews/adminProductReviewApi";
+import type { ProductReviewResponse } from "../../features/admin/reviews/adminProductReviewTypes";
 
 type RatingFilter = "ALL" | "5" | "4" | "3" | "2" | "1";
 

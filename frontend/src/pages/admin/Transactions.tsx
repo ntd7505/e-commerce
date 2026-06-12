@@ -1,9 +1,9 @@
 import { Download, RefreshCw, Search, ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
-import { AdminStatCard } from "../../components/AdminStatCard";
-import { getOrders } from "../../features/orders/adminOrderApi";
-import type { OrderResponse, PaymentStatus } from "../../features/orders/adminOrderTypes";
-import { OrderStatusBadge } from "../../features/orders/components/OrderStatusBadge";
+import { AdminStatCard } from "../../components/admin/AdminStatCard";
+import { getOrders } from "../../features/admin/orders/adminOrderApi";
+import type { OrderResponse, PaymentStatus } from "../../features/admin/orders/adminOrderTypes";
+import { OrderStatusBadge } from "../../features/admin/orders/components/OrderStatusBadge";
 
 type PaymentStatusFilter = "ALL" | PaymentStatus;
 

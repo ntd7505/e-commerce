@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { RefreshCw, Search, ShieldCheck, Users } from "lucide-react";
-import { AdminBadge } from "../../components/AdminBadge";
-import { getAdminUsers } from "../../features/customers/adminUserApi";
-import { getRoles } from "../../features/roles/adminRoleApi";
-import type { AdminUserResponse } from "../../features/customers/adminUserTypes";
-import type { RoleResponse } from "../../features/roles/adminRoleTypes";
+import { AdminBadge } from "../../components/admin/AdminBadge";
+import { getAdminUsers } from "../../features/admin/customers/adminUserApi";
+import { getRoles } from "../../features/admin/roles/adminRoleApi";
+import type { AdminUserResponse } from "../../features/admin/customers/adminUserTypes";
+import type { RoleResponse } from "../../features/admin/roles/adminRoleTypes";
 
 export default function Authority() {
   const [users, setUsers] = useState<AdminUserResponse[]>([]);

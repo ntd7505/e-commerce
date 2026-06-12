@@ -1,12 +1,12 @@
 import { AlertTriangle } from 'lucide-react';
-import { ProductBasicDetails } from '../../features/adminProducts/components/ProductBasicDetails';
-import { ProductClassificationPanel } from '../../features/adminProducts/components/ProductClassificationPanel';
-import { ProductCreateImagesPanel } from '../../features/adminProducts/components/ProductCreateImagesPanel';
-import { ProductEditorHeader } from '../../features/adminProducts/components/ProductEditorHeader';
-import { ProductInitialVariantForm } from '../../features/adminProducts/components/ProductInitialVariantForm';
-import { ProductMediaEditor } from '../../features/adminProducts/components/ProductMediaEditor';
-import { ProductVariantsEditor } from '../../features/adminProducts/components/ProductVariantsEditor';
-import { useAdminProductEditor } from '../../features/adminProducts/hooks/useAdminProductEditor';
+import { ProductBasicDetails } from '../../features/admin/products/components/ProductBasicDetails';
+import { ProductClassificationPanel } from '../../features/admin/products/components/ProductClassificationPanel';
+import { ProductCreateImagesPanel } from '../../features/admin/products/components/ProductCreateImagesPanel';
+import { ProductEditorHeader } from '../../features/admin/products/components/ProductEditorHeader';
+import { ProductInitialVariantForm } from '../../features/admin/products/components/ProductInitialVariantForm';
+import { ProductMediaEditor } from '../../features/admin/products/components/ProductMediaEditor';
+import { ProductVariantsEditor } from '../../features/admin/products/components/ProductVariantsEditor';
+import { useAdminProductEditor } from '../../features/admin/products/hooks/useAdminProductEditor';
 
 export default function AddProduct() {
   const editor = useAdminProductEditor();

@@ -1,4 +1,4 @@
-import RoleManagementPageContent from "../../features/roles/components/RoleManagementPageContent";
+import RoleManagementPageContent from "../../features/admin/roles/components/RoleManagementPageContent";
 
 export default function AdminRole() {
   return <RoleManagementPageContent />;

@@ -1,7 +1,7 @@
-import { ProductListHeader } from '../../features/adminProducts/components/ProductListHeader';
-import { ProductStats } from '../../features/adminProducts/components/ProductStats';
-import { ProductTable } from '../../features/adminProducts/components/ProductTable';
-import { useAdminProductsList } from '../../features/adminProducts/hooks/useAdminProductsList';
+import { ProductListHeader } from '../../features/admin/products/components/ProductListHeader';
+import { ProductStats } from '../../features/admin/products/components/ProductStats';
+import { ProductTable } from '../../features/admin/products/components/ProductTable';
+import { useAdminProductsList } from '../../features/admin/products/hooks/useAdminProductsList';
 
 export default function Products() {
   const productsList = useAdminProductsList();

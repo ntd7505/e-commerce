@@ -2,4 +2,14 @@
 
 @theme {
   --font-sans: "Inter", sans-serif;
+  --color-nexa-blue: #0066cc;
+  --color-nexa-red: #ee4d2d;
+  --color-nexa-gray-bg: #f4f4f4;
+  --color-nexa-text-gray: #757575;
+}
+
+@utility container-custom {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 15px;
 }
