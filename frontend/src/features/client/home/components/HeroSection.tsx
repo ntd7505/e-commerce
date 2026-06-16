@@ -5,7 +5,7 @@ import MainBanner from './MainBanner';
 const HeroSection = () => {
   return (
     <main className="container-custom mt-4">
-      <div className="grid grid-cols-12 gap-4 h-[380px]">
+      <div className="grid grid-cols-12 gap-4 md:h-[380px]">
         <CategorySidebar />
         <MainBanner />
       </div>

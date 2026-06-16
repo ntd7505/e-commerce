@@ -1,9 +1,9 @@
-import { adminClient } from "../../../api/adminClient";
+import { apiClient } from "../../../api/apiClient";
 import type { ApiResponse } from "../../../types/api";
 import type { PermissionResponse, RoleCreateRequest, RoleResponse } from "./adminRoleTypes";
 
 export async function getRoles(): Promise<RoleResponse[]> {
-  const response = await adminClient.get<ApiResponse<RoleResponse[]>>(
+  const response = await apiClient.get<ApiResponse<RoleResponse[]>>(
     "/api/v1/admin/roles"
   );
 
@@ -11,7 +11,7 @@ export async function getRoles(): Promise<RoleResponse[]> {
 }
 
 export async function createRole(payload: RoleCreateRequest): Promise<RoleResponse> {
-  const response = await adminClient.post<ApiResponse<RoleResponse>>(
+  const response = await apiClient.post<ApiResponse<RoleResponse>>(
     "/api/v1/admin/roles",
     payload
   );
@@ -20,7 +20,7 @@ export async function createRole(payload: RoleCreateRequest): Promise<RoleRespon
 }
 
 export async function getPermissions(): Promise<PermissionResponse[]> {
-  const response = await adminClient.get<ApiResponse<PermissionResponse[]>>(
+  const response = await apiClient.get<ApiResponse<PermissionResponse[]>>(
     "/api/v1/admin/permissions"
   );
 

@@ -1,9 +1,9 @@
-import { adminClient } from "../../../api/adminClient";
+import { apiClient } from "../../../api/apiClient";
 import { unwrapApiList, type ApiResponse } from "../../../types/api";
 import type { AdminUserResponse, UserStatus } from "./adminUserTypes";
 
 export async function getAdminUsers(): Promise<AdminUserResponse[]> {
-  const response = await adminClient.get<ApiResponse<AdminUserResponse[]>>(
+  const response = await apiClient.get<ApiResponse<AdminUserResponse[]>>(
     "/api/v1/admin/users/all"
   );
 
@@ -11,7 +11,7 @@ export async function getAdminUsers(): Promise<AdminUserResponse[]> {
 }
 
 export async function getCurrentAdminUser(): Promise<AdminUserResponse> {
-  const response = await adminClient.get<ApiResponse<AdminUserResponse>>(
+  const response = await apiClient.get<ApiResponse<AdminUserResponse>>(
     "/api/v1/admin/users/me"
   );
 
@@ -22,7 +22,7 @@ export async function updateAdminUserStatus(
   id: number,
   status: UserStatus
 ): Promise<AdminUserResponse> {
-  const response = await adminClient.patch<ApiResponse<AdminUserResponse>>(
+  const response = await apiClient.patch<ApiResponse<AdminUserResponse>>(
     `/api/v1/admin/users/${id}/status`,
     { status }
   );

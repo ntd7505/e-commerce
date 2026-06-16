@@ -112,7 +112,7 @@ export default function AdminLayout() {
   const navigate = useNavigate();
   const location = useLocation();
   const user = getStoredUser();
-  const displayName = user ? `${user.firstName} ${user.lastName}`.trim() || user.email : 'Dealport';
+  const displayName = user ? (user.fullName || user.email) : 'Dealport';
   const displayEmail = user?.email ?? 'admin';
   const pageTitle = getPageTitle(location.pathname);
 

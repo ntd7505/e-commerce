@@ -1,4 +1,4 @@
-import { adminClient } from "../../../api/adminClient";
+import { apiClient } from "../../../api/apiClient";
 import { unwrapApiList, type ApiResponse } from "../../../types/api";
 
 import type {
@@ -14,7 +14,7 @@ import type {
 } from "./adminProductTypes";
 
 export async function getProducts(): Promise<ProductResponse[]> {
-    const response = await adminClient.get<ApiResponse<ProductResponse[]>>(
+    const response = await apiClient.get<ApiResponse<ProductResponse[]>>(
         "/api/v1/admin/products/all"
     );
 
@@ -22,7 +22,7 @@ export async function getProducts(): Promise<ProductResponse[]> {
 }
 
 export async function getProductById(id: number): Promise<ProductResponse> {
-    const response = await adminClient.get<ApiResponse<ProductResponse>>(
+    const response = await apiClient.get<ApiResponse<ProductResponse>>(
         `/api/v1/admin/products/${id}`
     );
 
@@ -32,7 +32,7 @@ export async function getProductById(id: number): Promise<ProductResponse> {
 export async function createProduct(
     payload: ProductCreateRequest
 ): Promise<ProductResponse> {
-    const response = await adminClient.post<ApiResponse<ProductResponse>>(
+    const response = await apiClient.post<ApiResponse<ProductResponse>>(
         "/api/v1/admin/products",
         payload
     );
@@ -41,7 +41,7 @@ export async function createProduct(
 }
 
 export async function toggleProductStatus(id: number): Promise<ProductResponse> {
-    const response = await adminClient.patch<ApiResponse<ProductResponse>>(
+    const response = await apiClient.patch<ApiResponse<ProductResponse>>(
         `/api/v1/admin/products/${id}/status`
     );
 
@@ -52,7 +52,7 @@ export async function updateProduct(
     id: number,
     payload: ProductUpdateRequest
 ): Promise<ProductResponse> {
-    const response = await adminClient.patch<ApiResponse<ProductResponse>>(
+    const response = await apiClient.patch<ApiResponse<ProductResponse>>(
         `/api/v1/admin/products/${id}`,
         payload
     );
@@ -64,7 +64,7 @@ export async function addProductVariant(
     productId: number,
     payload: ProductVariantRequest
 ): Promise<ProductVariantResponse> {
-    const response = await adminClient.post<ApiResponse<ProductVariantResponse>>(
+    const response = await apiClient.post<ApiResponse<ProductVariantResponse>>(
         `/api/v1/admin/products/${productId}/variants`,
         payload
     );
@@ -73,7 +73,7 @@ export async function addProductVariant(
 }
 
 export async function getProductVariantById(id: number): Promise<ProductVariantResponse> {
-    const response = await adminClient.get<ApiResponse<ProductVariantResponse>>(
+    const response = await apiClient.get<ApiResponse<ProductVariantResponse>>(
         `/api/v1/admin/products/variants/${id}`
     );
 
@@ -84,7 +84,7 @@ export async function updateProductVariant(
     id: number,
     payload: ProductVariantUpdateRequest
 ): Promise<ProductVariantResponse> {
-    const response = await adminClient.patch<ApiResponse<ProductVariantResponse>>(
+    const response = await apiClient.patch<ApiResponse<ProductVariantResponse>>(
         `/api/v1/admin/products/variants/${id}`,
         payload
     );
@@ -93,7 +93,7 @@ export async function updateProductVariant(
 }
 
 export async function toggleProductVariantStatus(id: number): Promise<ProductVariantResponse> {
-    const response = await adminClient.patch<ApiResponse<ProductVariantResponse>>(
+    const response = await apiClient.patch<ApiResponse<ProductVariantResponse>>(
         `/api/v1/admin/products/variants/${id}/status`
     );
 
@@ -101,14 +101,14 @@ export async function toggleProductVariantStatus(id: number): Promise<ProductVar
 }
 
 export async function deleteProductVariant(id: number): Promise<void> {
-    await adminClient.delete(`/api/v1/admin/products/variants/${id}`);
+    await apiClient.delete(`/api/v1/admin/products/variants/${id}`);
 }
 
 export async function createProductMedia(
     productId: number,
     payload: ProductMediaRequest
 ): Promise<ProductMediaResponse> {
-    const response = await adminClient.post<ApiResponse<ProductMediaResponse>>(
+    const response = await apiClient.post<ApiResponse<ProductMediaResponse>>(
         `/api/v1/admin/products/${productId}/media`,
         payload
     );
@@ -120,7 +120,7 @@ export async function updateProductMedia(
     mediaId: number,
     payload: ProductMediaUpdateRequest
 ): Promise<ProductMediaResponse> {
-    const response = await adminClient.patch<ApiResponse<ProductMediaResponse>>(
+    const response = await apiClient.patch<ApiResponse<ProductMediaResponse>>(
         `/api/v1/admin/products/media/${mediaId}`,
         payload
     );
@@ -129,5 +129,5 @@ export async function updateProductMedia(
 }
 
 export async function deleteProductMedia(mediaId: number): Promise<void> {
-    await adminClient.delete(`/api/v1/admin/products/media/${mediaId}`);
+    await apiClient.delete(`/api/v1/admin/products/media/${mediaId}`);
 }

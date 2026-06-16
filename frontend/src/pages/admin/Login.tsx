@@ -17,11 +17,20 @@ export default function Login() {
 
     try {
       const data = await signIn({ email, password });
-
-      localStorage.setItem('accessToken', data.accessToken);
-      localStorage.setItem('user', JSON.stringify(data.user));
-
-      navigate('/admin/dashboard');
+      
+      const { setAuthSession } = await import('../../features/auth/authStorage');
+      setAuthSession(data.accessToken, data.refreshToken);
+      
+      const { getMe } = await import('../../features/auth/authApi');
+      const userData = await getMe();
+      
+      // We need to reload to trigger AuthProvider loadUser, or set it directly.
+      // Since AuthProvider checks token on mount, if we navigate and force a re-render it works.
+      // Better yet, we can just reload the page to the redirect URL or dashboard.
+      const params = new URLSearchParams(window.location.search);
+      const redirect = params.get('redirect') || '/admin/dashboard';
+      window.location.href = redirect;
+      
     } catch {
       setError('Email hoặc mật khẩu không đúng');
     } finally {

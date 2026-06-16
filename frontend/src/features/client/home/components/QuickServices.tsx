@@ -11,15 +11,17 @@ const QuickServices = () => {
 
   return (
     <div className="container-custom mt-8" data-purpose="service-links">
-      <div className="bg-white rounded-lg p-6 flex justify-between items-center shadow-sm">
-        {services.map((service, index) => (
-          <div key={index} className="flex flex-col items-center gap-3 cursor-pointer group hover:-translate-y-1 transition-transform duration-300">
-            <div className={`w-14 h-14 rounded-full flex items-center justify-center text-2xl transition-all duration-300 group-hover:text-white group-hover:shadow-lg ${service.colorClass}`}>
-              <i className={`fa-solid ${service.icon}`}></i>
+      <div className="bg-white rounded-lg p-4 md:p-6 shadow-sm">
+        <div className="grid grid-cols-3 md:grid-cols-5 gap-4 md:gap-6">
+          {services.map((service, index) => (
+            <div key={index} className="flex flex-col items-center gap-2 md:gap-3 cursor-pointer group hover:-translate-y-1 transition-transform duration-300">
+              <div className={`w-12 h-12 md:w-14 md:h-14 rounded-full flex items-center justify-center text-xl md:text-2xl transition-all duration-300 group-hover:text-white group-hover:shadow-lg ${service.colorClass}`}>
+                <i className={`fa-solid ${service.icon}`}></i>
+              </div>
+              <span className="text-xs md:text-sm font-medium group-hover:text-nexa-blue transition-colors text-center">{service.name}</span>
             </div>
-            <span className="text-sm font-medium group-hover:text-nexa-blue transition-colors">{service.name}</span>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );

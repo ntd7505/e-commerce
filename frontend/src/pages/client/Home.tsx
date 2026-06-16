@@ -1,34 +1,38 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import HeroSection from '../../features/client/home/components/HeroSection';
 import QuickServices from '../../features/client/home/components/QuickServices';
 import FlashSaleSection from '../../features/client/home/components/FlashSaleSection';
 import RecommendedSection from '../../features/client/home/components/RecommendedSection';
-
-
-import { clientProductApi } from '../../features/client/home/clientProductApi';
-
+import { useFlashSaleProducts } from '../../features/client/home/hooks/useFlashSaleProducts';
+import { useRecommendedProducts } from '../../features/client/home/hooks/useRecommendedProducts';
 
 const Home = () => {
+  const {
+    products: flashSaleProducts,
+    loading: flashSaleLoading,
+    error: flashSaleError,
+  } = useFlashSaleProducts(10);
 
-  useEffect(() => {
-    console.log("Bắt đầu test gọi API...");
-
-    // Gọi thử lấy 5 sản phẩm đầu tiên
-    clientProductApi.getProductsPageable(0, 5)
-      .then(data => {
-        console.log("✅ Lấy dữ liệu THÀNH CÔNG! Kết quả là:", data);
-      })
-      .catch(error => {
-        console.error("❌ Gọi API THẤT BẠI. Lỗi:", error);
-      });
-  }, []);
+  const {
+    products: recommendedProducts,
+    loading: recommendedLoading,
+    error: recommendedError,
+  } = useRecommendedProducts(0, 10);
 
   return (
     <div>
       <HeroSection />
       <QuickServices />
-      <FlashSaleSection />
-      <RecommendedSection />
+      <FlashSaleSection
+        products={flashSaleProducts}
+        loading={flashSaleLoading}
+        error={flashSaleError}
+      />
+      <RecommendedSection
+        products={recommendedProducts}
+        loading={recommendedLoading}
+        error={recommendedError}
+      />
     </div>
   );
 };

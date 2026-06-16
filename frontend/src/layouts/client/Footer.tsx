@@ -3,7 +3,7 @@ import React from 'react';
 const Footer = () => {
   return (
     <footer className="bg-white border-t border-gray-200 pt-10 pb-6 mt-12 text-sm text-gray-600">
-      <div className="container-custom grid grid-cols-4 gap-8">
+      <div className="container-custom grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
         <div>
           <h4 className="font-bold text-gray-800 text-base mb-4">Về NexaMart</h4>
           <ul className="space-y-2">
@@ -54,17 +54,17 @@ const Footer = () => {
         <div>
           <h4 className="font-bold text-gray-800 text-base mb-4">Kết nối với chúng tôi</h4>
           <div className="flex gap-4">
-            <a href="#" className="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center hover:bg-blue-700 transition-colors shadow-sm">
+            <a href="#" className="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center hover:bg-blue-700 transition-colors shadow-sm" aria-label="Facebook">
               <i className="fa-brands fa-facebook-f text-lg"></i>
             </a>
-            <a href="#" className="w-10 h-10 rounded-full bg-red-600 text-white flex items-center justify-center hover:bg-red-700 transition-colors shadow-sm">
+            <a href="#" className="w-10 h-10 rounded-full bg-red-600 text-white flex items-center justify-center hover:bg-red-700 transition-colors shadow-sm" aria-label="YouTube">
               <i className="fa-brands fa-youtube text-lg"></i>
             </a>
-            <a href="#" className="w-10 h-10 rounded-full bg-blue-400 text-white flex items-center justify-center hover:bg-blue-500 transition-colors shadow-sm">
+            <a href="#" className="w-10 h-10 rounded-full bg-blue-400 text-white flex items-center justify-center hover:bg-blue-500 transition-colors shadow-sm" aria-label="Twitter">
               <i className="fa-brands fa-twitter text-lg"></i>
             </a>
           </div>
-          
+
           <h4 className="font-bold text-gray-800 text-base mt-6 mb-4">Tải ứng dụng trên điện thoại</h4>
           <div className="flex gap-2">
             <div className="border border-gray-200 rounded p-2 flex gap-2 items-center cursor-pointer hover:border-nexa-blue transition-colors">
@@ -82,7 +82,7 @@ const Footer = () => {
           </div>
         </div>
       </div>
-      
+
       <div className="container-custom mt-8 pt-6 border-t border-gray-200 text-center text-xs text-gray-500">
         <p>© 2026 - Bản quyền của Công ty TNHH NexaMart</p>
         <p className="mt-1">Địa chỉ: Tòa nhà ABC, Phường XYZ, Quận 1, TP.HCM. Email: support@nexamart.vn</p>

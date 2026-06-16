@@ -1,9 +1,18 @@
+export interface Role {
+  id?: number;
+  name: string;
+  description?: string;
+  permissions?: any[];
+}
+
 export interface User {
-  id: string;
+  id?: number;
   email: string;
-  firstName: string;
-  lastName: string;
-  role: string;
+  fullName: string;
+  phoneNumber?: string;
+  avatarUrl?: string;
+  status: string;
+  roles: Role[];
 }
 
 export interface LoginCredentials {
@@ -11,9 +20,17 @@ export interface LoginCredentials {
   password: string;
 }
 
+export interface RegisterCredentials {
+  email: string;
+  password: string;
+  fullName: string;
+  phoneNumber?: string;
+}
+
 export interface LoginResponse {
   accessToken: string;
-  user: User;
+  refreshToken: string;
+  authenticated: boolean;
 }
 
 export interface AuthState {

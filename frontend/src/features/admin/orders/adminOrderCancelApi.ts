@@ -1,9 +1,9 @@
-import { adminClient } from "../../../api/adminClient";
+import { apiClient } from "../../../api/apiClient";
 import { unwrapApiList, type ApiResponse } from "../../../types/api";
 import type { OrderCancelRequestResponse } from "./adminOrderCancelTypes";
 
 export async function getOrderCancelRequests(): Promise<OrderCancelRequestResponse[]> {
-    const response = await adminClient.get<ApiResponse<OrderCancelRequestResponse[]>>(
+    const response = await apiClient.get<ApiResponse<OrderCancelRequestResponse[]>>(
         "/api/v1/admin/order-cancel-requests/all"
     );
 
@@ -11,7 +11,7 @@ export async function getOrderCancelRequests(): Promise<OrderCancelRequestRespon
 }
 
 export async function approveOrderCancelRequest(requestId: number): Promise<OrderCancelRequestResponse> {
-    const response = await adminClient.post<ApiResponse<OrderCancelRequestResponse>>(
+    const response = await apiClient.post<ApiResponse<OrderCancelRequestResponse>>(
         `/api/v1/admin/order-cancel-requests/${requestId}/approvals`
     );
 
@@ -19,7 +19,7 @@ export async function approveOrderCancelRequest(requestId: number): Promise<Orde
 }
 
 export async function rejectOrderCancelRequest(requestId: number): Promise<OrderCancelRequestResponse> {
-    const response = await adminClient.post<ApiResponse<OrderCancelRequestResponse>>(
+    const response = await apiClient.post<ApiResponse<OrderCancelRequestResponse>>(
         `/api/v1/admin/order-cancel-requests/${requestId}/rejections`
     );
 

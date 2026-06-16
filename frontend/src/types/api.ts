@@ -6,7 +6,13 @@ export type ApiResponse<T> = {
 };
 
 export type PageResponse<T> = {
-    content?: T[];
+    content: T[];
+    page: number;
+    size: number;
+    totalElements: number;
+    totalPages: number;
+    first: boolean;
+    last: boolean;
 };
 
 export function unwrapApiList<T>(data: T[] | PageResponse<T> | null | undefined): T[] {

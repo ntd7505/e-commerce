@@ -1,9 +1,9 @@
-import { adminClient } from "../../../api/adminClient";
+import { apiClient } from "../../../api/apiClient";
 import { unwrapApiList, type ApiResponse } from "../../../types/api";
 import type { BrandCreateRequest, BrandRequest, BrandResponse, BrandStatusUpdateRequest } from "./adminBrandTypes";
 
 export async function getBrands(): Promise<BrandResponse[]> {
-    const response = await adminClient.get<ApiResponse<BrandResponse[]>>(
+    const response = await apiClient.get<ApiResponse<BrandResponse[]>>(
         "/api/v1/admin/brands/all"
     );
 
@@ -11,7 +11,7 @@ export async function getBrands(): Promise<BrandResponse[]> {
 }
 
 export async function getBrandById(id: number): Promise<BrandResponse> {
-    const response = await adminClient.get<ApiResponse<BrandResponse>>(
+    const response = await apiClient.get<ApiResponse<BrandResponse>>(
         `/api/v1/admin/brands/${id}`
     );
 
@@ -19,7 +19,7 @@ export async function getBrandById(id: number): Promise<BrandResponse> {
 }
 
 export async function getDeletedBrands(): Promise<BrandResponse[]> {
-    const response = await adminClient.get<ApiResponse<BrandResponse[]>>(
+    const response = await apiClient.get<ApiResponse<BrandResponse[]>>(
         "/api/v1/admin/brands/deleted/all"
     );
 
@@ -27,7 +27,7 @@ export async function getDeletedBrands(): Promise<BrandResponse[]> {
 }
 
 export async function createBrand(payload: BrandCreateRequest): Promise<BrandResponse> {
-    const response = await adminClient.post<ApiResponse<BrandResponse>>(
+    const response = await apiClient.post<ApiResponse<BrandResponse>>(
         "/api/v1/admin/brands",
         payload
     );
@@ -36,7 +36,7 @@ export async function createBrand(payload: BrandCreateRequest): Promise<BrandRes
 }
 
 export async function updateBrand(id: number, payload: BrandRequest): Promise<BrandResponse> {
-    const response = await adminClient.patch<ApiResponse<BrandResponse>>(
+    const response = await apiClient.patch<ApiResponse<BrandResponse>>(
         `/api/v1/admin/brands/${id}`,
         payload
     );
@@ -48,7 +48,7 @@ export async function updateBrandStatus(
     id: number,
     payload: BrandStatusUpdateRequest
 ): Promise<BrandResponse> {
-    const response = await adminClient.patch<ApiResponse<BrandResponse>>(
+    const response = await apiClient.patch<ApiResponse<BrandResponse>>(
         `/api/v1/admin/brands/${id}/status`,
         payload
     );
@@ -57,5 +57,5 @@ export async function updateBrandStatus(
 }
 
 export async function deleteBrand(id: number): Promise<void> {
-    await adminClient.delete(`/api/v1/admin/brands/${id}`);
+    await apiClient.delete(`/api/v1/admin/brands/${id}`);
 }

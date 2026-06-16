@@ -1,9 +1,14 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import AdminLayout from './layouts/admin/AdminLayout';
 import ClientLayout from './layouts/client/ClientLayout';
+import { AuthProvider } from './features/auth/AuthProvider';
 
 // Pages
 import Home from './pages/client/Home';
+import ClientLogin from './pages/client/Login';
+import ClientRegister from './pages/client/Register';
+import ProductList from './pages/client/ProductList';
+import ProductDetail from './pages/client/ProductDetail';
 import Dashboard from './pages/admin/Dashboard';
 import Orders from './pages/admin/Orders';
 import Customers from './pages/admin/Customers';
@@ -14,8 +19,8 @@ import Settings from './pages/admin/Settings';
 import Categories from './pages/admin/Categories';
 import AdminRole from './pages/admin/AdminRole';
 import Brands from './pages/admin/Brands';
-import Login from './pages/admin/Login';
-import { RequireAuth } from './features/auth/RequireAuth';
+import AdminLogin from './pages/admin/Login';
+import { RequireAdmin } from './features/auth/RequireAuth';
 import Coupons from './pages/admin/Coupons';
 import ProductMedia from './pages/admin/ProductMedia';
 import ProductReviews from './pages/admin/ProductReviews';
@@ -25,36 +30,43 @@ import Profile from './pages/admin/Profile';
 export default function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        {/* Client Routes (Trang dành cho khách hàng) */}
-        <Route path="/" element={<ClientLayout />}>
-          <Route index element={<Home />} />
-        </Route>
-        <Route path="/login" element={<Login />} />
-
-        {/* Admin Routes */}
-        <Route element={<RequireAuth />}>
-          <Route path="/admin" element={<AdminLayout />}>
-            <Route index element={<Navigate to="/admin/dashboard" replace />} />
-            <Route path="dashboard" element={<Dashboard />} />
-            <Route path="orders" element={<Orders />} />
-            <Route path="customers" element={<Customers />} />
-            <Route path="coupons" element={<Coupons />} />
-            <Route path="transactions" element={<Transactions />} />
-            <Route path="products" element={<Products />} />
-            <Route path="products/add" element={<AddProduct />} />
-            <Route path="products/:id/edit" element={<AddProduct />} />
-            <Route path="products/media" element={<ProductMedia />} />
-            <Route path="products/reviews" element={<ProductReviews />} />
-            <Route path="categories" element={<Categories />} />
-            <Route path="brands" element={<Brands />} />
-            <Route path="roles" element={<AdminRole />} />
-            <Route path="authority" element={<Authority />} />
-            <Route path="profile" element={<Profile />} />
-            <Route path="settings" element={<Settings />} />
+      <AuthProvider>
+        <Routes>
+          {/* Client Routes (Trang dành cho khách hàng) */}
+          <Route path="/" element={<ClientLayout />}>
+            <Route index element={<Home />} />
+            <Route path="login" element={<ClientLogin />} />
+            <Route path="register" element={<ClientRegister />} />
+            <Route path="products" element={<ProductList />} />
+            <Route path="products/:slug" element={<ProductDetail />} />
           </Route>
-        </Route>
-      </Routes>
+          
+          <Route path="/admin/login" element={<AdminLogin />} />
+
+          {/* Admin Routes */}
+          <Route element={<RequireAdmin />}>
+            <Route path="/admin" element={<AdminLayout />}>
+              <Route index element={<Navigate to="/admin/dashboard" replace />} />
+              <Route path="dashboard" element={<Dashboard />} />
+              <Route path="orders" element={<Orders />} />
+              <Route path="customers" element={<Customers />} />
+              <Route path="coupons" element={<Coupons />} />
+              <Route path="transactions" element={<Transactions />} />
+              <Route path="products" element={<Products />} />
+              <Route path="products/add" element={<AddProduct />} />
+              <Route path="products/:id/edit" element={<AddProduct />} />
+              <Route path="products/media" element={<ProductMedia />} />
+              <Route path="products/reviews" element={<ProductReviews />} />
+              <Route path="categories" element={<Categories />} />
+              <Route path="brands" element={<Brands />} />
+              <Route path="roles" element={<AdminRole />} />
+              <Route path="authority" element={<Authority />} />
+              <Route path="profile" element={<Profile />} />
+              <Route path="settings" element={<Settings />} />
+            </Route>
+          </Route>
+        </Routes>
+      </AuthProvider>
     </BrowserRouter>
   );
 }

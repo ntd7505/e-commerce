@@ -1,9 +1,9 @@
-import { adminClient } from "../../../api/adminClient";
+import { apiClient } from "../../../api/apiClient";
 import { unwrapApiList, type ApiResponse } from "../../../types/api";
 import type { OrderResponse } from "./adminOrderTypes";
 
 export async function getOrders(): Promise<OrderResponse[]> {
-    const response = await adminClient.get<ApiResponse<OrderResponse[]>>(
+    const response = await apiClient.get<ApiResponse<OrderResponse[]>>(
         "/api/v1/admin/orders/all"
     );
 
@@ -11,7 +11,7 @@ export async function getOrders(): Promise<OrderResponse[]> {
 }
 
 export async function getOrderById(orderId: number): Promise<OrderResponse> {
-    const response = await adminClient.get<ApiResponse<OrderResponse>>(
+    const response = await apiClient.get<ApiResponse<OrderResponse>>(
         `/api/v1/admin/orders/${orderId}`
     );
 
@@ -19,7 +19,7 @@ export async function getOrderById(orderId: number): Promise<OrderResponse> {
 }
 
 export async function confirmOrder(orderId: number): Promise<OrderResponse> {
-    const response = await adminClient.post<ApiResponse<OrderResponse>>(
+    const response = await apiClient.post<ApiResponse<OrderResponse>>(
         `/api/v1/admin/orders/${orderId}/confirmations`
     );
 
@@ -27,7 +27,7 @@ export async function confirmOrder(orderId: number): Promise<OrderResponse> {
 }
 
 export async function processOrder(orderId: number): Promise<OrderResponse> {
-    const response = await adminClient.post<ApiResponse<OrderResponse>>(
+    const response = await apiClient.post<ApiResponse<OrderResponse>>(
         `/api/v1/admin/orders/${orderId}/processing-events`
     );
 
@@ -35,7 +35,7 @@ export async function processOrder(orderId: number): Promise<OrderResponse> {
 }
 
 export async function shipOrder(orderId: number): Promise<OrderResponse> {
-    const response = await adminClient.post<ApiResponse<OrderResponse>>(
+    const response = await apiClient.post<ApiResponse<OrderResponse>>(
         `/api/v1/admin/orders/${orderId}/shipments`
     );
 
@@ -43,7 +43,7 @@ export async function shipOrder(orderId: number): Promise<OrderResponse> {
 }
 
 export async function deliverOrder(orderId: number): Promise<OrderResponse> {
-    const response = await adminClient.post<ApiResponse<OrderResponse>>(
+    const response = await apiClient.post<ApiResponse<OrderResponse>>(
         `/api/v1/admin/orders/${orderId}/deliveries`
     );
 
