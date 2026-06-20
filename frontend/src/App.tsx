@@ -9,6 +9,7 @@ import ClientLogin from './pages/client/Login';
 import ClientRegister from './pages/client/Register';
 import ProductList from './pages/client/ProductList';
 import ProductDetail from './pages/client/ProductDetail';
+import Account from './pages/client/Account';
 import Dashboard from './pages/admin/Dashboard';
 import Orders from './pages/admin/Orders';
 import Customers from './pages/admin/Customers';
@@ -20,7 +21,7 @@ import Categories from './pages/admin/Categories';
 import AdminRole from './pages/admin/AdminRole';
 import Brands from './pages/admin/Brands';
 import AdminLogin from './pages/admin/Login';
-import { RequireAdmin } from './features/auth/RequireAuth';
+import { RequireAdmin, RequireAuth } from './features/auth/RequireAuth';
 import Coupons from './pages/admin/Coupons';
 import ProductMedia from './pages/admin/ProductMedia';
 import ProductReviews from './pages/admin/ProductReviews';
@@ -39,6 +40,9 @@ export default function App() {
             <Route path="register" element={<ClientRegister />} />
             <Route path="products" element={<ProductList />} />
             <Route path="products/:slug" element={<ProductDetail />} />
+            <Route element={<RequireAuth />}>
+              <Route path="account" element={<Account />} />
+            </Route>
           </Route>
           
           <Route path="/admin/login" element={<AdminLogin />} />

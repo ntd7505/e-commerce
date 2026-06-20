@@ -7,10 +7,26 @@ export interface BrandSummaryResponse {
   slug: string;
 }
 
+export interface CategoryParentResponse {
+  id: number;
+  name: string;
+  slug: string;
+}
+
+export interface CategoryChildResponse {
+  id: number;
+  name: string;
+  slug: string;
+  active: boolean;
+}
+
 export interface CategorySummaryResponse {
   id: number;
   name: string;
   slug: string;
+  active?: boolean;
+  parent?: CategoryParentResponse | null;
+  children?: CategoryChildResponse[];
 }
 
 export interface ProductVariantResponse {
@@ -61,9 +77,18 @@ export interface ProductParams {
 }
 
 export interface ReviewSummaryResponse {
-  averageRating: number;
+  averageRating: number | null;
   totalReviews: number;
-  ratingCounts: Record<number, number>;
+  fiveStarCount: number;
+  fourStarCount: number;
+  threeStarCount: number;
+  twoStarCount: number;
+  oneStarCount: number;
+  fiveStarPercent: number;
+  fourStarPercent: number;
+  threeStarPercent: number;
+  twoStarPercent: number;
+  oneStarPercent: number;
 }
 
 export interface ProductReviewResponse {

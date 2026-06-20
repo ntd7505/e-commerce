@@ -1,11 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { clientProductApi, type CategorySummaryResponse } from '../../features/client/home/clientProductApi';
+import { useAuth } from '../../features/auth/AuthProvider';
 
 const Header = () => {
   const navigate = useNavigate();
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchParams] = useSearchParams();
+  const keywordParam = searchParams.get('keyword') || '';
+  const { user } = useAuth();
+
+  const [searchQuery, setSearchQuery] = useState(keywordParam);
   const [categories, setCategories] = useState<CategorySummaryResponse[]>([]);
+
+  useEffect(() => {
+    setSearchQuery(keywordParam);
+  }, [keywordParam]);
 
   useEffect(() => {
     clientProductApi
@@ -25,6 +34,10 @@ const Header = () => {
   };
 
   return (
+    <>
+    <div className="bg-blue-600 text-white text-sm py-2 text-center font-medium">
+      Khuyến mãi đặc biệt: Giảm thêm 5% cho đơn hàng từ 5 triệu. Nhập mã NEXA5
+    </div>
     <header className="bg-white border-b border-gray-100 py-4" data-purpose="primary-header">
       <div className="container-custom flex items-center justify-between gap-4 md:gap-8">
         <Link to="/" className="text-2xl md:text-3xl font-bold text-nexa-blue shrink-0">
@@ -35,7 +48,7 @@ const Header = () => {
         <div className="flex-grow max-w-2xl relative">
           <div className="flex items-center border-2 border-gray-200 rounded-md bg-white overflow-hidden focus-within:border-nexa-blue transition-colors">
             <input
-              className="w-full px-4 py-2 outline-none border-none focus:ring-0 text-sm"
+              className="w-full px-4 py-2.5 outline-none border-none focus:ring-0 text-sm"
               placeholder="Tìm sản phẩm, thương hiệu hoặc danh mục"
               type="text"
               value={searchQuery}
@@ -45,7 +58,7 @@ const Header = () => {
             />
             <button
               onClick={handleSearch}
-              className="px-5 py-2 text-gray-400 cursor-pointer hover:text-nexa-blue transition-colors"
+              className="px-6 py-2.5 bg-blue-600 text-white cursor-pointer hover:bg-blue-700 transition-colors flex items-center justify-center"
               aria-label="Tìm kiếm sản phẩm"
             >
               <i className="fa-solid fa-magnifying-glass"></i>
@@ -88,9 +101,13 @@ const Header = () => {
           </div>
 
           {/* Account */}
-          <Link to="/login" className="flex items-center gap-2 cursor-pointer hover:text-nexa-blue transition-colors no-underline text-inherit">
-            <i className="fa-regular fa-user text-xl"></i>
-            <span className="text-sm font-medium hidden sm:inline">Tài khoản</span>
+          <Link to={user ? "/account" : "/login"} className="flex items-center gap-2 cursor-pointer hover:text-nexa-blue transition-colors no-underline text-inherit" title={user?.fullName || "Tài khoản"}>
+            {user?.avatarUrl ? (
+              <img src={user.avatarUrl} alt={user.fullName} className="w-6 h-6 rounded-full object-cover border border-gray-200" />
+            ) : (
+              <i className="fa-regular fa-user text-xl"></i>
+            )}
+            <span className="text-sm font-medium hidden sm:inline max-w-[100px] truncate">{user ? user.fullName.split(' ').pop() || user.fullName : 'Tài khoản'}</span>
           </Link>
 
           {/* Cart — no hardcoded badge count */}
@@ -100,6 +117,15 @@ const Header = () => {
         </div>
       </div>
     </header>
+    <div className="bg-gray-50 border-b border-gray-100 py-2.5 hidden md:block">
+      <div className="container-custom flex items-center text-sm text-gray-600 gap-1.5">
+        <i className="fa-solid fa-location-dot text-gray-400"></i>
+        <span>Giao đến: <strong className="text-gray-900">TP. Hồ Chí Minh</strong></span>
+        <span className="mx-1 text-gray-300">|</span>
+        <button className="text-blue-600 hover:underline">Thay đổi</button>
+      </div>
+    </div>
+    </>
   );
 };
 

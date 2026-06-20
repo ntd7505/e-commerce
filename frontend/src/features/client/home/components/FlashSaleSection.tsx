@@ -51,7 +51,7 @@ const FlashSaleSection: React.FC<Props> = ({ products, loading, error }) => {
   const formatTime = (time: number) => (time < 10 ? `0${time}` : time);
 
   return (
-    <section className="container-custom mt-8" data-purpose="flash-sale-section">
+    <section className="w-full mt-2" data-purpose="flash-sale-section">
       <div className="bg-white rounded-lg p-4 shadow-sm">
         {/* Header */}
         <div className="flex flex-wrap items-center gap-3 mb-4">

@@ -25,7 +25,7 @@ const SkeletonCard = () => (
 
 const RecommendedSection: React.FC<Props> = ({ products, loading, error }) => {
   return (
-    <section className="container-custom mt-8 mb-10" data-purpose="recommendations">
+    <section className="w-full mt-2 mb-10" data-purpose="recommendations">
       <h3 className="text-2xl font-bold mb-4">Gợi ý hôm nay</h3>
 
       {loading ? (

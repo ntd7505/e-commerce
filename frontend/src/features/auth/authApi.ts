@@ -34,6 +34,15 @@ export async function getMe(): Promise<User> {
     return response.data.data;
 }
 
+export async function updateMe(payload: { fullName: string; phoneNumber: string; avatarUrl?: string }): Promise<User> {
+    const response = await apiClient.patch<ApiResponse<User>>(
+        "/api/v1/client/users/me",
+        payload
+    );
+
+    return response.data.data;
+}
+
 export async function logout(token: string): Promise<void> {
     await apiClient.post<ApiResponse<void>>("/api/v1/auth/logout", { token });
 }

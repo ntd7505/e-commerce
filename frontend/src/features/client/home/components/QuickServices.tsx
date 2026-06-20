@@ -10,7 +10,7 @@ const QuickServices = () => {
   ];
 
   return (
-    <div className="container-custom mt-8" data-purpose="service-links">
+    <div className="w-full mt-2" data-purpose="service-links">
       <div className="bg-white rounded-lg p-4 md:p-6 shadow-sm">
         <div className="grid grid-cols-3 md:grid-cols-5 gap-4 md:gap-6">
           {services.map((service, index) => (

@@ -10,7 +10,7 @@ export function RequireAuth() {
   }
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace state={{ from: location }} />;
+    return <Navigate to={`/login?redirect=${encodeURIComponent(location.pathname + location.search)}`} replace />;
   }
 
   return <Outlet />;

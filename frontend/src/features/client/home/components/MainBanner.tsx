@@ -41,8 +41,8 @@ const MainBanner = () => {
 
   return (
     <>
-      {/* Main carousel — takes full width on mobile, 6 cols on desktop */}
-      <section className="col-span-12 md:col-span-6 rounded-lg relative overflow-hidden group cursor-pointer min-h-[200px] md:min-h-0" data-purpose="hero-slider">
+      {/* Main carousel — takes full width on mobile, 8 cols on desktop */}
+      <section className="col-span-12 md:col-span-8 rounded-lg relative overflow-hidden group cursor-pointer min-h-[200px] md:min-h-0 shadow-sm" data-purpose="hero-slider">
         <div
           className="flex h-full w-full transition-transform duration-500 ease-out"
           style={{ transform: `translateX(-${currentIndex * 100}%)` }}
@@ -103,7 +103,7 @@ const MainBanner = () => {
       </section>
 
       {/* Promo side banners — hidden on mobile */}
-      <section className="col-span-3 flex-col gap-4 hidden md:flex" data-purpose="promo-banners">
+      <section className="col-span-12 md:col-span-4 flex flex-col gap-4 hidden md:flex" data-purpose="promo-banners">
         <div className="flex-1 bg-[#b9d7ea] rounded-lg p-4 relative overflow-hidden flex flex-col justify-between cursor-pointer hover:shadow-md transition-shadow">
           <div>
             <h4 className="font-bold text-lg text-gray-900">Tuần lễ Laptop</h4>
