@@ -3,6 +3,7 @@ import ProductCard from '../../../../components/client/ProductCard';
 import type { ProductResponse } from '../clientProductApi';
 import { formatCurrency, calculateDiscountPercent } from '../../../../utils/formatters';
 import { AlertCircle, Zap } from 'lucide-react';
+import { useAddToCartAction } from '../../cart/hooks/useAddToCartAction';
 
 type Props = {
   products: ProductResponse[];
@@ -25,6 +26,7 @@ const SkeletonCard = () => (
 
 const FlashSaleSection: React.FC<Props> = ({ products, loading, error }) => {
   const [timeLeft, setTimeLeft] = useState<number>(7200);
+  const { handleAddToCart } = useAddToCartAction();
 
   useEffect(() => {
     if (timeLeft <= 0) return;
@@ -40,6 +42,7 @@ const FlashSaleSection: React.FC<Props> = ({ products, loading, error }) => {
     }, 1000);
 
     return () => clearInterval(timerId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const saleEnded = timeLeft <= 0;
@@ -109,17 +112,21 @@ const FlashSaleSection: React.FC<Props> = ({ products, loading, error }) => {
               const currentPrice = firstVariant?.salePrice > 0 ? firstVariant.salePrice : firstVariant?.price || 0;
               const originalPrice = firstVariant?.price > currentPrice ? firstVariant.price : null;
 
+              const validVariant = product.variants?.find(v => v.active && (!('deleted' in v) || !(v as Record<string, unknown>).deleted) && v.stockQuantity > 0);
+              const displayVariant = validVariant || firstVariant;
+
               return (
                 <ProductCard
                   key={product.id}
                   image={thumbnailImage}
                   name={product.name}
                   slug={product.slug}
-                  price={formatCurrency(currentPrice)}
+                  price={displayVariant ? formatCurrency(currentPrice) : "Chưa có giá"}
                   originalPrice={originalPrice ? formatCurrency(originalPrice) : ""}
                   discountBadge={originalPrice ? calculateDiscountPercent(originalPrice, currentPrice) : ""}
                   isFlashSale={true}
                   saleEnded={saleEnded}
+                  onAddToCart={validVariant ? () => handleAddToCart(validVariant.id, 1, product.name) : undefined}
                 />
               );
             })}

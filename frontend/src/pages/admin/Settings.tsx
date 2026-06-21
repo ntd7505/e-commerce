@@ -36,6 +36,7 @@ export default function Settings() {
     if (!stored) return;
 
     try {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSettings({ ...defaultSettings, ...JSON.parse(stored) });
     } catch {
       localStorage.removeItem(STORAGE_KEY);

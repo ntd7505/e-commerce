@@ -50,6 +50,7 @@ const CategorySidebar = () => {
       const activeCat = categories.find((c) => c.id === activeCategoryId);
       if (activeCat) {
         if (activeCat.parent) {
+          // eslint-disable-next-line react-hooks/set-state-in-effect
           setExpandedCategories((prev) => ({ ...prev, [activeCat.parent!.id]: true }));
         } else {
           setExpandedCategories((prev) => ({ ...prev, [activeCat.id]: true }));

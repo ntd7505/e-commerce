@@ -7,6 +7,7 @@ import { Pagination } from '../../components/common/Pagination';
 import { ErrorState, EmptyState } from '../../components/common/States';
 import { Filter } from 'lucide-react';
 import { formatCurrency, calculateDiscountPercent } from '../../utils/formatters';
+import { useAddToCartAction } from '../../features/client/cart/hooks/useAddToCartAction';
 
 export default function ProductList() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -32,6 +33,8 @@ export default function ProductList() {
   const [expandedCategories, setExpandedCategories] = useState<Record<number, boolean>>({});
   const [activeDropdown, setActiveDropdown] = useState<'category' | 'brand' | 'price' | 'sort' | null>(null);
 
+  const { handleAddToCart } = useAddToCartAction();
+
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (!(e.target as Element).closest('.filter-dropdown')) {
@@ -43,6 +46,7 @@ export default function ProductList() {
   }, []);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLocalMinPrice(minPrice ? minPrice.toString() : '');
     setLocalMaxPrice(maxPrice ? maxPrice.toString() : '');
   }, [minPrice, maxPrice]);
@@ -82,6 +86,7 @@ export default function ProductList() {
       const activeCat = categories.find((c) => c.id === categoryId);
       if (activeCat) {
         if (activeCat.parent) {
+          // eslint-disable-next-line react-hooks/set-state-in-effect
           setExpandedCategories((prev) => ({ ...prev, [activeCat.parent!.id]: true }));
         } else {
           setExpandedCategories((prev) => ({ ...prev, [activeCat.id]: true }));
@@ -393,11 +398,12 @@ export default function ProductList() {
                 {products.map(product => {
                   const activeMedia = product.media?.filter(m => m.active !== false).sort((a, b) => a.sortOrder - b.sortOrder) || [];
                   const thumbnailImage = activeMedia.find(m => m.thumbnail)?.url || activeMedia[0]?.url || '';
-                  const validVariant = product.variants?.find(v => v.active);
-                  const currentPrice = validVariant && validVariant.salePrice > 0 && validVariant.salePrice < validVariant.price
-                    ? validVariant.salePrice
-                    : validVariant?.price || 0;
-                  const originalPrice = validVariant && validVariant.price > currentPrice ? validVariant.price : null;
+                  const validVariant = product.variants?.find(v => v.active && (!('deleted' in v) || !(v as Record<string, unknown>).deleted) && v.stockQuantity > 0);
+                  const displayVariant = validVariant || product.variants?.find(v => v.active);
+                  const currentPrice = displayVariant && displayVariant.salePrice > 0 && displayVariant.salePrice < displayVariant.price
+                    ? displayVariant.salePrice
+                    : displayVariant?.price || 0;
+                  const originalPrice = displayVariant && displayVariant.price > currentPrice ? displayVariant.price : null;
 
                   return (
                     <ProductCard
@@ -405,10 +411,11 @@ export default function ProductList() {
                       image={thumbnailImage}
                       name={product.name}
                       slug={product.slug}
-                      price={validVariant ? formatCurrency(currentPrice) : "Chưa có giá"}
+                      price={displayVariant ? formatCurrency(currentPrice) : "Chưa có giá"}
                       originalPrice={originalPrice ? formatCurrency(originalPrice) : ""}
                       discountBadge={originalPrice ? calculateDiscountPercent(originalPrice, currentPrice) : ""}
                       isFlashSale={false}
+                      onAddToCart={validVariant ? () => handleAddToCart(validVariant.id, 1, product.name) : undefined}
                     />
                   );
                 })}

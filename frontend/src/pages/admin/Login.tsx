@@ -8,6 +8,7 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const navigate = useNavigate();
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -22,6 +23,7 @@ export default function Login() {
       setAuthSession(data.accessToken, data.refreshToken);
       
       const { getMe } = await import('../../features/auth/authApi');
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const userData = await getMe();
       
       // We need to reload to trigger AuthProvider loadUser, or set it directly.

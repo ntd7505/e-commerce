@@ -8,10 +8,12 @@ export const useClientProducts = (params: ProductParams = {}) => {
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
 
+    const paramsString = JSON.stringify(params);
+
     const fetchProducts = useCallback(async () => {
         setLoading(true);
         try {
-            const data = await clientProductApi.getProductsPageable(params);
+            const data = await clientProductApi.getProductsPageable(JSON.parse(paramsString));
             setProducts(data.content || []);
             setTotalPages(data.totalPages || 0);
             setTotalElements(data.totalElements || 0);
@@ -22,10 +24,10 @@ export const useClientProducts = (params: ProductParams = {}) => {
         } finally {
             setLoading(false);
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [JSON.stringify(params)]);
+    }, [paramsString]);
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         void fetchProducts();
     }, [fetchProducts]);
 

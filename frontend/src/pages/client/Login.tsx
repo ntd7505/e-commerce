@@ -25,8 +25,12 @@ export default function ClientLogin() {
       const userData = await getMe();
       setUser(userData);
 
-      const redirect = searchParams.get('redirect') || '/';
-      navigate(redirect);
+      const redirect = searchParams.get('redirect');
+      if (redirect && redirect.startsWith('/')) {
+        navigate(redirect, { replace: true });
+      } else {
+        navigate('/', { replace: true });
+      }
     } catch {
       setError('Email hoặc mật khẩu không đúng');
     } finally {

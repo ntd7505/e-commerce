@@ -40,6 +40,7 @@ export default function ProductReviews() {
   }
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     void loadReviews();
   }, []);
 

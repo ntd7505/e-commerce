@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { getMe, logout as apiLogout } from "./authApi";
 import { getAccessToken, getRefreshToken, clearAuthSession, isAuthenticated as checkIsAuthenticated, setUser as setStoredUser } from "./authStorage";

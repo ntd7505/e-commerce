@@ -2,6 +2,8 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import AdminLayout from './layouts/admin/AdminLayout';
 import ClientLayout from './layouts/client/ClientLayout';
 import { AuthProvider } from './features/auth/AuthProvider';
+import { CartProvider } from './features/client/cart/CartProvider';
+import { ToastProvider } from './features/ui/ToastProvider';
 
 // Pages
 import Home from './pages/client/Home';
@@ -10,6 +12,9 @@ import ClientRegister from './pages/client/Register';
 import ProductList from './pages/client/ProductList';
 import ProductDetail from './pages/client/ProductDetail';
 import Account from './pages/client/Account';
+import Cart from './pages/client/Cart';
+import Checkout from './pages/client/Checkout';
+import CheckoutSuccess from './pages/client/CheckoutSuccess';
 import Dashboard from './pages/admin/Dashboard';
 import Orders from './pages/admin/Orders';
 import Customers from './pages/admin/Customers';
@@ -32,7 +37,9 @@ export default function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <Routes>
+        <ToastProvider>
+          <CartProvider>
+            <Routes>
           {/* Client Routes (Trang dành cho khách hàng) */}
           <Route path="/" element={<ClientLayout />}>
             <Route index element={<Home />} />
@@ -42,6 +49,9 @@ export default function App() {
             <Route path="products/:slug" element={<ProductDetail />} />
             <Route element={<RequireAuth />}>
               <Route path="account" element={<Account />} />
+              <Route path="cart" element={<Cart />} />
+              <Route path="checkout" element={<Checkout />} />
+              <Route path="checkout/success/:orderId" element={<CheckoutSuccess />} />
             </Route>
           </Route>
           
@@ -69,7 +79,9 @@ export default function App() {
               <Route path="settings" element={<Settings />} />
             </Route>
           </Route>
-        </Routes>
+            </Routes>
+          </CartProvider>
+        </ToastProvider>
       </AuthProvider>
     </BrowserRouter>
   );

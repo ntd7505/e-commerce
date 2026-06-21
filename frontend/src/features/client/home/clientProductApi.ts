@@ -142,15 +142,20 @@ export const clientProductApi = {
     return response.data.data;
   },
 
-  getProductReviews: async (productId: number, page: number = 0, size: number = 10): Promise<ProductReviewResponse[]> => {
-    const response = await publicClient.get<ApiResponse<ProductReviewResponse[] | PageResponse<ProductReviewResponse>>>(`/api/v1/client/products/${productId}/reviews`, {
+  getProductReviews: async (productId: number, page: number = 0, size: number = 10): Promise<PageResponse<ProductReviewResponse>> => {
+    const response = await publicClient.get<ApiResponse<PageResponse<ProductReviewResponse>>>(`/api/v1/client/products/${productId}/reviews`, {
       params: { page, size }
     });
-    return unwrapApiList(response.data.data);
+    return response.data.data;
   },
 
   getProductReviewSummary: async (productId: number): Promise<ReviewSummaryResponse> => {
     const response = await publicClient.get<ApiResponse<ReviewSummaryResponse>>(`/api/v1/client/products/${productId}/review-summary`);
+    return response.data.data;
+  },
+
+  getProductReviewMedia: async (productId: number): Promise<{id: number, url: string, mediaType: string}[]> => {
+    const response = await publicClient.get<ApiResponse<{id: number, url: string, mediaType: string}[]>>(`/api/v1/client/products/${productId}/review-media`);
     return response.data.data;
   }
 };

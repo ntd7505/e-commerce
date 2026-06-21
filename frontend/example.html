@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>NexaMart - Giỏ hàng</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700;900&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#0b74e5",
+                        "background-light": "#f5f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Be Vietnam Pro"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: "Be Vietnam Pro", sans-serif;
+            background-color: #f5f7f8;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        .sticky-summary {
+            top: 2rem;
+        }
+    </style>
+</head>
+
+<body class="text-[#111418]">
+    <!-- Shared TopNavBar Structure -->
+    <div class="relative flex h-auto w-full flex-col bg-white overflow-x-hidden"
+        style="--checkbox-tick-svg: url('data:image/svg+xml,%3csvg viewBox=%270 0 16 16%27 fill=%27rgb(255,255,255)%27 xmlns=%27http://www.w3.org/2000/svg%27%3e%3cpath d=%27M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z%27/%3e%3c/svg%3e');">
+        <div class="layout-container flex h-full grow flex-col">
+            <header
+                class="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#f0f2f5] px-10 py-3 bg-white">
+                <div class="flex items-center gap-8">
+                    <div class="flex items-center gap-4 text-[#111418]">
+                        <div class="size-6 text-primary">
+                            <svg fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                                <path clip-rule="evenodd" d="M24 4H42V17.3333V30.6667H24V44H6V30.6667V17.3333H24V4Z"
+                                    fill="currentColor" fill-rule="evenodd"></path>
+                            </svg>
+                        </div>
+                        <h2 class="text-[#111418] text-lg font-bold leading-tight tracking-[-0.015em]">NexaMart</h2>
+                    </div>
+                    <label class="flex flex-col min-w-40 !h-10 max-w-64">
+                        <div class="flex w-full flex-1 items-stretch rounded-lg h-full">
+                            <div
+                                class="text-[#60758a] flex border-none bg-[#f0f2f5] items-center justify-center pl-4 rounded-l-lg border-r-0">
+                                <span class="material-symbols-outlined">search</span>
+                            </div>
+                            <input
+                                class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111418] focus:outline-0 focus:ring-0 border-none bg-[#f0f2f5] focus:border-none h-full placeholder:text-[#60758a] px-4 rounded-l-none border-l-0 pl-2 text-base font-normal leading-normal"
+                                placeholder="Tìm kiếm sản phẩm công nghệ..." value="" />
+                        </div>
+                    </label>
+                </div>
+                <div class="flex flex-1 justify-end gap-8">
+                    <div class="flex items-center gap-9">
+                        <a class="text-[#111418] text-sm font-medium leading-normal hover:text-primary transition-colors"
+                            href="#">Sản phẩm</a>
+                        <a class="text-[#111418] text-sm font-medium leading-normal hover:text-primary transition-colors"
+                            href="#">Khuyến mãi</a>
+                        <a class="text-[#111418] text-sm font-medium leading-normal hover:text-primary transition-colors"
+                            href="#">Tin công nghệ</a>
+                    </div>
+                    <div class="flex gap-2">
+                        <button
+                            class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 bg-[#f0f2f5] text-[#111418] gap-2 text-sm font-bold leading-normal tracking-[0.015em] min-w-0 px-2.5">
+                            <span class="material-symbols-outlined">shopping_cart</span>
+                        </button>
+                        <button
+                            class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 bg-[#f0f2f5] text-[#111418] gap-2 text-sm font-bold leading-normal tracking-[0.015em] min-w-0 px-2.5">
+                            <span class="material-symbols-outlined">person</span>
+                        </button>
+                    </div>
+                </div>
+            </header>
+            <!-- Breadcrumbs -->
+            <div class="max-w-[1280px] mx-auto w-full px-10">
+                <div class="flex flex-wrap gap-2 py-4">
+                    <a class="text-[#60758a] text-sm font-medium leading-normal" href="#">Trang chủ</a>
+                    <span class="text-[#60758a] text-sm font-medium leading-normal">/</span>
+                    <span class="text-[#111418] text-sm font-medium leading-normal">Giỏ hàng</span>
+                </div>
+                <div class="flex flex-wrap justify-between gap-3 pb-6 pt-2">
+                    <h1 class="text-[#111418] text-3xl font-black leading-tight tracking-[-0.033em]">Giỏ hàng của bạn
+                        (3)</h1>
+                </div>
+                <!-- Main Content Area -->
+                <div class="flex flex-col lg:flex-row gap-8 pb-20">
+                    <!-- Left Side: Cart Items -->
+                    <div class="flex-1">
+                        <!-- Bulk Actions -->
+                        <div
+                            class="bg-white rounded-xl px-6 py-3 mb-4 flex items-center justify-between border border-[#f0f2f5] shadow-sm">
+                            <label class="flex items-center gap-x-3 cursor-pointer group">
+                                <input
+                                    class="h-5 w-5 rounded border-[#dbe0e6] border-2 bg-transparent text-primary checked:bg-primary checked:border-primary focus:ring-0 focus:ring-offset-0 focus:outline-none transition-all"
+                                    type="checkbox" />
+                                <span class="text-[#111418] text-sm font-medium group-hover:text-primary">Chọn tất
+                                    cả</span>
+                            </label>
+                            <button
+                                class="flex items-center gap-2 px-3 py-2 text-[#111418] hover:text-red-500 text-sm font-bold transition-colors">
+                                <span class="material-symbols-outlined text-[20px]">delete</span>
+                                <span>Xóa mục đã chọn</span>
+                            </button>
+                        </div>
+                        <!-- Item List -->
+                        <div class="flex flex-col gap-4">
+                            <!-- Item 1: iPhone 15 Pro Max -->
+                            <div
+                                class="bg-white rounded-xl p-6 flex flex-col md:flex-row items-center gap-6 border border-[#f0f2f5] shadow-sm">
+                                <input checked=""
+                                    class="h-5 w-5 rounded border-[#dbe0e6] border-2 text-primary checked:bg-primary focus:ring-0"
+                                    type="checkbox" />
+                                <div class="w-24 h-24 rounded-lg bg-gray-50 flex-shrink-0">
+                                    <img class="w-full h-full object-contain"
+                                        data-alt="A professional studio product shot of a Titanium Natural iPhone 15 Pro Max with its sleek metallic finish and triple-lens camera system visible. The lighting is crisp and cinematic, highlighting the brushed metal texture against a clean, minimal white background. The aesthetic is high-end technology, bright and modern, conforming to a luxury consumer electronics brand identity."
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuC-Tq_hn7ac-7nZgu36g-Z5Qtw-UB80nigJ6DsWNOuwbokLtbhycjwFfAtdy52mqY4BSq2p6xw7W4bJasS2CQXYTERKs25GtHNKLbov-3XvuEUoGwKADTULUfWPqQOV9SCy7cZe1APFVDiCjbO-1eo9j46utnJ6JULrBIKb1VYLXVU6WYTCTXsMsUtLdKwCKpg0Pl9bR5iAapw0Tl8YoGpn9kZQz8C4YcInK9Y7ycuvR8iXrAoJNMZWDYWeelHZNY_-2G4CiY2AphAs" />
+                                </div>
+                                <div class="flex-1 flex flex-col gap-1">
+                                    <h3 class="text-[#111418] text-lg font-bold leading-tight">iPhone 15 Pro Max 256GB
+                                    </h3>
+                                    <p class="text-[#60758a] text-sm">Phân loại: Titan Tự Nhiên</p>
+                                    <div class="mt-2 text-primary font-bold text-lg">29.490.000đ</div>
+                                </div>
+                                <div class="flex items-center gap-8">
+                                    <!-- Quantity Stepper -->
+                                    <div
+                                        class="flex items-center border border-[#dbe0e6] rounded-lg h-10 overflow-hidden">
+                                        <button
+                                            class="px-3 hover:bg-gray-100 transition-colors text-[#111418] border-r border-[#dbe0e6]">
+                                            <span class="material-symbols-outlined text-[18px]">remove</span>
+                                        </button>
+                                        <div class="px-4 font-bold text-sm">1</div>
+                                        <button
+                                            class="px-3 hover:bg-gray-100 transition-colors text-[#111418] border-l border-[#dbe0e6]">
+                                            <span class="material-symbols-outlined text-[18px]">add</span>
+                                        </button>
+                                    </div>
+                                    <div class="text-right min-w-[120px]">
+                                        <div class="text-sm text-[#60758a]">Thành tiền</div>
+                                        <div class="text-[#111418] font-black">29.490.000đ</div>
+                                    </div>
+                                    <button class="p-2 text-[#60758a] hover:text-red-500 transition-colors">
+                                        <span class="material-symbols-outlined">delete</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- Item 2: MacBook Air M2 -->
+                            <div
+                                class="bg-white rounded-xl p-6 flex flex-col md:flex-row items-center gap-6 border border-[#f0f2f5] shadow-sm">
+                                <input checked=""
+                                    class="h-5 w-5 rounded border-[#dbe0e6] border-2 text-primary checked:bg-primary focus:ring-0"
+                                    type="checkbox" />
+                                <div class="w-24 h-24 rounded-lg bg-gray-50 flex-shrink-0">
+                                    <img class="w-full h-full object-contain"
+                                        data-alt="A sleek Space Gray MacBook Air M2 laptop shown partially open from a side profile to emphasize its incredibly thin design. The hardware has a smooth matte finish, reflecting soft studio lights in a clean, minimalist setting. High-resolution textures capture the premium aluminum build, presented in a bright, modern, and professional aesthetic suitable for a high-end electronics store."
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuDjBRPVqpB8TE8j70rhoADSR0LHo7JXSewvfl4c6fTqkHjh3UbyVALOmYmiC8960gLJ5ZVbqr6-8SxCYN0MIr_7oPdC4MKiQ3W5YxGXZuGz-gzSC-LS_cGeEHRWZK1BPuQ-20aZnm8ytGoV4Oavfr6Wio_hi88zrev16aNcgB3f03qBgtTJ7GD3EC-HuW6z6efT2xcUbunymzPG7w0-dW9CLbgCmdIDD_xEtL9Xgyeufp2N7XloEVd6-H6VQVmoR6829TYB9hYqNvYT" />
+                                </div>
+                                <div class="flex-1 flex flex-col gap-1">
+                                    <h3 class="text-[#111418] text-lg font-bold leading-tight">MacBook Air M2 13"
+                                        (8GB/256GB)</h3>
+                                    <p class="text-[#60758a] text-sm">Phân loại: Space Gray</p>
+                                    <div class="mt-2 text-primary font-bold text-lg">24.990.000đ</div>
+                                </div>
+                                <div class="flex items-center gap-8">
+                                    <div
+                                        class="flex items-center border border-[#dbe0e6] rounded-lg h-10 overflow-hidden">
+                                        <button
+                                            class="px-3 hover:bg-gray-100 transition-colors text-[#111418] border-r border-[#dbe0e6]">
+                                            <span class="material-symbols-outlined text-[18px]">remove</span>
+                                        </button>
+                                        <div class="px-4 font-bold text-sm">1</div>
+                                        <button
+                                            class="px-3 hover:bg-gray-100 transition-colors text-[#111418] border-l border-[#dbe0e6]">
+                                            <span class="material-symbols-outlined text-[18px]">add</span>
+                                        </button>
+                                    </div>
+                                    <div class="text-right min-w-[120px]">
+                                        <div class="text-sm text-[#60758a]">Thành tiền</div>
+                                        <div class="text-[#111418] font-black">24.990.000đ</div>
+                                    </div>
+                                    <button class="p-2 text-[#60758a] hover:text-red-500 transition-colors">
+                                        <span class="material-symbols-outlined">delete</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- Item 3: AirPods Pro 2 -->
+                            <div
+                                class="bg-white rounded-xl p-6 flex flex-col md:flex-row items-center gap-6 border border-[#f0f2f5] shadow-sm">
+                                <input
+                                    class="h-5 w-5 rounded border-[#dbe0e6] border-2 text-primary checked:bg-primary focus:ring-0"
+                                    type="checkbox" />
+                                <div class="w-24 h-24 rounded-lg bg-gray-50 flex-shrink-0">
+                                    <img class="w-full h-full object-contain"
+                                        data-alt="A pair of AirPods Pro 2 wireless earbuds emerging from their glossy white charging case. The image uses sharp macro photography to showcase the precision engineering and clean white aesthetic. Lighting is bright and even, casting soft shadows to emphasize the modern, high-tech industrial design of the product in a pristine light-mode e-commerce environment."
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuCWf-SbsPOuOGpTCsNbnwY0gYfke1WhdWaEGurapWu-mWpSn54ByW9fklmGNl9p33jxnABSSMaKTZxqXZ_mTZOJ6l_HYRc42B1xb-LhngT7w2vK0I7BSEcRvuCxhE6lQnmJ_x68PLxlMQVngZKZbIP48scrXhkomu6dzHNC2De1cgEzHtBmGXn4cVIy5qTIijM1jqHZxJGE9LBtS6Bb4w1e4nxXRXcyUErg8-D7OzmxJSmn23thxhND1Hww2ndvU8flO0HNs3zVaeHk" />
+                                </div>
+                                <div class="flex-1 flex flex-col gap-1">
+                                    <h3 class="text-[#111418] text-lg font-bold leading-tight">AirPods Pro (Gen 2)
+                                        MagSafe</h3>
+                                    <p class="text-[#60758a] text-sm">Phân loại: Trắng</p>
+                                    <div class="mt-2 text-primary font-bold text-lg">5.990.000đ</div>
+                                </div>
+                                <div class="flex items-center gap-8">
+                                    <div
+                                        class="flex items-center border border-[#dbe0e6] rounded-lg h-10 overflow-hidden">
+                                        <button
+                                            class="px-3 hover:bg-gray-100 transition-colors text-[#111418] border-r border-[#dbe0e6]">
+                                            <span class="material-symbols-outlined text-[18px]">remove</span>
+                                        </button>
+                                        <div class="px-4 font-bold text-sm">2</div>
+                                        <button
+                                            class="px-3 hover:bg-gray-100 transition-colors text-[#111418] border-l border-[#dbe0e6]">
+                                            <span class="material-symbols-outlined text-[18px]">add</span>
+                                        </button>
+                                    </div>
+                                    <div class="text-right min-w-[120px]">
+                                        <div class="text-sm text-[#60758a]">Thành tiền</div>
+                                        <div class="text-[#111418] font-black">11.980.000đ</div>
+                                    </div>
+                                    <button class="p-2 text-[#60758a] hover:text-red-500 transition-colors">
+                                        <span class="material-symbols-outlined">delete</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Right Side: Sticky Checkout Box -->
+                    <div class="w-full lg:w-[380px]">
+                        <div
+                            class="sticky sticky-summary bg-white rounded-xl border border-[#f0f2f5] shadow-lg overflow-hidden">
+                            <!-- Delivery Info -->
+                            <div class="p-6 border-b border-[#f0f2f5]">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h4 class="text-[#111418] font-bold">Giao tới</h4>
+                                    <button class="text-primary text-sm font-bold">Thay đổi</button>
+                                </div>
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="font-bold text-sm">Nguyễn Văn A</span>
+                                    <span class="w-px h-3 bg-[#dbe0e6]"></span>
+                                    <span class="font-bold text-sm">0901234567</span>
+                                </div>
+                                <div class="text-[#60758a] text-sm leading-relaxed">
+                                    Số 123, Đường Lê Lợi, Phường Bến Thành, Quận 1, TP. Hồ Chí Minh
+                                </div>
+                            </div>
+                            <!-- Promo Code Section -->
+                            <div class="p-6 border-b border-[#f0f2f5]">
+                                <div class="flex items-center justify-between mb-3">
+                                    <div class="flex items-center gap-2">
+                                        <span class="material-symbols-outlined text-primary">sell</span>
+                                        <span class="text-sm font-bold">Khuyến mãi</span>
+                                    </div>
+                                    <span class="text-[#60758a] text-xs">Có thể chọn 2</span>
+                                </div>
+                                <button
+                                    class="w-full flex items-center justify-between px-4 py-2 border border-dashed border-primary bg-blue-50/50 rounded-lg text-primary text-sm font-medium">
+                                    <span>Chọn hoặc nhập mã giảm giá</span>
+                                    <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+                                </button>
+                            </div>
+                            <!-- Summary Details -->
+                            <div class="p-6 flex flex-col gap-3">
+                                <div class="flex justify-between text-sm">
+                                    <span class="text-[#60758a]">Tạm tính (2 sản phẩm)</span>
+                                    <span class="text-[#111418] font-medium">54.480.000đ</span>
+                                </div>
+                                <div class="flex justify-between text-sm">
+                                    <span class="text-[#60758a]">Giảm giá từ Shop</span>
+                                    <span class="text-emerald-600 font-medium">-1.200.000đ</span>
+                                </div>
+                                <div class="flex justify-between text-sm">
+                                    <span class="text-[#60758a]">Phí vận chuyển</span>
+                                    <div class="text-right">
+                                        <span class="text-[#111418] font-medium">Miễn phí</span>
+                                        <div class="text-[10px] text-emerald-600 font-medium">Tiết kiệm 45.000đ</div>
+                                    </div>
+                                </div>
+                                <div class="border-t border-[#f0f2f5] mt-2 pt-4 flex flex-col gap-1">
+                                    <div class="flex justify-between items-end">
+                                        <span class="text-[#111418] font-bold">Tổng cộng</span>
+                                        <div class="text-right">
+                                            <div class="text-primary text-2xl font-black">53.280.000đ</div>
+                                            <div class="text-[10px] text-[#60758a]">(Đã bao gồm VAT)</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button
+                                    class="mt-6 w-full bg-primary hover:bg-blue-700 text-white font-black py-4 rounded-xl shadow-md shadow-blue-200 transition-all active:scale-[0.98]">
+                                    MUA HÀNG (2)
+                                </button>
+                                <p class="text-center text-[11px] text-[#60758a] mt-2 italic">
+                                    Nhấn "Mua hàng" để chuyển đến bước thanh toán bảo mật.
+                                </p>
+                            </div>
+                        </div>
+                        <!-- Trust Badge -->
+                        <div class="mt-6 flex items-center justify-center gap-6 opacity-60">
+                            <div class="flex flex-col items-center gap-1">
+                                <span class="material-symbols-outlined text-[32px]">verified_user</span>
+                                <span class="text-[10px] font-bold uppercase">Bảo mật</span>
+                            </div>
+                            <div class="flex flex-col items-center gap-1">
+                                <span class="material-symbols-outlined text-[32px]">published_with_changes</span>
+                                <span class="text-[10px] font-bold uppercase">Hoàn trả 30 ngày</span>
+                            </div>
+                            <div class="flex flex-col items-center gap-1">
+                                <span class="material-symbols-outlined text-[32px]">support_agent</span>
+                                <span class="text-[10px] font-bold uppercase">Hỗ trợ 24/7</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Micro-interaction Script -->
+    <script>
+        document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+            checkbox.addEventListener('change', function () {
+                const row = this.closest('.bg-white');
+                if (row && !this.checked) {
+                    row.classList.add('opacity-75');
+                } else if (row) {
+                    row.classList.remove('opacity-75');
+                }
+            });
+        });
+
+        // Simple stepper logic for demo
+        document.querySelectorAll('button').forEach(btn => {
+            if (btn.innerText.includes('add') || btn.innerText.includes('remove')) {
+                btn.addEventListener('click', (e) => {
+                    const parent = e.target.closest('.flex.items-center.border');
+                    const display = parent.querySelector('.font-bold.text-sm');
+                    let val = parseInt(display.innerText);
+                    if (e.target.innerText.includes('add')) {
+                        display.innerText = val + 1;
+                    } else if (val > 1) {
+                        display.innerText = val - 1;
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -2,17 +2,22 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { clientProductApi, type CategorySummaryResponse } from '../../features/client/home/clientProductApi';
 import { useAuth } from '../../features/auth/AuthProvider';
+import { useCart } from '../../features/client/cart/CartProvider';
 
 const Header = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const keywordParam = searchParams.get('keyword') || '';
   const { user } = useAuth();
+  const { cart } = useCart();
+  const [isBouncing, setIsBouncing] = useState(false);
+  const [prevTotalItems, setPrevTotalItems] = useState(cart?.totalItems || 0);
 
   const [searchQuery, setSearchQuery] = useState(keywordParam);
   const [categories, setCategories] = useState<CategorySummaryResponse[]>([]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setSearchQuery(keywordParam);
   }, [keywordParam]);
 
@@ -22,6 +27,18 @@ const Header = () => {
       .then(setCategories)
       .catch(console.error);
   }, []);
+
+  useEffect(() => {
+    if (cart && cart.totalItems !== prevTotalItems) {
+      if (cart.totalItems > prevTotalItems) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setIsBouncing(true);
+        const timer = setTimeout(() => setIsBouncing(false), 300);
+        return () => clearTimeout(timer);
+      }
+      setPrevTotalItems(cart.totalItems);
+    }
+  }, [cart, prevTotalItems]);
 
   const handleSearch = () => {
     const query = searchQuery.trim();
@@ -110,9 +127,21 @@ const Header = () => {
             <span className="text-sm font-medium hidden sm:inline max-w-[100px] truncate">{user ? user.fullName.split(' ').pop() || user.fullName : 'Tài khoản'}</span>
           </Link>
 
-          {/* Cart — no hardcoded badge count */}
-          <Link to="/products" className="relative cursor-pointer hover:text-nexa-blue transition-colors no-underline text-inherit" aria-label="Giỏ hàng">
+          {/* Cart */}
+          <Link 
+            to="/cart" 
+            className="relative cursor-pointer hover:text-nexa-blue transition-colors no-underline text-inherit" 
+            aria-label={`Giỏ hàng có ${cart?.totalItems ?? 0} sản phẩm`}
+          >
             <i className="fa-solid fa-cart-shopping text-2xl text-gray-700 hover:text-nexa-blue transition-colors"></i>
+            {cart && cart.totalItems > 0 && (
+              <span 
+                className={`absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center transform transition-transform ${isBouncing ? 'scale-125' : 'scale-100'}`}
+                aria-live="polite"
+              >
+                {cart.totalItems > 99 ? '99+' : cart.totalItems}
+              </span>
+            )}
           </Link>
         </div>
       </div>

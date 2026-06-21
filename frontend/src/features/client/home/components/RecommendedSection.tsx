@@ -3,6 +3,7 @@ import ProductCard from '../../../../components/client/ProductCard';
 import type { ProductResponse } from '../clientProductApi';
 import { formatCurrency, calculateDiscountPercent } from '../../../../utils/formatters';
 import { AlertCircle, Sparkles } from 'lucide-react';
+import { useAddToCartAction } from '../../cart/hooks/useAddToCartAction';
 
 type Props = {
   products: ProductResponse[];
@@ -24,6 +25,8 @@ const SkeletonCard = () => (
 );
 
 const RecommendedSection: React.FC<Props> = ({ products, loading, error }) => {
+  const { handleAddToCart } = useAddToCartAction();
+
   return (
     <section className="w-full mt-2 mb-10" data-purpose="recommendations">
       <h3 className="text-2xl font-bold mb-4">Gợi ý hôm nay</h3>
@@ -59,16 +62,20 @@ const RecommendedSection: React.FC<Props> = ({ products, loading, error }) => {
             const currentPrice = firstVariant?.salePrice > 0 ? firstVariant.salePrice : firstVariant?.price || 0;
             const originalPrice = firstVariant?.price > currentPrice ? firstVariant.price : null;
 
+            const validVariant = product.variants?.find(v => v.active && (!('deleted' in v) || !(v as Record<string, unknown>).deleted) && v.stockQuantity > 0);
+            const displayVariant = validVariant || firstVariant;
+
             return (
               <ProductCard
                 key={product.id}
                 image={thumbnailImage}
                 name={product.name}
                 slug={product.slug}
-                price={formatCurrency(currentPrice)}
+                price={displayVariant ? formatCurrency(currentPrice) : "Chưa có giá"}
                 originalPrice={originalPrice ? formatCurrency(originalPrice) : ""}
                 discountBadge={originalPrice ? calculateDiscountPercent(originalPrice, currentPrice) : ""}
                 isFlashSale={false}
+                onAddToCart={validVariant ? () => handleAddToCart(validVariant.id, 1, product.name) : undefined}
               />
             );
           })}

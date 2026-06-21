@@ -20,8 +20,9 @@ export default function ClientRegister() {
     try {
       await registerUser({ email, password, fullName, phoneNumber });
       navigate('/login?registered=true');
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Đăng ký thất bại. Vui lòng thử lại.');
+    } catch (err) {
+      const error = err as { response?: { data?: { message?: string } } };
+      setError(error.response?.data?.message || 'Đăng ký thất bại. Vui lòng thử lại.');
     } finally {
       setIsLoading(false);
     }

@@ -11,7 +11,7 @@ type ProductCardProps = {
   deliveryDate?: string;
   isFlashSale?: boolean;
   saleEnded?: boolean;
-  onAddToCart?: () => void;
+  onAddToCart?: () => Promise<void>;
 };
 
 const IMAGE_FALLBACK = (
@@ -36,18 +36,17 @@ const ProductCard: React.FC<ProductCardProps> = ({
   const [imgError, setImgError] = useState(false);
   const [addingToCart, setAddingToCart] = useState(false);
 
-  const handleAddToCart = (e: React.MouseEvent) => {
+  const handleAddToCart = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (addingToCart || saleEnded) return;
+    if (addingToCart || saleEnded || !onAddToCart) return;
 
     setAddingToCart(true);
-    // UI-only feedback — no real API call
-    setTimeout(() => {
+    try {
+      await onAddToCart();
+    } finally {
       setAddingToCart(false);
-    }, 600);
-
-    onAddToCart?.();
+    }
   };
 
   return (
@@ -75,9 +74,9 @@ const ProductCard: React.FC<ProductCardProps> = ({
           />
         )}
 
-        {/* Add to cart overlay on hover */}
-        {!saleEnded && (
-          <div className="absolute bottom-0 left-0 right-0 opacity-0 group-hover:opacity-100 transition-all duration-300 p-2 z-10">
+        {/* Add to cart overlay */}
+        {!saleEnded && onAddToCart ? (
+          <div className="absolute bottom-0 left-0 right-0 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-all duration-300 p-2 z-10">
             <button
               onClick={handleAddToCart}
               disabled={addingToCart}
@@ -97,7 +96,17 @@ const ProductCard: React.FC<ProductCardProps> = ({
               )}
             </button>
           </div>
-        )}
+        ) : !saleEnded && !onAddToCart ? (
+          <div className="absolute bottom-0 left-0 right-0 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-all duration-300 p-2 z-10">
+            <button
+              disabled
+              className="w-full bg-gray-400 text-white text-xs font-semibold py-2 rounded-md flex items-center justify-center gap-1.5 transition-colors shadow-lg cursor-not-allowed"
+            >
+              <i className="fa-solid fa-ban text-sm"></i>
+              Hết hàng
+            </button>
+          </div>
+        ) : null}
       </div>
 
       {/* Content */}

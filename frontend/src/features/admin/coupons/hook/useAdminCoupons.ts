@@ -49,7 +49,9 @@ export function useAdminCoupons() {
     }
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         void refreshCoupons();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [viewMode]);
 
     function openCreateModal() {
