@@ -1,6 +1,8 @@
 package com.NguyenDat.ecommerce.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import jakarta.validation.Valid;
 
@@ -138,7 +140,7 @@ public class BrandServiceImpl implements BrandService {
     public List<BrandResponse> showAllBrands() {
         return brandRepository.findAllByDeletedFalseAndActiveTrue().stream()
                 .map(brandMapper::toBrandResponse)
-                .toList();
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     @Override

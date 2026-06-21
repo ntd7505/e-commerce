@@ -30,6 +30,7 @@ public interface ProductReviewMapper {
     @Mapping(target = "productName", source = "product.name")
     @Mapping(target = "variantName", source = "orderItem.productVariant.variantName")
     @Mapping(target = "sku", source = "orderItem.productVariant.sku")
+    @Mapping(target = "verifiedPurchase", constant = "true")
     ProductReviewResponse toProductReviewResponse(ProductReview productReview);
 
     @Mapping(target = "id", ignore = true)

@@ -1,10 +1,10 @@
 package com.NguyenDat.ecommerce.dto.response.product_review;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Setter
 @Getter
@@ -30,6 +30,8 @@ public class ProductReviewResponse {
     String sku;
 
     List<ProductReviewMediaResponse> media;
+
+    Boolean verifiedPurchase;
 
     Boolean active;
     LocalDateTime createdAt;

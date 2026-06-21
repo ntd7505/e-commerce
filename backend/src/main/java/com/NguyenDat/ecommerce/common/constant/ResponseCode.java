@@ -126,7 +126,8 @@ public enum ResponseCode {
     PRODUCT_REVIEW_UPDATED(13003, "Product review updated successfully"),
     PRODUCT_REVIEW_DELETED(13004, "Product review deleted successfully"),
     PRODUCT_REVIEW_STATUS_UPDATED(13005, "Product review status updated successfully"),
-    PRODUCT_REVIEW_SUMMARY_FETCHED(13006, "Product review summary fetched successfully");
+    PRODUCT_REVIEW_SUMMARY_FETCHED(13006, "Product review summary fetched successfully"),
+    PRODUCT_REVIEW_MEDIA_FETCHED(13007, "Product review media fetched successfully");
 
     private final int code;
     private final String message;

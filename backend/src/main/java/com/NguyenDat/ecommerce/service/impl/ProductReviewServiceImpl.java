@@ -1,32 +1,39 @@
 package com.NguyenDat.ecommerce.service.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.NguyenDat.ecommerce.common.dto.response.PageResponse;
+import com.NguyenDat.ecommerce.common.exception.AppException;
+import com.NguyenDat.ecommerce.common.exception.ErrorCode;
+import com.NguyenDat.ecommerce.dto.request.ProductReviewFilterRequest;
+import com.NguyenDat.ecommerce.dto.request.product_review.ProductReviewCreateRequest;
+import com.NguyenDat.ecommerce.dto.request.product_review.ProductReviewMediaRequest;
+import com.NguyenDat.ecommerce.dto.response.ProductReviewEligibilityResponse;
+import com.NguyenDat.ecommerce.dto.response.product_review.ProductReviewMediaResponse;
+import com.NguyenDat.ecommerce.dto.response.product_review.ProductReviewResponse;
+import com.NguyenDat.ecommerce.dto.response.product_review.ProductReviewSummaryResponse;
+import com.NguyenDat.ecommerce.entity.*;
+import com.NguyenDat.ecommerce.enums.OrderStatus;
+import com.NguyenDat.ecommerce.mapper.ProductReviewMapper;
+import com.NguyenDat.ecommerce.repository.OrderItemRepository;
+import com.NguyenDat.ecommerce.repository.ProductReviewMediaRepository;
+import com.NguyenDat.ecommerce.repository.ProductReviewRepository;
+import com.NguyenDat.ecommerce.repository.UserRepository;
+import com.NguyenDat.ecommerce.repository.specification.ProductReviewSpecification;
+import com.NguyenDat.ecommerce.service.CurrentUserService;
+import com.NguyenDat.ecommerce.service.ProductReviewService;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.NguyenDat.ecommerce.common.exception.AppException;
-import com.NguyenDat.ecommerce.common.exception.ErrorCode;
-import com.NguyenDat.ecommerce.dto.request.product_review.ProductReviewCreateRequest;
-import com.NguyenDat.ecommerce.dto.request.product_review.ProductReviewMediaRequest;
-import com.NguyenDat.ecommerce.dto.response.product_review.ProductReviewResponse;
-import com.NguyenDat.ecommerce.dto.response.product_review.ProductReviewSummaryResponse;
-import com.NguyenDat.ecommerce.entity.OrderItem;
-import com.NguyenDat.ecommerce.entity.ProductReview;
-import com.NguyenDat.ecommerce.entity.ProductReviewMedia;
-import com.NguyenDat.ecommerce.entity.User;
-import com.NguyenDat.ecommerce.mapper.ProductReviewMapper;
-import com.NguyenDat.ecommerce.repository.OrderItemRepository;
-import com.NguyenDat.ecommerce.repository.ProductReviewRepository;
-import com.NguyenDat.ecommerce.repository.UserRepository;
-import com.NguyenDat.ecommerce.service.ProductReviewService;
-
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -38,6 +45,8 @@ public class ProductReviewServiceImpl implements ProductReviewService {
     UserRepository userRepository;
     OrderItemRepository orderItemRepository;
     ProductReviewMapper productReviewMapper;
+    ProductReviewMediaRepository productReviewMediaRepository;
+    CurrentUserService currentUserService;
 
     @Override
     @Transactional
@@ -54,6 +63,20 @@ public class ProductReviewServiceImpl implements ProductReviewService {
         OrderItem orderItem = orderItemRepository
                 .findById(productReviewCreateRequest.getOrderItemId())
                 .orElseThrow(() -> new AppException(ErrorCode.ORDER_ITEM_NOT_FOUND));
+
+        Order order = orderItem.getOrder();
+
+        if (!order.getUser().getId().equals(user.getId())) {
+            throw new AppException(ErrorCode.REVIEW_NOT_BELONG_TO_USER);
+        }
+
+        if (order.getStatus() != OrderStatus.COMPLETED) {
+            throw new AppException(ErrorCode.REVIEW_ORDER_NOT_COMPLETED);
+        }
+
+        if (productReviewRepository.existsByOrderItemId(orderItem.getId())) {
+            throw new AppException(ErrorCode.REVIEW_ALREADY_EXISTS);
+        }
 
         ProductReview productReview = productReviewMapper.toProductReview(productReviewCreateRequest);
 
@@ -72,7 +95,13 @@ public class ProductReviewServiceImpl implements ProductReviewService {
         }
         productReview.setMedia(productReviewMediaList);
 
-        return productReviewMapper.toProductReviewResponse(productReviewRepository.save(productReview));
+        try {
+            return productReviewMapper.toProductReviewResponse(
+                    productReviewRepository.saveAndFlush(productReview)
+            );
+        } catch (DataIntegrityViolationException exception) {
+            throw new AppException(ErrorCode.REVIEW_ALREADY_EXISTS);
+        }
     }
 
     @Override
@@ -84,49 +113,145 @@ public class ProductReviewServiceImpl implements ProductReviewService {
 
     @Override
     public ProductReviewSummaryResponse getReviewSummaryByProductId(Long productId) {
-        List<ProductReview> productReviews =
+        List<ProductReview> reviews =
                 productReviewRepository.findAllByProductIdAndDeletedFalseAndActiveTrue(productId);
-        if (productReviews.isEmpty()) {
-            throw new AppException(ErrorCode.REVIEW_NOT_FOUND);
+
+        if (reviews.isEmpty()) {
+            return emptySummary();
         }
 
-        long totalReviews = productReviews.size();
+        long totalReviews = reviews.size();
+        long fiveStarCount = countRating(reviews, 5);
+        long fourStarCount = countRating(reviews, 4);
+        long threeStarCount = countRating(reviews, 3);
+        long twoStarCount = countRating(reviews, 2);
+        long oneStarCount = countRating(reviews, 1);
 
-        double totalRating = 0;
-        long fiveStarCount = 0;
-        long fourStarCount = 0;
-        long threeStarCount = 0;
-        long twoStarCount = 0;
-        long oneStarCount = 0;
-        for (ProductReview productReview : productReviews) {
-            totalRating += productReview.getRating();
-            int rating = productReview.getRating();
-            if (rating == 5) {
-                fiveStarCount++;
-            } else if (rating == 4) {
-                fourStarCount++;
-            } else if (rating == 3) {
-                threeStarCount++;
-            } else if (rating == 2) {
-                twoStarCount++;
-            } else if (rating == 1) {
-                oneStarCount++;
-            }
-        }
+        double averageRating = reviews.stream()
+                .mapToInt(ProductReview::getRating)
+                .average()
+                .orElse(0D);
+
+        long totalMedia = productReviewMediaRepository
+                .countByReviewProductIdAndReviewDeletedFalseAndReviewActiveTrue(productId);
 
         return ProductReviewSummaryResponse.builder()
-                .averageRating(totalRating / totalReviews)
+                .averageRating(averageRating)
                 .totalReviews(totalReviews)
+                .totalMedia(totalMedia)
                 .fiveStarCount(fiveStarCount)
                 .fourStarCount(fourStarCount)
                 .threeStarCount(threeStarCount)
                 .twoStarCount(twoStarCount)
                 .oneStarCount(oneStarCount)
-                .fiveStarPercent((double) fiveStarCount / totalReviews * 100)
-                .fourStarPercent((double) fourStarCount / totalReviews * 100)
-                .threeStarPercent((double) threeStarCount / totalReviews * 100)
-                .twoStarPercent((double) twoStarCount / totalReviews * 100)
-                .oneStarPercent((double) oneStarCount / totalReviews * 100)
+                .fiveStarPercent(calculatePercent(fiveStarCount, totalReviews))
+                .fourStarPercent(calculatePercent(fourStarCount, totalReviews))
+                .threeStarPercent(calculatePercent(threeStarCount, totalReviews))
+                .twoStarPercent(calculatePercent(twoStarCount, totalReviews))
+                .oneStarPercent(calculatePercent(oneStarCount, totalReviews))
+                .build();
+    }
+
+    @Override
+    public PageResponse<ProductReviewResponse> getReviews(
+            Long productId,
+            ProductReviewFilterRequest filter
+    ) {
+        Specification<ProductReview> specification =
+                ProductReviewSpecification.filter(
+                        productId,
+                        filter.getRating(),
+                        filter.getHasMedia()
+                );
+
+        Page<ProductReviewResponse> page = productReviewRepository
+                .findAll(specification, filter.toPageable())
+                .map(productReviewMapper::toProductReviewResponse);
+
+        return PageResponse.from(page);
+    }
+
+    @Override
+    public PageResponse<ProductReviewMediaResponse> getReviewMedia(
+            Long productId,
+            Pageable pageable
+    ) {
+        Page<ProductReviewMediaResponse> page = productReviewMediaRepository
+                .findAllByReviewProductIdAndReviewDeletedFalseAndReviewActiveTrue(
+                        productId,
+                        pageable
+                )
+                .map(productReviewMapper::toProductReviewMediaResponse);
+
+        return PageResponse.from(page);
+    }
+
+    @Override
+    public ProductReviewEligibilityResponse getReviewEligibility(Long productId) {
+        User user = currentUserService.getCurrentUser();
+
+        List<OrderItem> items = orderItemRepository
+                .findAllByOrderUserIdAndProductVariantProductIdOrderByOrderCreatedAtDesc(
+                        user.getId(),
+                        productId
+                );
+
+        if (items.isEmpty()) {
+            return eligibility(false, null, "NOT_PURCHASED");
+        }
+
+        for (OrderItem item : items) {
+            if (item.getOrder().getStatus() == OrderStatus.COMPLETED
+                    && !productReviewRepository.existsByOrderItemId(item.getId())) {
+                return eligibility(true, item.getId(), null);
+            }
+        }
+
+        boolean hasCompletedOrder = items.stream()
+                .anyMatch(item -> item.getOrder().getStatus() == OrderStatus.COMPLETED);
+
+        return hasCompletedOrder
+                ? eligibility(false, null, "ALREADY_REVIEWED")
+                : eligibility(false, null, "ORDER_NOT_COMPLETED");
+    }
+
+    private ProductReviewEligibilityResponse eligibility(
+            boolean eligible,
+            Long orderItemId,
+            String reason
+    ) {
+        return ProductReviewEligibilityResponse.builder()
+                .eligible(eligible)
+                .orderItemId(orderItemId)
+                .reason(reason)
+                .build();
+    }
+
+    private long countRating(List<ProductReview> reviews, int rating) {
+        return reviews.stream()
+                .filter(review -> review.getRating() == rating)
+                .count();
+    }
+
+    private double calculatePercent(long count, long total) {
+        return total == 0 ? 0D : (double) count / total * 100;
+    }
+
+    private ProductReviewSummaryResponse emptySummary() {
+        return ProductReviewSummaryResponse.builder()
+                .averageRating(0D)
+                .totalReviews(0L)
+                .totalMedia(0L)
+                .fiveStarCount(0L)
+                .fourStarCount(0L)
+                .threeStarCount(0L)
+                .twoStarCount(0L)
+                .oneStarCount(0L)
+                .fiveStarPercent(0D)
+                .fourStarPercent(0D)
+                .threeStarPercent(0D)
+                .twoStarPercent(0D)
+                .oneStarPercent(0D)
                 .build();
     }
 }

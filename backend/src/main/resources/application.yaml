@@ -39,7 +39,7 @@ spring:
 
 app:
   cache:
-    key-prefix: "ecommerce:${APP_ENV:dev}:cache:"
+    key-prefix: "ecommerce:${APP_ENV:dev}:v2:cache:"
 
 springdoc:
   api-docs:

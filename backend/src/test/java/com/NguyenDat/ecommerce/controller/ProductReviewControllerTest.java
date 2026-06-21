@@ -1,6 +1,7 @@
 package com.NguyenDat.ecommerce.controller;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -19,7 +20,9 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.NguyenDat.ecommerce.common.constant.ResponseCode;
+import com.NguyenDat.ecommerce.common.dto.response.PageResponse;
 import com.NguyenDat.ecommerce.controller.client.ProductReviewController;
+import com.NguyenDat.ecommerce.dto.request.ProductReviewFilterRequest;
 import com.NguyenDat.ecommerce.dto.request.product_review.ProductReviewCreateRequest;
 import com.NguyenDat.ecommerce.dto.response.product_review.ProductReviewResponse;
 import com.NguyenDat.ecommerce.dto.response.product_review.ProductReviewSummaryResponse;
@@ -73,9 +76,16 @@ class ProductReviewControllerTest {
 
     @Test
     void getReviewsAndSummary_shouldReturnProductReviewData() throws Exception {
-        when(productReviewService.getAllReviewsProduct(1L))
-                .thenReturn(
-                        List.of(ProductReviewResponse.builder().id(2L).rating(4).build()));
+        when(productReviewService.getReviews(eq(1L), any(ProductReviewFilterRequest.class)))
+                .thenReturn(PageResponse.<ProductReviewResponse>builder()
+                        .content(List.of(ProductReviewResponse.builder().id(2L).rating(4).build()))
+                        .page(0)
+                        .size(10)
+                        .totalElements(1)
+                        .totalPages(1)
+                        .first(true)
+                        .last(true)
+                        .build());
         when(productReviewService.getReviewSummaryByProductId(1L))
                 .thenReturn(ProductReviewSummaryResponse.builder()
                         .averageRating(4.0)
@@ -84,12 +94,12 @@ class ProductReviewControllerTest {
 
         mockMvc.perform(get("/api/v1/client/products/{productId}/reviews", 1L))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data[0].rating").value(4));
+                .andExpect(jsonPath("$.data.content[0].rating").value(4));
         mockMvc.perform(get("/api/v1/client/products/{productId}/review-summary", 1L))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.averageRating").value(4.0));
 
-        verify(productReviewService).getAllReviewsProduct(1L);
+        verify(productReviewService).getReviews(eq(1L), any(ProductReviewFilterRequest.class));
         verify(productReviewService).getReviewSummaryByProductId(1L);
     }
 }

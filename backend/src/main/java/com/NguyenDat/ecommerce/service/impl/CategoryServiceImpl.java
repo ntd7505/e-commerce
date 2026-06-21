@@ -1,6 +1,8 @@
 package com.NguyenDat.ecommerce.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import jakarta.validation.Valid;
 
@@ -156,7 +158,7 @@ public class CategoryServiceImpl implements CategoryService {
     public List<CategoryResponse> showAllCategories() {
         return categoryRepository.findAllByDeletedFalseAndActiveTrue().stream()
                 .map(categoryMapper::toCategoryResponse)
-                .toList();
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     @Override

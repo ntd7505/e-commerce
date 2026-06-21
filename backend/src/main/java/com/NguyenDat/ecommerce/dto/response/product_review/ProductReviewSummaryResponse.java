@@ -18,6 +18,7 @@ public class ProductReviewSummaryResponse {
     Long threeStarCount;
     Long twoStarCount;
     Long oneStarCount;
+    Long totalMedia;
 
     Double fiveStarPercent;
     Double fourStarPercent;

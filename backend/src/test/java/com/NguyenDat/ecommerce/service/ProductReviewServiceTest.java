@@ -21,15 +21,18 @@ import com.NguyenDat.ecommerce.dto.request.product_review.ProductReviewCreateReq
 import com.NguyenDat.ecommerce.dto.request.product_review.ProductReviewMediaRequest;
 import com.NguyenDat.ecommerce.dto.response.product_review.ProductReviewResponse;
 import com.NguyenDat.ecommerce.dto.response.product_review.ProductReviewSummaryResponse;
+import com.NguyenDat.ecommerce.entity.Order;
 import com.NguyenDat.ecommerce.entity.OrderItem;
 import com.NguyenDat.ecommerce.entity.Product;
 import com.NguyenDat.ecommerce.entity.ProductReview;
 import com.NguyenDat.ecommerce.entity.ProductReviewMedia;
 import com.NguyenDat.ecommerce.entity.ProductVariant;
 import com.NguyenDat.ecommerce.entity.User;
+import com.NguyenDat.ecommerce.enums.OrderStatus;
 import com.NguyenDat.ecommerce.enums.ReviewMediaType;
 import com.NguyenDat.ecommerce.mapper.ProductReviewMapper;
 import com.NguyenDat.ecommerce.repository.OrderItemRepository;
+import com.NguyenDat.ecommerce.repository.ProductReviewMediaRepository;
 import com.NguyenDat.ecommerce.repository.ProductReviewRepository;
 import com.NguyenDat.ecommerce.repository.UserRepository;
 import com.NguyenDat.ecommerce.service.impl.ProductReviewServiceImpl;
@@ -48,6 +51,12 @@ class ProductReviewServiceTest {
 
     @Mock
     ProductReviewMapper productReviewMapper;
+
+    @Mock
+    ProductReviewMediaRepository productReviewMediaRepository;
+
+    @Mock
+    CurrentUserService currentUserService;
 
     @Mock
     Authentication authentication;
@@ -78,7 +87,12 @@ class ProductReviewServiceTest {
         ProductVariant variant = new ProductVariant();
         variant.setProduct(product);
         OrderItem orderItem = new OrderItem();
+        orderItem.setId(10L);
         orderItem.setProductVariant(variant);
+        Order order = new Order();
+        order.setUser(user);
+        order.setStatus(OrderStatus.COMPLETED);
+        orderItem.setOrder(order);
         ProductReview review = new ProductReview();
         ProductReviewMedia media = new ProductReviewMedia();
         ProductReviewResponse response = new ProductReviewResponse();
@@ -87,9 +101,10 @@ class ProductReviewServiceTest {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         when(userRepository.findByEmailAndDeletedFalse("dat@example.com")).thenReturn(Optional.of(user));
         when(orderItemRepository.findById(10L)).thenReturn(Optional.of(orderItem));
+        when(productReviewRepository.existsByOrderItemId(10L)).thenReturn(false);
         when(productReviewMapper.toProductReview(request)).thenReturn(review);
         when(productReviewMapper.toProductReviewMedia(mediaRequest)).thenReturn(media);
-        when(productReviewRepository.save(review)).thenReturn(review);
+        when(productReviewRepository.saveAndFlush(review)).thenReturn(review);
         when(productReviewMapper.toProductReviewResponse(review)).thenReturn(response);
 
         assertEquals(response, productReviewService.createProductReview(request));
@@ -118,6 +133,9 @@ class ProductReviewServiceTest {
         ProductReview threeStar = reviewWithRating(3);
         when(productReviewRepository.findAllByProductIdAndDeletedFalseAndActiveTrue(1L))
                 .thenReturn(List.of(fiveStar, threeStar));
+        when(productReviewMediaRepository
+                        .countByReviewProductIdAndReviewDeletedFalseAndReviewActiveTrue(1L))
+                .thenReturn(2L);
 
         ProductReviewSummaryResponse result = productReviewService.getReviewSummaryByProductId(1L);
 
@@ -125,19 +143,22 @@ class ProductReviewServiceTest {
         assertEquals(2, result.getTotalReviews());
         assertEquals(1, result.getFiveStarCount());
         assertEquals(1, result.getThreeStarCount());
+        assertEquals(2, result.getTotalMedia());
         assertEquals(50.0, result.getFiveStarPercent());
         assertEquals(50.0, result.getThreeStarPercent());
     }
 
     @Test
-    void getReviewSummary_shouldRejectProductWithoutReviews() {
+    void getReviewSummary_shouldReturnEmptySummaryForProductWithoutReviews() {
         when(productReviewRepository.findAllByProductIdAndDeletedFalseAndActiveTrue(1L))
                 .thenReturn(List.of());
 
-        AppException exception =
-                assertThrows(AppException.class, () -> productReviewService.getReviewSummaryByProductId(1L));
+        ProductReviewSummaryResponse result = productReviewService.getReviewSummaryByProductId(1L);
 
-        assertEquals(ErrorCode.REVIEW_NOT_FOUND, exception.getErrorCode());
+        assertEquals(0D, result.getAverageRating());
+        assertEquals(0L, result.getTotalReviews());
+        assertEquals(0L, result.getTotalMedia());
+        assertEquals(0D, result.getFiveStarPercent());
     }
 
     @Test
