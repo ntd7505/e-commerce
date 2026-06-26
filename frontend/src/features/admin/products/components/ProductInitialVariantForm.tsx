@@ -1,4 +1,4 @@
-import type { ChangeEvent } from "react";
+﻿import type { ChangeEvent } from "react";
 import type { ProductCreateFormValues } from "../adminProductFormTypes";
 
 type ProductInitialVariantFormProps = {
@@ -8,8 +8,8 @@ type ProductInitialVariantFormProps = {
 
 export function ProductInitialVariantForm({ formValues, onChange }: ProductInitialVariantFormProps) {
     return (
-        <section className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-            <h3 className="mb-6 text-lg font-bold text-gray-900">Initial Variant</h3>
+        <section className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
+            <h3 className="mb-6 text-lg font-bold text-slate-900">Initial Variant</h3>
             <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
                 <div>
                     <label className="mb-2 block text-[13px] font-bold text-[#0B2113]">Variant Name</label>
@@ -18,7 +18,7 @@ export function ProductInitialVariantForm({ formValues, onChange }: ProductIniti
                         name="variantName"
                         value={formValues.variantName}
                         onChange={onChange}
-                        className="w-full rounded-lg border border-gray-200 bg-[#f8f9fa] px-4 py-3 text-[13px] font-bold text-gray-900 focus:border-emerald-500 focus:outline-none"
+                        className="w-full rounded-lg border border-slate-200 bg-[#f8f9fa] px-4 py-3 text-[13px] font-bold text-slate-900 focus:border-emerald-500 focus:outline-none"
                     />
                 </div>
                 <div>
@@ -28,7 +28,7 @@ export function ProductInitialVariantForm({ formValues, onChange }: ProductIniti
                         name="stockQuantity"
                         value={formValues.stockQuantity}
                         onChange={onChange}
-                        className="w-full rounded-lg border border-gray-200 bg-[#f8f9fa] px-4 py-3 text-[13px] font-bold text-gray-900 focus:border-emerald-500 focus:outline-none"
+                        className="w-full rounded-lg border border-slate-200 bg-[#f8f9fa] px-4 py-3 text-[13px] font-bold text-slate-900 focus:border-emerald-500 focus:outline-none"
                     />
                 </div>
                 <div>
@@ -38,7 +38,7 @@ export function ProductInitialVariantForm({ formValues, onChange }: ProductIniti
                         name="price"
                         value={formValues.price}
                         onChange={onChange}
-                        className="w-full rounded-lg border border-gray-200 bg-[#f8f9fa] px-4 py-3 text-[13px] font-bold text-gray-900 focus:border-emerald-500 focus:outline-none"
+                        className="w-full rounded-lg border border-slate-200 bg-[#f8f9fa] px-4 py-3 text-[13px] font-bold text-slate-900 focus:border-emerald-500 focus:outline-none"
                     />
                 </div>
                 <div>
@@ -48,7 +48,7 @@ export function ProductInitialVariantForm({ formValues, onChange }: ProductIniti
                         name="salePrice"
                         value={formValues.salePrice}
                         onChange={onChange}
-                        className="w-full rounded-lg border border-gray-200 bg-[#f8f9fa] px-4 py-3 text-[13px] font-bold text-gray-900 focus:border-emerald-500 focus:outline-none"
+                        className="w-full rounded-lg border border-slate-200 bg-[#f8f9fa] px-4 py-3 text-[13px] font-bold text-slate-900 focus:border-emerald-500 focus:outline-none"
                     />
                 </div>
             </div>

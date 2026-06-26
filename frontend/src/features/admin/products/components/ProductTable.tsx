@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+﻿import { Link } from "react-router-dom";
 import { ChevronLeft, ChevronRight, Edit, Filter, MoreHorizontal, Package, Search } from "lucide-react";
 import { AdminBadge } from "../../../../components/admin/AdminBadge";
 import { AdminEmptyState } from "../../../../components/admin/AdminEmptyState";
@@ -54,13 +54,13 @@ export function ProductTable({
 
     const tabClass = (tab: "all" | "active" | "inactive") =>
         statusFilter === tab
-            ? "rounded-md border border-gray-200/60 bg-white px-5 py-2 text-[13px] font-bold text-emerald-800 shadow-sm"
-            : "rounded-md px-5 py-2 text-[13px] font-bold text-gray-500 transition-colors hover:text-gray-900";
+            ? "rounded-md border border-slate-200/60 bg-white px-5 py-2 text-[13px] font-bold text-emerald-800 shadow-sm"
+            : "rounded-md px-5 py-2 text-[13px] font-bold text-slate-500 transition-colors hover:text-slate-900";
 
     return (
-        <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
-            <div className="flex flex-wrap items-center justify-between gap-4 border-b border-gray-100 p-4">
-                <div className="flex items-center gap-1 rounded-lg border border-gray-100 bg-gray-50 p-1.5 shadow-inner">
+        <div className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm">
+            <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 p-4">
+                <div className="flex items-center gap-1 rounded-lg border border-slate-100 bg-slate-50 p-1.5 shadow-inner">
                     <button className={tabClass("all")} onClick={() => onStatusFilterChange("all")}>
                         All Products ({products.length})
                     </button>
@@ -79,14 +79,14 @@ export function ProductTable({
                             value={searchTerm}
                             onChange={(event) => onSearchChange(event.target.value)}
                             placeholder="Search products"
-                            className="w-72 rounded-lg border border-gray-200 bg-gray-50/50 py-2.5 pl-4 pr-10 text-[13px] font-medium outline-none placeholder:font-normal placeholder:text-gray-400 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
+                            className="w-72 rounded-lg border border-slate-200 bg-slate-50/50 py-2.5 pl-4 pr-10 text-[13px] font-medium outline-none placeholder:font-normal placeholder:text-slate-400 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
                         />
-                        <Search className="absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                        <Search className="absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
                     </div>
-                    <button className="rounded-lg border border-gray-200 bg-white p-2.5 text-gray-500 shadow-sm transition-colors hover:bg-gray-50 hover:text-gray-800">
+                    <button className="rounded-2xl border border-slate-100 bg-white p-2.5 text-slate-500 shadow-sm transition-colors hover:bg-slate-50 hover:text-slate-800">
                         <Filter className="h-4 w-4" />
                     </button>
-                    <button className="rounded-lg border border-gray-200 bg-white p-2.5 text-gray-500 shadow-sm transition-colors hover:bg-gray-50 hover:text-gray-800">
+                    <button className="rounded-2xl border border-slate-100 bg-white p-2.5 text-slate-500 shadow-sm transition-colors hover:bg-slate-50 hover:text-slate-800">
                         <MoreHorizontal className="h-4 w-4" />
                     </button>
                 </div>
@@ -129,7 +129,7 @@ export function ProductTable({
                                 <th className="rounded-r-lg px-4 py-4 text-right text-[13px] font-bold">Action</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-gray-100">
+                        <tbody className="divide-y divide-slate-100">
                             {paginatedProducts.map((product) => {
                                 const thumbnail = getProductThumbnail(product);
                                 const variant = getPrimaryVariant(product);
@@ -138,10 +138,10 @@ export function ProductTable({
                                 const displayPrice = salePrice > 0 ? salePrice : price;
 
                                 return (
-                                    <tr key={product.id} className="group transition-colors hover:bg-gray-50/50">
+                                    <tr key={product.id} className="group transition-colors hover:bg-slate-50/50">
                                         <td className="px-4 py-4">
                                             <div className="flex items-center gap-4">
-                                                <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg border border-gray-100 bg-gray-50 p-1.5">
+                                                <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg border border-slate-100 bg-slate-50 p-1.5">
                                                     <AdminImage
                                                         src={thumbnail}
                                                         alt={product.name}
@@ -151,33 +151,33 @@ export function ProductTable({
                                                     />
                                                 </div>
                                                 <div>
-                                                    <p className="font-bold leading-snug text-gray-900 transition-colors group-hover:text-emerald-600">
+                                                    <p className="font-bold leading-snug text-slate-900 transition-colors group-hover:text-emerald-600">
                                                         {product.name}
                                                     </p>
-                                                    <p className="mt-1 text-[12px] font-medium text-gray-500">{product.slug}</p>
+                                                    <p className="mt-1 text-[12px] font-medium text-slate-500">{product.slug}</p>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td className="px-4 py-4 text-[13px] font-bold text-gray-900">
+                                        <td className="px-4 py-4 text-[13px] font-bold text-slate-900">
                                             {product.brand?.name ?? "-"}
                                         </td>
-                                        <td className="px-4 py-4 text-[13px] font-bold text-gray-900">
+                                        <td className="px-4 py-4 text-[13px] font-bold text-slate-900">
                                             {product.category?.name ?? "-"}
                                         </td>
                                         <td className="px-4 py-4">
-                                            <div className="text-[13px] font-extrabold text-gray-900">
+                                            <div className="text-[13px] font-extrabold text-slate-900">
                                                 {currencyFormatter.format(displayPrice)}
                                             </div>
                                             {salePrice > 0 && price > salePrice && (
-                                                <div className="mt-1 text-[12px] font-semibold text-gray-400 line-through">
+                                                <div className="mt-1 text-[12px] font-semibold text-slate-400 line-through">
                                                     {currencyFormatter.format(price)}
                                                 </div>
                                             )}
                                         </td>
-                                        <td className="px-4 py-4 text-[13px] font-bold text-gray-900">
+                                        <td className="px-4 py-4 text-[13px] font-bold text-slate-900">
                                             {variant?.stockQuantity ?? 0}
                                         </td>
-                                        <td className="px-4 py-4 text-[13px] font-semibold text-gray-500">
+                                        <td className="px-4 py-4 text-[13px] font-semibold text-slate-500">
                                             {formatProductDate(product.createdAt)}
                                         </td>
                                         <td className="px-4 py-4">
@@ -193,7 +193,7 @@ export function ProductTable({
                                             <div className="flex items-center justify-end gap-3">
                                                 <Link
                                                     to={`/admin/products/${product.id}/edit`}
-                                                    className="text-gray-400 transition-colors hover:text-emerald-600"
+                                                    className="text-slate-400 transition-colors hover:text-emerald-600"
                                                 >
                                                     <Edit className="h-4 w-4" />
                                                 </Link>
@@ -206,8 +206,8 @@ export function ProductTable({
                     </table>
                 </div>
 
-                <div className="flex items-center justify-between border-t border-gray-100 px-5 py-3">
-                    <p className="text-[12px] font-medium text-gray-500">
+                <div className="flex items-center justify-between border-t border-slate-100 px-5 py-3">
+                    <p className="text-[12px] font-medium text-slate-500">
                         {filteredProducts.length > 0
                             ? `Showing ${startItem}-${endItem} of ${filteredProducts.length}`
                             : "No results"}
@@ -217,19 +217,19 @@ export function ProductTable({
                             type="button"
                             onClick={() => onPageChange(page - 1)}
                             disabled={page <= 1}
-                            className="flex items-center gap-1 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-[12px] font-bold text-gray-600 shadow-sm hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
+                            className="flex items-center gap-1 rounded-2xl border border-slate-100 bg-white px-3 py-1.5 text-[12px] font-bold text-slate-600 shadow-sm hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40"
                         >
                             <ChevronLeft className="h-3.5 w-3.5" />
                             Previous
                         </button>
-                        <span className="text-[12px] font-bold text-gray-700">
+                        <span className="text-[12px] font-bold text-slate-700">
                             Page {page} of {totalPages}
                         </span>
                         <button
                             type="button"
                             onClick={() => onPageChange(page + 1)}
                             disabled={page >= totalPages}
-                            className="flex items-center gap-1 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-[12px] font-bold text-gray-600 shadow-sm hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
+                            className="flex items-center gap-1 rounded-2xl border border-slate-100 bg-white px-3 py-1.5 text-[12px] font-bold text-slate-600 shadow-sm hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40"
                         >
                             Next
                             <ChevronRight className="h-3.5 w-3.5" />

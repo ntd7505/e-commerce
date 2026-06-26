@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { AdminAlert } from "../../components/admin/AdminAlert";
 import { OrderDetailModal } from "../../features/admin/orders/components/OrderDetailModal";
 import { OrderCancelRequestsTable } from "../../features/admin/orders/components/OrderCancelRequestsTable";
@@ -43,14 +43,14 @@ export default function Orders() {
 
       <OrderStats orders={ordersPage.orders} />
 
-      <div className="flex w-fit rounded-lg border border-gray-200 bg-gray-50 p-1">
+      <div className="flex w-fit rounded-lg border border-slate-200 bg-slate-50 p-1">
         <button
           type="button"
           onClick={() => setActiveTab("ORDERS")}
           className={`rounded-md px-4 py-2 text-sm font-bold transition-colors ${
             activeTab === "ORDERS"
               ? "bg-white text-emerald-700 shadow-sm"
-              : "text-gray-500 hover:text-gray-800"
+              : "text-slate-500 hover:text-slate-800"
           }`}
         >
           Orders
@@ -61,7 +61,7 @@ export default function Orders() {
           className={`rounded-md px-4 py-2 text-sm font-bold transition-colors ${
             activeTab === "CANCEL_REQUESTS"
               ? "bg-white text-emerald-700 shadow-sm"
-              : "text-gray-500 hover:text-gray-800"
+              : "text-slate-500 hover:text-slate-800"
           }`}
         >
           Cancel Requests

@@ -1,4 +1,4 @@
-import { Download, RefreshCw, Search, ChevronLeft, ChevronRight } from "lucide-react";
+﻿import { Download, RefreshCw, Search, ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import { AdminStatCard } from "../../components/admin/AdminStatCard";
 import { getOrders } from "../../features/admin/orders/adminOrderApi";
@@ -141,8 +141,8 @@ export default function Transactions() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-bold text-gray-900">Transactions</h2>
-          <p className="text-sm text-gray-500">Payment status and transaction references derived from orders.</p>
+          <h2 className="text-xl font-bold text-slate-900">Transactions</h2>
+          <p className="text-sm text-slate-500">Payment status and transaction references derived from orders.</p>
         </div>
         <div className="flex items-center gap-2">
           <button
@@ -159,7 +159,7 @@ export default function Transactions() {
             type="button"
             onClick={loadTransactions}
             disabled={loading}
-            className="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50 disabled:opacity-60"
+            className="flex items-center gap-2 rounded-2xl border border-slate-100 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50 disabled:opacity-60"
           >
             <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
             Refresh
@@ -179,22 +179,22 @@ export default function Transactions() {
       </div>
 
       {/* Table */}
-      <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
-        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-gray-100 p-5">
+      <div className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm">
+        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 p-5">
           <div>
-            <h3 className="font-bold text-gray-900">Payment History</h3>
-            <p className="mt-1 text-xs font-medium text-gray-500">
+            <h3 className="font-bold text-slate-900">Payment History</h3>
+            <p className="mt-1 text-xs font-medium text-slate-500">
               Showing {filteredTransactions.length} of {transactions.length} records
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
-            <div className="flex rounded-lg border border-gray-200 bg-gray-50 p-1">
+            <div className="flex rounded-lg border border-slate-200 bg-slate-50 p-1">
               {statusOptions.map((option) => (
                 <button
                   key={option.value}
                   type="button"
                   onClick={() => handleFilter(option.value)}
-                  className={`rounded-md px-3 py-1.5 text-xs font-bold transition-colors ${statusFilter === option.value ? "bg-white text-emerald-700 shadow-sm" : "text-gray-500 hover:text-gray-800"
+                  className={`rounded-md px-3 py-1.5 text-xs font-bold transition-colors ${statusFilter === option.value ? "bg-white text-emerald-700 shadow-sm" : "text-slate-500 hover:text-slate-800"
                     }`}
                 >
                   {option.label}
@@ -202,23 +202,23 @@ export default function Transactions() {
               ))}
             </div>
             <div className="relative w-72">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
               <input
                 value={searchTerm}
                 onChange={(e) => handleSearch(e.target.value)}
                 placeholder="Search order, customer, code"
-                className="w-full rounded-lg border border-gray-200 bg-gray-50 py-2 pl-9 pr-3 text-sm outline-none transition focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
+                className="w-full rounded-lg border border-slate-200 bg-slate-50 py-2 pl-9 pr-3 text-sm outline-none transition focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
               />
             </div>
           </div>
         </div>
 
-        {loading && <div className="p-6 text-sm text-gray-500">Loading transactions...</div>}
+        {loading && <div className="p-6 text-sm text-slate-500">Loading transactions...</div>}
         {!loading && error && <div className="p-6 text-sm font-semibold text-red-600">{error}</div>}
         {!loading && !error && filteredTransactions.length === 0 && (
           <div className="p-10 text-center">
             <Download className="mx-auto mb-3 h-10 w-10 text-gray-200" />
-            <p className="text-sm font-semibold text-gray-400">No transactions found</p>
+            <p className="text-sm font-semibold text-slate-400">No transactions found</p>
           </div>
         )}
 
@@ -226,7 +226,7 @@ export default function Transactions() {
           <>
             <div className="overflow-x-auto">
               <table className="w-full min-w-[900px] text-left text-sm">
-                <thead className="sticky top-0 bg-gray-50 text-xs uppercase tracking-wider text-gray-500">
+                <thead className="sticky top-0 bg-slate-50 text-xs uppercase tracking-wider text-slate-500">
                   <tr>
                     <th className="px-5 py-3 font-bold">Order</th>
                     <th className="px-5 py-3 font-bold">Customer</th>
@@ -237,24 +237,24 @@ export default function Transactions() {
                     <th className="px-5 py-3 font-bold">Paid At</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-100">
+                <tbody className="divide-y divide-slate-100">
                   {pagedTransactions.map((transaction) => (
-                    <tr key={transaction.orderId} className="transition-colors hover:bg-gray-50">
-                      <td className="px-5 py-4 font-bold text-gray-900">#{transaction.orderId}</td>
-                      <td className="px-5 py-4 font-medium text-gray-800">{transaction.recipientName}</td>
+                    <tr key={transaction.orderId} className="transition-colors hover:bg-slate-50">
+                      <td className="px-5 py-4 font-bold text-slate-900">#{transaction.orderId}</td>
+                      <td className="px-5 py-4 font-medium text-slate-800">{transaction.recipientName}</td>
                       <td className="px-5 py-4">
-                        <span className="rounded-md bg-gray-100 px-2 py-0.5 text-[11px] font-bold text-gray-600">
+                        <span className="rounded-md bg-slate-100 px-2 py-0.5 text-[11px] font-bold text-slate-600">
                           {transaction.method}
                         </span>
                       </td>
-                      <td className="px-5 py-4 text-right font-semibold text-gray-900">
+                      <td className="px-5 py-4 text-right font-semibold text-slate-900">
                         {formatMoney(transaction.amount)} ₫
                       </td>
                       <td className="px-5 py-4">
                         <OrderStatusBadge value={transaction.paymentStatus} />
                       </td>
-                      <td className="px-5 py-4 font-mono text-xs text-gray-500">{transaction.transactionCode}</td>
-                      <td className="px-5 py-4 text-gray-500">{formatDate(transaction.paidAt)}</td>
+                      <td className="px-5 py-4 font-mono text-xs text-slate-500">{transaction.transactionCode}</td>
+                      <td className="px-5 py-4 text-slate-500">{formatDate(transaction.paidAt)}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -263,8 +263,8 @@ export default function Transactions() {
 
             {/* Pagination */}
             {totalPages > 1 && (
-              <div className="flex items-center justify-between border-t border-gray-100 px-5 py-3">
-                <p className="text-[12px] text-gray-500">
+              <div className="flex items-center justify-between border-t border-slate-100 px-5 py-3">
+                <p className="text-[12px] text-slate-500">
                   Showing {(currentPage - 1) * PAGE_SIZE + 1}–
                   {Math.min(currentPage * PAGE_SIZE, filteredTransactions.length)} of {filteredTransactions.length}
                 </p>
@@ -273,7 +273,7 @@ export default function Transactions() {
                     type="button"
                     onClick={() => setPage((p) => Math.max(1, p - 1))}
                     disabled={currentPage === 1}
-                    className="rounded-md border border-gray-200 p-1.5 text-gray-500 transition-colors hover:bg-gray-50 disabled:opacity-40"
+                    className="rounded-md border border-slate-200 p-1.5 text-slate-500 transition-colors hover:bg-slate-50 disabled:opacity-40"
                   >
                     <ChevronLeft className="h-4 w-4" />
                   </button>
@@ -282,14 +282,14 @@ export default function Transactions() {
                     .map((p, idx, arr) => (
                       <span key={p}>
                         {idx > 0 && arr[idx - 1] !== p - 1 && (
-                          <span className="px-1 text-gray-400">…</span>
+                          <span className="px-1 text-slate-400">…</span>
                         )}
                         <button
                           type="button"
                           onClick={() => setPage(p)}
                           className={`min-w-[32px] rounded-md border px-2 py-1 text-[12px] font-bold transition-colors ${p === currentPage
                               ? "border-emerald-500 bg-emerald-500 text-white"
-                              : "border-gray-200 text-gray-600 hover:bg-gray-50"
+                              : "border-slate-200 text-slate-600 hover:bg-slate-50"
                             }`}
                         >
                           {p}
@@ -300,7 +300,7 @@ export default function Transactions() {
                     type="button"
                     onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                     disabled={currentPage === totalPages}
-                    className="rounded-md border border-gray-200 p-1.5 text-gray-500 transition-colors hover:bg-gray-50 disabled:opacity-40"
+                    className="rounded-md border border-slate-200 p-1.5 text-slate-500 transition-colors hover:bg-slate-50 disabled:opacity-40"
                   >
                     <ChevronRight className="h-4 w-4" />
                   </button>

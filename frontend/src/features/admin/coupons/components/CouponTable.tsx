@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { Edit, RotateCcw, Search, Tag, Trash2 } from "lucide-react";
 import { AdminBadge } from "../../../../components/admin/AdminBadge";
 import { AdminEmptyState } from "../../../../components/admin/AdminEmptyState";
@@ -117,17 +117,17 @@ export function CouponTable({
     }
 
     return (
-        <div className="overflow-hidden rounded-lg border border-gray-200 bg-white">
-            <div className="flex flex-wrap items-center justify-between gap-4 border-b border-gray-100 p-5">
+        <div className="overflow-hidden rounded-2xl border border-slate-100 bg-white">
+            <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 p-5">
                 <div>
-                    <h3 className="font-bold text-gray-900">Coupon List</h3>
-                    <p className="mt-1 text-xs font-medium text-gray-500">
+                    <h3 className="font-bold text-slate-900">Coupon List</h3>
+                    <p className="mt-1 text-xs font-medium text-slate-500">
                         Showing {filteredCoupons.length} of {coupons.length} coupons
                     </p>
                 </div>
 
                 <div className="flex flex-wrap items-center gap-3">
-                    <div className="flex rounded-lg border border-gray-200 bg-gray-50 p-1">
+                    <div className="flex rounded-lg border border-slate-200 bg-slate-50 p-1">
                         {viewOptions.map((option) => (
                             <button
                                 key={option.value}
@@ -136,7 +136,7 @@ export function CouponTable({
                                 className={`rounded-md px-3 py-1.5 text-xs font-bold transition-colors ${
                                     viewMode === option.value
                                         ? "bg-white text-emerald-700 shadow-sm"
-                                        : "text-gray-500 hover:text-gray-800"
+                                        : "text-slate-500 hover:text-slate-800"
                                 }`}
                             >
                                 {option.label}
@@ -145,7 +145,7 @@ export function CouponTable({
                     </div>
 
                     {viewMode === "ACTIVE" && (
-                        <div className="flex rounded-lg border border-gray-200 bg-gray-50 p-1">
+                        <div className="flex rounded-lg border border-slate-200 bg-slate-50 p-1">
                             {filterOptions.map((option) => (
                                 <button
                                     key={option.value}
@@ -154,7 +154,7 @@ export function CouponTable({
                                     className={`rounded-md px-3 py-1.5 text-xs font-bold transition-colors ${
                                         statusFilter === option.value
                                             ? "bg-white text-emerald-700 shadow-sm"
-                                            : "text-gray-500 hover:text-gray-800"
+                                            : "text-slate-500 hover:text-slate-800"
                                     }`}
                                 >
                                     {option.label}
@@ -164,12 +164,12 @@ export function CouponTable({
                     )}
 
                     <div className="relative w-72">
-                        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
                         <input
                             value={searchTerm}
                             onChange={(event) => setSearchTerm(event.target.value)}
                             placeholder="Search coupons"
-                            className="w-full rounded-lg border border-gray-200 bg-gray-50 py-2 pl-9 pr-3 text-sm outline-none focus:border-emerald-500"
+                            className="w-full rounded-lg border border-slate-200 bg-slate-50 py-2 pl-9 pr-3 text-sm outline-none focus:border-emerald-500"
                         />
                     </div>
 
@@ -177,7 +177,7 @@ export function CouponTable({
                         <button
                             type="button"
                             onClick={clearFilters}
-                            className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs font-bold text-gray-600 transition-colors hover:bg-gray-50"
+                            className="rounded-2xl border border-slate-100 bg-white px-3 py-2 text-xs font-bold text-slate-600 transition-colors hover:bg-slate-50"
                         >
                             Clear
                         </button>
@@ -203,7 +203,7 @@ export function CouponTable({
             {!loading && !error && filteredCoupons.length > 0 && (
                 <div className="overflow-x-auto">
                     <table className="w-full min-w-[1120px] text-left text-sm">
-                        <thead className="bg-gray-50 text-xs uppercase text-gray-500">
+                        <thead className="bg-slate-50 text-xs uppercase text-slate-500">
                             <tr>
                                 <th className="px-5 py-3">Code</th>
                                 <th className="px-5 py-3">Name</th>
@@ -216,36 +216,36 @@ export function CouponTable({
                             </tr>
                         </thead>
 
-                        <tbody className="divide-y divide-gray-100">
+                        <tbody className="divide-y divide-slate-100">
                             {filteredCoupons.map((coupon) => {
                                 const busy = actionCouponId === coupon.id;
 
                                 return (
                                     <tr key={coupon.id}>
-                                        <td className="px-5 py-4 font-bold text-gray-900">{coupon.code}</td>
-                                        <td className="px-5 py-4 text-gray-700">{coupon.name}</td>
-                                        <td className="px-5 py-4 text-gray-700">
+                                        <td className="px-5 py-4 font-bold text-slate-900">{coupon.code}</td>
+                                        <td className="px-5 py-4 text-slate-700">{coupon.name}</td>
+                                        <td className="px-5 py-4 text-slate-700">
                                             {coupon.discountType === "PERCENT"
                                                 ? `${coupon.discountValue}%`
                                                 : formatMoney(coupon.discountValue)}
                                             {coupon.maxDiscountAmount !== null && (
-                                                <p className="mt-1 text-xs text-gray-500">
+                                                <p className="mt-1 text-xs text-slate-500">
                                                     Max {formatMoney(coupon.maxDiscountAmount)}
                                                 </p>
                                             )}
                                         </td>
-                                        <td className="px-5 py-4 text-gray-700">
+                                        <td className="px-5 py-4 text-slate-700">
                                             <p>Min order: {formatMoney(coupon.minOrderAmount)}</p>
-                                            <p className="mt-1 text-xs text-gray-500">
+                                            <p className="mt-1 text-xs text-slate-500">
                                                 Per user: {coupon.perUserLimit ?? "Unlimited"}
                                             </p>
                                         </td>
-                                        <td className="px-5 py-4 text-gray-700">
+                                        <td className="px-5 py-4 text-slate-700">
                                             {coupon.usedCount}/{coupon.usageLimit ?? "Unlimited"}
                                         </td>
-                                        <td className="px-5 py-4 text-gray-700">
+                                        <td className="px-5 py-4 text-slate-700">
                                             <p>{formatDate(coupon.startAt)}</p>
-                                            <p className="mt-1 text-xs text-gray-500">to {formatDate(coupon.endAt)}</p>
+                                            <p className="mt-1 text-xs text-slate-500">to {formatDate(coupon.endAt)}</p>
                                         </td>
                                         <td className="px-5 py-4">
                                             {viewMode === "DELETED" ? (
@@ -281,10 +281,10 @@ export function CouponTable({
                                                             type="button"
                                                             onClick={() => onEdit(coupon)}
                                                             disabled={busy}
-                                                            className="rounded-md p-2 transition-colors hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-60"
+                                                            className="rounded-md p-2 transition-colors hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-60"
                                                             aria-label="Edit coupon"
                                                         >
-                                                            <Edit className="h-4 w-4 text-gray-500" />
+                                                            <Edit className="h-4 w-4 text-slate-500" />
                                                         </button>
 
                                                         <button

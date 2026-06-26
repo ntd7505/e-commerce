@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-export type BadgeVariant = "success" | "warning" | "danger" | "neutral" | "info";
+export type BadgeVariant = "success" | "warning" | "danger" | "neutral" | "info" | "purple";
 
 type AdminBadgeProps = {
     variant: BadgeVariant;
@@ -15,16 +15,18 @@ const variantClass: Record<BadgeVariant, string> = {
     success: "bg-emerald-50 text-emerald-700",
     warning: "bg-amber-50 text-amber-700",
     danger: "bg-red-50 text-red-600",
-    neutral: "bg-gray-100 text-gray-600",
+    neutral: "bg-slate-100 text-slate-600",
     info: "bg-blue-50 text-blue-700",
+    purple: "bg-purple-50 text-purple-700",
 };
 
 const dotClass: Record<BadgeVariant, string> = {
     success: "bg-emerald-500",
     warning: "bg-amber-500",
     danger: "bg-red-400",
-    neutral: "bg-gray-400",
+    neutral: "bg-slate-400",
     info: "bg-blue-500",
+    purple: "bg-purple-500",
 };
 
 export function AdminBadge({

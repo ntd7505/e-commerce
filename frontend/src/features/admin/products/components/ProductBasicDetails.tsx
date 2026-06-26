@@ -1,4 +1,4 @@
-import type { ChangeEvent } from "react";
+﻿import type { ChangeEvent } from "react";
 import type { ProductCreateFormValues } from "../adminProductFormTypes";
 
 type ProductBasicDetailsProps = {
@@ -17,11 +17,11 @@ export function ProductBasicDetails({
     onChange,
 }: ProductBasicDetailsProps) {
     return (
-        <section className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-            <h3 className="mb-6 text-lg font-bold text-gray-900">Basic Details</h3>
+        <section className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
+            <h3 className="mb-6 text-lg font-bold text-slate-900">Basic Details</h3>
             <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
                 {isEditMode && (
-                    <label className="flex items-center gap-3 rounded-lg border border-gray-200 bg-[#f8f9fa] px-4 py-3 text-[13px] font-bold text-gray-700 md:col-span-2">
+                    <label className="flex items-center gap-3 rounded-lg border border-slate-200 bg-[#f8f9fa] px-4 py-3 text-[13px] font-bold text-slate-700 md:col-span-2">
                         <input
                             type="checkbox"
                             checked={productActive}
@@ -44,7 +44,7 @@ export function ProductBasicDetails({
                         value={formValues.name}
                         onChange={onChange}
                         placeholder="e.g. iPhone 15"
-                        className="w-full rounded-lg border border-gray-200 bg-[#f8f9fa] px-4 py-3 text-[13px] font-medium text-gray-900 focus:border-emerald-500 focus:outline-none"
+                        className="w-full rounded-lg border border-slate-200 bg-[#f8f9fa] px-4 py-3 text-[13px] font-medium text-slate-900 focus:border-emerald-500 focus:outline-none"
                     />
                 </div>
 
@@ -56,7 +56,7 @@ export function ProductBasicDetails({
                         value={formValues.shortDescription}
                         onChange={onChange}
                         placeholder="Brief summary of your product..."
-                        className="min-h-[80px] w-full resize-none rounded-lg border border-gray-200 bg-[#f8f9fa] px-4 py-3 text-[13px] font-medium text-gray-900 focus:border-emerald-500 focus:outline-none"
+                        className="min-h-[80px] w-full resize-none rounded-lg border border-slate-200 bg-[#f8f9fa] px-4 py-3 text-[13px] font-medium text-slate-900 focus:border-emerald-500 focus:outline-none"
                     />
                 </div>
 
@@ -67,7 +67,7 @@ export function ProductBasicDetails({
                         value={formValues.description}
                         onChange={onChange}
                         placeholder="Describe your product..."
-                        className="min-h-[140px] w-full resize-none rounded-lg border border-gray-200 bg-[#f8f9fa] px-4 py-4 text-[13px] font-medium text-gray-700 focus:border-emerald-500 focus:outline-none"
+                        className="min-h-[140px] w-full resize-none rounded-lg border border-slate-200 bg-[#f8f9fa] px-4 py-4 text-[13px] font-medium text-slate-700 focus:border-emerald-500 focus:outline-none"
                     />
                 </div>
             </div>

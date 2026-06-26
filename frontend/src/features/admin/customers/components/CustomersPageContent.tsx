@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+﻿import { useEffect, useMemo, useState } from "react";
 import { RefreshCw, Search, Users, Ban, CheckCircle, ChevronLeft, ChevronRight } from "lucide-react";
 import { AdminBadge } from "../../../../components/admin/AdminBadge";
 import { getAdminUsers, updateAdminUserStatus } from "../adminUserApi";
@@ -89,8 +89,8 @@ export default function CustomersPageContent() {
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h2 className="text-[22px] font-bold text-gray-900">Customers</h2>
-          <p className="mt-1 text-[13px] text-gray-500">
+          <h2 className="text-[22px] font-bold text-slate-900">Customers</h2>
+          <p className="mt-1 text-[13px] text-slate-500">
             Quản lý tài khoản khách hàng – Ban/Unban trực tiếp.
           </p>
         </div>
@@ -98,7 +98,7 @@ export default function CustomersPageContent() {
           type="button"
           onClick={loadUsers}
           disabled={loading}
-          className="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-[13px] font-bold text-gray-700 shadow-sm transition-colors hover:bg-gray-50 disabled:opacity-50"
+          className="flex items-center gap-2 rounded-2xl border border-slate-100 bg-white px-4 py-2.5 text-[13px] font-bold text-slate-700 shadow-sm transition-colors hover:bg-slate-50 disabled:opacity-50"
         >
           <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
           Refresh
@@ -107,10 +107,10 @@ export default function CustomersPageContent() {
 
       {/* Stat cards */}
       <div className="grid gap-4 md:grid-cols-3">
-        <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-shadow hover:shadow-md">
-          <p className="text-[11px] font-bold uppercase tracking-wider text-gray-400">Total Users</p>
-          <p className="mt-3 text-3xl font-extrabold text-gray-900">{users.length}</p>
-          <p className="mt-1 text-[12px] text-gray-500">Registered accounts</p>
+        <div className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm transition-shadow hover:shadow-md">
+          <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Total Users</p>
+          <p className="mt-3 text-3xl font-extrabold text-slate-900">{users.length}</p>
+          <p className="mt-1 text-[12px] text-slate-500">Registered accounts</p>
         </div>
         <div className="rounded-xl border border-emerald-100 bg-emerald-50 p-5 shadow-sm transition-shadow hover:shadow-md">
           <p className="text-[11px] font-bold uppercase tracking-wider text-emerald-600">Active</p>
@@ -125,19 +125,19 @@ export default function CustomersPageContent() {
       </div>
 
       {/* Table card */}
-      <div className="rounded-xl border border-gray-200 bg-white shadow-sm">
+      <div className="rounded-2xl border border-slate-100 bg-white shadow-sm">
         {/* Toolbar */}
-        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-gray-100 p-5">
-          <div className="flex items-center gap-2 text-[13px] font-bold text-gray-700">
+        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 p-5">
+          <div className="flex items-center gap-2 text-[13px] font-bold text-slate-700">
             <Users className="h-4 w-4 text-emerald-600" />
             User directory
-            <span className="ml-1 rounded-full bg-gray-100 px-2 py-0.5 text-[11px] font-bold text-gray-500">
+            <span className="ml-1 rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-bold text-slate-500">
               {filteredUsers.length}
             </span>
           </div>
           <div className="flex flex-wrap items-center gap-3">
             {/* Status filter */}
-            <div className="flex rounded-lg border border-gray-200 bg-gray-50 p-1">
+            <div className="flex rounded-lg border border-slate-200 bg-slate-50 p-1">
               {statusFilters.map((opt) => (
                 <button
                   key={opt.value}
@@ -145,7 +145,7 @@ export default function CustomersPageContent() {
                   onClick={() => handleFilterChange(opt.value)}
                   className={`rounded-md px-3 py-1.5 text-xs font-bold transition-colors ${statusFilter === opt.value
                       ? "bg-white shadow-sm text-emerald-700"
-                      : `text-gray-500 hover:text-gray-800 ${opt.color}`
+                      : `text-slate-500 hover:text-slate-800 ${opt.color}`
                     }`}
                 >
                   {opt.label}
@@ -155,12 +155,12 @@ export default function CustomersPageContent() {
 
             {/* Search */}
             <div className="relative w-full sm:w-72">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
               <input
                 value={searchTerm}
                 onChange={(e) => handleSearchChange(e.target.value)}
                 placeholder="Search name, email, phone"
-                className="w-full rounded-lg border border-gray-200 bg-gray-50 py-2.5 pl-9 pr-3 text-[13px] outline-none transition focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
+                className="w-full rounded-lg border border-slate-200 bg-slate-50 py-2.5 pl-9 pr-3 text-[13px] outline-none transition focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
               />
             </div>
           </div>
@@ -174,7 +174,7 @@ export default function CustomersPageContent() {
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-[13px]">
-            <thead className="sticky top-0 z-10 bg-gray-50 text-[11px] font-bold uppercase tracking-wider text-gray-500">
+            <thead className="sticky top-0 z-10 bg-slate-50 text-[11px] font-bold uppercase tracking-wider text-slate-500">
               <tr>
                 <th className="px-5 py-3">Name</th>
                 <th className="px-5 py-3">Email</th>
@@ -184,10 +184,10 @@ export default function CustomersPageContent() {
                 <th className="px-5 py-3 text-right">Action</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-slate-100">
               {loading ? (
                 <tr>
-                  <td colSpan={6} className="px-5 py-10 text-center text-gray-400">
+                  <td colSpan={6} className="px-5 py-10 text-center text-slate-400">
                     <RefreshCw className="mx-auto h-5 w-5 animate-spin mb-2" />
                     Loading users...
                   </td>
@@ -196,9 +196,9 @@ export default function CustomersPageContent() {
                 <tr>
                   <td colSpan={6} className="px-5 py-14 text-center">
                     <Users className="mx-auto mb-3 h-10 w-10 text-gray-200" />
-                    <p className="text-[13px] font-semibold text-gray-400">No users found</p>
+                    <p className="text-[13px] font-semibold text-slate-400">No users found</p>
                     {searchTerm && (
-                      <p className="mt-1 text-[12px] text-gray-400">Try a different search term</p>
+                      <p className="mt-1 text-[12px] text-slate-400">Try a different search term</p>
                     )}
                   </td>
                 </tr>
@@ -209,18 +209,18 @@ export default function CustomersPageContent() {
                   return (
                     <tr
                       key={user.id}
-                      className="transition-colors hover:bg-gray-50"
+                      className="transition-colors hover:bg-slate-50"
                     >
                       <td className="px-5 py-4">
                         <div className="flex items-center gap-3">
                           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-100 text-[12px] font-bold text-emerald-700 shrink-0">
                             {((user.fullName || user.email || "?")[0] || "?").toUpperCase()}
                           </div>
-                          <span className="font-semibold text-gray-900">{user.fullName}</span>
+                          <span className="font-semibold text-slate-900">{user.fullName}</span>
                         </div>
                       </td>
-                      <td className="px-5 py-4 text-gray-500">{user.email}</td>
-                      <td className="px-5 py-4 text-gray-500">{user.phoneNumber || "—"}</td>
+                      <td className="px-5 py-4 text-slate-500">{user.email}</td>
+                      <td className="px-5 py-4 text-slate-500">{user.phoneNumber || "—"}</td>
                       <td className="px-5 py-4">
                         <div className="flex flex-wrap gap-1">
                           {user.roles?.length ? (
@@ -233,7 +233,7 @@ export default function CustomersPageContent() {
                               </span>
                             ))
                           ) : (
-                            <span className="rounded-md bg-gray-100 px-2 py-0.5 text-[11px] font-bold text-gray-500">
+                            <span className="rounded-md bg-slate-100 px-2 py-0.5 text-[11px] font-bold text-slate-500">
                               USER
                             </span>
                           )}
@@ -278,8 +278,8 @@ export default function CustomersPageContent() {
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="flex items-center justify-between border-t border-gray-100 px-5 py-3">
-            <p className="text-[12px] text-gray-500">
+          <div className="flex items-center justify-between border-t border-slate-100 px-5 py-3">
+            <p className="text-[12px] text-slate-500">
               Showing {(currentPage - 1) * PAGE_SIZE + 1}–
               {Math.min(currentPage * PAGE_SIZE, filteredUsers.length)} of {filteredUsers.length}
             </p>
@@ -288,7 +288,7 @@ export default function CustomersPageContent() {
                 type="button"
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={currentPage === 1}
-                className="rounded-md border border-gray-200 p-1.5 text-gray-500 transition-colors hover:bg-gray-50 disabled:opacity-40"
+                className="rounded-md border border-slate-200 p-1.5 text-slate-500 transition-colors hover:bg-slate-50 disabled:opacity-40"
               >
                 <ChevronLeft className="h-4 w-4" />
               </button>
@@ -297,14 +297,14 @@ export default function CustomersPageContent() {
                 .map((p, idx, arr) => (
                   <span key={p}>
                     {idx > 0 && arr[idx - 1] !== p - 1 && (
-                      <span className="px-1 text-gray-400">…</span>
+                      <span className="px-1 text-slate-400">…</span>
                     )}
                     <button
                       type="button"
                       onClick={() => setPage(p)}
                       className={`min-w-[32px] rounded-md border px-2 py-1 text-[12px] font-bold transition-colors ${p === currentPage
                           ? "border-emerald-500 bg-emerald-500 text-white"
-                          : "border-gray-200 text-gray-600 hover:bg-gray-50"
+                          : "border-slate-200 text-slate-600 hover:bg-slate-50"
                         }`}
                     >
                       {p}
@@ -315,7 +315,7 @@ export default function CustomersPageContent() {
                 type="button"
                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 disabled={currentPage === totalPages}
-                className="rounded-md border border-gray-200 p-1.5 text-gray-500 transition-colors hover:bg-gray-50 disabled:opacity-40"
+                className="rounded-md border border-slate-200 p-1.5 text-slate-500 transition-colors hover:bg-slate-50 disabled:opacity-40"
               >
                 <ChevronRight className="h-4 w-4" />
               </button>

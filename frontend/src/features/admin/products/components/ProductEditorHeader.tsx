@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+﻿import { Link } from "react-router-dom";
 import { Save } from "lucide-react";
 
 type ProductEditorHeaderProps = {
@@ -20,7 +20,7 @@ export function ProductEditorHeader({
                 <h2 className="text-[22px] font-bold text-[#0B2113]">
                     {isEditMode ? "Edit Product" : "Add New Product"}
                 </h2>
-                <p className="mt-1 text-sm font-medium text-gray-500">
+                <p className="mt-1 text-sm font-medium text-slate-500">
                     {isEditMode
                         ? "Update product details, variants, inventory, and media."
                         : "Create a product with one initial variant and product images."}
@@ -30,7 +30,7 @@ export function ProductEditorHeader({
             <div className="flex items-center gap-3">
                 <Link
                     to="/admin/products"
-                    className="rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-[13px] font-bold text-gray-700 shadow-sm hover:bg-gray-50"
+                    className="rounded-2xl border border-slate-100 bg-white px-4 py-2.5 text-[13px] font-bold text-slate-700 shadow-sm hover:bg-slate-50"
                 >
                     Back
                 </Link>

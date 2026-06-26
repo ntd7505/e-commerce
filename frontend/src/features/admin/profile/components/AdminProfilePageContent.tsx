@@ -1,4 +1,4 @@
-import { 
+﻿import { 
   Share2, Copy, Plus, EyeOff, Calendar, 
   PenTool, Wand2, Edit3, HelpCircle
 } from 'lucide-react';
@@ -6,7 +6,7 @@ import {
 export default function AdminRole() {
   return (
     <div className="space-y-6 max-w-[1400px] mx-auto pb-10">
-      <h2 className="text-[22px] font-bold text-gray-900 mb-6">About section</h2>
+      <h2 className="text-[22px] font-bold text-slate-900 mb-6">About section</h2>
       
       <div className="flex flex-col lg:flex-row gap-6 items-start">
          
@@ -14,10 +14,10 @@ export default function AdminRole() {
          <div className="w-full lg:w-[35%] flex flex-col gap-6">
             
             {/* Profile Card */}
-            <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex flex-col items-center">
+            <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex flex-col items-center">
               <div className="w-full flex justify-between items-center mb-6">
-                <h3 className="font-bold text-gray-900 text-[16px]">Profile</h3>
-                <div className="flex items-center gap-3 text-gray-500">
+                <h3 className="font-bold text-slate-900 text-[16px]">Profile</h3>
+                <div className="flex items-center gap-3 text-slate-500">
                   <button className="hover:text-emerald-600 transition-colors"><Edit3 className="w-4 h-4" /></button>
                   <button className="hover:text-emerald-600 transition-colors"><Share2 className="w-4 h-4" /></button>
                 </div>
@@ -26,15 +26,15 @@ export default function AdminRole() {
               <div className="w-24 h-24 rounded-full overflow-hidden mb-4 border-[3px] border-white shadow-sm ring-1 ring-gray-100">
                  <img src="https://images.unsplash.com/photo-1543610892-0b1f7e6d8ac1?q=80&w=200" alt="Wade Warren" className="w-full h-full object-cover" />
               </div>
-              <h2 className="text-xl font-bold text-gray-900 mb-1">Wade Warren</h2>
+              <h2 className="text-xl font-bold text-slate-900 mb-1">Wade Warren</h2>
               <div className="flex items-center gap-2 mb-6">
-                <span className="text-gray-500 text-[13px] font-medium">wade.warren@example.com</span>
+                <span className="text-slate-500 text-[13px] font-medium">wade.warren@example.com</span>
                 <button className="text-blue-500 hover:text-blue-700"><Copy className="w-3.5 h-3.5" /></button>
               </div>
               
-              <div className="w-full border-t border-gray-100 mb-6"></div>
+              <div className="w-full border-t border-slate-100 mb-6"></div>
               
-              <p className="text-gray-500 text-[13px] font-medium mb-4">Linked with Social media</p>
+              <p className="text-slate-500 text-[13px] font-medium mb-4">Linked with Social media</p>
               
               <div className="flex items-center justify-center gap-5 mb-6">
                  {/* Google */}
@@ -54,15 +54,15 @@ export default function AdminRole() {
                  </div>
               </div>
               
-              <button className="flex items-center gap-2 border border-gray-200 text-gray-700 px-5 py-2.5 rounded-full text-[13px] font-bold hover:bg-gray-50 transition-colors">
-                <Plus className="w-4 h-4 text-gray-400" /> Social media
+              <button className="flex items-center gap-2 border border-slate-200 text-slate-700 px-5 py-2.5 rounded-full text-[13px] font-bold hover:bg-slate-50 transition-colors">
+                <Plus className="w-4 h-4 text-slate-400" /> Social media
               </button>
             </div>
 
             {/* Change Password Card */}
-            <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex flex-col">
+            <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex flex-col">
               <div className="flex justify-between items-center mb-6">
-                <h3 className="font-bold text-gray-900 text-[16px]">Change Password</h3>
+                <h3 className="font-bold text-slate-900 text-[16px]">Change Password</h3>
                 <a href="#" className="flex items-center gap-1.5 text-[13px] text-blue-500 font-bold hover:underline">
                   Need help <HelpCircle className="w-3.5 h-3.5" />
                 </a>
@@ -70,10 +70,10 @@ export default function AdminRole() {
               
               <div className="flex flex-col gap-5">
                  <div>
-                    <label className="block text-[13px] font-bold text-gray-700 mb-2">Current Password</label>
+                    <label className="block text-[13px] font-bold text-slate-700 mb-2">Current Password</label>
                     <div className="relative">
-                      <input type="password" placeholder="Enter password" className="w-full px-4 py-2.5 bg-[#f8f9fa] border border-gray-200 rounded-lg text-[13px] focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 placeholder:text-gray-400" />
-                      <button className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                      <input type="password" placeholder="Enter password" className="w-full px-4 py-2.5 bg-[#f8f9fa] border border-slate-200 rounded-lg text-[13px] focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 placeholder:text-slate-400" />
+                      <button className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
                         <EyeOff className="w-4 h-4" />
                       </button>
                     </div>
@@ -81,20 +81,20 @@ export default function AdminRole() {
                  </div>
 
                  <div>
-                    <label className="block text-[13px] font-bold text-gray-700 mb-2">New Password</label>
+                    <label className="block text-[13px] font-bold text-slate-700 mb-2">New Password</label>
                     <div className="relative">
-                      <input type="password" placeholder="Enter password" className="w-full px-4 py-2.5 bg-[#f8f9fa] border border-gray-200 rounded-lg text-[13px] focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 placeholder:text-gray-400" />
-                      <button className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                      <input type="password" placeholder="Enter password" className="w-full px-4 py-2.5 bg-[#f8f9fa] border border-slate-200 rounded-lg text-[13px] focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 placeholder:text-slate-400" />
+                      <button className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
                         <EyeOff className="w-4 h-4" />
                       </button>
                     </div>
                  </div>
 
                  <div>
-                    <label className="block text-[13px] font-bold text-gray-700 mb-2">Re-enter Password</label>
+                    <label className="block text-[13px] font-bold text-slate-700 mb-2">Re-enter Password</label>
                     <div className="relative mb-2">
-                      <input type="password" placeholder="Enter password" className="w-full px-4 py-2.5 bg-[#f8f9fa] border border-gray-200 rounded-lg text-[13px] focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 placeholder:text-gray-400" />
-                      <button className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                      <input type="password" placeholder="Enter password" className="w-full px-4 py-2.5 bg-[#f8f9fa] border border-slate-200 rounded-lg text-[13px] focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 placeholder:text-slate-400" />
+                      <button className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
                         <EyeOff className="w-4 h-4" />
                       </button>
                     </div>
@@ -109,10 +109,10 @@ export default function AdminRole() {
          </div>
 
          {/* Right Column */}
-         <div className="w-full lg:w-[65%] bg-white p-8 rounded-xl border border-gray-200 shadow-sm">
+         <div className="w-full lg:w-[65%] bg-white p-8 rounded-xl border border-slate-200 shadow-sm">
             <div className="flex justify-between items-center mb-8">
-              <h3 className="font-bold text-gray-900 text-lg">Profile Update</h3>
-              <button className="flex items-center gap-1.5 border border-gray-200 text-gray-700 px-4 py-2 rounded-lg text-[13px] font-bold hover:bg-gray-50 transition-colors">
+              <h3 className="font-bold text-slate-900 text-lg">Profile Update</h3>
+              <button className="flex items-center gap-1.5 border border-slate-200 text-slate-700 px-4 py-2 rounded-lg text-[13px] font-bold hover:bg-slate-50 transition-colors">
                 <Edit3 className="w-3.5 h-3.5" /> Edit
               </button>
             </div>
@@ -122,46 +122,46 @@ export default function AdminRole() {
                  <img src="https://images.unsplash.com/photo-1543610892-0b1f7e6d8ac1?q=80&w=200" alt="Wade Warren" className="w-full h-full object-cover" />
               </div>
               <button className="bg-[#3c9c64] text-white px-5 py-2.5 rounded-lg text-[13px] font-bold hover:bg-emerald-700 transition-colors shadow-sm">Upload New</button>
-              <button className="bg-white border border-gray-200 text-gray-700 px-5 py-2.5 rounded-lg text-[13px] font-bold hover:bg-gray-50 transition-colors">Delete</button>
+              <button className="bg-white border border-slate-200 text-slate-700 px-5 py-2.5 rounded-lg text-[13px] font-bold hover:bg-slate-50 transition-colors">Delete</button>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-6 mb-6">
                <div>
-                  <label className="block text-[13px] font-bold text-gray-700 mb-2">First Name</label>
-                  <input type="text" defaultValue="Wade" className="w-full px-4 py-3 bg-[#f8f9fa] border border-gray-200 rounded-lg text-[13px] font-bold text-gray-900 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500" />
+                  <label className="block text-[13px] font-bold text-slate-700 mb-2">First Name</label>
+                  <input type="text" defaultValue="Wade" className="w-full px-4 py-3 bg-[#f8f9fa] border border-slate-200 rounded-lg text-[13px] font-bold text-slate-900 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500" />
                </div>
                <div>
-                  <label className="block text-[13px] font-bold text-gray-700 mb-2">Last Name</label>
-                  <input type="text" defaultValue="Warren" className="w-full px-4 py-3 bg-[#f8f9fa] border border-gray-200 rounded-lg text-[13px] font-bold text-gray-900 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500" />
+                  <label className="block text-[13px] font-bold text-slate-700 mb-2">Last Name</label>
+                  <input type="text" defaultValue="Warren" className="w-full px-4 py-3 bg-[#f8f9fa] border border-slate-200 rounded-lg text-[13px] font-bold text-slate-900 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500" />
                </div>
                <div>
-                  <label className="block text-[13px] font-bold text-gray-700 mb-2">Password</label>
+                  <label className="block text-[13px] font-bold text-slate-700 mb-2">Password</label>
                   <div className="relative">
-                    <input type="password" defaultValue="************" className="w-full px-4 py-3 bg-[#f8f9fa] border border-gray-200 rounded-lg text-[13px] font-bold text-gray-900 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 tracking-wider" />
-                    <button className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                    <input type="password" defaultValue="************" className="w-full px-4 py-3 bg-[#f8f9fa] border border-slate-200 rounded-lg text-[13px] font-bold text-slate-900 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 tracking-wider" />
+                    <button className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
                       <EyeOff className="w-4 h-4" />
                     </button>
                   </div>
                </div>
                <div>
-                  <label className="block text-[13px] font-bold text-gray-700 mb-2">Phone Number</label>
-                  <div className="flex bg-[#f8f9fa] border border-gray-200 rounded-lg overflow-hidden focus-within:border-emerald-500 focus-within:ring-1 focus-within:ring-emerald-500">
-                    <input type="text" defaultValue="(406) 555-0120" className="flex-1 px-4 py-3 bg-transparent text-[13px] font-bold text-gray-900 focus:outline-none" />
-                    <button className="px-3 border-l border-gray-200 flex items-center justify-center gap-1.5 hover:bg-gray-100 transition-colors">
+                  <label className="block text-[13px] font-bold text-slate-700 mb-2">Phone Number</label>
+                  <div className="flex bg-[#f8f9fa] border border-slate-200 rounded-lg overflow-hidden focus-within:border-emerald-500 focus-within:ring-1 focus-within:ring-emerald-500">
+                    <input type="text" defaultValue="(406) 555-0120" className="flex-1 px-4 py-3 bg-transparent text-[13px] font-bold text-slate-900 focus:outline-none" />
+                    <button className="px-3 border-l border-slate-200 flex items-center justify-center gap-1.5 hover:bg-slate-100 transition-colors">
                       <img src="https://flagcdn.com/w20/us.png" alt="US" className="w-5 h-auto rounded-[2px]" />
-                      <svg className="w-3 h-3 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                      <svg className="w-3 h-3 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
                     </button>
                   </div>
                </div>
                <div>
-                  <label className="block text-[13px] font-bold text-gray-700 mb-2">E-mail</label>
-                  <input type="email" defaultValue="wade.warren@example.com" className="w-full px-4 py-3 bg-[#f8f9fa] border border-gray-200 rounded-lg text-[13px] font-bold text-gray-900 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500" />
+                  <label className="block text-[13px] font-bold text-slate-700 mb-2">E-mail</label>
+                  <input type="email" defaultValue="wade.warren@example.com" className="w-full px-4 py-3 bg-[#f8f9fa] border border-slate-200 rounded-lg text-[13px] font-bold text-slate-900 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500" />
                </div>
                <div>
-                  <label className="block text-[13px] font-bold text-gray-700 mb-2">Date of Birth</label>
+                  <label className="block text-[13px] font-bold text-slate-700 mb-2">Date of Birth</label>
                   <div className="relative">
-                    <input type="text" defaultValue="12- January- 1999" className="w-full px-4 py-3 bg-[#f8f9fa] border border-gray-200 rounded-lg text-[13px] font-bold text-gray-900 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500" />
-                    <button className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                    <input type="text" defaultValue="12- January- 1999" className="w-full px-4 py-3 bg-[#f8f9fa] border border-slate-200 rounded-lg text-[13px] font-bold text-slate-900 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500" />
+                    <button className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
                       <Calendar className="w-4 h-4" />
                     </button>
                   </div>
@@ -170,13 +170,13 @@ export default function AdminRole() {
 
             <div className="flex flex-col gap-6">
                <div>
-                  <label className="block text-[13px] font-bold text-gray-700 mb-2">Location</label>
-                  <input type="text" defaultValue="2972 Westheimer Rd. Santa Ana, Illinois 85486" className="w-full px-4 py-3 bg-[#f8f9fa] border border-gray-200 rounded-lg text-[13px] font-bold text-gray-900 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500" />
+                  <label className="block text-[13px] font-bold text-slate-700 mb-2">Location</label>
+                  <input type="text" defaultValue="2972 Westheimer Rd. Santa Ana, Illinois 85486" className="w-full px-4 py-3 bg-[#f8f9fa] border border-slate-200 rounded-lg text-[13px] font-bold text-slate-900 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500" />
                </div>
                
                <div>
-                  <label className="block text-[13px] font-bold text-gray-700 mb-2">Credit Card</label>
-                  <div className="flex relative items-center bg-[#f8f9fa] border border-gray-200 rounded-lg overflow-hidden focus-within:border-emerald-500 focus-within:ring-1 focus-within:ring-emerald-500">
+                  <label className="block text-[13px] font-bold text-slate-700 mb-2">Credit Card</label>
+                  <div className="flex relative items-center bg-[#f8f9fa] border border-slate-200 rounded-lg overflow-hidden focus-within:border-emerald-500 focus-within:ring-1 focus-within:ring-emerald-500">
                     <div className="pl-4 pr-2 flex items-center">
                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <circle cx="7" cy="12" r="6" fill="#EA001B"/>
@@ -184,21 +184,21 @@ export default function AdminRole() {
                           <path d="M12 16.5C10.744 15.352 10 13.768 10 12C10 10.232 10.744 8.648 12 7.5C13.256 8.648 14 10.232 14 12C14 13.768 13.256 15.352 12 16.5Z" fill="#FF5E00"/>
                        </svg>
                     </div>
-                    <input type="text" defaultValue="843-4359-4444" className="flex-1 px-2 py-3.5 bg-transparent text-[13px] font-bold text-gray-900 focus:outline-none" />
-                    <button className="pr-4 pl-2 h-full flex items-center justify-center border-l-transparent text-gray-400">
+                    <input type="text" defaultValue="843-4359-4444" className="flex-1 px-2 py-3.5 bg-transparent text-[13px] font-bold text-slate-900 focus:outline-none" />
+                    <button className="pr-4 pl-2 h-full flex items-center justify-center border-l-transparent text-slate-400">
                       <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
                     </button>
                   </div>
                </div>
 
                <div>
-                  <label className="block text-[13px] font-bold text-gray-700 mb-2">Biography</label>
+                  <label className="block text-[13px] font-bold text-slate-700 mb-2">Biography</label>
                   <div className="relative">
                      <textarea 
                        placeholder="Enter a biography about you" 
-                       className="w-full px-4 py-4 bg-[#f8f9fa] border border-gray-200 rounded-lg text-[13px] font-medium text-gray-600 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 min-h-[120px] resize-none pb-12"
+                       className="w-full px-4 py-4 bg-[#f8f9fa] border border-slate-200 rounded-lg text-[13px] font-medium text-slate-600 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 min-h-[120px] resize-none pb-12"
                      ></textarea>
-                     <div className="absolute bottom-3 right-3 flex items-center gap-2 text-gray-400">
+                     <div className="absolute bottom-3 right-3 flex items-center gap-2 text-slate-400">
                        <button className="hover:text-emerald-600 transition-colors p-1"><PenTool className="w-4 h-4" /></button>
                        <button className="hover:text-emerald-600 transition-colors p-1"><Wand2 className="w-4 h-4" /></button>
                      </div>

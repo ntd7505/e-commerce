@@ -1,4 +1,4 @@
-import { Edit, Filter, MoreHorizontal, Search, Trash2 } from "lucide-react";
+﻿import { Edit, Filter, MoreHorizontal, Search, Trash2 } from "lucide-react";
 import { AdminBadge } from "../../../../components/admin/AdminBadge";
 import { AdminImage } from "../../../../components/admin/AdminImage";
 import type { BrandResponse } from "../adminBrandTypes";
@@ -29,10 +29,10 @@ export function BrandTable({
   onToggleStatus,
 }: BrandTableProps) {
   return (
-    <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
-      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-gray-100 p-4">
-        <div className="flex items-center gap-1 rounded-lg border border-gray-100 bg-gray-50 p-1.5 shadow-inner">
-          <button className="rounded-md border border-gray-200/60 bg-white px-5 py-2 text-[13px] font-bold text-emerald-800 shadow-sm">
+    <div className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm">
+      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 p-4">
+        <div className="flex items-center gap-1 rounded-lg border border-slate-100 bg-slate-50 p-1.5 shadow-inner">
+          <button className="rounded-md border border-slate-200/60 bg-white px-5 py-2 text-[13px] font-bold text-emerald-800 shadow-sm">
             All Brands ({brands.length})
           </button>
         </div>
@@ -44,21 +44,21 @@ export function BrandTable({
               value={searchTerm}
               onChange={(event) => onSearchChange(event.target.value)}
               placeholder="Search brands"
-              className="w-72 rounded-lg border border-gray-200 bg-gray-50/50 py-2.5 pl-10 pr-4 text-[13px] font-medium outline-none placeholder:font-normal placeholder:text-gray-400 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
+              className="w-72 rounded-lg border border-slate-200 bg-slate-50/50 py-2.5 pl-10 pr-4 text-[13px] font-medium outline-none placeholder:font-normal placeholder:text-slate-400 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
             />
-            <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+            <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
           </div>
-          <button className="rounded-lg border border-gray-200 bg-white p-2.5 text-gray-500 shadow-sm hover:bg-gray-50 hover:text-gray-800">
+          <button className="rounded-2xl border border-slate-100 bg-white p-2.5 text-slate-500 shadow-sm hover:bg-slate-50 hover:text-slate-800">
             <Filter className="h-4 w-4" />
           </button>
-          <button className="rounded-lg border border-gray-200 bg-white p-2.5 text-gray-500 shadow-sm hover:bg-gray-50 hover:text-gray-800">
+          <button className="rounded-2xl border border-slate-100 bg-white p-2.5 text-slate-500 shadow-sm hover:bg-slate-50 hover:text-slate-800">
             <MoreHorizontal className="h-4 w-4" />
           </button>
         </div>
       </div>
 
       {loading && (
-        <div className="p-6 text-center text-sm font-semibold text-gray-500">
+        <div className="p-6 text-center text-sm font-semibold text-slate-500">
           Đang tải thương hiệu...
         </div>
       )}
@@ -68,7 +68,7 @@ export function BrandTable({
       )}
 
       {!loading && !error && filteredBrands.length === 0 && (
-        <div className="p-6 text-center text-sm font-semibold text-gray-500">
+        <div className="p-6 text-center text-sm font-semibold text-slate-500">
           Chưa có thương hiệu phù hợp.
         </div>
       )}
@@ -87,15 +87,15 @@ export function BrandTable({
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-slate-100">
               {filteredBrands.map((brand, index) => (
-                <tr key={brand.id} className="group transition-colors hover:bg-gray-50/50">
-                  <td className="px-4 py-4 text-[13px] font-extrabold text-gray-900">
+                <tr key={brand.id} className="group transition-colors hover:bg-slate-50/50">
+                  <td className="px-4 py-4 text-[13px] font-extrabold text-slate-900">
                     {index + 1}
                   </td>
                   <td className="px-4 py-4">
                     <div className="flex items-center gap-4">
-                      <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center overflow-hidden rounded-full border border-gray-200 bg-white p-2 shadow-sm">
+                      <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center overflow-hidden rounded-full border border-slate-200 bg-white p-2 shadow-sm">
                         <AdminImage
                           src={brand.logoUrl}
                           alt={brand.name}
@@ -104,12 +104,12 @@ export function BrandTable({
                           fallbackClassName="h-full w-full rounded-full"
                         />
                       </div>
-                      <span className="font-bold text-gray-900 transition-colors group-hover:text-emerald-600">
+                      <span className="font-bold text-slate-900 transition-colors group-hover:text-emerald-600">
                         {brand.name}
                       </span>
                     </div>
                   </td>
-                  <td className="px-4 py-4 text-[13px] font-semibold text-gray-500">
+                  <td className="px-4 py-4 text-[13px] font-semibold text-slate-500">
                     {brand.slug}
                   </td>
                   <td className="px-4 py-4">
@@ -126,7 +126,7 @@ export function BrandTable({
                       <button
                         type="button"
                         onClick={() => onEdit(brand)}
-                        className="text-gray-400 transition-colors hover:text-emerald-600"
+                        className="text-slate-400 transition-colors hover:text-emerald-600"
                       >
                         <Edit className="h-4 w-4" />
                       </button>
@@ -134,7 +134,7 @@ export function BrandTable({
                         type="button"
                         onClick={() => onDelete(brand)}
                         disabled={updatingId === brand.id}
-                        className="text-gray-400 transition-colors hover:text-red-500 disabled:cursor-not-allowed disabled:opacity-50"
+                        className="text-slate-400 transition-colors hover:text-red-500 disabled:cursor-not-allowed disabled:opacity-50"
                       >
                         <Trash2 className="h-4 w-4" />
                       </button>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { Mail, Lock, ArrowRight, Sparkles } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { signIn } from '../../features/auth/authApi';
@@ -100,7 +100,7 @@ export default function Login() {
           <form onSubmit={handleLogin} className="space-y-6">
             
             <div className="group">
-              <label className="block text-[11px] font-bold text-gray-500 mb-2 tracking-widest uppercase">Email Address</label>
+              <label className="block text-[11px] font-bold text-slate-500 mb-2 tracking-widest uppercase">Email Address</label>
               <div className="relative">
                 <input
                   type="email"
@@ -112,13 +112,13 @@ export default function Login() {
                   required
                   className="w-full pl-12 pr-4 py-4 rounded-xl text-[15px] input-editorial placeholder-gray-400 focus:outline-none"
                 />
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-[#059669] transition-colors duration-400" />
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-[#059669] transition-colors duration-400" />
               </div>
             </div>
 
             <div className="group">
               <div className="flex items-center justify-between mb-2">
-                <label className="block text-[11px] font-bold text-gray-500 tracking-widest uppercase">Password</label>
+                <label className="block text-[11px] font-bold text-slate-500 tracking-widest uppercase">Password</label>
                 <a href="#" className="text-[12px] font-semibold text-[#059669] hover:text-[#047857] transition-colors duration-300">Forgot?</a>
               </div>
               <div className="relative">
@@ -132,7 +132,7 @@ export default function Login() {
                   required
                   className="w-full pl-12 pr-4 py-4 rounded-xl text-[15px] input-editorial placeholder-gray-400 focus:outline-none"
                 />
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-[#059669] transition-colors duration-400" />
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-[#059669] transition-colors duration-400" />
               </div>
             </div>
 
@@ -147,7 +147,7 @@ export default function Login() {
                   <polyline points="20 6 9 17 4 12"></polyline>
                 </svg>
               </div>
-              <label htmlFor="remember" className="text-[14px] text-gray-600 font-medium cursor-pointer select-none hover:text-[#1a1a1a] transition-colors duration-300">
+              <label htmlFor="remember" className="text-[14px] text-slate-600 font-medium cursor-pointer select-none hover:text-[#1a1a1a] transition-colors duration-300">
                 Keep me signed in
               </label>
             </div>
