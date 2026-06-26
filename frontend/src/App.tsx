@@ -12,6 +12,9 @@ import ClientRegister from './pages/client/Register';
 import ProductList from './pages/client/ProductList';
 import ProductDetail from './pages/client/ProductDetail';
 import Account from './pages/client/Account';
+import AccountOrders from './pages/client/AccountOrders';
+import AccountOrderDetail from './pages/client/AccountOrderDetail';
+import AccountAddresses from './pages/client/AccountAddresses';
 import Cart from './pages/client/Cart';
 import Checkout from './pages/client/Checkout';
 import CheckoutSuccess from './pages/client/CheckoutSuccess';
@@ -49,6 +52,9 @@ export default function App() {
             <Route path="products/:slug" element={<ProductDetail />} />
             <Route element={<RequireAuth />}>
               <Route path="account" element={<Account />} />
+              <Route path="account/orders" element={<AccountOrders />} />
+              <Route path="account/orders/:id" element={<AccountOrderDetail />} />
+              <Route path="account/addresses" element={<AccountAddresses />} />
               <Route path="cart" element={<Cart />} />
               <Route path="checkout" element={<Checkout />} />
               <Route path="checkout/success/:orderId" element={<CheckoutSuccess />} />

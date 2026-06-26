@@ -1,11 +1,27 @@
-import React from 'react';
 import { User as UserIcon, Package, MapPin, Star, Ticket, LogOut } from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../../../features/auth/AuthProvider';
+
+type ActiveKey = 'profile' | 'orders' | 'addresses';
+
+function resolveActiveKey(pathname: string): ActiveKey {
+  if (pathname.startsWith('/account/orders')) return 'orders';
+  if (pathname.startsWith('/account/addresses')) return 'addresses';
+  return 'profile';
+}
 
 export default function AccountSidebar() {
   const { user, logout } = useAuth();
+  const { pathname } = useLocation();
+  const active = resolveActiveKey(pathname);
 
   if (!user) return null;
+
+  const baseItem =
+    'flex items-center gap-3 px-5 py-3 lg:py-3.5 lg:border-l-4 lg:border-b-0 border-b-2 whitespace-nowrap transition-colors';
+  const activeItem = `${baseItem} bg-blue-50/50 text-nexa-blue font-semibold border-nexa-blue cursor-default`;
+  const idleItem = `${baseItem} text-gray-600 font-medium hover:text-nexa-blue hover:bg-blue-50/40 border-transparent cursor-pointer`;
+  const disabledItem = `${baseItem} text-gray-400 cursor-not-allowed border-transparent`;
 
   return (
     <div className="w-full lg:w-64 shrink-0 bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">
@@ -25,31 +41,37 @@ export default function AccountSidebar() {
       
       <ul className="flex flex-row lg:flex-col overflow-x-auto lg:overflow-visible py-2 lg:py-3 scrollbar-hide">
         <li className="shrink-0 lg:w-full">
-          <div className="flex items-center gap-3 px-5 py-3 lg:py-3.5 bg-blue-50/50 text-nexa-blue font-semibold lg:border-l-4 lg:border-b-0 border-b-2 border-nexa-blue cursor-default whitespace-nowrap transition-colors">
+          <Link
+            to="/account"
+            className={active === 'profile' ? activeItem : idleItem}
+            aria-current={active === 'profile' ? 'page' : undefined}
+          >
             <UserIcon className="w-5 h-5 hidden lg:block" />
             Thông tin tài khoản
-          </div>
+          </Link>
         </li>
         <li className="shrink-0 lg:w-full">
-          <div className="flex items-center justify-between px-5 py-3 lg:py-3.5 text-gray-400 cursor-not-allowed lg:border-l-4 lg:border-b-0 border-b-2 border-transparent whitespace-nowrap" aria-disabled="true">
-            <div className="flex items-center gap-3">
-               <Package className="w-5 h-5 hidden lg:block" />
-               Quản lý đơn hàng
-            </div>
-            <span className="text-[10px] bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full font-medium ml-3">Sắp ra mắt</span>
-          </div>
+          <Link
+            to="/account/orders"
+            className={active === 'orders' ? activeItem : idleItem}
+            aria-current={active === 'orders' ? 'page' : undefined}
+          >
+            <Package className="w-5 h-5 hidden lg:block" />
+            Quản lý đơn hàng
+          </Link>
         </li>
         <li className="shrink-0 lg:w-full">
-          <div className="flex items-center justify-between px-5 py-3 lg:py-3.5 text-gray-400 cursor-not-allowed lg:border-l-4 lg:border-b-0 border-b-2 border-transparent whitespace-nowrap" aria-disabled="true">
-            <div className="flex items-center gap-3">
-               <MapPin className="w-5 h-5 hidden lg:block" />
-               Sổ địa chỉ
-            </div>
-            <span className="text-[10px] bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full font-medium ml-3">Sắp ra mắt</span>
-          </div>
+          <Link
+            to="/account/addresses"
+            className={active === 'addresses' ? activeItem : idleItem}
+            aria-current={active === 'addresses' ? 'page' : undefined}
+          >
+            <MapPin className="w-5 h-5 hidden lg:block" />
+            Sổ địa chỉ
+          </Link>
         </li>
         <li className="shrink-0 lg:w-full">
-          <div className="flex items-center justify-between px-5 py-3 lg:py-3.5 text-gray-400 cursor-not-allowed lg:border-l-4 lg:border-b-0 border-b-2 border-transparent whitespace-nowrap" aria-disabled="true">
+          <div className={disabledItem} aria-disabled="true">
             <div className="flex items-center gap-3">
                <Star className="w-5 h-5 hidden lg:block" />
                Đánh giá sản phẩm
@@ -58,7 +80,7 @@ export default function AccountSidebar() {
           </div>
         </li>
         <li className="shrink-0 lg:w-full">
-          <div className="flex items-center justify-between px-5 py-3 lg:py-3.5 text-gray-400 cursor-not-allowed lg:border-l-4 lg:border-b-0 border-b-2 border-transparent whitespace-nowrap" aria-disabled="true">
+          <div className={disabledItem} aria-disabled="true">
             <div className="flex items-center gap-3">
                <Ticket className="w-5 h-5 hidden lg:block" />
                Mã giảm giá
