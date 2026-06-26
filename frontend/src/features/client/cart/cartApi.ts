@@ -29,14 +29,12 @@ export const cartApi = {
     return res.data.data;
   },
 
-  removeItem: async (itemId: number): Promise<CartResponse> => {
-    const res = await apiClient.delete<ApiResponse<CartResponse>>(`/api/v1/client/cart/items/${itemId}`);
-    return res.data.data;
+  removeItem: async (itemId: number): Promise<void> => {
+    await apiClient.delete<ApiResponse<void>>(`/api/v1/client/cart/items/${itemId}`);
   },
 
-  clearCart: async (): Promise<CartResponse> => {
-    const res = await apiClient.delete<ApiResponse<CartResponse>>('/api/v1/client/cart/items');
-    return res.data.data;
+  clearCart: async (): Promise<void> => {
+    await apiClient.delete<ApiResponse<void>>('/api/v1/client/cart/items');
   },
 
   // Addresses

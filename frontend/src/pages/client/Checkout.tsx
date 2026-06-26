@@ -18,6 +18,7 @@ export default function Checkout() {
 
   // Draft state
   const [cartItemIds, setCartItemIds] = useState<number[]>([]);
+  const [preferredAddressId, setPreferredAddressId] = useState<number | undefined>(undefined);
   const [selectedAddress, setSelectedAddress] = useState<AddressResponse | null>(null);
   const [couponCode, setCouponCode] = useState<string | null>(null);
   const [couponError, setCouponError] = useState<string | null>(null);
@@ -38,6 +39,7 @@ export default function Checkout() {
       }
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setCartItemIds(draft.cartItemIds);
+      if (draft.addressId) setPreferredAddressId(draft.addressId);
       if (draft.couponCode) setCouponCode(draft.couponCode);
     } catch {
       navigate('/cart', { replace: true });
@@ -151,9 +153,10 @@ export default function Checkout() {
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Left Column */}
           <div className="flex-1">
-            <AddressSelector 
-              selectedAddressId={selectedAddress?.id} 
-              onSelect={setSelectedAddress} 
+            <AddressSelector
+              selectedAddressId={selectedAddress?.id}
+              onSelect={setSelectedAddress}
+              preferredAddressId={preferredAddressId}
             />
 
             <div className="bg-white rounded-xl p-6 border border-gray-100 shadow-sm mb-6">

@@ -29,6 +29,8 @@ export interface UpdateCartItemRequest {
 }
 
 // Addresses
+export type AddressType = 'HOME' | 'OFFICE' | 'OTHER';
+
 export interface AddressResponse {
   id: number;
   recipientName: string;
@@ -37,8 +39,11 @@ export interface AddressResponse {
   districtName: string;
   wardName: string;
   fullAddress: string;
-  addressType: 'HOME' | 'OFFICE' | 'OTHER';
+  addressType: AddressType;
   isDefault: boolean;
+  deleted: boolean;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface AddressRequest {
@@ -48,7 +53,7 @@ export interface AddressRequest {
   districtName: string;
   wardName: string;
   fullAddress: string;
-  addressType: 'HOME' | 'OFFICE' | 'OTHER';
+  addressType: AddressType;
   isDefault: boolean;
 }
 

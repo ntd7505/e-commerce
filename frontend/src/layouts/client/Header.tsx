@@ -3,13 +3,15 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { clientProductApi, type CategorySummaryResponse } from '../../features/client/home/clientProductApi';
 import { useAuth } from '../../features/auth/AuthProvider';
 import { useCart } from '../../features/client/cart/CartProvider';
+import { useDefaultShippingAddressLabel } from '../../features/client/addresses/hooks/useDefaultShippingAddressLabel';
 
 const Header = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const keywordParam = searchParams.get('keyword') || '';
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
   const { cart } = useCart();
+  const deliveryLabel = useDefaultShippingAddressLabel();
   const [isBouncing, setIsBouncing] = useState(false);
   const [prevTotalItems, setPrevTotalItems] = useState(cart?.totalItems || 0);
 
@@ -149,9 +151,14 @@ const Header = () => {
     <div className="bg-gray-50 border-b border-gray-100 py-2.5 hidden md:block">
       <div className="container-custom flex items-center text-sm text-gray-600 gap-1.5">
         <i className="fa-solid fa-location-dot text-gray-400"></i>
-        <span>Giao đến: <strong className="text-gray-900">TP. Hồ Chí Minh</strong></span>
+        <span>Giao đến: <strong className="text-gray-900">{deliveryLabel}</strong></span>
         <span className="mx-1 text-gray-300">|</span>
-        <button className="text-blue-600 hover:underline">Thay đổi</button>
+        <Link
+          to={isAuthenticated ? '/account/addresses' : '/login?redirect=/account/addresses'}
+          className="text-blue-600 hover:underline"
+        >
+          Thay đổi
+        </Link>
       </div>
     </div>
     </>

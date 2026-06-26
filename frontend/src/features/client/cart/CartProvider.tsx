@@ -4,6 +4,21 @@ import { cartApi } from './cartApi';
 import type { CartResponse, AddCartItemRequest, UpdateCartItemRequest } from './cartTypes';
 import { useAuth } from '../../auth/AuthProvider';
 
+const createEmptyCart = (): CartResponse => ({
+  id: 0,
+  status: 'ACTIVE',
+  items: [],
+  totalItems: 0,
+  subtotalAmount: 0,
+});
+
+const recalculateCart = (cart: CartResponse, items: CartResponse['items']): CartResponse => ({
+  ...cart,
+  items,
+  totalItems: items.reduce((sum, item) => sum + item.quantity, 0),
+  subtotalAmount: items.reduce((sum, item) => sum + item.lineTotal, 0),
+});
+
 interface CartContextType {
   cart: CartResponse | null;
   loading: boolean;
@@ -37,7 +52,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     } catch (err: unknown) {
       // Bỏ qua lỗi 404 (Cart not found - chưa có cart)
       if ((err as { response?: { status: number } }).response?.status === 404) {
-        setCart({ id: 0, status: 'ACTIVE', items: [], totalItems: 0, subtotalAmount: 0 });
+        setCart(createEmptyCart());
       } else {
         setError('Không thể tải giỏ hàng.');
         console.error('refreshCart error', err);
@@ -84,8 +99,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
     if (!isAuthenticated) return;
     setError(null);
     try {
-      const updatedCart = await cartApi.removeItem(itemId);
-      setCart(updatedCart);
+      await cartApi.removeItem(itemId);
+      setCart((currentCart) => {
+        if (!currentCart) return createEmptyCart();
+        const nextItems = currentCart.items.filter((item) => item.id !== itemId);
+        return recalculateCart(currentCart, nextItems);
+      });
     } catch (err: unknown) {
       setError((err as { response?: { data?: { message?: string } } }).response?.data?.message || 'Không thể xoá sản phẩm');
       throw err;
@@ -97,8 +116,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setError(null);
     setLoading(true);
     try {
-      const updatedCart = await cartApi.clearCart();
-      setCart(updatedCart);
+      await cartApi.clearCart();
+      setCart((currentCart) => {
+        if (!currentCart) return createEmptyCart();
+        return recalculateCart(currentCart, []);
+      });
     } catch (err: unknown) {
       setError((err as { response?: { data?: { message?: string } } }).response?.data?.message || 'Không thể xoá giỏ hàng');
       throw err;
