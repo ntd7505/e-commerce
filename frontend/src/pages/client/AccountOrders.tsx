@@ -10,7 +10,7 @@ import {
   Star,
   AlertTriangle,
 } from 'lucide-react';
-import AccountSidebar from './components/account/AccountSidebar';
+import AccountPageLayout from './components/account/AccountPageLayout';
 import { useOrders } from '../../features/client/orders/hooks/useOrders';
 import {
   ORDER_FILTER_TABS,
@@ -263,150 +263,132 @@ export default function AccountOrders() {
   }
 
   function handleReview(order: Order) {
-    // TODO: Chưa có route đánh giá sản phẩm - điều hướng khi màn review được build.
     showToast(`Đánh giá đơn hàng #${order.id} sẽ ra mắt soon.`, 'success');
   }
 
   const noResultsInTab = !loading && !error && filteredOrders.length === 0;
 
   return (
-    <div className="bg-[#f5f7fb] min-h-screen py-8">
-      <div className="container-custom">
-        <nav aria-label="Breadcrumb" className="text-sm text-gray-500 mb-8 flex items-center gap-2 flex-wrap">
-          <Link to="/" className="hover:text-blue-600 transition-colors font-medium">Trang chủ</Link>
-          <span className="text-gray-400">/</span>
-          <Link to="/account" className="hover:text-blue-600 transition-colors font-medium">Tài khoản</Link>
-          <span className="text-gray-400">/</span>
-          <span className="text-gray-900 font-semibold">Đơn hàng của tôi</span>
-        </nav>
-
-        <div className="flex flex-col lg:flex-row gap-8 items-start">
-          <AccountSidebar />
-
-          <div className="flex-1 w-full">
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 lg:p-8">
-              <div className="mb-6 pb-5 border-b border-gray-100">
-                <h1 className="text-2xl lg:text-3xl font-black text-gray-900">Đơn hàng của tôi</h1>
-                <p className="text-gray-500 mt-1.5">Theo dõi trạng thái, xem chi tiết và quản lý đơn hàng của bạn.</p>
-              </div>
-
-              <div className="relative mb-5">
-                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-                <input
-                  type="text"
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  placeholder="Tìm theo mã đơn hoặc tên sản phẩm"
-                  className="w-full rounded-xl border border-gray-200 bg-gray-50/60 pl-10 pr-4 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 outline-none transition-colors focus:border-blue-600 focus:bg-white focus:ring-2 focus:ring-blue-100"
-                />
-              </div>
-
-              <div className="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-hide">
-                {ORDER_FILTER_TABS.map((tab) => {
-                  const isActive = activeTab === tab.key;
-                  return (
-                    <button
-                      key={tab.key}
-                      type="button"
-                      onClick={() => setActiveTab(tab.key as OrderTabKey)}
-                      className={`shrink-0 px-4 py-2 rounded-full text-sm font-semibold transition-colors border ${
-                        isActive
-                          ? 'bg-blue-600 text-white border-blue-600'
-                          : 'bg-white text-gray-600 border-gray-200 hover:border-blue-600 hover:text-blue-600'
-                      }`}
-                    >
-                      {tab.label}
-                    </button>
-                  );
-                })}
-              </div>
-
-              <div className="mt-6 space-y-4">
-                {loading && (
-                  <>
-                    <OrderCardSkeleton />
-                    <OrderCardSkeleton />
-                    <OrderCardSkeleton />
-                  </>
-                )}
-
-                {!loading && error && (
-                  <div className="flex flex-col items-center justify-center py-16 text-center">
-                    <div className="w-14 h-14 bg-red-50 text-red-500 rounded-full flex items-center justify-center mb-4">
-                      <XCircle className="w-7 h-7" />
-                    </div>
-                    <p className="text-red-600 font-medium mb-4">{error}</p>
-                    <button
-                      onClick={refresh}
-                      className="px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 transition-colors"
-                    >
-                      Thử lại
-                    </button>
-                  </div>
-                )}
-
-                {noResultsInTab && (
-                  <div className="flex flex-col items-center justify-center py-16 text-center bg-gray-50/50 rounded-2xl border border-gray-100 border-dashed">
-                    <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm mb-4">
-                      <Package className="w-8 h-8 text-gray-400" />
-                    </div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-1">Bạn chưa có đơn hàng nào</h3>
-                    <p className="text-gray-500 max-w-sm mx-auto mb-6">
-                      {activeTab === 'ALL' && search.trim() === ''
-                        ? 'Các đơn hàng bạn đặt sẽ xuất hiện tại đây.'
-                        : 'Không có đơn hàng nào phù hợp với bộ lọc hiện tại.'}
-                    </p>
-                    <Link
-                      to="/products"
-                      className="px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 transition-colors"
-                    >
-                      Tiếp tục mua sắm
-                    </Link>
-                  </div>
-                )}
-
-                {!loading && !error && filteredOrders.length > 0 && (
-                  filteredOrders.map((order) => (
-                    <OrderCard
-                      key={order.id}
-                      order={order}
-                      onCancel={openCancel}
-                      onRequestCancel={openRequestCancel}
-                      onConfirmReceipt={setReceiptTarget}
-                      onReview={handleReview}
-                      receiptLoading={receiptLoadingId === order.id}
-                    />
-                  ))
-                )}
-              </div>
-
-              {!loading && !error && totalPages > 1 && (
-                <div className="flex items-center justify-center gap-3 mt-8 pt-6 border-t border-gray-100">
-                  <button
-                    onClick={prevPage}
-                    disabled={first}
-                    className="inline-flex items-center gap-1 px-4 py-2.5 rounded-xl border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                  >
-                    <ChevronLeft className="w-4 h-4" />
-                    Trước
-                  </button>
-                  <span className="text-sm text-gray-500 font-medium">
-                    Trang {page + 1} / {totalPages}
-                  </span>
-                  <button
-                    onClick={nextPage}
-                    disabled={last}
-                    className="inline-flex items-center gap-1 px-4 py-2.5 rounded-xl border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                  >
-                    Sau
-                    <ChevronRight className="w-4 h-4" />
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
+    <>
+      <AccountPageLayout
+        breadcrumbCurrent="Đơn hàng của tôi"
+        title="Đơn hàng của tôi"
+        description="Theo dõi trạng thái, xem chi tiết và quản lý đơn hàng của bạn."
+      >
+        <div className="relative mb-5">
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Tìm theo mã đơn hoặc tên sản phẩm"
+            className="w-full rounded-xl border border-gray-200 bg-gray-50/60 pl-10 pr-4 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 outline-none transition-colors focus:border-blue-600 focus:bg-white focus:ring-2 focus:ring-blue-100"
+          />
         </div>
-      </div>
+
+        <div className="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-hide">
+          {ORDER_FILTER_TABS.map((tab) => {
+            const isActive = activeTab === tab.key;
+            return (
+              <button
+                key={tab.key}
+                type="button"
+                onClick={() => setActiveTab(tab.key as OrderTabKey)}
+                className={`shrink-0 px-4 py-2 rounded-full text-sm font-semibold transition-colors border ${
+                  isActive
+                    ? 'bg-blue-600 text-white border-blue-600'
+                    : 'bg-white text-gray-600 border-gray-200 hover:border-blue-600 hover:text-blue-600'
+                }`}
+              >
+                {tab.label}
+              </button>
+            );
+          })}
+        </div>
+
+        <div className="mt-6 space-y-4">
+          {loading && (
+            <>
+              <OrderCardSkeleton />
+              <OrderCardSkeleton />
+              <OrderCardSkeleton />
+            </>
+          )}
+
+          {!loading && error && (
+            <div className="flex flex-col items-center justify-center py-16 text-center">
+              <div className="w-14 h-14 bg-red-50 text-red-500 rounded-full flex items-center justify-center mb-4">
+                <XCircle className="w-7 h-7" />
+              </div>
+              <p className="text-red-600 font-medium mb-4">{error}</p>
+              <button
+                onClick={refresh}
+                className="px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 transition-colors"
+              >
+                Thử lại
+              </button>
+            </div>
+          )}
+
+          {noResultsInTab && (
+            <div className="flex flex-col items-center justify-center py-16 text-center bg-gray-50/50 rounded-2xl border border-gray-100 border-dashed">
+              <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm mb-4">
+                <Package className="w-8 h-8 text-gray-400" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-1">Bạn chưa có đơn hàng nào</h3>
+              <p className="text-gray-500 max-w-sm mx-auto mb-6">
+                {activeTab === 'ALL' && search.trim() === ''
+                  ? 'Các đơn hàng bạn đặt sẽ xuất hiện tại đây.'
+                  : 'Không có đơn hàng nào phù hợp với bộ lọc hiện tại.'}
+              </p>
+              <Link
+                to="/products"
+                className="px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 transition-colors"
+              >
+                Tiếp tục mua sắm
+              </Link>
+            </div>
+          )}
+
+          {!loading && !error && filteredOrders.length > 0 && (
+            filteredOrders.map((order) => (
+              <OrderCard
+                key={order.id}
+                order={order}
+                onCancel={openCancel}
+                onRequestCancel={openRequestCancel}
+                onConfirmReceipt={setReceiptTarget}
+                onReview={handleReview}
+                receiptLoading={receiptLoadingId === order.id}
+              />
+            ))
+          )}
+        </div>
+
+        {!loading && !error && totalPages > 1 && (
+          <div className="flex items-center justify-center gap-3 mt-8 pt-6 border-t border-gray-100">
+            <button
+              onClick={prevPage}
+              disabled={first}
+              className="inline-flex items-center gap-1 px-4 py-2.5 rounded-xl border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              <ChevronLeft className="w-4 h-4" />
+              Trước
+            </button>
+            <span className="text-sm text-gray-500 font-medium">
+              Trang {page + 1} / {totalPages}
+            </span>
+            <button
+              onClick={nextPage}
+              disabled={last}
+              className="inline-flex items-center gap-1 px-4 py-2.5 rounded-xl border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              Sau
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+        )}
+      </AccountPageLayout>
 
       <CancelOrderModal
         open={!!cancelTarget}
@@ -437,6 +419,6 @@ export default function AccountOrders() {
         onClose={() => setReceiptTarget(null)}
         onConfirm={handleConfirmReceipt}
       />
-    </div>
+    </>
   );
 }

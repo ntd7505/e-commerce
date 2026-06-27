@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import type { ProductMediaResponse } from '../../../../features/client/home/clientProductApi';
+import { ShieldCheck, RotateCcw, PenTool, Zap } from 'lucide-react';
 
 interface ProductGalleryProps {
   media: ProductMediaResponse[];
@@ -7,29 +8,31 @@ interface ProductGalleryProps {
 }
 
 export default function ProductGallery({ media, productName }: ProductGalleryProps) {
+  // Filter active, sort by sortOrder. Thumbnail is prioritized.
   const activeMedia = [...media]
     .filter(m => m.active !== false)
-    .sort((a, b) => a.sortOrder - b.sortOrder);
+    .sort((a, b) => {
+      if (a.thumbnail === b.thumbnail) return a.sortOrder - b.sortOrder;
+      return a.thumbnail ? -1 : 1;
+    });
 
-  const defaultImage = activeMedia.length > 0 
-    ? (activeMedia.find(m => m.thumbnail)?.url || activeMedia[0].url) 
-    : '';
+  const defaultImage = activeMedia.length > 0 ? activeMedia[0].url : '';
 
   const [activeImage, setActiveImage] = useState<string>('');
   
   const currentImage = activeImage || defaultImage;
 
   return (
-    <div className="lg:w-[450px] flex flex-col gap-4 shrink-0">
-      <div className="w-full aspect-square rounded-xl bg-white border border-gray-100 overflow-hidden flex items-center justify-center">
+    <div className="lg:w-[400px] xl:w-[450px] flex flex-col gap-3 shrink-0">
+      <div className="w-full aspect-square rounded-2xl bg-gray-50 border border-gray-100 overflow-hidden flex items-center justify-center p-4">
         {currentImage ? (
           <img 
             src={currentImage} 
             alt={productName} 
-            className="w-full h-full object-contain p-8 mix-blend-multiply" 
+            className="w-full h-full object-contain mix-blend-multiply" 
           />
         ) : (
-          <div className="text-gray-400">Chưa có ảnh</div>
+          <div className="text-gray-400 text-sm font-medium">Chưa có ảnh</div>
         )}
       </div>
       
@@ -78,6 +81,26 @@ export default function ProductGallery({ media, productName }: ProductGalleryPro
           })}
         </div>
       )}
+
+      {/* Trust Badges */}
+      <div className="grid grid-cols-2 gap-3 mt-4 pt-4 border-t border-gray-100">
+        <div className="flex items-center gap-2">
+          <ShieldCheck className="w-4 h-4 text-blue-600 shrink-0" />
+          <span className="text-xs text-gray-700 font-medium">Chính hãng 100%</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <RotateCcw className="w-4 h-4 text-blue-600 shrink-0" />
+          <span className="text-xs text-gray-700 font-medium">Đổi trả 30 ngày</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <PenTool className="w-4 h-4 text-blue-600 shrink-0" />
+          <span className="text-xs text-gray-700 font-medium">Bảo hành chính hãng</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <Zap className="w-4 h-4 text-blue-600 shrink-0" />
+          <span className="text-xs text-gray-700 font-medium">Giao nhanh 2h</span>
+        </div>
+      </div>
     </div>
   );
 }

@@ -153,7 +153,7 @@ export default function ProductDetail() {
         <span className="text-gray-900 font-medium line-clamp-1">{product.name}</span>
       </nav>
 
-      <div className="flex flex-col lg:flex-row gap-6 mb-10">
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 flex flex-col lg:flex-row gap-6 mb-10">
         {/* Left: Gallery */}
         <ProductGallery media={product.media || []} productName={product.name} />
 
@@ -180,7 +180,7 @@ export default function ProductDetail() {
       {/* Product Tabs */}
       <ProductTabs 
         totalReviews={reviewSummary?.totalReviews || 0}
-        descriptionNode={<ProductDescription description={product.description} />}
+        descriptionNode={<ProductDescription product={product} />}
         specsNode={<ProductSpecifications product={product} selectedVariant={selectedVariant} />}
         reviewsNode={<ProductReviews productId={product.id} reviewSummary={reviewSummary} />}
       />

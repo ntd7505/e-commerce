@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Box, Minus, Plus, Trash2 } from 'lucide-react';
 import type { CartItemResponse } from '../../../../features/client/cart/cartTypes';
 import { formatCurrency } from '../../../../utils/formatters';
 
@@ -62,7 +63,7 @@ export default function CartItemCard({
           <img src={item.thumbnailUrl} alt={item.productName} className="w-full h-full object-contain mix-blend-multiply" />
         ) : (
           <div className="text-gray-400">
-            <i className="fa-solid fa-box text-3xl"></i>
+            <Box className="w-8 h-8" />
           </div>
         )}
       </div>
@@ -77,17 +78,17 @@ export default function CartItemCard({
           <button
             onClick={() => handleQuantityChange(localQuantity - 1)}
             disabled={localQuantity <= 1 || loading}
-            className="px-3 h-full hover:bg-gray-100 transition-colors text-gray-900 border-r border-gray-200 disabled:opacity-50"
+            className="px-3 h-full hover:bg-gray-100 transition-colors text-gray-900 border-r border-gray-200 disabled:opacity-50 flex items-center justify-center"
           >
-            <i className="fa-solid fa-minus text-[14px]"></i>
+            <Minus className="w-3.5 h-3.5" />
           </button>
           <div className="px-4 font-bold text-sm min-w-[40px] text-center">{localQuantity}</div>
           <button
             onClick={() => handleQuantityChange(localQuantity + 1)}
             disabled={loading}
-            className="px-3 h-full hover:bg-gray-100 transition-colors text-gray-900 border-l border-gray-200 disabled:opacity-50"
+            className="px-3 h-full hover:bg-gray-100 transition-colors text-gray-900 border-l border-gray-200 disabled:opacity-50 flex items-center justify-center"
           >
-            <i className="fa-solid fa-plus text-[14px]"></i>
+            <Plus className="w-3.5 h-3.5" />
           </button>
         </div>
         <div className="text-right min-w-[120px] hidden md:block">
@@ -95,7 +96,7 @@ export default function CartItemCard({
           <div className="text-gray-900 font-black">{formatCurrency(item.lineTotal)}</div>
         </div>
         <button onClick={handleRemove} className="p-2 text-gray-500 hover:text-red-500 transition-colors" title="Xoá">
-          <i className="fa-solid fa-trash-can"></i>
+          <Trash2 className="w-5 h-5" />
         </button>
       </div>
     </div>

@@ -5,7 +5,7 @@ import { useClientProducts } from '../../features/client/home/hooks/useClientPro
 import { clientProductApi, type CategorySummaryResponse, type BrandSummaryResponse } from '../../features/client/home/clientProductApi';
 import { Pagination } from '../../components/common/Pagination';
 import { ErrorState, EmptyState } from '../../components/common/States';
-import { Filter } from 'lucide-react';
+import { Filter, ChevronDown, ChevronRight, Check } from 'lucide-react';
 import { formatCurrency, calculateDiscountPercent } from '../../utils/formatters';
 import { useAddToCartAction } from '../../features/client/cart/hooks/useAddToCartAction';
 
@@ -191,7 +191,7 @@ export default function ProductList() {
                   onClick={() => setActiveDropdown(activeDropdown === 'category' ? null : 'category')}
                   className={`px-4 py-2 rounded-full border text-sm font-medium transition-colors ${categoryId ? 'border-blue-600 text-blue-600 bg-blue-50' : 'border-gray-300 text-gray-700 hover:border-blue-600 hover:text-blue-600'}`}
                 >
-                  Danh mục <i className="fa-solid fa-chevron-down ml-1 text-[10px]"></i>
+                  Danh mục <ChevronDown className="w-3 h-3 ml-1 inline" />
                 </button>
                 {activeDropdown === 'category' && (
                   <div className="absolute top-full left-0 mt-2 w-64 bg-white border border-gray-100 shadow-xl rounded-xl p-4 z-50">
@@ -230,8 +230,8 @@ export default function ProductList() {
                                   onClick={(e) => handleChevronClick(cat.id, e)}
                                   className="p-1 text-gray-400 hover:text-gray-600 transition-colors border-0 cursor-pointer"
                                 >
-                                  <i className={`fa-solid fa-chevron-right text-[9px] transition-transform duration-300 ${isExpanded ? 'rotate-90' : ''
-                                    }`}></i>
+                                  <ChevronRight className={`w-2.5 h-2.5 transition-transform duration-300 ${isExpanded ? 'rotate-90' : ''
+                                    }`} />
                                 </button>
                               )}
                             </div>
@@ -270,7 +270,7 @@ export default function ProductList() {
                   onClick={() => setActiveDropdown(activeDropdown === 'brand' ? null : 'brand')}
                   className={`px-4 py-2 rounded-full border text-sm font-medium transition-colors ${brandId ? 'border-blue-600 text-blue-600 bg-blue-50' : 'border-gray-300 text-gray-700 hover:border-blue-600 hover:text-blue-600'}`}
                 >
-                  Thương hiệu <i className="fa-solid fa-chevron-down ml-1 text-[10px]"></i>
+                  Thương hiệu <ChevronDown className="w-3 h-3 ml-1 inline" />
                 </button>
                 {activeDropdown === 'brand' && (
                   <div className="absolute top-full left-0 mt-2 w-64 bg-white border border-gray-100 shadow-xl rounded-xl p-4 z-50">
@@ -289,7 +289,7 @@ export default function ProductList() {
                             onClick={() => handleBrandChange(brandId === b.id ? undefined : b.id)}
                             className={`w-5 h-5 rounded flex items-center justify-center border ${brandId === b.id ? 'bg-blue-600 border-blue-600 text-white' : 'border-gray-300 bg-white'}`}
                           >
-                            {brandId === b.id && <i className="fa-solid fa-check text-xs"></i>}
+                            {brandId === b.id && <Check className="w-3 h-3" />}
                           </button>
                           <span className="text-sm text-gray-700 cursor-pointer hover:text-blue-600 transition-colors" onClick={() => handleBrandChange(brandId === b.id ? undefined : b.id)}>{b.name}</span>
                         </li>
@@ -305,7 +305,7 @@ export default function ProductList() {
                   onClick={() => setActiveDropdown(activeDropdown === 'price' ? null : 'price')}
                   className={`px-4 py-2 rounded-full border text-sm font-medium transition-colors ${(minPrice || maxPrice) ? 'border-blue-600 text-blue-600 bg-blue-50' : 'border-gray-300 text-gray-700 hover:border-blue-600 hover:text-blue-600'}`}
                 >
-                  Khoảng giá <i className="fa-solid fa-chevron-down ml-1 text-[10px]"></i>
+                  Khoảng giá <ChevronDown className="w-3 h-3 ml-1 inline" />
                 </button>
                 {activeDropdown === 'price' && (
                   <div className="absolute top-full left-0 lg:left-auto lg:right-0 mt-2 w-72 bg-white border border-gray-100 shadow-xl rounded-xl p-4 z-50">
@@ -350,7 +350,7 @@ export default function ProductList() {
               >
                 <span className="text-gray-500 font-normal">Sắp xếp:</span> 
                 {currentSortKey === 'createdAt-desc' ? 'Hàng mới' : currentSortKey === 'price-asc' ? 'Giá thấp đến cao' : currentSortKey === 'price-desc' ? 'Giá cao đến thấp' : 'Phổ biến'}
-                <i className="fa-solid fa-chevron-down ml-1 text-[10px]"></i>
+                <ChevronDown className="w-3 h-3 ml-1 inline" />
               </button>
               {activeDropdown === 'sort' && (
                 <div className="absolute top-full right-0 mt-2 w-48 bg-white border border-gray-100 shadow-xl rounded-xl p-2 z-50">

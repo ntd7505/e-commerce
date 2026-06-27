@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { ChevronRight, Check, AlertCircle } from 'lucide-react';
 import { clientProductApi, type CategorySummaryResponse } from '../clientProductApi';
 
 /* ──────────── Skeleton items ──────────── */
@@ -80,20 +81,18 @@ const CategorySidebar = () => {
   const parentCategories = categories.filter((c) => !c.parent);
 
   return (
-    <aside className="w-full" data-purpose="category-sidebar">
-      <h3 className="font-bold text-gray-900 mb-2 px-3 pt-3 flex items-center gap-2 uppercase tracking-wide text-sm">
-        <i className="fa-solid fa-list text-nexa-blue"></i> Danh mục
-      </h3>
-      <ul className="text-sm p-2">
+    <aside className="w-full bg-[var(--surface-2)] border-[0.5px] border-[var(--border)] rounded-[10px] py-4 h-max" data-purpose="category-sidebar">
+      <div className="text-[10px] text-[var(--text-muted)] uppercase tracking-[0.1em] font-medium px-4 mb-3">Danh mục</div>
+      <ul className="flex flex-col px-2 gap-0.5">
         {loading ? (
           Array.from({ length: 6 }).map((_, i) => <SkeletonItem key={i} />)
         ) : error ? (
-          <li className="p-3 text-center text-gray-500 text-xs">
-            <i className="fa-solid fa-circle-exclamation text-gray-400 mb-1 block text-lg"></i>
-            Không thể tải danh mục
+          <li className="p-3 text-center text-[var(--text-muted)] text-[12px]">
+            <AlertCircle className="w-4 h-4 text-[var(--text-muted)] mb-1 block mx-auto" />
+            Lỗi tải danh mục
           </li>
         ) : parentCategories.length === 0 ? (
-          <li className="p-3 text-center text-gray-500 text-xs">
+          <li className="p-3 text-center text-[var(--text-muted)] text-[12px]">
             Chưa có danh mục nào
           </li>
         ) : (
@@ -102,62 +101,52 @@ const CategorySidebar = () => {
             const isExpanded = !!expandedCategories[cat.id];
             const isParentActive = activeCategoryId === cat.id;
             const isChildActive = cat.children?.some((child) => activeCategoryId === child.id) || false;
-            const isActive = isParentActive || isChildActive;
 
             return (
-              <li key={cat.id} className="mb-1">
+              <li key={cat.id}>
                 <div
                   onClick={() => handleCategoryClick(cat.id, hasChildren)}
-                  className={`flex items-center justify-between p-3 rounded cursor-pointer group transition-colors ${
-                    isParentActive
-                      ? 'bg-blue-50 text-nexa-blue font-semibold'
-                      : isChildActive
-                      ? 'text-nexa-blue font-medium bg-blue-50/50'
-                      : 'hover:bg-gray-50 hover:text-nexa-blue'
+                  className={`flex items-center justify-between px-3 py-2.5 rounded-[8px] cursor-pointer transition-colors group ${
+                    isParentActive || isChildActive
+                      ? 'bg-[var(--surface-0)] text-[var(--color-primary)] font-medium'
+                      : 'hover:bg-[var(--surface-0)] text-[var(--text-primary)]'
                   }`}
                 >
-                  <div className="flex items-center gap-3">
-                    <i className={`fa-solid fa-tag w-5 text-gray-500 group-hover:text-nexa-blue group-hover:scale-110 transition-all ${isActive ? 'text-nexa-blue' : ''}`}></i>
-                    <span className="font-medium group-hover:font-semibold transition-all">
-                      {cat.name}
-                    </span>
-                  </div>
+                  <span className="text-[13px] leading-[1.3] pr-2 flex-1">{cat.name}</span>
                   {hasChildren ? (
                     <button
                       type="button"
                       onClick={(e) => handleChevronClick(cat.id, e)}
-                      className="p-1 rounded hover:bg-gray-200/50 text-gray-400 hover:text-gray-600 transition-colors border-0 flex items-center justify-center cursor-pointer"
+                      className="p-1 text-[var(--text-muted)] transition-colors border-0 flex items-center justify-center cursor-pointer bg-transparent rounded-[4px] hover:bg-black/5"
                     >
-                      <i className={`fa-solid fa-chevron-right text-[10px] transition-transform duration-300 ${
+                      <ChevronRight className={`w-3.5 h-3.5 transition-transform duration-300 ${
                         isExpanded ? 'rotate-90' : ''
-                      }`}></i>
+                      }`} />
                     </button>
                   ) : (
-                    <i className={`fa-solid fa-chevron-right text-[10px] transition-all group-hover:translate-x-1 ${
-                      isParentActive
-                        ? 'text-nexa-blue opacity-100'
-                        : 'text-gray-300 group-hover:text-nexa-blue opacity-0 group-hover:opacity-100'
-                    }`}></i>
+                    <ChevronRight className={`w-3.5 h-3.5 transition-colors ${
+                      isParentActive || isChildActive ? 'text-[var(--color-primary)]' : 'text-transparent group-hover:text-[var(--text-muted)]'
+                    }`} />
                   )}
                 </div>
 
                 {hasChildren && isExpanded && (
-                  <ul className="pl-6 mt-1 space-y-1 border-l-2 border-gray-100 ml-5">
+                  <ul className="pl-3 mt-1 mb-2 space-y-0.5 border-l-[1.5px] border-[var(--border)] ml-4">
                     {cat.children!.map((child) => {
                       const isSubActive = activeCategoryId === child.id;
                       return (
                         <li
                           key={child.id}
                           onClick={() => navigate(`/products?categoryId=${child.id}`)}
-                          className={`flex items-center justify-between p-2 rounded cursor-pointer transition-colors text-xs ${
+                          className={`flex items-center justify-between px-3 py-2 cursor-pointer transition-colors text-[12px] rounded-r-[6px] ${
                             isSubActive
-                              ? 'text-nexa-blue font-semibold bg-blue-50/30'
-                              : 'text-gray-600 hover:text-nexa-blue hover:bg-gray-50/50'
+                              ? 'text-[var(--color-primary)] font-medium bg-[var(--surface-0)]'
+                              : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-0)]'
                           }`}
                         >
-                          <span className="font-medium">{child.name}</span>
+                          <span className="leading-[1.3] flex-1">{child.name}</span>
                           {isSubActive && (
-                            <i className="fa-solid fa-check text-[10px] text-nexa-blue"></i>
+                            <Check className="w-3 h-3 text-[var(--color-primary)] ml-2 shrink-0" />
                           )}
                         </li>
                       );

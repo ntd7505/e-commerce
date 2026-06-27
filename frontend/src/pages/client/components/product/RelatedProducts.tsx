@@ -15,7 +15,7 @@ export default function RelatedProducts({ products }: RelatedProductsProps) {
   if (!products || products.length === 0) return null;
 
   return (
-    <div className="mb-20">
+    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 mb-10 min-h-[400px]">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-xl font-bold text-gray-900">Sản phẩm liên quan</h2>
         <div className="flex gap-2">
@@ -28,7 +28,7 @@ export default function RelatedProducts({ products }: RelatedProductsProps) {
         </div>
       </div>
       
-      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
         {products.map((item) => {
           const thumbnailImage = item.media?.find((media) => media.thumbnail)?.url || item.media?.[0]?.url || '';
           const firstVariant = item.variants?.[0];

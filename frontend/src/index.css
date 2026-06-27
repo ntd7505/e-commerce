@@ -1,23 +1,91 @@
 @import "tailwindcss";
 
+:root {
+  --color-primary: #2563eb;
+  --color-danger: #ef4444;
+  --color-warning: #f59e0b;
+  --color-hero-bg: #0f1b35;
+  --color-navy: #1e3a8a;
+
+  --surface-0: #f5f7f8;
+  --surface-1: #ffffff;
+  --surface-2: #ffffff;
+  
+  --border: #e5e7eb;
+  --border-strong: #d1d5db;
+  
+  --text-primary: #111827;
+  --text-secondary: #4b5563;
+  --text-muted: #6b7280;
+  
+  --radius: 10px;
+}
+
+body {
+  background-color: var(--surface-0);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+}
+
 @theme {
-  --font-sans: "Inter", sans-serif;
-  --color-nexa-blue: #0066cc;
-  --color-nexa-red: #ee4d2d;
-  --color-nexa-gray-bg: #f4f4f4;
-  --color-nexa-text-gray: #757575;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+
+  --color-primary: var(--color-primary);
+  --color-primary-hover: #1d4ed8;
+  --color-primary-soft: rgba(37, 99, 235, 0.1);
+
+  --color-danger: var(--color-danger);
+  --color-danger-hover: #dc2626;
+  --color-danger-soft: rgba(239, 68, 68, 0.1);
+
+  --color-success: #22c55e;
+  --color-success-soft: #eafbef;
+
+  --color-warning: var(--color-warning);
+  --color-warning-soft: rgba(245, 158, 11, 0.1);
+
+  --color-canvas: var(--surface-0);
+  --color-surface: var(--surface-1);
+  --color-surface-alt: var(--surface-2);
+
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+
+  --color-text: var(--text-primary);
+  --color-text-muted: var(--text-secondary);
+  --color-text-subtle: var(--text-muted);
+
+  --color-hero-bg: var(--color-hero-bg);
+  --color-navy: var(--color-navy);
+
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 10px;
+  --radius-xl: 12px;
+  --radius-2xl: 16px;
+
+  /* No shadows allowed in new design, set to transparent or minimal if needed, but keeping legacy tokens just in case */
+  --shadow-sm: none;
+  --shadow-md: none;
+  --shadow-lg: none;
+
+  /* Legacy aliases (do not remove per rules) */
+  --color-nexa-blue: var(--color-primary);
+  --color-nexa-red: var(--color-danger);
+  --color-nexa-gray-bg: var(--surface-0);
+  --color-nexa-text-gray: var(--text-secondary);
 }
 
 @utility container-custom {
-  max-width: 1440px;
+  max-width: 1280px;
   margin: 0 auto;
   padding: 0 24px;
 }
 
 @utility custom-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: #cbd5e1 transparent;
-  
+  scrollbar-color: var(--color-border-strong) transparent;
+
   &::-webkit-scrollbar {
     width: 4px;
   }
@@ -25,7 +93,7 @@
     background: transparent;
   }
   &::-webkit-scrollbar-thumb {
-    background-color: #cbd5e1;
-    border-radius: 20px;
+    background-color: var(--color-border-strong);
+    border-radius: 9999px;
   }
 }

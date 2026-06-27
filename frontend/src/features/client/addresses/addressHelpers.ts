@@ -19,13 +19,13 @@ export function getAddressTypeLabel(type: AddressType): string {
 export function getAddressTypeBadgeClass(type: AddressType): string {
   switch (type) {
     case "HOME":
-      return "bg-blue-50 text-blue-700 border-blue-200";
+      return "bg-primary-soft text-primary border-primary/20";
     case "OFFICE":
       return "bg-indigo-50 text-indigo-700 border-indigo-200";
     case "OTHER":
-      return "bg-gray-100 text-gray-700 border-gray-200";
+      return "bg-surface-alt text-text-muted border-border";
     default:
-      return "bg-gray-100 text-gray-700 border-gray-200";
+      return "bg-surface-alt text-text-muted border-border";
   }
 }
 

@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { cartApi } from '../../features/client/cart/cartApi';
 import type { OrderBasicResponse } from '../../features/client/cart/cartTypes';
 import { formatCurrency } from '../../utils/formatters';
+import { Check } from 'lucide-react';
 import { LoadingState, ErrorState } from '../../components/common/States';
 
 export default function CheckoutSuccess() {
@@ -45,7 +46,7 @@ export default function CheckoutSuccess() {
       <div className="max-w-[800px] mx-auto w-full px-4">
         <div className="bg-white rounded-2xl p-8 md:p-12 border border-gray-100 shadow-sm text-center">
           <div className="w-24 h-24 bg-green-100 text-green-500 rounded-full flex items-center justify-center mx-auto mb-6">
-            <i className="fa-solid fa-check text-5xl"></i>
+            <Check className="w-12 h-12" strokeWidth={3} />
           </div>
           
           <h1 className="text-2xl md:text-3xl font-black text-gray-900 mb-2">Đặt hàng thành công!</h1>

@@ -21,16 +21,16 @@ const Home = () => {
   } = useRecommendedProducts(0, 10);
 
   return (
-    <div className="bg-gray-50/30 py-6">
+    <div className="bg-[var(--surface-0)] py-4">
       <div className="container-custom">
-        <div className="flex flex-col lg:flex-row gap-6 items-start">
+        <div className="flex flex-col lg:flex-row gap-[14px] items-start">
           {/* Left Sidebar */}
-          <div className="w-full lg:w-60 xl:w-64 shrink-0 lg:sticky lg:top-4 hidden lg:block h-fit max-h-[calc(100vh-32px)] custom-scrollbar overflow-y-auto rounded-xl shadow-sm bg-white">
+          <div className="w-full lg:w-[180px] shrink-0 lg:sticky lg:top-4 hidden lg:block h-fit max-h-[calc(100vh-32px)] custom-scrollbar overflow-y-auto">
             <CategorySidebar />
           </div>
 
           {/* Main Content */}
-          <div className="flex-1 flex flex-col gap-6 w-full min-w-0">
+          <div className="flex-1 flex flex-col gap-[14px] w-full min-w-0">
             <HeroSection />
             <QuickServices />
             <FlashSaleSection

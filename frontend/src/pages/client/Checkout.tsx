@@ -7,6 +7,7 @@ import CouponInput from './components/checkout/CouponInput';
 import { formatCurrency } from '../../utils/formatters';
 import { LoadingState } from '../../components/common/States';
 import { useCart } from '../../features/client/cart/CartProvider';
+import { Box, CreditCard, Loader2 } from 'lucide-react';
 
 export default function Checkout() {
   const navigate = useNavigate();
@@ -159,48 +160,57 @@ export default function Checkout() {
               preferredAddressId={preferredAddressId}
             />
 
-            <div className="bg-white rounded-xl p-6 border border-gray-100 shadow-sm mb-6">
+            <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm mb-6">
               <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2 mb-4">
-                <i className="fa-solid fa-box text-blue-600"></i> Sản phẩm
+                <Box className="w-5 h-5 text-blue-600" /> Sản phẩm
               </h2>
               {loading && !preview ? (
                 <div className="py-10"><LoadingState /></div>
               ) : error ? (
                 <div className="py-4 text-red-500">{error}</div>
               ) : (
-                <div className="flex flex-col gap-4">
+                <div className="flex flex-col divide-y divide-gray-50">
                   {preview?.items.map((item) => (
-                    <div key={item.id} className="flex gap-4 py-4 border-b border-gray-50 last:border-b-0">
-                      <div className="w-20 h-20 bg-gray-50 rounded-lg flex-shrink-0 flex items-center justify-center border border-gray-100 overflow-hidden">
+                    <div key={item.id} className="flex gap-4 py-4 first:pt-0 last:pb-0">
+                      <div className="w-16 h-16 md:w-20 md:h-20 bg-gray-50 rounded-lg flex-shrink-0 flex items-center justify-center border border-gray-100 overflow-hidden">
                         {item.thumbnailUrl ? (
                           <img src={item.thumbnailUrl} alt={item.productName} className="w-full h-full object-contain" />
                         ) : (
-                          <i className="fa-solid fa-box text-gray-300 text-2xl"></i>
+                          <Box className="w-6 h-6 text-gray-300" />
                         )}
                       </div>
-                      <div className="flex-1 flex flex-col justify-center">
+                      <div className="flex-1 flex flex-col justify-center min-w-0">
                         <h4 className="font-bold text-gray-900 line-clamp-1">{item.productName}</h4>
-                        <p className="text-sm text-gray-500">Phân loại: {item.variantName}</p>
+                        <p className="text-sm text-gray-500 line-clamp-1">Phân loại: {item.variantName}</p>
                         <div className="flex items-center justify-between mt-2">
-                          <span className="text-sm font-medium">x{item.quantity}</span>
-                          <span className="font-bold text-blue-600">{formatCurrency(item.unitPrice)}</span>
+                          <span className="text-sm text-gray-500 font-medium">x{item.quantity}</span>
+                          <div className="text-right">
+                            <span className="font-bold text-blue-600 block leading-tight">{formatCurrency(item.lineTotal)}</span>
+                            {item.quantity > 1 && (
+                              <span className="text-xs text-gray-400">{formatCurrency(item.unitPrice)}/sp</span>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </div>
                   ))}
                 </div>
               )}
-              
-              <div className="mt-6">
-                <label className="block text-sm font-bold text-gray-900 mb-2">Lời nhắn cho người bán (Tuỳ chọn)</label>
-                <textarea 
-                  rows={2} 
+
+              <div className="mt-6 rounded-xl bg-slate-50/60 border border-slate-100 p-4">
+                <label htmlFor="seller-note" className="block text-sm font-bold text-gray-900 mb-2">
+                  Lời nhắn cho người bán (tùy chọn)
+                </label>
+                <textarea
+                  id="seller-note"
+                  rows={2}
                   maxLength={500}
-                  className="w-full border-gray-300 rounded-lg text-sm focus:ring-blue-600 focus:border-blue-600"
-                  placeholder="Lưu ý cho người bán..."
+                  className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 outline-none transition-colors resize-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                  placeholder="Ví dụ: Giao giờ hành chính, gọi trước khi giao..."
                   value={note}
                   onChange={e => setNote(e.target.value)}
                 />
+                <p className="mt-1.5 text-right text-xs text-gray-400">{note.length}/500</p>
               </div>
             </div>
 
@@ -211,9 +221,9 @@ export default function Checkout() {
               error={couponError} 
             />
 
-            <div className="bg-white rounded-xl p-6 border border-gray-100 shadow-sm mb-6 lg:mb-0">
+            <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm mb-6 lg:mb-0">
               <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2 mb-4">
-                <i className="fa-solid fa-credit-card text-blue-600"></i> Phương thức thanh toán
+                <CreditCard className="w-5 h-5 text-blue-600" /> Phương thức thanh toán
               </h2>
               {preview?.paymentMethods && preview.paymentMethods.length > 0 ? (
                 <div className="flex flex-col gap-3">
@@ -239,7 +249,7 @@ export default function Checkout() {
 
           {/* Right Column (Summary) */}
           <div className="w-full lg:w-[360px] xl:w-[400px] flex-shrink-0">
-            <div className="bg-white rounded-xl p-6 border border-gray-100 shadow-sm sticky top-[100px]">
+            <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm sticky top-[100px]">
               <h2 className="text-lg font-bold text-gray-900 mb-6">Chi tiết đơn hàng</h2>
               
               <div className="flex flex-col gap-4 text-sm mb-6">
@@ -276,7 +286,7 @@ export default function Checkout() {
                 disabled={submitting || loading || !selectedAddress || !paymentMethod}
                 className="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-4 rounded-xl shadow-md shadow-blue-200 transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
-                {submitting && <i className="fa-solid fa-spinner fa-spin"></i>}
+                {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
                 ĐẶT HÀNG
               </button>
             </div>

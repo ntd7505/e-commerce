@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 const banners = [
   {
@@ -40,18 +41,19 @@ const MainBanner = () => {
   };
 
   return (
-    <>
-      {/* Main carousel — takes full width on mobile, 8 cols on desktop */}
-      <section className="col-span-12 md:col-span-8 rounded-lg relative overflow-hidden group cursor-pointer min-h-[200px] md:min-h-0 shadow-sm" data-purpose="hero-slider">
+    <div className="h-auto md:h-[380px] flex flex-col md:grid md:grid-cols-[1fr_220px] lg:grid-cols-[1fr_260px] gap-[14px]">
+      {/* Main carousel — Left Block */}
+      <div className="relative overflow-hidden group cursor-pointer min-h-[200px] md:min-h-0 flex-1 rounded-[10px] border-[0.5px] border-[var(--border)] bg-white">
         <div
           className="flex h-full w-full transition-transform duration-500 ease-out"
           style={{ transform: `translateX(-${currentIndex * 100}%)` }}
         >
           {banners.map((banner, index) => (
-            <div key={index} className={`w-full min-w-full h-full shrink-0 flex items-center p-6 md:p-8 relative ${banner.bg}`}>
+            <div key={index} className={`w-full min-w-full h-full shrink-0 flex items-center p-6 md:p-10 relative ${banner.bg}`}>
               <div className="z-10 w-2/3 md:w-1/2">
-                <h2 className="text-2xl md:text-4xl font-bold mb-2">{banner.title}</h2>
-                <p className="text-base md:text-xl mb-4">{banner.subtitle}</p>
+                <h2 className="text-2xl md:text-4xl font-bold mb-3 text-gray-900">{banner.title}</h2>
+                <p className="text-base md:text-xl mb-6 text-gray-800">{banner.subtitle}</p>
+                <button className="bg-[var(--color-primary)] text-white text-sm font-medium px-8 py-3 rounded-lg inline-block border-0 cursor-pointer hover:bg-[var(--color-primary-hover)] transition-colors shadow-sm">Xem ngay</button>
               </div>
               <div className="absolute right-0 top-0 h-full w-1/3 md:w-1/2 flex items-center justify-center p-4">
                 <img
@@ -88,38 +90,38 @@ const MainBanner = () => {
           type="button"
           onClick={(event) => { event.stopPropagation(); handlePrev(); }}
           aria-label="Banner trước"
-          className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/50 text-gray-800 flex items-center justify-center hover:bg-white hover:shadow-md transition-all opacity-0 group-hover:opacity-100 z-20 border-0"
+          className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/50 text-gray-800 flex items-center justify-center hover:bg-white hover:shadow-md transition-all opacity-0 group-hover:opacity-100 z-20 border-0 cursor-pointer"
         >
-          <i className="fa-solid fa-chevron-left"></i>
+          <ChevronLeft className="w-5 h-5" />
         </button>
         <button
           type="button"
           onClick={(event) => { event.stopPropagation(); handleNext(); }}
           aria-label="Banner tiếp theo"
-          className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/50 text-gray-800 flex items-center justify-center hover:bg-white hover:shadow-md transition-all opacity-0 group-hover:opacity-100 z-20 border-0"
+          className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/50 text-gray-800 flex items-center justify-center hover:bg-white hover:shadow-md transition-all opacity-0 group-hover:opacity-100 z-20 border-0 cursor-pointer"
         >
-          <i className="fa-solid fa-chevron-right"></i>
+          <ChevronRight className="w-5 h-5" />
         </button>
-      </section>
+      </div>
 
-      {/* Promo side banners — hidden on mobile */}
-      <section className="col-span-12 md:col-span-4 flex flex-col gap-4 hidden md:flex" data-purpose="promo-banners">
-        <div className="flex-1 bg-[#b9d7ea] rounded-lg p-4 relative overflow-hidden flex flex-col justify-between cursor-pointer hover:shadow-md transition-shadow">
+      {/* Promo side banners — Right Block */}
+      <div className="flex flex-col gap-[14px] h-full hidden md:flex">
+        <div className="flex-1 bg-[#b9d7ea] p-4 flex flex-col justify-between relative rounded-[10px] overflow-hidden cursor-pointer border-[0.5px] border-[var(--border)] hover:shadow-md transition-shadow">
           <div>
-            <h4 className="font-bold text-lg text-gray-900">Tuần lễ Laptop</h4>
-            <p className="text-sm text-gray-800">Deal đến 50%</p>
+            <h4 className="font-bold text-lg text-gray-900 leading-tight">Tuần lễ Laptop</h4>
+            <p className="text-sm text-gray-800 mt-1">Deal đến 50%</p>
           </div>
-          <img alt="Tuần lễ Laptop - Deal đến 50%" className="self-end w-32" loading="lazy" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBSpUHjWhPK24A4ejppWJoEAWLhB732slfyFtDarQGXNdyLwDHgVmPCEgbHWLxH7QRVm8j31Rxm8UbnBuLoqcgNV2xHYslgkKTDaDtbRz8t0hSNVq89nSEt6BKfZNfgMgf0mwmANKsWZK0gFhab2MWZq9cDyFk2HQ8YDkp0JHNMoB2NsWq9ufEFEIeF71iJVg7DO5dPclAc7x09JS4uvFdAUPs5TpWM7VzIm3XzwhmmFyrrH8BrRN2vq8cKyjoeCQeKy4jRa8oAUYxV" />
+          <img alt="Tuần lễ Laptop" className="self-end w-28 lg:w-32 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBSpUHjWhPK24A4ejppWJoEAW9LhB732slfyFtDarQGXNdyLwDHgVmPCEgbHWLxH7QRVm8j31Rxm8UbnBuLoqcgNV2xHYslgkKTDaDtbRz8t0hSNVq89nSEt6BKfZNfgMgf0mwmANKsWZK0gFhab2MWZq9cDyFk2HQ8YDkp0JHNMoB2NsWq9ufEFEIeF71iJVg7DO5dPclAc7x09JS4uvFdAUPs5TpWM7VzIm3XzwhmmFyrrH8BrRN2vq8cKyjoeCQeKy4jRa8oAUYxV" />
         </div>
-        <div className="flex-1 bg-[#3a3a3a] rounded-lg p-4 text-white relative overflow-hidden flex flex-col justify-between cursor-pointer hover:shadow-md transition-shadow">
-          <div>
-            <h4 className="font-bold text-lg">Tai nghe SONY</h4>
-            <p className="text-sm text-gray-300">Âm thanh đỉnh cao</p>
+        <div className="flex-1 bg-[#3a3a3a] p-4 flex flex-col justify-between relative rounded-[10px] overflow-hidden cursor-pointer border-[0.5px] border-[#3a3a3a] hover:shadow-md transition-shadow">
+          <div className="z-10">
+            <h4 className="font-bold text-lg text-white leading-tight">Tai nghe SONY</h4>
+            <p className="text-sm text-gray-300 mt-1">Âm thanh đỉnh cao</p>
           </div>
-          <img alt="Tai nghe SONY - Âm thanh đỉnh cao" className="self-end w-32" loading="lazy" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBOFKyneMEd_OWF96GOMTMStWQIIiGrGb-A3MPSnZ1TBT-EEOiIJAPiRdIvvGC5LDawD0lt4C1tUUOAyMUOjeN-RQC_wzqmHXv0isnlmyMn2zijgzMYDfkNJh8sIoXKjkJV6JSB65c9N4oMMujqwo5G2aGkw0vw5gqjd1HWu1Z6VdbUzg66stwP88iJtGuZXkCjXwuv2Iqo36wvFN3nEW1H8KaQAgUQyvODVi5Sm-AIMYO68QHMxVE9P8J7nfVB_E5YhrwbeAkxiMpG" />
+          <img alt="Tai nghe SONY" className="absolute -bottom-2 -right-2 w-32 lg:w-40 object-contain mix-blend-screen opacity-90" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBOFKyneMEd_OWF96GOMTMStWQIIiGrGb-A3MPSnZ1TBT-EEOiIJAPiRdIvvGC5LDawD0lt4C1tUUOAyMUOjeN-RQC_wzqmHXv0isnlmyMn2zijgzMYDfkNJh8sIoXKjkJV6JSB65c9N4oMMujqwo5G2aGkw0vw5gqjd1HWu1Z6VdbUzg66stwP88iJtGuZXkCjXwuv2Iqo36wvFN3nEW1H8KaQAgUQyvODVi5Sm-AIMYO68QHMxVE9P8J7nfVB_E5YhrwbeAkxiMp3G" />
         </div>
-      </section>
-    </>
+      </div>
+    </div>
   );
 };
 

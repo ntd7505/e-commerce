@@ -2,11 +2,13 @@ import { User as UserIcon, Package, MapPin, Star, Ticket, LogOut } from 'lucide-
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../../../features/auth/AuthProvider';
 
-type ActiveKey = 'profile' | 'orders' | 'addresses';
+type ActiveKey = 'profile' | 'orders' | 'addresses' | 'reviews' | 'coupons';
 
 function resolveActiveKey(pathname: string): ActiveKey {
   if (pathname.startsWith('/account/orders')) return 'orders';
   if (pathname.startsWith('/account/addresses')) return 'addresses';
+  if (pathname.startsWith('/account/reviews')) return 'reviews';
+  if (pathname.startsWith('/account/coupons')) return 'coupons';
   return 'profile';
 }
 
@@ -21,7 +23,6 @@ export default function AccountSidebar() {
     'flex items-center gap-3 px-5 py-3 lg:py-3.5 lg:border-l-4 lg:border-b-0 border-b-2 whitespace-nowrap transition-colors';
   const activeItem = `${baseItem} bg-blue-50/50 text-nexa-blue font-semibold border-nexa-blue cursor-default`;
   const idleItem = `${baseItem} text-gray-600 font-medium hover:text-nexa-blue hover:bg-blue-50/40 border-transparent cursor-pointer`;
-  const disabledItem = `${baseItem} text-gray-400 cursor-not-allowed border-transparent`;
 
   return (
     <div className="w-full lg:w-64 shrink-0 bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">
@@ -71,22 +72,24 @@ export default function AccountSidebar() {
           </Link>
         </li>
         <li className="shrink-0 lg:w-full">
-          <div className={disabledItem} aria-disabled="true">
-            <div className="flex items-center gap-3">
-               <Star className="w-5 h-5 hidden lg:block" />
-               Đánh giá sản phẩm
-            </div>
-            <span className="text-[10px] bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full font-medium ml-3">Sắp ra mắt</span>
-          </div>
+          <Link
+            to="/account/reviews"
+            className={active === 'reviews' ? activeItem : idleItem}
+            aria-current={active === 'reviews' ? 'page' : undefined}
+          >
+            <Star className="w-5 h-5 hidden lg:block" />
+            Đánh giá sản phẩm
+          </Link>
         </li>
         <li className="shrink-0 lg:w-full">
-          <div className={disabledItem} aria-disabled="true">
-            <div className="flex items-center gap-3">
-               <Ticket className="w-5 h-5 hidden lg:block" />
-               Mã giảm giá
-            </div>
-            <span className="text-[10px] bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full font-medium ml-3">Sắp ra mắt</span>
-          </div>
+          <Link
+            to="/account/coupons"
+            className={active === 'coupons' ? activeItem : idleItem}
+            aria-current={active === 'coupons' ? 'page' : undefined}
+          >
+            <Ticket className="w-5 h-5 hidden lg:block" />
+            Mã giảm giá
+          </Link>
         </li>
         <li className="shrink-0 lg:w-full lg:border-t border-gray-100 lg:mt-3 lg:pt-3">
           <button 

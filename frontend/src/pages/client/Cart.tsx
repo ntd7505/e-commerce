@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { MapPin, Phone, ChevronRight, Plus, Star, AlertCircle, Loader2, Tag } from 'lucide-react';
+import { MapPin, Phone, ChevronRight, Plus, Star, AlertCircle, Loader2, Tag, Trash2, ShieldCheck, RotateCcw, Headset } from 'lucide-react';
 import { useCart } from '../../features/client/cart/CartProvider';
 import CartItemCard from './components/cart/CartItemCard';
 import { cartApi } from '../../features/client/cart/cartApi';
@@ -223,7 +223,7 @@ export default function Cart() {
           <span className="text-gray-500 text-sm font-medium">/</span>
           <span className="text-gray-900 text-sm font-medium">Giỏ hàng</span>
         </div>
-        
+
         <div className="flex flex-wrap justify-between gap-3 pb-6 pt-2">
           <h1 className="text-gray-900 text-2xl md:text-3xl font-black leading-tight tracking-[-0.033em]">
             Giỏ hàng của bạn ({cart?.totalItems || 0})
@@ -261,7 +261,7 @@ export default function Cart() {
                   disabled={selectedIds.size === 0}
                   className="flex items-center gap-2 px-3 py-2 text-gray-700 hover:text-red-500 text-sm font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <i className="fa-solid fa-trash-can"></i>
+                  <Trash2 className="w-4 h-4" />
                   <span className="hidden sm:inline">Xóa mục đã chọn</span>
                 </button>
               </div>
@@ -435,15 +435,15 @@ export default function Cart() {
                   {/* Trust Badges */}
                   <div className="mt-8 flex items-center justify-center gap-6 opacity-60 border-t border-gray-50 pt-6">
                     <div className="flex flex-col items-center gap-1 text-center">
-                      <i className="fa-solid fa-shield-halved text-2xl"></i>
+                      <ShieldCheck className="w-6 h-6" />
                       <span className="text-[10px] font-bold uppercase">Bảo mật</span>
                     </div>
                     <div className="flex flex-col items-center gap-1 text-center">
-                      <i className="fa-solid fa-rotate-left text-2xl"></i>
+                      <RotateCcw className="w-6 h-6" />
                       <span className="text-[10px] font-bold uppercase">Đổi trả 30 ngày</span>
                     </div>
                     <div className="flex flex-col items-center gap-1 text-center">
-                      <i className="fa-solid fa-headset text-2xl"></i>
+                      <Headset className="w-6 h-6" />
                       <span className="text-[10px] font-bold uppercase">Hỗ trợ 24/7</span>
                     </div>
                   </div>

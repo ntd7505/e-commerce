@@ -7,38 +7,76 @@ interface ProductSpecificationsProps {
 }
 
 export default function ProductSpecifications({ product, selectedVariant }: ProductSpecificationsProps) {
+  const inStock = selectedVariant && selectedVariant.stockQuantity > 0;
+
   return (
-    <div className="space-y-4 text-sm text-gray-700">
-      {product.brand && (
-        <div className="flex border-b border-gray-100 pb-3">
-          <span className="w-1/3 text-gray-500">Thương hiệu</span>
-          <span className="w-2/3 font-medium">{product.brand.name}</span>
+    <div className="w-full max-w-3xl border border-gray-200 rounded-2xl overflow-hidden">
+      <div className="flex border-b border-gray-200 last:border-b-0 text-sm">
+        <div className="w-1/3 bg-gray-50 p-4 text-gray-600 font-medium border-r border-gray-200">
+          Thương hiệu
         </div>
-      )}
-      {product.category && (
-        <div className="flex border-b border-gray-100 pb-3">
-          <span className="w-1/3 text-gray-500">Danh mục</span>
-          <span className="w-2/3 font-medium">{product.category.name}</span>
+        <div className="w-2/3 p-4 text-gray-900 font-medium">
+          {product.brand?.name || 'Đang cập nhật'}
         </div>
-      )}
+      </div>
+
+      <div className="flex border-b border-gray-200 last:border-b-0 text-sm">
+        <div className="w-1/3 bg-gray-50 p-4 text-gray-600 font-medium border-r border-gray-200">
+          Danh mục
+        </div>
+        <div className="w-2/3 p-4 text-gray-900 font-medium">
+          {product.category?.name || 'Đang cập nhật'}
+        </div>
+      </div>
+
       {selectedVariant && (
         <>
-          <div className="flex border-b border-gray-100 pb-3">
-            <span className="w-1/3 text-gray-500">SKU</span>
-            <span className="w-2/3 font-medium">{selectedVariant.sku}</span>
+          <div className="flex border-b border-gray-200 last:border-b-0 text-sm">
+            <div className="w-1/3 bg-gray-50 p-4 text-gray-600 font-medium border-r border-gray-200">
+              SKU
+            </div>
+            <div className="w-2/3 p-4 text-gray-900 font-medium uppercase">
+              {selectedVariant.sku}
+            </div>
           </div>
-          <div className="flex border-b border-gray-100 pb-3">
-            <span className="w-1/3 text-gray-500">Tiền tệ</span>
-            <span className="w-2/3 font-medium">{selectedVariant.currency}</span>
+
+          <div className="flex border-b border-gray-200 last:border-b-0 text-sm">
+            <div className="w-1/3 bg-gray-50 p-4 text-gray-600 font-medium border-r border-gray-200">
+              Phiên bản
+            </div>
+            <div className="w-2/3 p-4 text-gray-900 font-medium">
+              {selectedVariant.variantName}
+            </div>
           </div>
-          <div className="flex border-b border-gray-100 pb-3">
-            <span className="w-1/3 text-gray-500">Kho hàng</span>
-            <span className="w-2/3 font-medium">
-              {selectedVariant.stockQuantity > 0 ? selectedVariant.stockQuantity : 'Hết hàng'}
-            </span>
+
+          <div className="flex border-b border-gray-200 last:border-b-0 text-sm">
+            <div className="w-1/3 bg-gray-50 p-4 text-gray-600 font-medium border-r border-gray-200">
+              Tình trạng
+            </div>
+            <div className={`w-2/3 p-4 font-medium ${inStock ? 'text-green-600' : 'text-red-500'}`}>
+              {inStock ? 'Còn hàng' : 'Hết hàng'}
+            </div>
           </div>
         </>
       )}
+
+      <div className="flex border-b border-gray-200 last:border-b-0 text-sm">
+        <div className="w-1/3 bg-gray-50 p-4 text-gray-600 font-medium border-r border-gray-200">
+          Bảo hành
+        </div>
+        <div className="w-2/3 p-4 text-gray-900 font-medium">
+          Chính hãng
+        </div>
+      </div>
+
+      <div className="flex border-b border-gray-200 last:border-b-0 text-sm">
+        <div className="w-1/3 bg-gray-50 p-4 text-gray-600 font-medium border-r border-gray-200">
+          Giao hàng
+        </div>
+        <div className="w-2/3 p-4 text-gray-900 font-medium">
+          Toàn quốc
+        </div>
+      </div>
     </div>
   );
 }

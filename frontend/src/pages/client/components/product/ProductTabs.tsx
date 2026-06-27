@@ -22,7 +22,7 @@ export default function ProductTabs({
   ] as const;
 
   return (
-    <div className="bg-white rounded-xl border border-gray-100 mb-10">
+    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm mb-10 overflow-hidden">
       <div className="flex border-b border-gray-100 overflow-x-auto hide-scrollbar">
         {tabs.map(tab => (
           <button

@@ -15,6 +15,8 @@ import Account from './pages/client/Account';
 import AccountOrders from './pages/client/AccountOrders';
 import AccountOrderDetail from './pages/client/AccountOrderDetail';
 import AccountAddresses from './pages/client/AccountAddresses';
+import AccountReviews from './pages/client/AccountReviews';
+import AccountCoupons from './pages/client/AccountCoupons';
 import Cart from './pages/client/Cart';
 import Checkout from './pages/client/Checkout';
 import CheckoutSuccess from './pages/client/CheckoutSuccess';
@@ -55,6 +57,8 @@ export default function App() {
               <Route path="account/orders" element={<AccountOrders />} />
               <Route path="account/orders/:id" element={<AccountOrderDetail />} />
               <Route path="account/addresses" element={<AccountAddresses />} />
+              <Route path="account/reviews" element={<AccountReviews />} />
+              <Route path="account/coupons" element={<AccountCoupons />} />
               <Route path="cart" element={<Cart />} />
               <Route path="checkout" element={<Checkout />} />
               <Route path="checkout/success/:orderId" element={<CheckoutSuccess />} />

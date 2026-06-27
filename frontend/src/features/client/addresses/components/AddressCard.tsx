@@ -24,45 +24,45 @@ export function AddressCard({
   settingDefault,
 }: AddressCardProps) {
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow p-5 lg:p-6">
+    <div className={`bg-canvas border rounded-xl p-5 transition-colors duration-200 flex flex-col h-full ${address.isDefault ? 'border-primary shadow-sm' : 'border-border hover:border-primary/50'}`}>
       <div className="flex flex-wrap items-start justify-between gap-3 mb-4">
         <div className="flex items-center gap-2 flex-wrap">
           <span
-            className={`inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-bold ${getAddressTypeBadgeClass(
+            className={`inline-flex items-center rounded px-2 py-0.5 text-xs font-semibold uppercase tracking-wide ${getAddressTypeBadgeClass(
               address.addressType,
             )}`}
           >
             {getAddressTypeLabel(address.addressType)}
           </span>
           {address.isDefault && (
-            <span className="inline-flex items-center gap-1 rounded-full border border-blue-200 bg-blue-50 px-2.5 py-1 text-xs font-bold text-blue-700">
-              <Star className="w-3 h-3 fill-blue-500 text-blue-500" />
+            <span className="inline-flex items-center gap-1 text-xs font-bold text-primary bg-primary-soft px-2 py-0.5 rounded">
+              <Star className="w-3.5 h-3.5 fill-current" />
               Mặc định
             </span>
           )}
         </div>
       </div>
 
-      <div className="space-y-2.5">
+      <div className="space-y-1.5 flex-1 mb-5">
         <div className="flex items-center gap-2">
-          <h3 className="text-base font-bold text-gray-900">{address.recipientName}</h3>
-          <span className="text-gray-300">|</span>
-          <span className="inline-flex items-center gap-1.5 text-sm text-gray-600 font-medium">
-            <Phone className="w-3.5 h-3.5 text-gray-400" />
+          <h3 className="text-base font-bold text-text">{address.recipientName}</h3>
+          <span className="text-border-strong">|</span>
+          <span className="inline-flex items-center gap-1.5 text-sm text-text-muted font-medium">
+            <Phone className="w-3.5 h-3.5" />
             {address.phoneNumber}
           </span>
         </div>
-        <p className="flex items-start gap-2 text-sm text-gray-600 leading-relaxed">
-          <MapPin className="w-4 h-4 text-gray-400 shrink-0 mt-0.5" />
+        <p className="flex items-start gap-2 text-sm text-text-subtle leading-relaxed mt-2">
+          <MapPin className="w-4 h-4 shrink-0 mt-0.5" />
           <span>{buildAddressLine(address)}</span>
         </p>
       </div>
 
-      <div className="flex flex-wrap items-center gap-2 mt-5 pt-4 border-t border-gray-100">
+      <div className="flex flex-wrap items-center gap-4 mt-auto pt-4 border-t border-border">
         <button
           type="button"
           onClick={() => onEdit(address)}
-          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-semibold text-gray-700 bg-gray-50 hover:bg-gray-100 transition-colors"
+          className="inline-flex items-center gap-1.5 text-sm font-semibold text-text-muted hover:text-primary transition-colors"
         >
           <Pencil className="w-4 h-4" />
           Sửa
@@ -71,20 +71,21 @@ export function AddressCard({
           type="button"
           onClick={() => onDelete(address)}
           disabled={deleting}
-          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-semibold text-red-600 bg-red-50 hover:bg-red-100 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+          className="inline-flex items-center gap-1.5 text-sm font-semibold text-text-muted hover:text-danger transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
         >
           {deleting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
           {deleting ? "Đang xóa..." : "Xóa"}
         </button>
+        
         {!address.isDefault && (
           <button
             type="button"
             onClick={() => onSetDefault(address)}
             disabled={settingDefault}
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-semibold text-blue-600 bg-blue-50 hover:bg-blue-100 transition-colors disabled:opacity-60 disabled:cursor-not-allowed ml-auto"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-semibold border border-border text-text-muted hover:border-primary hover:text-primary transition-colors disabled:opacity-60 disabled:cursor-not-allowed ml-auto bg-canvas"
           >
             {settingDefault ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
-            {settingDefault ? "Đang đặt..." : "Đặt làm mặc định"}
+            {settingDefault ? "Đang đặt..." : "Thiết lập mặc định"}
           </button>
         )}
       </div>
@@ -94,18 +95,20 @@ export function AddressCard({
 
 export function AddressCardSkeleton() {
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 lg:p-6 animate-pulse">
+    <div className="bg-canvas rounded-xl border border-border p-5 flex flex-col h-full animate-pulse">
       <div className="flex gap-2 mb-4">
-        <div className="h-6 w-20 rounded-full bg-gray-100" />
-        <div className="h-6 w-20 rounded-full bg-gray-100" />
+        <div className="h-5 w-16 rounded bg-surface-alt" />
+        <div className="h-5 w-20 rounded bg-surface-alt" />
       </div>
-      <div className="space-y-3">
-        <div className="h-4 w-1/2 rounded bg-gray-100" />
-        <div className="h-4 w-3/4 rounded bg-gray-100" />
+      <div className="space-y-3 flex-1 mb-5">
+        <div className="h-5 w-1/2 rounded bg-surface-alt" />
+        <div className="h-4 w-3/4 rounded bg-surface-alt mt-3" />
+        <div className="h-4 w-2/3 rounded bg-surface-alt" />
       </div>
-      <div className="flex gap-2 mt-5 pt-4 border-t border-gray-100">
-        <div className="h-9 w-20 rounded-xl bg-gray-100" />
-        <div className="h-9 w-20 rounded-xl bg-gray-100" />
+      <div className="flex gap-4 mt-auto pt-4 border-t border-border">
+        <div className="h-5 w-12 rounded bg-surface-alt" />
+        <div className="h-5 w-12 rounded bg-surface-alt" />
+        <div className="h-8 w-32 rounded bg-surface-alt ml-auto" />
       </div>
     </div>
   );

@@ -1,25 +1,24 @@
-import { useDefaultShippingAddressLabel } from '../../features/client/addresses/hooks/useDefaultShippingAddressLabel';
+import React from 'react';
+import { ShieldCheck, RotateCcw, Rocket, Lock, Headset } from 'lucide-react';
 
 const BenefitsBar = () => {
-  const deliveryLabel = useDefaultShippingAddressLabel();
-
   return (
-    <div className="bg-white hidden md:block" data-purpose="benefits-bar">
-      <div className="container-custom py-3 flex justify-between text-xs text-gray-600">
-        <div className="flex items-center gap-1.5">
-          <i className="fa-solid fa-location-dot text-nexa-blue"></i> Giao đến: <span className="font-bold text-black">{deliveryLabel}</span>
+    <div className="bg-[var(--surface-2)] border-b border-[var(--border)]" data-purpose="benefits-bar">
+      <div className="container-custom py-3 flex items-center justify-center gap-10 text-[11px] text-[var(--text-secondary)]">
+        <div className="flex items-center gap-2">
+          <ShieldCheck className="w-4 h-4 text-[var(--color-primary)]" /> 100% chính hãng
         </div>
-        <div className="flex items-center gap-1.5">
-          <i className="fa-solid fa-circle-check text-nexa-blue"></i> 100% Chính hãng
+        <div className="flex items-center gap-2">
+          <RotateCcw className="w-4 h-4 text-[var(--color-primary)]" /> Đổi trả 30 ngày
         </div>
-        <div className="flex items-center gap-1.5">
-          <i className="fa-solid fa-rotate-left text-nexa-blue"></i> Đổi trả dễ dàng
+        <div className="flex items-center gap-2">
+          <Rocket className="w-4 h-4 text-[var(--color-primary)]" /> Giao hàng 2h
         </div>
-        <div className="flex items-center gap-1.5">
-          <i className="fa-solid fa-truck text-nexa-blue"></i> Giao hàng 2h
+        <div className="flex items-center gap-2">
+          <Lock className="w-4 h-4 text-[var(--color-primary)]" /> Thanh toán bảo mật
         </div>
-        <div className="flex items-center gap-1.5">
-          <i className="fa-solid fa-shield-halved text-nexa-blue"></i> Thanh toán bảo mật
+        <div className="flex items-center gap-2">
+          <Headset className="w-4 h-4 text-[var(--color-primary)]" /> Hỗ trợ 24/7
         </div>
       </div>
     </div>

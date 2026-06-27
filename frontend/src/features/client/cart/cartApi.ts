@@ -16,6 +16,7 @@ export const cartApi = {
   // Cart
   getCart: async (): Promise<CartResponse> => {
     const res = await apiClient.get<ApiResponse<CartResponse>>('/api/v1/client/cart');
+    console.log('CART RESPONSE:', res.data.data);
     return res.data.data;
   },
 
