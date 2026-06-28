@@ -1,4 +1,4 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 import { AdminAlert } from "../../components/admin/AdminAlert";
 import { OrderDetailModal } from "../../features/admin/orders/components/OrderDetailModal";
 import { OrderCancelRequestsTable } from "../../features/admin/orders/components/OrderCancelRequestsTable";
@@ -43,25 +43,29 @@ export default function Orders() {
 
       <OrderStats orders={ordersPage.orders} />
 
-      <div className="flex w-fit rounded-lg border border-slate-200 bg-slate-50 p-1">
+      <div className="flex w-fit rounded-lg border border-border-strong bg-surface p-1" role="tablist">
         <button
           type="button"
+          role="tab"
+          aria-selected={activeTab === "ORDERS"}
           onClick={() => setActiveTab("ORDERS")}
           className={`rounded-md px-4 py-2 text-sm font-bold transition-colors ${
             activeTab === "ORDERS"
-              ? "bg-white text-emerald-700 shadow-sm"
-              : "text-slate-500 hover:text-slate-800"
+              ? "bg-surface text-success shadow-sm"
+              : "text-muted hover:text-text"
           }`}
         >
           Orders
         </button>
         <button
           type="button"
+          role="tab"
+          aria-selected={activeTab === "CANCEL_REQUESTS"}
           onClick={() => setActiveTab("CANCEL_REQUESTS")}
           className={`rounded-md px-4 py-2 text-sm font-bold transition-colors ${
             activeTab === "CANCEL_REQUESTS"
-              ? "bg-white text-emerald-700 shadow-sm"
-              : "text-slate-500 hover:text-slate-800"
+              ? "bg-surface text-success shadow-sm"
+              : "text-muted hover:text-text"
           }`}
         >
           Cancel Requests

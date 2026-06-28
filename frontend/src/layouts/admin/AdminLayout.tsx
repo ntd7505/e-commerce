@@ -31,12 +31,12 @@ const SidebarItem: React.FC<SidebarItemProps> = ({ icon: Icon, label, to, collap
         collapsed ? 'justify-center px-2 py-2.5' : 'px-3 py-2.5'
       } ${
         isActive
-          ? 'bg-emerald-500 text-white shadow-sm shadow-emerald-200'
-          : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'
+          ? 'bg-success text-white shadow-sm shadow-emerald-200'
+          : 'text-muted hover:bg-surface hover:text-text'
       }`}
     >
       <Icon className={`shrink-0 ${collapsed ? 'w-5 h-5' : 'w-4 h-4 mr-3'}`} />
-      {!collapsed && <span className="text-[13px] font-semibold truncate">{label}</span>}
+      {!collapsed && <span className="text-sm font-semibold truncate">{label}</span>}
     </Link>
   );
 };
@@ -63,10 +63,11 @@ const SidebarGroup: React.FC<SidebarGroupProps> = ({ icon: Icon, label, groupPre
           type="button"
           onClick={() => setManualExpanded((e) => !e)}
           title={label}
+          aria-expanded={expanded}
           className={`w-full flex items-center justify-center px-2 py-2.5 rounded-lg transition-all duration-200 ${
             isGroupActive
-              ? 'bg-emerald-500 text-white shadow-sm shadow-emerald-200'
-              : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'
+              ? 'bg-success text-white shadow-sm shadow-emerald-200'
+              : 'text-muted hover:bg-surface hover:text-text'
           }`}
         >
           <Icon className="w-5 h-5 shrink-0" />
@@ -80,20 +81,21 @@ const SidebarGroup: React.FC<SidebarGroupProps> = ({ icon: Icon, label, groupPre
       <button
         type="button"
         onClick={() => setManualExpanded((e) => !e)}
+        aria-expanded={expanded}
         className={`w-full flex items-center px-3 py-2.5 rounded-lg transition-all duration-200 ${
           isGroupActive
-            ? 'text-emerald-700'
-            : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'
+            ? 'text-success'
+            : 'text-muted hover:bg-surface hover:text-text'
         }`}
       >
         <Icon className="w-4 h-4 mr-3 shrink-0" />
-        <span className="text-[13px] font-semibold truncate flex-1 text-left">{label}</span>
+        <span className="text-sm font-semibold truncate flex-1 text-left">{label}</span>
         <ChevronDown
           className={`w-4 h-4 shrink-0 transition-transform duration-200 ${expanded ? 'rotate-180' : ''}`}
         />
       </button>
       {expanded && (
-        <div className="ml-3 mt-1 border-l-2 border-slate-100 pl-2">
+        <div className="ml-3 mt-1 pl-2 border-l border-border/60">
           {children}
         </div>
       )}
@@ -182,42 +184,43 @@ export default function AdminLayout() {
   const initial = displayName[0]?.toUpperCase() ?? 'A';
 
   return (
-    <div className="h-screen w-full bg-slate-50 flex overflow-hidden font-sans">
+    <div className="h-screen w-full bg-surface flex overflow-hidden font-sans">
       {/* ─── Sidebar ─── */}
       {/* Mobile overlay */}
       {mobileSidebarOpen && (
         <div
-          className="fixed inset-0 z-40 bg-slate-900/50 backdrop-blur-sm lg:hidden"
+          className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm lg:hidden"
           onClick={() => setMobileSidebarOpen(false)}
         />
       )}
 
       <aside
         ref={sidebarRef}
-        className={`bg-white border-r border-slate-200 flex flex-col shrink-0 h-full overflow-hidden transition-all duration-300 z-50 ${
+        className={`bg-surface border-r border-border-strong flex flex-col shrink-0 h-full overflow-hidden transition-all duration-300 z-50 ${
           collapsed ? 'w-[60px]' : 'w-64'
         } ${
           mobileSidebarOpen ? 'fixed lg:relative' : 'fixed lg:relative -translate-x-full lg:translate-x-0'
         }`}
       >
         {/* Logo + collapse button */}
-        <div className={`flex items-center border-b border-slate-100 shrink-0 h-[72px] ${collapsed ? 'justify-center px-2' : 'justify-between px-5'}`}>
+        <div className={`flex items-center border-b border-border shrink-0 h-[72px] ${collapsed ? 'justify-center px-2' : 'justify-between px-5'}`}>
           {!collapsed && (
             <div className="flex items-center gap-2">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500 shadow-sm shadow-emerald-200">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-success shadow-sm shadow-emerald-200">
                 <Package className="h-4.5 w-4.5 text-white" />
               </div>
               <div>
-                <span className="font-extrabold text-[17px] text-slate-800 tracking-tight block leading-none">
+                <span className="font-extrabold text-lg text-text tracking-tight block leading-none">
                   NexaMart
                 </span>
-                <span className="text-[10px] text-slate-400 font-medium tracking-wide">Admin Dashboard</span>
+                <span className="text-xs text-muted font-medium tracking-wide">Admin Dashboard</span>
               </div>
             </div>
           )}
           <button
             onClick={() => setCollapsed((c) => !c)}
-            className="p-1.5 rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors hidden lg:block"
+            aria-expanded={!collapsed}
+            className="p-1.5 rounded-lg text-muted hover:bg-surface-alt hover:text-muted transition-colors hidden lg:block"
             aria-label="Toggle sidebar"
           >
             {collapsed ? <Menu className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
@@ -225,7 +228,7 @@ export default function AdminLayout() {
           {!collapsed && (
             <button
               onClick={() => setMobileSidebarOpen(false)}
-              className="p-1.5 rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors lg:hidden"
+              className="p-1.5 rounded-lg text-muted hover:bg-surface-alt hover:text-muted transition-colors lg:hidden"
               aria-label="Close sidebar"
             >
               <X className="w-4 h-4" />
@@ -238,7 +241,7 @@ export default function AdminLayout() {
           {/* ─── Overview ─── */}
           <nav className="mb-4">
             {!collapsed && (
-              <p className="px-3 mb-1.5 text-[10px] font-bold uppercase tracking-widest text-slate-400">
+              <p className="px-3 mb-1.5 text-xs font-semibold text-muted">
                 {MENU_GROUPS[0].label}
               </p>
             )}
@@ -248,7 +251,7 @@ export default function AdminLayout() {
           {/* ─── Sales ─── */}
           <nav className="mb-4">
             {!collapsed && (
-              <p className="px-3 mb-1.5 text-[10px] font-bold uppercase tracking-widest text-slate-400">
+              <p className="px-3 mb-1.5 text-xs font-semibold text-muted">
                 {MENU_GROUPS[1].label}
               </p>
             )}
@@ -260,7 +263,7 @@ export default function AdminLayout() {
           {/* ─── Catalog ─── */}
           <nav className="mb-4">
             {!collapsed && (
-              <p className="px-3 mb-1.5 text-[10px] font-bold uppercase tracking-widest text-slate-400">
+              <p className="px-3 mb-1.5 text-xs font-semibold text-muted">
                 {MENU_GROUPS[2].label}
               </p>
             )}
@@ -289,7 +292,7 @@ export default function AdminLayout() {
           {/* ─── Customers ─── */}
           <nav className="mb-4">
             {!collapsed && (
-              <p className="px-3 mb-1.5 text-[10px] font-bold uppercase tracking-widest text-slate-400">
+              <p className="px-3 mb-1.5 text-xs font-semibold text-muted">
                 {MENU_GROUPS[3].label}
               </p>
             )}
@@ -299,7 +302,7 @@ export default function AdminLayout() {
           {/* ─── Administration ─── */}
           <nav className="mb-4">
             {!collapsed && (
-              <p className="px-3 mb-1.5 text-[10px] font-bold uppercase tracking-widest text-slate-400">
+              <p className="px-3 mb-1.5 text-xs font-semibold text-muted">
                 {MENU_GROUPS[4].label}
               </p>
             )}
@@ -311,12 +314,12 @@ export default function AdminLayout() {
         </div>
 
         {/* Footer user profile */}
-        <div className={`border-t border-slate-100 shrink-0 bg-white ${collapsed ? 'p-2' : 'p-4'}`}>
+        <div className={`border-t border-border shrink-0 bg-surface ${collapsed ? 'p-2' : 'p-4'}`}>
           {collapsed ? (
             <button
               type="button"
               onClick={handleLogout}
-              className="w-full flex items-center justify-center p-2 rounded-lg text-slate-400 hover:bg-red-50 hover:text-red-500 transition-colors"
+              className="w-full flex items-center justify-center p-2 rounded-lg text-muted hover:bg-danger-soft hover:text-danger transition-colors"
               aria-label="Sign out"
             >
               <LogOut className="w-4 h-4" />
@@ -326,20 +329,20 @@ export default function AdminLayout() {
               <button
                 type="button"
                 onClick={() => navigate('/admin/profile')}
-                className="w-full flex items-center gap-3 px-2 py-2 mb-2 rounded-lg hover:bg-slate-50 transition-colors text-left"
+                className="w-full flex items-center gap-3 px-2 py-2 mb-2 rounded-lg hover:bg-surface transition-colors text-left"
               >
-                <div className="w-9 h-9 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 font-bold text-[14px] shrink-0">
+                <div className="w-9 h-9 rounded-full bg-success-soft flex items-center justify-center text-success font-bold text-sm shrink-0">
                   {initial}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-[13px] font-bold text-slate-900 truncate">{displayName}</p>
-                  <p className="text-[11px] text-slate-400 truncate">{displayEmail}</p>
+                  <p className="text-sm font-bold text-text truncate">{displayName}</p>
+                  <p className="text-xs text-muted truncate">{displayEmail}</p>
                 </div>
               </button>
               <button
                 type="button"
                 onClick={handleLogout}
-                className="w-full flex items-center justify-center gap-2 px-3 py-2 text-[13px] font-semibold border border-red-100 rounded-lg text-red-600 hover:bg-red-50 transition-colors"
+                className="w-full flex items-center justify-center gap-2 px-3 py-2 text-sm font-semibold border border-danger-soft rounded-lg text-danger hover:bg-danger-soft transition-colors"
               >
                 <LogOut className="w-4 h-4" />
                 Đăng xuất
@@ -352,17 +355,17 @@ export default function AdminLayout() {
       {/* ─── Main Content ─── */}
       <div className="flex-1 flex flex-col h-full overflow-hidden min-w-0">
         {/* Header */}
-        <header className="h-[72px] bg-white border-b border-slate-200 flex items-center justify-between px-4 md:px-6 shrink-0 z-20">
+        <header className="h-[72px] bg-surface border-b border-border-strong flex items-center justify-between px-4 md:px-6 shrink-0 z-20">
           <div className="flex items-center gap-3">
             {/* Mobile menu button */}
             <button
               onClick={() => setMobileSidebarOpen(true)}
-              className="p-2 rounded-lg text-slate-500 hover:bg-slate-100 transition-colors lg:hidden"
+              className="p-2 rounded-lg text-muted hover:bg-surface-alt transition-colors lg:hidden"
               aria-label="Open menu"
             >
               <Menu className="w-5 h-5" />
             </button>
-            <h1 className="text-lg font-bold text-slate-800">{pageTitle}</h1>
+            <h1 className="text-wrap-balance text-lg font-bold text-text">{pageTitle}</h1>
           </div>
 
           <div className="flex items-center gap-3">
@@ -370,57 +373,59 @@ export default function AdminLayout() {
             <div className="relative" ref={notifRef}>
               <button
                 onClick={() => setNotifOpen((o) => !o)}
-                className="relative flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-700"
+                aria-expanded={notifOpen}
+                className="relative flex h-9 w-9 items-center justify-center rounded-xl border border-border-strong bg-surface text-muted transition-colors hover:bg-surface hover:text-text"
                 aria-label="Notifications"
               >
                 <Bell className="h-4 w-4" />
                 {unreadCount > 0 && (
-                  <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[9px] font-bold text-white border border-white">
+                  <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-danger-soft0 text-[9px] font-bold text-white border border-white">
                     {unreadCount}
                   </span>
                 )}
               </button>
 
               {notifOpen && (
-                <div className="absolute right-0 top-11 z-50 w-80 rounded-2xl border border-slate-200 bg-white shadow-xl shadow-slate-200/60">
-                  <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3">
-                    <p className="text-[13px] font-bold text-slate-800">Thông báo</p>
+                <div className="absolute right-0 top-11 z-50 w-80 rounded-2xl border border-border-strong bg-surface ">
+                  <div className="flex items-center justify-between border-b border-border px-4 py-3">
+                    <p className="text-sm font-bold text-text">Thông báo</p>
                     <div className="flex items-center gap-2">
                       {unreadCount > 0 && (
                         <button
                           onClick={markAllRead}
-                          className="text-[11px] font-semibold text-emerald-600 hover:text-emerald-700"
+                          className="text-xs font-semibold text-success hover:text-success"
                         >
                           Đánh dấu đã đọc
                         </button>
                       )}
                       <button
                         onClick={() => setNotifOpen(false)}
-                        className="text-slate-400 hover:text-slate-600"
+                        className="text-muted hover:text-muted"
                       >
                         <X className="h-4 w-4" />
                       </button>
                     </div>
                   </div>
-                  <div className="divide-y divide-slate-100 max-h-72 overflow-y-auto">
+                  <div className="divide-y divide-border max-h-72 overflow-y-auto">
                     {notifications.map((n) => (
-                      <div
+                      <button
                         key={n.id}
+                        type="button"
                         onClick={() =>
                           setNotifications((prev) =>
                             prev.map((item) => (item.id === n.id ? { ...item, read: true } : item))
                           )
                         }
-                        className={`flex items-start gap-3 px-4 py-3 cursor-pointer transition-colors hover:bg-slate-50 ${!n.read ? 'bg-emerald-50/40' : ''}`}
+                        className={`w-full text-left flex items-start gap-3 px-4 py-3 cursor-pointer transition-colors hover:bg-surface ${!n.read ? 'bg-success-soft/40' : ''}`}
                       >
-                        <div className={`mt-0.5 h-2 w-2 shrink-0 rounded-full ${!n.read ? 'bg-emerald-500' : 'bg-slate-200'}`} />
+                        <div className={`mt-0.5 h-2 w-2 shrink-0 rounded-full ${!n.read ? 'bg-success' : 'bg-border'}`} />
                         <div>
-                          <p className={`text-[12px] leading-relaxed ${!n.read ? 'font-semibold text-slate-800' : 'text-slate-600'}`}>
+                          <p className={`text-xs leading-relaxed ${!n.read ? 'font-semibold text-text' : 'text-muted'}`}>
                             {n.text}
                           </p>
-                          <p className="mt-0.5 text-[11px] text-slate-400">{n.time}</p>
+                          <p className="mt-0.5 text-xs text-muted">{n.time}</p>
                         </div>
-                      </div>
+                      </button>
                     ))}
                   </div>
                 </div>
@@ -431,49 +436,50 @@ export default function AdminLayout() {
             <div className="relative" ref={profileRef}>
               <button
                 onClick={() => setProfileOpen((o) => !o)}
-                className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-2 py-1.5 transition-colors hover:bg-slate-50"
+                aria-expanded={profileOpen}
+                className="flex items-center gap-2 rounded-xl border border-border-strong bg-surface px-2 py-1.5 transition-colors hover:bg-surface"
               >
-                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-100 text-[12px] font-bold text-emerald-700 border border-emerald-200">
+                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-success-soft text-xs font-bold text-success border border-success-soft">
                   {initial}
                 </div>
                 <div className="hidden md:block text-left">
-                  <p className="text-[12px] font-bold text-slate-800 leading-none">{displayName}</p>
-                  <p className="text-[10px] text-slate-400 mt-0.5 truncate max-w-[120px]">{displayEmail}</p>
+                  <p className="text-xs font-bold text-text leading-none">{displayName}</p>
+                  <p className="text-xs text-muted mt-0.5 truncate max-w-[120px]">{displayEmail}</p>
                 </div>
-                <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+                <ChevronDown className="w-3.5 h-3.5 text-muted" />
               </button>
 
               {profileOpen && (
-                <div className="absolute right-0 top-12 z-50 w-56 rounded-2xl border border-slate-200 bg-white shadow-xl shadow-slate-200/60 overflow-hidden">
-                  <div className="flex items-center gap-3 px-4 py-3 border-b border-slate-100 bg-slate-50/50">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-100 text-emerald-700 font-bold text-[15px] border border-emerald-200">
+                <div className="absolute right-0 top-12 z-50 w-56 rounded-2xl border border-border-strong bg-surface  overflow-hidden">
+                  <div className="flex items-center gap-3 px-4 py-3 border-b border-border bg-surface/50">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-success-soft text-success font-bold text-sm border border-success-soft">
                       {initial}
                     </div>
                     <div className="min-w-0">
-                      <p className="text-[13px] font-bold text-slate-900 truncate">{displayName}</p>
-                      <p className="text-[11px] text-slate-400 truncate">{displayEmail}</p>
+                      <p className="text-sm font-bold text-text truncate">{displayName}</p>
+                      <p className="text-xs text-muted truncate">{displayEmail}</p>
                     </div>
                   </div>
                   <div className="py-1.5">
                     <button
                       onClick={() => navigate('/admin/profile')}
-                      className="w-full flex items-center gap-2.5 px-4 py-2 text-[13px] font-medium text-slate-700 hover:bg-slate-50 transition-colors"
+                      className="w-full flex items-center gap-2.5 px-4 py-2 text-sm font-medium text-text hover:bg-surface transition-colors"
                     >
-                      <User className="w-4 h-4 text-slate-400" />
+                      <User className="w-4 h-4 text-muted" />
                       Hồ sơ của tôi
                     </button>
                     <button
                       onClick={() => navigate('/admin/settings')}
-                      className="w-full flex items-center gap-2.5 px-4 py-2 text-[13px] font-medium text-slate-700 hover:bg-slate-50 transition-colors"
+                      className="w-full flex items-center gap-2.5 px-4 py-2 text-sm font-medium text-text hover:bg-surface transition-colors"
                     >
-                      <Settings className="w-4 h-4 text-slate-400" />
+                      <Settings className="w-4 h-4 text-muted" />
                       Cài đặt
                     </button>
                   </div>
-                  <div className="border-t border-slate-100 py-1.5">
+                  <div className="border-t border-border py-1.5">
                     <button
                       onClick={handleLogout}
-                      className="w-full flex items-center gap-2.5 px-4 py-2 text-[13px] font-medium text-red-600 hover:bg-red-50 transition-colors"
+                      className="w-full flex items-center gap-2.5 px-4 py-2 text-sm font-medium text-danger hover:bg-danger-soft transition-colors"
                     >
                       <LogOut className="w-4 h-4" />
                       Đăng xuất
@@ -486,7 +492,7 @@ export default function AdminLayout() {
         </header>
 
         {/* Page content */}
-        <main className="flex-1 overflow-y-auto bg-slate-50 p-4 md:p-6">
+        <main className="flex-1 overflow-y-auto bg-surface p-4 md:p-6">
           <AdminErrorBoundary key={location.pathname}>
             <Outlet />
           </AdminErrorBoundary>

@@ -30,7 +30,7 @@ const DOT: Record<BadgeVariant, string> = {
 };
 
 const SIZE: Record<BadgeSize, string> = {
-  sm: "text-[11px] px-2 py-0.5",
+  sm: "text-xs px-2 py-0.5",
   md: "text-xs px-2.5 py-1",
 };
 

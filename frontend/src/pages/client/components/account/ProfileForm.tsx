@@ -175,10 +175,10 @@ export default function ProfileForm() {
   if (!user) {
     return (
       <div className="animate-pulse flex flex-col gap-6 w-full">
-        <div className="h-8 bg-gray-100 rounded-lg w-1/4 mb-4"></div>
-        <div className="h-14 bg-gray-50 rounded-xl border border-gray-100"></div>
-        <div className="h-14 bg-gray-50 rounded-xl border border-gray-100"></div>
-        <div className="h-14 bg-gray-50 rounded-xl border border-gray-100"></div>
+        <div className="h-8 bg-surface-alt rounded-lg w-1/4 mb-4"></div>
+        <div className="h-14 bg-surface rounded-xl border border-border"></div>
+        <div className="h-14 bg-surface rounded-xl border border-border"></div>
+        <div className="h-14 bg-surface rounded-xl border border-border"></div>
       </div>
     );
   }
@@ -187,13 +187,13 @@ export default function ProfileForm() {
     <div className="flex flex-col-reverse lg:flex-row gap-8 lg:items-start w-full">
       <div className="flex-1 w-full lg:max-w-2xl">
         {successMsg && (
-          <div role="status" className="mb-8 p-4 bg-green-50 text-green-800 rounded-xl border border-green-200 text-sm flex items-start gap-3 shadow-sm">
-            <CheckCircle2 className="w-5 h-5 text-green-600 shrink-0 mt-0.5" /> 
+          <div role="status" className="mb-8 p-4 bg-success-soft text-green-800 rounded-xl border border-success-soft text-sm flex items-start gap-3 shadow-sm">
+            <CheckCircle2 className="w-5 h-5 text-success shrink-0 mt-0.5" /> 
             <div className="flex-1">
               <p className="font-semibold text-green-900 mb-0.5">Thành công</p>
               <p>{successMsg}</p>
             </div>
-            <button type="button" onClick={() => setSuccessMsg('')} className="text-green-600 hover:text-green-900 focus-visible:outline-green-600 rounded p-1 transition-colors">
+            <button type="button" onClick={() => setSuccessMsg('')} className="text-success hover:text-green-900 focus-visible:outline-green-600 rounded p-1 transition-colors">
               <span className="sr-only">Đóng</span>
               &times;
             </button>
@@ -201,13 +201,13 @@ export default function ProfileForm() {
         )}
         
         {globalError && (
-          <div role="alert" className="mb-8 p-4 bg-red-50 text-red-800 rounded-xl border border-red-200 text-sm flex items-start gap-3 shadow-sm">
-            <AlertCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" /> 
+          <div role="alert" className="mb-8 p-4 bg-danger-soft text-red-800 rounded-xl border border-danger-soft text-sm flex items-start gap-3 shadow-sm">
+            <AlertCircle className="w-5 h-5 text-danger shrink-0 mt-0.5" /> 
             <div className="flex-1">
               <p className="font-semibold text-red-900 mb-0.5">Đã có lỗi xảy ra</p>
               <p>{globalError}</p>
             </div>
-            <button type="button" onClick={() => setGlobalError('')} className="text-red-600 hover:text-red-900 focus-visible:outline-red-600 rounded p-1 transition-colors">
+            <button type="button" onClick={() => setGlobalError('')} className="text-danger hover:text-red-900 focus-visible:outline-red-600 rounded p-1 transition-colors">
                <span className="sr-only">Đóng</span>
               &times;
             </button>
@@ -216,22 +216,22 @@ export default function ProfileForm() {
         
         <form onSubmit={handleSubmit} className="space-y-6" noValidate>
           <div className="space-y-2">
-            <label className="block text-sm font-semibold text-gray-800">Email đăng nhập</label>
+            <label className="block text-sm font-semibold text-text">Email đăng nhập</label>
             <input 
               type="email" 
               value={user.email} 
               disabled 
               aria-describedby="email-help"
-              className="w-full bg-gray-50/70 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-500 cursor-not-allowed shadow-sm focus:outline-none"
+              className="w-full bg-surface/70 border border-border-strong rounded-xl px-4 py-3 text-sm text-muted cursor-not-allowed shadow-sm focus:outline-none"
             />
-            <p id="email-help" className="text-xs text-gray-500 flex items-center gap-1.5 mt-1">
+            <p id="email-help" className="text-xs text-muted flex items-center gap-1.5 mt-1">
                <AlertCircle className="w-3.5 h-3.5" />
                Email đăng nhập không thể thay đổi.
             </p>
           </div>
 
           <div className="space-y-2">
-            <label htmlFor="fullName" className="block text-sm font-semibold text-gray-800">Họ và Tên <span className="text-red-500">*</span></label>
+            <label htmlFor="fullName" className="block text-sm font-semibold text-text">Họ và Tên <span className="text-danger">*</span></label>
             <input 
               id="fullName"
               type="text" 
@@ -243,16 +243,16 @@ export default function ProfileForm() {
               aria-describedby={errors.fullName ? "fullName-error" : undefined}
               className={`w-full border rounded-xl px-4 py-3 text-sm outline-none transition-all shadow-sm focus:ring-2
                 ${errors.fullName 
-                  ? 'border-red-300 focus:border-red-400 focus:ring-red-100 bg-red-50/20' 
-                  : 'border-gray-300 focus:border-nexa-blue focus:ring-blue-100 bg-white'}`}
+                  ? 'border-danger focus:border-red-400 focus:ring-danger-soft bg-danger-soft/20' 
+                  : 'border-border-strong focus:border-primary focus:ring-primary-soft bg-surface'}`}
               placeholder="Nhập họ và tên (tối thiểu 5 ký tự)"
               required
             />
-            {errors.fullName && <p id="fullName-error" className="text-sm text-red-500 mt-1 font-medium">{errors.fullName}</p>}
+            {errors.fullName && <p id="fullName-error" className="text-sm text-danger mt-1 font-medium">{errors.fullName}</p>}
           </div>
 
           <div className="space-y-2">
-            <label htmlFor="phoneNumber" className="block text-sm font-semibold text-gray-800">Số điện thoại <span className="text-red-500">*</span></label>
+            <label htmlFor="phoneNumber" className="block text-sm font-semibold text-text">Số điện thoại <span className="text-danger">*</span></label>
             <input 
               id="phoneNumber"
               type="tel" 
@@ -266,16 +266,16 @@ export default function ProfileForm() {
               aria-describedby={errors.phoneNumber ? "phoneNumber-error" : undefined}
               className={`w-full border rounded-xl px-4 py-3 text-sm outline-none transition-all shadow-sm focus:ring-2
                 ${errors.phoneNumber 
-                  ? 'border-red-300 focus:border-red-400 focus:ring-red-100 bg-red-50/20' 
-                  : 'border-gray-300 focus:border-nexa-blue focus:ring-blue-100 bg-white'}`}
+                  ? 'border-danger focus:border-red-400 focus:ring-danger-soft bg-danger-soft/20' 
+                  : 'border-border-strong focus:border-primary focus:ring-primary-soft bg-surface'}`}
               placeholder="Nhập 10 chữ số"
               required
             />
-            {errors.phoneNumber && <p id="phoneNumber-error" className="text-sm text-red-500 mt-1 font-medium">{errors.phoneNumber}</p>}
+            {errors.phoneNumber && <p id="phoneNumber-error" className="text-sm text-danger mt-1 font-medium">{errors.phoneNumber}</p>}
           </div>
           
           <div className="space-y-2">
-            <label htmlFor="avatarUrl" className="block text-sm font-semibold text-gray-800">URL Ảnh đại diện</label>
+            <label htmlFor="avatarUrl" className="block text-sm font-semibold text-text">URL Ảnh đại diện</label>
             <input 
               id="avatarUrl"
               type="url" 
@@ -286,18 +286,18 @@ export default function ProfileForm() {
               aria-describedby={errors.avatarUrl ? "avatarUrl-error" : undefined}
               className={`w-full border rounded-xl px-4 py-3 text-sm outline-none transition-all shadow-sm focus:ring-2
                 ${errors.avatarUrl 
-                  ? 'border-red-300 focus:border-red-400 focus:ring-red-100 bg-red-50/20' 
-                  : 'border-gray-300 focus:border-nexa-blue focus:ring-blue-100 bg-white'}`}
+                  ? 'border-danger focus:border-red-400 focus:ring-danger-soft bg-danger-soft/20' 
+                  : 'border-border-strong focus:border-primary focus:ring-primary-soft bg-surface'}`}
               placeholder="https://example.com/avatar.jpg"
             />
-            {errors.avatarUrl && <p id="avatarUrl-error" className="text-sm text-red-500 mt-1 font-medium">{errors.avatarUrl}</p>}
+            {errors.avatarUrl && <p id="avatarUrl-error" className="text-sm text-danger mt-1 font-medium">{errors.avatarUrl}</p>}
           </div>
 
           <div className="pt-6 flex flex-wrap items-center gap-4">
             <button 
               type="submit" 
               disabled={isSaving || !isDirty}
-              className="bg-nexa-blue text-white px-8 py-3.5 rounded-xl text-sm font-semibold hover:bg-blue-700 transition-all disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-sm shadow-blue-500/20 hover:shadow-blue-500/30 min-w-[180px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-nexa-blue"
+              className="bg-primary text-white px-8 py-3.5 rounded-xl text-sm font-semibold hover:bg-primary-hover transition-all disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-sm shadow-primary/20 hover:shadow-primary/30 min-w-[180px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary"
             >
               {isSaving ? (
                 <><Loader2 className="w-5 h-5 animate-spin" /> Đang lưu...</>
@@ -308,7 +308,7 @@ export default function ProfileForm() {
               <button
                 type="button"
                 onClick={handleUndo}
-                className="px-6 py-3.5 rounded-xl text-sm font-semibold text-gray-600 bg-gray-100 hover:bg-gray-200 transition-all flex items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-gray-300"
+                className="px-6 py-3.5 rounded-xl text-sm font-semibold text-muted bg-surface-alt hover:bg-border transition-all flex items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-gray-300"
                 aria-label="Hoàn tác thay đổi"
               >
                 <RefreshCcw className="w-4 h-4" />
@@ -319,7 +319,7 @@ export default function ProfileForm() {
         </form>
       </div>
 
-      <div className="hidden lg:block w-px bg-gray-100 self-stretch mx-6"></div>
+      <div className="hidden lg:block w-px bg-surface-alt self-stretch mx-6"></div>
       
       <AvatarPreview avatarUrl={formData.avatarUrl} onChange={handleAvatarChange} />
     </div>

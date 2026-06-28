@@ -1,4 +1,4 @@
-﻿import { AlertTriangle, Image as ImageIcon, PlusCircle, Trash2, Upload } from "lucide-react";
+import { AlertTriangle, Image as ImageIcon, PlusCircle, Trash2, Upload } from "lucide-react";
 import { AdminImage } from "../../../../components/admin/AdminImage";
 import type { MediaDraft } from "../adminProductFormTypes";
 
@@ -34,11 +34,11 @@ export function ProductMediaEditor({
     const isUploading = uploadingKey !== null;
 
     return (
-        <section className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
+        <section className="rounded-2xl border border-border bg-surface p-6 shadow-sm">
             <div className="mb-6 flex items-center justify-between gap-4">
-                <h3 className="text-lg font-bold text-slate-900">Product Media</h3>
+                <h3 className="text-lg font-bold text-text">Product Media</h3>
                 <div className="flex items-center gap-2">
-                    <label className="flex cursor-pointer items-center gap-1.5 rounded-2xl border border-slate-100 bg-white px-3 py-2 text-[12px] font-bold text-slate-600 shadow-sm hover:bg-slate-50">
+                    <label className="flex cursor-pointer items-center gap-1.5 rounded-2xl border border-border bg-surface px-3 py-2 text-xs font-bold text-muted shadow-sm hover:bg-surface">
                         <Upload className="h-3.5 w-3.5" />
                         {uploadingKey === "edit-bulk" ? "Uploading..." : "Upload images"}
                         <input
@@ -57,7 +57,7 @@ export function ProductMediaEditor({
                         type="button"
                         onClick={onAdd}
                         disabled={isUploading}
-                        className="flex items-center gap-1.5 rounded-2xl border border-slate-100 bg-white px-3 py-2 text-[12px] font-bold text-slate-600 shadow-sm hover:bg-slate-50 disabled:opacity-50"
+                        className="flex items-center gap-1.5 rounded-2xl border border-border bg-surface px-3 py-2 text-xs font-bold text-muted shadow-sm hover:bg-surface disabled:opacity-50"
                     >
                         <PlusCircle className="h-3.5 w-3.5" /> Add URL
                     </button>
@@ -66,8 +66,8 @@ export function ProductMediaEditor({
 
             <div className="space-y-4">
                 {mediaItems.map((media, index) => (
-                    <div key={media.id ?? `new-${index}`} className="rounded-lg border border-slate-200 p-4">
-                        <div className="mb-3 flex aspect-video items-center justify-center rounded-lg border border-slate-200 bg-[#f8f9fa] p-4">
+                    <div key={media.id ?? `new-${index}`} className="rounded-lg border border-border-strong p-4">
+                        <div className="mb-3 flex aspect-video items-center justify-center rounded-lg border border-border-strong bg-surface-alt p-4">
                             {media.url ? (
                                 <AdminImage
                                     src={media.url}
@@ -76,19 +76,19 @@ export function ProductMediaEditor({
                                     fallbackClassName="h-full w-full"
                                 />
                             ) : (
-                                <ImageIcon className="h-8 w-8 text-slate-400" />
+                                <ImageIcon className="h-8 w-8 text-muted" />
                             )}
                         </div>
                         <input
                             value={media.url}
                             onChange={(event) => onChange(index, { url: event.target.value })}
                             placeholder="Image URL"
-                            className="mb-1 w-full rounded-lg border border-slate-200 bg-[#f8f9fa] px-3 py-2.5 text-[12px] focus:border-emerald-500 focus:outline-none"
+                            className="mb-1 w-full rounded-lg border border-border-strong bg-surface-alt px-3 py-2.5 text-xs focus:border-success focus:outline-none"
                         />
                         {hasDummyUrl(media.url) && (
-                            <p className="mb-3 flex items-center gap-1 text-[11px] font-bold text-amber-600">
+                            <p className="mb-3 flex items-center gap-1 text-xs font-bold text-warning">
                                 <AlertTriangle className="h-3.5 w-3.5" />
-                                URL chứa example.com — upload ảnh thật để thay thế
+                                URL ch?a example.com � upload ?nh th?t d? thay th?
                             </p>
                         )}
                         {!hasDummyUrl(media.url) && <div className="mb-3" />}
@@ -97,19 +97,19 @@ export function ProductMediaEditor({
                                 value={media.altText}
                                 onChange={(event) => onChange(index, { altText: event.target.value })}
                                 placeholder="Alt text"
-                                className="rounded-lg border border-slate-200 bg-[#f8f9fa] px-3 py-2.5 text-[12px] focus:border-emerald-500 focus:outline-none"
+                                className="rounded-lg border border-border-strong bg-surface-alt px-3 py-2.5 text-xs focus:border-success focus:outline-none"
                             />
                             <input
                                 type="number"
                                 value={media.sortOrder}
                                 onChange={(event) => onChange(index, { sortOrder: event.target.value })}
                                 placeholder="Sort"
-                                className="rounded-lg border border-slate-200 bg-[#f8f9fa] px-3 py-2.5 text-[12px] focus:border-emerald-500 focus:outline-none"
+                                className="rounded-lg border border-border-strong bg-surface-alt px-3 py-2.5 text-xs focus:border-success focus:outline-none"
                             />
                         </div>
                         <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
                             <div className="flex items-center gap-4">
-                                <label className="flex items-center gap-2 text-[12px] font-bold text-slate-700">
+                                <label className="flex items-center gap-2 text-xs font-bold text-text">
                                     <input
                                         type="checkbox"
                                         checked={media.thumbnail}
@@ -118,7 +118,7 @@ export function ProductMediaEditor({
                                     />
                                     Thumbnail
                                 </label>
-                                <label className="flex items-center gap-2 text-[12px] font-bold text-slate-700">
+                                <label className="flex items-center gap-2 text-xs font-bold text-text">
                                     <input
                                         type="checkbox"
                                         checked={media.active}
@@ -129,7 +129,7 @@ export function ProductMediaEditor({
                                 </label>
                             </div>
                             <div className="flex items-center gap-2">
-                                <label className="flex cursor-pointer items-center gap-1.5 rounded-2xl border border-slate-100 bg-white px-3 py-2 text-[12px] font-bold text-slate-600 hover:bg-slate-50">
+                                <label className="flex cursor-pointer items-center gap-1.5 rounded-2xl border border-border bg-surface px-3 py-2 text-xs font-bold text-muted hover:bg-surface">
                                     <Upload className="h-4 w-4" />
                                     {uploadingKey === `edit-${index}` ? "Uploading..." : "Upload"}
                                     <input
@@ -147,14 +147,14 @@ export function ProductMediaEditor({
                                     type="button"
                                     onClick={() => onSave(index)}
                                     disabled={savingMediaIndex === index}
-                                    className="rounded-lg bg-emerald-600 px-3 py-2 text-[12px] font-bold text-white hover:bg-emerald-700 disabled:opacity-50"
+                                    className="rounded-lg bg-success px-3 py-2 text-xs font-bold text-white hover:bg-success disabled:opacity-50"
                                 >
                                     {savingMediaIndex === index ? "Saving..." : "Save"}
                                 </button>
                                 <button
                                     type="button"
                                     onClick={() => onDelete(index)}
-                                    className="rounded-2xl border border-slate-100 bg-white p-2 text-slate-400 hover:bg-red-50 hover:text-red-500"
+                                    className="rounded-2xl border border-border bg-surface p-2 text-muted hover:bg-danger-soft hover:text-danger"
                                 >
                                     <Trash2 className="h-4 w-4" />
                                 </button>

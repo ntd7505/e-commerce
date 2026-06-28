@@ -1,4 +1,4 @@
-﻿import { X } from "lucide-react";
+import { X } from "lucide-react";
 import type { CategoryResponse } from "../adminCategoryTypes";
 
 type CategoryModalProps = {
@@ -36,16 +36,16 @@ export function CategoryModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-      <div className="w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-xl">
-        <div className="flex items-center justify-between border-b border-slate-100 bg-slate-50/50 px-6 py-4">
-          <h3 className="text-[16px] font-bold text-slate-900">
+      <div className="w-full max-w-md overflow-hidden rounded-2xl bg-surface shadow-xl">
+        <div className="flex items-center justify-between border-b border-border bg-surface/50 px-6 py-4">
+          <h3 className="text-base font-bold text-text">
             {editingCategory ? "Edit Category" : "Add Category"}
           </h3>
           <button
             type="button"
             onClick={onClose}
             disabled={saving}
-            className="rounded-full p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 disabled:cursor-not-allowed disabled:opacity-60"
+            className="rounded-full p-1.5 text-muted transition-colors hover:bg-surface-alt hover:text-muted disabled:cursor-not-allowed disabled:opacity-60"
           >
             <X className="h-5 w-5" />
           </button>
@@ -53,27 +53,27 @@ export function CategoryModal({
 
         <div className="space-y-5 p-6">
           <div>
-            <label className="mb-2 block text-[13px] font-bold text-[#0B2113]">
-              Category Name <span className="text-red-500">*</span>
+            <label className="mb-2 block text-sm font-bold text-text">
+              Category Name <span className="text-danger">*</span>
             </label>
             <input
               type="text"
               value={name}
               onChange={(event) => onNameChange(event.target.value)}
               placeholder="e.g. Smartphones"
-              className="w-full rounded-lg border border-slate-200 bg-[#f8f9fa] px-4 py-3 text-[13px] font-medium text-slate-900 focus:border-emerald-500 focus:outline-none"
+              className="w-full rounded-lg border border-border-strong bg-surface-alt px-4 py-3 text-sm font-medium text-text focus:border-success focus:outline-none"
             />
           </div>
 
           <div>
-            <label className="mb-2 block text-[13px] font-bold text-[#0B2113]">
+            <label className="mb-2 block text-sm font-bold text-text">
               Parent Category
             </label>
             <select
               value={parentCategoryId}
               onChange={(event) => onParentChange(event.target.value)}
               disabled={saving}
-              className="w-full rounded-lg border border-slate-200 bg-[#f8f9fa] px-4 py-3 text-[13px] font-medium text-slate-900 focus:border-emerald-500 focus:outline-none disabled:cursor-not-allowed disabled:opacity-60"
+              className="w-full rounded-lg border border-border-strong bg-surface-alt px-4 py-3 text-sm font-medium text-text focus:border-success focus:outline-none disabled:cursor-not-allowed disabled:opacity-60"
             >
               <option value="">No parent category</option>
               {categories
@@ -87,24 +87,24 @@ export function CategoryModal({
           </div>
 
           <div>
-            <label className="mb-2 block text-[13px] font-bold text-[#0B2113]">
+            <label className="mb-2 block text-sm font-bold text-text">
               Description
             </label>
             <textarea
               value={description}
               onChange={(event) => onDescriptionChange(event.target.value)}
               placeholder="Short category description"
-              className="min-h-[96px] w-full resize-none rounded-lg border border-slate-200 bg-[#f8f9fa] px-4 py-3 text-[13px] font-medium text-slate-900 focus:border-emerald-500 focus:outline-none"
+              className="min-h-[96px] w-full resize-none rounded-lg border border-border-strong bg-surface-alt px-4 py-3 text-sm font-medium text-text focus:border-success focus:outline-none"
             />
           </div>
         </div>
 
-        <div className="flex justify-end gap-3 border-t border-slate-100 bg-slate-50 px-6 py-4">
+        <div className="flex justify-end gap-3 border-t border-border bg-surface px-6 py-4">
           <button
             type="button"
             onClick={onClose}
             disabled={saving}
-            className="rounded-2xl border border-slate-100 bg-white px-5 py-2.5 text-[13px] font-bold text-slate-600 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
+            className="rounded-2xl border border-border bg-surface px-5 py-2.5 text-sm font-bold text-muted transition-colors hover:bg-surface disabled:cursor-not-allowed disabled:opacity-60"
           >
             Cancel
           </button>
@@ -112,7 +112,7 @@ export function CategoryModal({
             type="button"
             onClick={onSave}
             disabled={saving}
-            className="rounded-lg bg-emerald-600 px-5 py-2.5 text-[13px] font-bold text-white shadow-sm transition-colors hover:bg-emerald-700 disabled:cursor-not-allowed disabled:bg-emerald-400"
+            className="rounded-lg bg-success px-5 py-2.5 text-sm font-bold text-white shadow-sm transition-colors hover:bg-success disabled:cursor-not-allowed disabled:bg-success/60"
           >
             {saving ? "Saving..." : "Save Category"}
           </button>

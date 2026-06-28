@@ -7,7 +7,7 @@ import Footer from './Footer';
 
 const ClientLayout = () => {
   return (
-    <div className="min-h-screen bg-nexa-gray-bg flex flex-col font-sans">
+    <div className="min-h-screen bg-canvas flex flex-col font-sans">
       <TopBar />
       <Header />
       <BenefitsBar />

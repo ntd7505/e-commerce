@@ -19,12 +19,12 @@ type AddressFormModalProps = {
 };
 
 const inputBase =
-  "w-full rounded-xl border px-3.5 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 outline-none transition-colors focus:ring-2";
+  "w-full rounded-xl border px-3.5 py-2.5 text-sm text-text placeholder:text-muted outline-none transition-colors focus:ring-2";
 
 function fieldClass(hasError: boolean): string {
   return hasError
-    ? `${inputBase} border-red-300 focus:ring-red-200`
-    : `${inputBase} border-gray-200 focus:border-blue-600 focus:ring-blue-100`;
+    ? `${inputBase} border-danger focus:ring-danger-soft`
+    : `${inputBase} border-border-strong focus:border-primary focus:ring-primary-soft`;
 }
 
 const typeIcon: Record<AddressType, typeof Home> = {
@@ -100,18 +100,18 @@ export function AddressFormModal({
   return (
     <div className="fixed inset-0 z-[90] flex items-center justify-center p-4">
       <div
-        className="absolute inset-0 bg-gray-900/50 backdrop-blur-sm"
+        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
         onClick={() => !loading && onClose()}
         aria-hidden="true"
       />
-      <div className="relative w-full max-w-lg max-h-[90vh] bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden flex flex-col">
-        <div className="flex items-start justify-between gap-4 p-5 border-b border-gray-100 shrink-0">
-          <h3 className="text-lg font-bold text-gray-900">{title}</h3>
+      <div className="relative w-full max-w-lg max-h-[90vh] bg-surface rounded-2xl border border-border overflow-hidden flex flex-col">
+        <div className="flex items-start justify-between gap-4 p-5 border-b border-border shrink-0">
+          <h3 className="text-lg font-bold text-text">{title}</h3>
           <button
             type="button"
             onClick={onClose}
             disabled={loading}
-            className="text-gray-400 hover:text-gray-600 p-1 disabled:opacity-50"
+            className="text-muted hover:text-muted p-1 disabled:opacity-50"
             aria-label="Đóng"
           >
             <X className="w-5 h-5" />
@@ -121,8 +121,8 @@ export function AddressFormModal({
         <form onSubmit={handleSubmit} className="p-5 overflow-y-auto">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label htmlFor="addr-recipient" className="block text-sm font-semibold text-gray-800 mb-1.5">
-                Họ tên người nhận <span className="text-red-500">*</span>
+              <label htmlFor="addr-recipient" className="block text-sm font-semibold text-text mb-1.5">
+                Họ tên người nhận <span className="text-danger">*</span>
               </label>
               <input
                 id="addr-recipient"
@@ -135,13 +135,13 @@ export function AddressFormModal({
                 className={fieldClass(!!errors.recipientName)}
               />
               {errors.recipientName && (
-                <p className="mt-1.5 text-xs text-red-600 font-medium">{errors.recipientName}</p>
+                <p className="mt-1.5 text-xs text-danger font-medium">{errors.recipientName}</p>
               )}
             </div>
 
             <div>
-              <label htmlFor="addr-phone" className="block text-sm font-semibold text-gray-800 mb-1.5">
-                Số điện thoại <span className="text-red-500">*</span>
+              <label htmlFor="addr-phone" className="block text-sm font-semibold text-text mb-1.5">
+                Số điện thoại <span className="text-danger">*</span>
               </label>
               <input
                 id="addr-phone"
@@ -155,15 +155,15 @@ export function AddressFormModal({
                 className={fieldClass(!!errors.phoneNumber)}
               />
               {errors.phoneNumber && (
-                <p className="mt-1.5 text-xs text-red-600 font-medium">{errors.phoneNumber}</p>
+                <p className="mt-1.5 text-xs text-danger font-medium">{errors.phoneNumber}</p>
               )}
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
             <div>
-              <label htmlFor="addr-province" className="block text-sm font-semibold text-gray-800 mb-1.5">
-                Tỉnh/Thành phố <span className="text-red-500">*</span>
+              <label htmlFor="addr-province" className="block text-sm font-semibold text-text mb-1.5">
+                Tỉnh/Thành phố <span className="text-danger">*</span>
               </label>
               <input
                 id="addr-province"
@@ -176,12 +176,12 @@ export function AddressFormModal({
                 className={fieldClass(!!errors.provinceName)}
               />
               {errors.provinceName && (
-                <p className="mt-1.5 text-xs text-red-600 font-medium">{errors.provinceName}</p>
+                <p className="mt-1.5 text-xs text-danger font-medium">{errors.provinceName}</p>
               )}
             </div>
             <div>
-              <label htmlFor="addr-district" className="block text-sm font-semibold text-gray-800 mb-1.5">
-                Quận/Huyện <span className="text-red-500">*</span>
+              <label htmlFor="addr-district" className="block text-sm font-semibold text-text mb-1.5">
+                Quận/Huyện <span className="text-danger">*</span>
               </label>
               <input
                 id="addr-district"
@@ -194,12 +194,12 @@ export function AddressFormModal({
                 className={fieldClass(!!errors.districtName)}
               />
               {errors.districtName && (
-                <p className="mt-1.5 text-xs text-red-600 font-medium">{errors.districtName}</p>
+                <p className="mt-1.5 text-xs text-danger font-medium">{errors.districtName}</p>
               )}
             </div>
             <div>
-              <label htmlFor="addr-ward" className="block text-sm font-semibold text-gray-800 mb-1.5">
-                Phường/Xã <span className="text-red-500">*</span>
+              <label htmlFor="addr-ward" className="block text-sm font-semibold text-text mb-1.5">
+                Phường/Xã <span className="text-danger">*</span>
               </label>
               <input
                 id="addr-ward"
@@ -212,14 +212,14 @@ export function AddressFormModal({
                 className={fieldClass(!!errors.wardName)}
               />
               {errors.wardName && (
-                <p className="mt-1.5 text-xs text-red-600 font-medium">{errors.wardName}</p>
+                <p className="mt-1.5 text-xs text-danger font-medium">{errors.wardName}</p>
               )}
             </div>
           </div>
 
           <div className="mt-4">
-            <label htmlFor="addr-detail" className="block text-sm font-semibold text-gray-800 mb-1.5">
-              Địa chỉ cụ thể <span className="text-red-500">*</span>
+            <label htmlFor="addr-detail" className="block text-sm font-semibold text-text mb-1.5">
+              Địa chỉ cụ thể <span className="text-danger">*</span>
             </label>
             <input
               id="addr-detail"
@@ -232,12 +232,12 @@ export function AddressFormModal({
               className={fieldClass(!!errors.fullAddress)}
             />
             {errors.fullAddress && (
-              <p className="mt-1.5 text-xs text-red-600 font-medium">{errors.fullAddress}</p>
+              <p className="mt-1.5 text-xs text-danger font-medium">{errors.fullAddress}</p>
             )}
           </div>
 
           <div className="mt-4">
-            <span className="block text-sm font-semibold text-gray-800 mb-1.5">Loại địa chỉ</span>
+            <span className="block text-sm font-semibold text-text mb-1.5">Loại địa chỉ</span>
             <div className="grid grid-cols-3 gap-2">
               {ADDRESS_TYPE_OPTIONS.map((opt) => {
                 const Icon = typeIcon[opt.value];
@@ -250,8 +250,8 @@ export function AddressFormModal({
                     disabled={loading}
                     className={`inline-flex items-center justify-center gap-1.5 rounded-xl border px-3 py-2.5 text-sm font-semibold transition-colors ${
                       isActive
-                        ? "border-blue-600 bg-blue-50 text-blue-700"
-                        : "border-gray-200 text-gray-600 hover:border-blue-400 hover:text-blue-600"
+                        ? "border-primary bg-primary-soft text-primary"
+                        : "border-border-strong text-muted hover:border-primary hover:text-primary"
                     } disabled:opacity-60`}
                   >
                     <Icon className="w-4 h-4" />
@@ -261,7 +261,7 @@ export function AddressFormModal({
               })}
             </div>
             {errors.addressType && (
-              <p className="mt-1.5 text-xs text-red-600 font-medium">{errors.addressType}</p>
+              <p className="mt-1.5 text-xs text-danger font-medium">{errors.addressType}</p>
             )}
           </div>
 
@@ -271,9 +271,9 @@ export function AddressFormModal({
               checked={form.isDefault}
               onChange={(e) => update("isDefault", e.target.checked)}
               disabled={loading}
-              className="w-4 h-4 rounded text-blue-600 focus:ring-blue-200 border-gray-300"
+              className="w-4 h-4 rounded text-primary focus:ring-primary-soft border-border-strong"
             />
-            <span className="text-sm text-gray-700 font-medium">Đặt làm địa chỉ mặc định</span>
+            <span className="text-sm text-text font-medium">Đặt làm địa chỉ mặc định</span>
           </label>
 
           <div className="mt-6 flex items-center justify-end gap-3">
@@ -281,14 +281,14 @@ export function AddressFormModal({
               type="button"
               onClick={onClose}
               disabled={loading}
-              className="px-4 py-2.5 rounded-xl text-sm font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors disabled:opacity-50"
+              className="px-4 py-2.5 rounded-xl text-sm font-semibold text-text bg-surface-alt hover:bg-border transition-colors disabled:opacity-50"
             >
               Hủy bỏ
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 transition-colors disabled:opacity-60"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-primary hover:bg-primary-hover transition-colors disabled:opacity-60"
             >
               {loading && <Loader2 className="w-4 h-4 animate-spin" />}
               {submitLabel}

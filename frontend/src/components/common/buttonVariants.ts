@@ -26,7 +26,7 @@ const VARIANT: Record<Variant, string> = {
   danger:
     "bg-danger text-white hover:bg-danger-hover active:scale-[0.98] shadow-sm",
   success:
-    "bg-success text-white hover:bg-emerald-600 active:scale-[0.98] shadow-sm",
+    "bg-success text-white hover:bg-success active:scale-[0.98] shadow-sm",
 };
 
 const BASE =

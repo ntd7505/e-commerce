@@ -110,7 +110,7 @@ export default function AccountAddresses() {
 
           {!loading && error && (
             <div className="md:col-span-2 flex flex-col items-center justify-center py-16 text-center">
-              <div className="w-14 h-14 bg-red-50 text-danger rounded-full flex items-center justify-center mb-4">
+              <div className="w-14 h-14 bg-danger-soft text-danger rounded-full flex items-center justify-center mb-4">
                 <XCircle className="w-7 h-7" />
               </div>
               <p className="text-danger font-medium mb-4">{error}</p>

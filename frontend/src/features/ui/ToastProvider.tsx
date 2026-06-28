@@ -54,25 +54,25 @@ export function ToastProvider({ children }: { children: ReactNode }) {
             key={toast.id}
             role={toast.type === 'error' ? 'alert' : 'status'}
             aria-live="polite"
-            className="pointer-events-auto flex items-start gap-3 w-80 p-4 rounded-xl shadow-lg border bg-white animate-in slide-in-from-bottom-5 fade-in duration-300"
+            className="pointer-events-auto flex items-start gap-3 w-80 p-4 rounded-xl shadow-lg border bg-surface animate-in slide-in-from-bottom-5 fade-in duration-300"
             style={{
               borderColor: toast.type === 'success' ? '#22c55e' : '#ef4444',
             }}
           >
             {toast.type === 'success' ? (
-              <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0 mt-0.5" />
+              <CheckCircle2 className="w-5 h-5 text-success shrink-0 mt-0.5" />
             ) : (
-              <AlertCircle className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
+              <AlertCircle className="w-5 h-5 text-danger shrink-0 mt-0.5" />
             )}
             
             <div className="flex-1">
-              <p className="text-sm text-gray-800 font-medium">{toast.message}</p>
+              <p className="text-sm text-text font-medium">{toast.message}</p>
               {toast.action && (
                 <div className="mt-2">
                   {toast.action.to ? (
                     <Link
                       to={toast.action.to}
-                      className="text-sm font-bold text-blue-600 hover:text-blue-700 hover:underline"
+                      className="text-sm font-bold text-primary hover:text-primary hover:underline"
                       onClick={() => {
                         toast.action?.onClick?.();
                         removeToast(toast.id);
@@ -86,7 +86,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
                         toast.action?.onClick?.();
                         removeToast(toast.id);
                       }}
-                      className="text-sm font-bold text-blue-600 hover:text-blue-700 hover:underline"
+                      className="text-sm font-bold text-primary hover:text-primary hover:underline"
                     >
                       {toast.action.label}
                     </button>
@@ -97,7 +97,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
             
             <button
               onClick={() => removeToast(toast.id)}
-              className="text-gray-400 hover:text-gray-600 shrink-0 p-1"
+              className="text-muted hover:text-muted shrink-0 p-1"
               aria-label="Đóng"
             >
               <X className="w-4 h-4" />

@@ -1,4 +1,4 @@
-ï»¿import { Download, RefreshCw, Search, ChevronLeft, ChevronRight } from "lucide-react";
+import { Download, RefreshCw, Search, ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import { AdminStatCard } from "../../components/admin/AdminStatCard";
 import { getOrders } from "../../features/admin/orders/adminOrderApi";
@@ -14,7 +14,7 @@ function formatMoney(value: number) {
 }
 
 function formatDate(value: string | null) {
-  if (!value) return "â€”";
+  if (!value) return "—";
   return new Date(value).toLocaleString("vi-VN", {
     day: "2-digit",
     month: "2-digit",
@@ -56,7 +56,7 @@ function mapTransactions(orders: OrderResponse[]) {
     paymentStatus: order.paymentStatus,
     method: order.payment?.method ?? "COD",
     amount: order.payment?.amount ?? order.totalAmount,
-    transactionCode: order.payment?.transactionCode ?? "â€”",
+    transactionCode: order.payment?.transactionCode ?? "—",
     paidAt: order.payment?.paidAt ?? null,
     createdAt: order.createdAt,
   }));
@@ -141,8 +141,8 @@ export default function Transactions() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-bold text-slate-900">Transactions</h2>
-          <p className="text-sm text-slate-500">Payment status and transaction references derived from orders.</p>
+          <h2 className="text-xl font-bold text-text">Transactions</h2>
+          <p className="text-sm text-muted">Payment status and transaction references derived from orders.</p>
         </div>
         <div className="flex items-center gap-2">
           <button
@@ -150,7 +150,7 @@ export default function Transactions() {
             onClick={() =>
               exportToCsv(filteredTransactions, `transactions_${new Date().toISOString().slice(0, 10)}.csv`)
             }
-            className="flex items-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-bold text-emerald-700 transition-colors hover:bg-emerald-100"
+            className="flex items-center gap-2 rounded-lg border border-success-soft bg-success-soft px-4 py-2 text-sm font-bold text-success transition-colors hover:bg-success-soft"
           >
             <Download className="h-4 w-4" />
             Export CSV
@@ -159,7 +159,7 @@ export default function Transactions() {
             type="button"
             onClick={loadTransactions}
             disabled={loading}
-            className="flex items-center gap-2 rounded-2xl border border-slate-100 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50 disabled:opacity-60"
+            className="flex items-center gap-2 rounded-2xl border border-border bg-surface px-4 py-2 text-sm font-semibold text-text transition-colors hover:bg-surface disabled:opacity-60"
           >
             <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
             Refresh
@@ -172,29 +172,29 @@ export default function Transactions() {
         <AdminStatCard label="Total" value={transactions.length} />
         <AdminStatCard label="Paid" value={paidCount} />
         <AdminStatCard label="Unpaid" value={unpaidCount} />
-        <AdminStatCard label="Revenue" value={`${formatMoney(totalRevenue)} â‚«`} />
+        <AdminStatCard label="Revenue" value={`${formatMoney(totalRevenue)} ?`} />
         <div className="hidden">
           <AdminStatCard label="Refunded" value={refundedCount} />
         </div>
       </div>
 
       {/* Table */}
-      <div className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm">
-        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 p-5">
+      <div className="overflow-hidden rounded-2xl border border-border bg-surface shadow-sm">
+        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border p-5">
           <div>
-            <h3 className="font-bold text-slate-900">Payment History</h3>
-            <p className="mt-1 text-xs font-medium text-slate-500">
+            <h3 className="font-bold text-text">Payment History</h3>
+            <p className="mt-1 text-xs font-medium text-muted">
               Showing {filteredTransactions.length} of {transactions.length} records
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
-            <div className="flex rounded-lg border border-slate-200 bg-slate-50 p-1">
+            <div className="flex rounded-lg border border-border-strong bg-surface p-1">
               {statusOptions.map((option) => (
                 <button
                   key={option.value}
                   type="button"
                   onClick={() => handleFilter(option.value)}
-                  className={`rounded-md px-3 py-1.5 text-xs font-bold transition-colors ${statusFilter === option.value ? "bg-white text-emerald-700 shadow-sm" : "text-slate-500 hover:text-slate-800"
+                  className={`rounded-md px-3 py-1.5 text-xs font-bold transition-colors ${statusFilter === option.value ? "bg-surface text-success shadow-sm" : "text-muted hover:text-text"
                     }`}
                 >
                   {option.label}
@@ -202,23 +202,23 @@ export default function Transactions() {
               ))}
             </div>
             <div className="relative w-72">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
               <input
                 value={searchTerm}
                 onChange={(e) => handleSearch(e.target.value)}
                 placeholder="Search order, customer, code"
-                className="w-full rounded-lg border border-slate-200 bg-slate-50 py-2 pl-9 pr-3 text-sm outline-none transition focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
+                className="w-full rounded-lg border border-border-strong bg-surface py-2 pl-9 pr-3 text-sm outline-none transition focus:border-success focus:ring-1 focus:ring-success"
               />
             </div>
           </div>
         </div>
 
-        {loading && <div className="p-6 text-sm text-slate-500">Loading transactions...</div>}
-        {!loading && error && <div className="p-6 text-sm font-semibold text-red-600">{error}</div>}
+        {loading && <div className="p-6 text-sm text-muted">Loading transactions...</div>}
+        {!loading && error && <div className="p-6 text-sm font-semibold text-danger">{error}</div>}
         {!loading && !error && filteredTransactions.length === 0 && (
           <div className="p-10 text-center">
-            <Download className="mx-auto mb-3 h-10 w-10 text-gray-200" />
-            <p className="text-sm font-semibold text-slate-400">No transactions found</p>
+            <Download className="mx-auto mb-3 h-10 w-10 text-subtle" />
+            <p className="text-sm font-semibold text-muted">No transactions found</p>
           </div>
         )}
 
@@ -226,7 +226,7 @@ export default function Transactions() {
           <>
             <div className="overflow-x-auto">
               <table className="w-full min-w-[900px] text-left text-sm">
-                <thead className="sticky top-0 bg-slate-50 text-xs uppercase tracking-wider text-slate-500">
+                <thead className="sticky top-0 bg-surface text-xs font-semibold text-muted">
                   <tr>
                     <th className="px-5 py-3 font-bold">Order</th>
                     <th className="px-5 py-3 font-bold">Customer</th>
@@ -237,24 +237,24 @@ export default function Transactions() {
                     <th className="px-5 py-3 font-bold">Paid At</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody className="divide-y divide-border">
                   {pagedTransactions.map((transaction) => (
-                    <tr key={transaction.orderId} className="transition-colors hover:bg-slate-50">
-                      <td className="px-5 py-4 font-bold text-slate-900">#{transaction.orderId}</td>
-                      <td className="px-5 py-4 font-medium text-slate-800">{transaction.recipientName}</td>
+                    <tr key={transaction.orderId} className="transition-colors hover:bg-surface">
+                      <td className="px-5 py-4 font-bold text-text">#{transaction.orderId}</td>
+                      <td className="px-5 py-4 font-medium text-text">{transaction.recipientName}</td>
                       <td className="px-5 py-4">
-                        <span className="rounded-md bg-slate-100 px-2 py-0.5 text-[11px] font-bold text-slate-600">
+                        <span className="rounded-md bg-surface-alt px-2 py-0.5 text-xs font-bold text-muted">
                           {transaction.method}
                         </span>
                       </td>
-                      <td className="px-5 py-4 text-right font-semibold text-slate-900">
-                        {formatMoney(transaction.amount)} â‚«
+                      <td className="px-5 py-4 text-right font-semibold text-text">
+                        {formatMoney(transaction.amount)} ?
                       </td>
                       <td className="px-5 py-4">
                         <OrderStatusBadge value={transaction.paymentStatus} />
                       </td>
-                      <td className="px-5 py-4 font-mono text-xs text-slate-500">{transaction.transactionCode}</td>
-                      <td className="px-5 py-4 text-slate-500">{formatDate(transaction.paidAt)}</td>
+                      <td className="px-5 py-4 font-mono text-xs text-muted">{transaction.transactionCode}</td>
+                      <td className="px-5 py-4 text-muted">{formatDate(transaction.paidAt)}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -263,9 +263,9 @@ export default function Transactions() {
 
             {/* Pagination */}
             {totalPages > 1 && (
-              <div className="flex items-center justify-between border-t border-slate-100 px-5 py-3">
-                <p className="text-[12px] text-slate-500">
-                  Showing {(currentPage - 1) * PAGE_SIZE + 1}â€“
+              <div className="flex items-center justify-between border-t border-border px-5 py-3">
+                <p className="text-xs text-muted">
+                  Showing {(currentPage - 1) * PAGE_SIZE + 1}–
                   {Math.min(currentPage * PAGE_SIZE, filteredTransactions.length)} of {filteredTransactions.length}
                 </p>
                 <div className="flex items-center gap-1">
@@ -273,7 +273,7 @@ export default function Transactions() {
                     type="button"
                     onClick={() => setPage((p) => Math.max(1, p - 1))}
                     disabled={currentPage === 1}
-                    className="rounded-md border border-slate-200 p-1.5 text-slate-500 transition-colors hover:bg-slate-50 disabled:opacity-40"
+                    className="rounded-md border border-border-strong p-1.5 text-muted transition-colors hover:bg-surface disabled:opacity-40"
                   >
                     <ChevronLeft className="h-4 w-4" />
                   </button>
@@ -282,14 +282,14 @@ export default function Transactions() {
                     .map((p, idx, arr) => (
                       <span key={p}>
                         {idx > 0 && arr[idx - 1] !== p - 1 && (
-                          <span className="px-1 text-slate-400">â€¦</span>
+                          <span className="px-1 text-muted">…</span>
                         )}
                         <button
                           type="button"
                           onClick={() => setPage(p)}
-                          className={`min-w-[32px] rounded-md border px-2 py-1 text-[12px] font-bold transition-colors ${p === currentPage
-                              ? "border-emerald-500 bg-emerald-500 text-white"
-                              : "border-slate-200 text-slate-600 hover:bg-slate-50"
+                          className={`min-w-[32px] rounded-md border px-2 py-1 text-xs font-bold transition-colors ${p === currentPage
+                              ? "border-success bg-success text-white"
+                              : "border-border-strong text-muted hover:bg-surface"
                             }`}
                         >
                           {p}
@@ -300,7 +300,7 @@ export default function Transactions() {
                     type="button"
                     onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                     disabled={currentPage === totalPages}
-                    className="rounded-md border border-slate-200 p-1.5 text-slate-500 transition-colors hover:bg-slate-50 disabled:opacity-40"
+                    className="rounded-md border border-border-strong p-1.5 text-muted transition-colors hover:bg-surface disabled:opacity-40"
                   >
                     <ChevronRight className="h-4 w-4" />
                   </button>

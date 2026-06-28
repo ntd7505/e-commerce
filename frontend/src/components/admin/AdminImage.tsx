@@ -79,7 +79,7 @@ export function AdminImage({
         return (
             <div
                 className={`flex flex-col items-center justify-center gap-1 ${
-                    isDummy ? "bg-amber-50 text-amber-700" : "bg-emerald-50 text-emerald-700"
+                    isDummy ? "bg-warning-soft text-warning" : "bg-success-soft text-success"
                 } ${fallbackClassName}`}
                 title={isDummy ? "URL chứa example.com — cần upload ảnh thật" : undefined}
             >
@@ -89,7 +89,7 @@ export function AdminImage({
                     <span className="text-xs font-extrabold leading-none">{fallbackDisplay}</span>
                 )}
                 {isDummy && (
-                    <span className="text-[10px] font-bold leading-none">Upload ảnh</span>
+                    <span className="text-xs font-bold leading-none">Upload ảnh</span>
                 )}
             </div>
         );

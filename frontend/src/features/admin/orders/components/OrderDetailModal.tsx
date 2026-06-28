@@ -1,4 +1,4 @@
-﻿import { X } from "lucide-react";
+import { X } from "lucide-react";
 import type { ReactNode } from "react";
 import type { OrderResponse } from "../adminOrderTypes";
 import { OrderStatusBadge } from "./OrderStatusBadge";
@@ -65,25 +65,25 @@ export function OrderDetailModal({
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4 backdrop-blur-sm">
-            <div className="max-h-[90vh] w-full max-w-4xl overflow-hidden rounded-lg bg-white shadow-xl">
-                <div className="flex items-center justify-between border-b border-slate-100 bg-slate-50 px-6 py-4">
+            <div className="max-h-[90vh] w-full max-w-4xl overflow-hidden rounded-lg bg-surface shadow-xl">
+                <div className="flex items-center justify-between border-b border-border bg-surface px-6 py-4">
                     <div>
-                        <h3 className="text-lg font-bold text-slate-900">
+                        <h3 className="text-lg font-bold text-text">
                             {order ? `Order #${order.id}` : "Loading order"}
                         </h3>
-                        {order && <p className="mt-1 text-xs font-medium text-slate-500">Created {formatDate(order.createdAt)}</p>}
+                        {order && <p className="mt-1 text-xs font-medium text-muted">Created {formatDate(order.createdAt)}</p>}
                     </div>
                     <button
                         type="button"
                         onClick={onClose}
-                        className="rounded-full p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600"
+                        className="rounded-full p-2 text-muted transition-colors hover:bg-surface-alt hover:text-muted"
                         aria-label="Close order detail"
                     >
                         <X className="h-5 w-5" />
                     </button>
                 </div>
 
-                {loading && <div className="p-6 text-sm text-slate-500">Loading order detail...</div>}
+                {loading && <div className="p-6 text-sm text-muted">Loading order detail...</div>}
 
                 {order && !loading && (
                     <div className="max-h-[calc(90vh-76px)] overflow-y-auto p-6">
@@ -97,21 +97,21 @@ export function OrderDetailModal({
                             </InfoPanel>
 
                             <InfoPanel title="Recipient">
-                                <p className="font-semibold text-slate-900">{order.recipientName}</p>
-                                <p className="mt-1 text-sm text-slate-600">{order.phoneNumber}</p>
-                                <p className="mt-3 text-sm text-slate-600">{order.shippingAddress}</p>
+                                <p className="font-semibold text-text">{order.recipientName}</p>
+                                <p className="mt-1 text-sm text-muted">{order.phoneNumber}</p>
+                                <p className="mt-3 text-sm text-muted">{order.shippingAddress}</p>
                             </InfoPanel>
 
                             <InfoPanel title="Payment">
-                                <p className="text-sm text-slate-600">Method: {order.payment?.method ?? "-"}</p>
-                                <p className="mt-1 text-sm text-slate-600">Paid at: {formatDate(order.payment?.paidAt ?? null)}</p>
-                                <p className="mt-1 text-sm text-slate-600">Code: {order.payment?.transactionCode ?? "-"}</p>
+                                <p className="text-sm text-muted">Method: {order.payment?.method ?? "-"}</p>
+                                <p className="mt-1 text-sm text-muted">Paid at: {formatDate(order.payment?.paidAt ?? null)}</p>
+                                <p className="mt-1 text-sm text-muted">Code: {order.payment?.transactionCode ?? "-"}</p>
                             </InfoPanel>
                         </div>
 
-                        <div className="mt-6 overflow-hidden rounded-lg border border-slate-200">
+                        <div className="mt-6 overflow-hidden rounded-lg border border-border-strong">
                             <table className="w-full text-left text-sm">
-                                <thead className="bg-slate-50 text-xs uppercase text-slate-500">
+                                <thead className="bg-surface text-xs uppercase text-muted">
                                     <tr>
                                         <th className="px-5 py-3">Product</th>
                                         <th className="px-5 py-3">SKU</th>
@@ -120,17 +120,17 @@ export function OrderDetailModal({
                                         <th className="px-5 py-3 text-right">Total</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-slate-100">
+                                <tbody className="divide-y divide-border">
                                     {order.items.map((item) => (
                                         <tr key={item.id}>
                                             <td className="px-5 py-4">
-                                                <p className="font-semibold text-slate-900">{item.productName}</p>
-                                                <p className="mt-1 text-xs text-slate-500">{item.variantName}</p>
+                                                <p className="font-semibold text-text">{item.productName}</p>
+                                                <p className="mt-1 text-xs text-muted">{item.variantName}</p>
                                             </td>
-                                            <td className="px-5 py-4 text-slate-600">{item.sku}</td>
-                                            <td className="px-5 py-4 text-slate-600">{item.quantity}</td>
-                                            <td className="px-5 py-4 text-slate-600">{formatMoney(item.unitPrice)}</td>
-                                            <td className="px-5 py-4 text-right font-semibold text-slate-900">{formatMoney(item.lineTotal)}</td>
+                                            <td className="px-5 py-4 text-muted">{item.sku}</td>
+                                            <td className="px-5 py-4 text-muted">{item.quantity}</td>
+                                            <td className="px-5 py-4 text-muted">{formatMoney(item.unitPrice)}</td>
+                                            <td className="px-5 py-4 text-right font-semibold text-text">{formatMoney(item.lineTotal)}</td>
                                         </tr>
                                     ))}
                                 </tbody>
@@ -138,19 +138,19 @@ export function OrderDetailModal({
                         </div>
 
                         <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-[1fr_280px]">
-                            <div className="rounded-lg border border-slate-200 p-5">
-                                <h4 className="font-bold text-slate-900">Note</h4>
-                                <p className="mt-2 text-sm text-slate-600">{order.note || "No note"}</p>
+                            <div className="rounded-lg border border-border-strong p-5">
+                                <h4 className="font-bold text-text">Note</h4>
+                                <p className="mt-2 text-sm text-muted">{order.note || "No note"}</p>
                                 {order.couponCode && (
-                                    <p className="mt-3 text-sm font-semibold text-emerald-700">Coupon: {order.couponCode}</p>
+                                    <p className="mt-3 text-sm font-semibold text-success">Coupon: {order.couponCode}</p>
                                 )}
                             </div>
 
-                            <div className="rounded-lg border border-slate-200 p-5">
+                            <div className="rounded-lg border border-border-strong p-5">
                                 <PriceRow label="Subtotal" value={order.subtotalAmount} />
                                 <PriceRow label="Shipping" value={order.shippingFee} />
                                 <PriceRow label="Discount" value={-order.discountAmount} />
-                                <div className="mt-3 border-t border-slate-100 pt-3">
+                                <div className="mt-3 border-t border-border pt-3">
                                     <PriceRow label="Total" value={order.totalAmount} strong />
                                 </div>
                             </div>
@@ -160,7 +160,7 @@ export function OrderDetailModal({
                             <button
                                 type="button"
                                 onClick={onClose}
-                                className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-bold text-slate-600 transition-colors hover:bg-slate-50"
+                                className="rounded-lg border border-border-strong px-4 py-2 text-sm font-bold text-muted transition-colors hover:bg-surface"
                             >
                                 Close
                             </button>
@@ -169,7 +169,7 @@ export function OrderDetailModal({
                                     type="button"
                                     onClick={() => onAction(order.id, nextAction.action)}
                                     disabled={busy}
-                                    className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-60"
+                                    className="rounded-lg bg-success px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-success disabled:cursor-not-allowed disabled:opacity-60"
                                 >
                                     {busy ? "Updating..." : nextAction.label}
                                 </button>
@@ -184,8 +184,8 @@ export function OrderDetailModal({
 
 function InfoPanel({ title, children }: { title: string; children: ReactNode }) {
     return (
-        <div className="rounded-lg border border-slate-200 p-5">
-            <h4 className="mb-3 font-bold text-slate-900">{title}</h4>
+        <div className="rounded-lg border border-border-strong p-5">
+            <h4 className="mb-3 font-bold text-text">{title}</h4>
             {children}
         </div>
     );
@@ -194,7 +194,7 @@ function InfoPanel({ title, children }: { title: string; children: ReactNode }) 
 function StatusRow({ label, children }: { label: string; children: ReactNode }) {
     return (
         <div className="flex items-center justify-between gap-3">
-            <span className="text-sm text-slate-500">{label}</span>
+            <span className="text-sm text-muted">{label}</span>
             {children}
         </div>
     );
@@ -202,7 +202,7 @@ function StatusRow({ label, children }: { label: string; children: ReactNode }) 
 
 function PriceRow({ label, value, strong }: { label: string; value: number; strong?: boolean }) {
     return (
-        <div className={`flex items-center justify-between text-sm ${strong ? "font-bold text-slate-900" : "text-slate-600"}`}>
+        <div className={`flex items-center justify-between text-sm ${strong ? "font-bold text-text" : "text-muted"}`}>
             <span>{label}</span>
             <span>{formatMoney(value)}</span>
         </div>

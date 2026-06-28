@@ -13,12 +13,12 @@ type ReviewFormModalProps = {
 };
 
 const inputBase =
-  "w-full rounded-xl border px-3.5 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 outline-none transition-colors focus:ring-2";
+  "w-full rounded-xl border px-3.5 py-2.5 text-sm text-text placeholder:text-muted outline-none transition-colors focus:ring-2";
 
 function fieldClass(hasError: boolean): string {
   return hasError
-    ? `${inputBase} border-red-300 focus:ring-red-200`
-    : `${inputBase} border-gray-200 focus:border-blue-600 focus:ring-blue-100`;
+    ? `${inputBase} border-danger focus:ring-danger-soft`
+    : `${inputBase} border-border-strong focus:border-primary focus:ring-primary-soft`;
 }
 
 export function ReviewFormModal({
@@ -107,15 +107,15 @@ export function ReviewFormModal({
   return (
     <div className="fixed inset-0 z-[90] flex items-center justify-center p-4">
       <div
-        className="absolute inset-0 bg-gray-900/50 backdrop-blur-sm"
+        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
         onClick={() => !submitting && onClose()}
         aria-hidden="true"
       />
-      <div className="relative w-full max-w-lg max-h-[90vh] bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden flex flex-col">
-        <div className="flex items-start justify-between gap-4 p-5 border-b border-gray-100 shrink-0">
+      <div className="relative w-full max-w-lg max-h-[90vh] bg-surface rounded-2xl border border-border overflow-hidden flex flex-col">
+        <div className="flex items-start justify-between gap-4 p-5 border-b border-border shrink-0">
           <div className="min-w-0">
-            <h3 className="text-lg font-bold text-gray-900">Viết đánh giá</h3>
-            <p className="mt-0.5 text-sm text-gray-500 truncate">
+            <h3 className="text-lg font-bold text-text">Viết đánh giá</h3>
+            <p className="mt-0.5 text-sm text-muted truncate">
               {productName} · {variantName}
             </p>
           </div>
@@ -123,7 +123,7 @@ export function ReviewFormModal({
             type="button"
             onClick={onClose}
             disabled={submitting}
-            className="text-gray-400 hover:text-gray-600 p-1 disabled:opacity-50"
+            className="text-muted hover:text-muted p-1 disabled:opacity-50"
             aria-label="Đóng"
           >
             <X className="w-5 h-5" />
@@ -133,8 +133,8 @@ export function ReviewFormModal({
         <form onSubmit={handleSubmit} className="p-5 overflow-y-auto">
           {/* Rating */}
           <div className="mb-5">
-            <span className="block text-sm font-semibold text-gray-800 mb-2">
-              Đánh giá sao <span className="text-red-500">*</span>
+            <span className="block text-sm font-semibold text-text mb-2">
+              Đánh giá sao <span className="text-danger">*</span>
             </span>
             <div className="flex items-center gap-1.5">
               {Array.from({ length: 5 }).map((_, idx) => {
@@ -153,25 +153,25 @@ export function ReviewFormModal({
                     <Star
                       className={`w-7 h-7 transition-colors ${
                         val <= displayRating
-                          ? "fill-amber-400 text-amber-400"
-                          : "fill-transparent text-gray-300 hover:text-amber-300"
+                          ? "fill-warning text-warning"
+                          : "fill-transparent text-subtle hover:text-warning"
                       }`}
                     />
                   </button>
                 );
               })}
               {rating > 0 && (
-                <span className="ml-2 text-sm font-semibold text-gray-700">{rating}/5</span>
+                <span className="ml-2 text-sm font-semibold text-text">{rating}/5</span>
               )}
             </div>
             {ratingError && (
-              <p className="mt-1.5 text-xs text-red-600 font-medium">Vui lòng chọn số sao đánh giá.</p>
+              <p className="mt-1.5 text-xs text-danger font-medium">Vui lòng chọn số sao đánh giá.</p>
             )}
           </div>
 
           {/* Title */}
           <div className="mb-4">
-            <label htmlFor="rev-title" className="block text-sm font-semibold text-gray-800 mb-1.5">
+            <label htmlFor="rev-title" className="block text-sm font-semibold text-text mb-1.5">
               Tiêu đề
             </label>
             <input
@@ -185,14 +185,14 @@ export function ReviewFormModal({
               className={fieldClass(!!titleError)}
             />
             {titleError && (
-              <p className="mt-1.5 text-xs text-red-600 font-medium">Tiêu đề không vượt quá 150 ký tự.</p>
+              <p className="mt-1.5 text-xs text-danger font-medium">Tiêu đề không vượt quá 150 ký tự.</p>
             )}
-            <p className="mt-1 text-right text-xs text-gray-400">{title.length}/150</p>
+            <p className="mt-1 text-right text-xs text-muted">{title.length}/150</p>
           </div>
 
           {/* Content */}
           <div className="mb-4">
-            <label htmlFor="rev-content" className="block text-sm font-semibold text-gray-800 mb-1.5">
+            <label htmlFor="rev-content" className="block text-sm font-semibold text-text mb-1.5">
               Nội dung
             </label>
             <textarea
@@ -206,19 +206,19 @@ export function ReviewFormModal({
               className={`${fieldClass(!!contentError)} resize-none`}
             />
             {contentError && (
-              <p className="mt-1.5 text-xs text-red-600 font-medium">Nội dung không vượt quá 2000 ký tự.</p>
+              <p className="mt-1.5 text-xs text-danger font-medium">Nội dung không vượt quá 2000 ký tự.</p>
             )}
-            <p className="mt-1 text-right text-xs text-gray-400">{content.length}/2000</p>
+            <p className="mt-1 text-right text-xs text-muted">{content.length}/2000</p>
           </div>
 
           {/* Media URLs */}
           <div className="mb-4">
-            <span className="block text-sm font-semibold text-gray-800 mb-1.5">
+            <span className="block text-sm font-semibold text-text mb-1.5">
               Hình ảnh / Video (tùy chọn, tối đa 5)
             </span>
             <div className="flex items-center gap-2">
               <div className="relative flex-1">
-                <Link2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <Link2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" />
                 <input
                   type="url"
                   value={mediaUrlDraft}
@@ -238,26 +238,26 @@ export function ReviewFormModal({
                 type="button"
                 onClick={addMedia}
                 disabled={submitting || !mediaUrlDraft.trim() || media.length >= 5}
-                className="inline-flex items-center gap-1 rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="inline-flex items-center gap-1 rounded-xl border border-border-strong bg-surface px-3 py-2.5 text-sm font-semibold text-text hover:bg-surface disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 <Plus className="w-4 h-4" />
                 Thêm
               </button>
             </div>
             {mediaCountError && (
-              <p className="mt-1.5 text-xs text-red-600 font-medium">Tối đa 5 media.</p>
+              <p className="mt-1.5 text-xs text-danger font-medium">Tối đa 5 media.</p>
             )}
             {media.length > 0 && (
               <div className="mt-2 space-y-2">
                 {media.map((m, idx) => (
-                  <div key={idx} className="flex items-center gap-2 rounded-lg bg-gray-50 border border-gray-100 px-3 py-2">
-                    <span className="text-xs text-gray-400 shrink-0">{idx + 1}.</span>
-                    <span className="flex-1 text-sm text-gray-700 truncate">{m.url}</span>
+                  <div key={idx} className="flex items-center gap-2 rounded-lg bg-surface border border-border px-3 py-2">
+                    <span className="text-xs text-muted shrink-0">{idx + 1}.</span>
+                    <span className="flex-1 text-sm text-text truncate">{m.url}</span>
                     <button
                       type="button"
                       onClick={() => removeMedia(idx)}
                       disabled={submitting}
-                      className="text-gray-400 hover:text-red-500 p-0.5 disabled:opacity-50"
+                      className="text-muted hover:text-danger p-0.5 disabled:opacity-50"
                       aria-label="Xóa media"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -275,9 +275,9 @@ export function ReviewFormModal({
               checked={anonymous}
               onChange={(e) => setAnonymous(e.target.checked)}
               disabled={submitting}
-              className="w-4 h-4 rounded text-blue-600 focus:ring-blue-200 border-gray-300"
+              className="w-4 h-4 rounded text-primary focus:ring-primary-soft border-border-strong"
             />
-            <span className="text-sm text-gray-700 font-medium">Đánh giá ẩn danh</span>
+            <span className="text-sm text-text font-medium">Đánh giá ẩn danh</span>
           </label>
 
           <div className="mt-6 flex items-center justify-end gap-3">
@@ -285,14 +285,14 @@ export function ReviewFormModal({
               type="button"
               onClick={onClose}
               disabled={submitting}
-              className="px-4 py-2.5 rounded-xl text-sm font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors disabled:opacity-50"
+              className="px-4 py-2.5 rounded-xl text-sm font-semibold text-text bg-surface-alt hover:bg-border transition-colors disabled:opacity-50"
             >
               Hủy bỏ
             </button>
             <button
               type="submit"
               disabled={submitting}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 transition-colors disabled:opacity-60"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-primary hover:bg-primary-hover transition-colors disabled:opacity-60"
             >
               {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
               Gửi đánh giá

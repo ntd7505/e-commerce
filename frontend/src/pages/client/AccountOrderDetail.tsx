@@ -53,17 +53,17 @@ function OrderTimeline({ status }: { status: OrderStatus }) {
     return (
       <div className="flex items-center gap-4 overflow-x-auto pb-2 scrollbar-hide">
         <div className="flex flex-col items-center gap-2 min-w-[80px] shrink-0">
-          <div className="w-9 h-9 rounded-full bg-emerald-500 text-white flex items-center justify-center">
+          <div className="w-9 h-9 rounded-full bg-success text-white flex items-center justify-center">
             <Clock className="w-4 h-4" />
           </div>
-          <span className="text-[11px] font-semibold text-gray-800 text-center leading-tight">Đặt hàng</span>
+          <span className="text-xs font-semibold text-text text-center leading-tight">Đặt hàng</span>
         </div>
-        <div className="h-1 w-8 sm:w-14 rounded-full bg-red-300 mt-[-18px]" />
+        <div className="h-1 w-8 sm:w-14 rounded-full bg-danger-soft mt-[-18px]" />
         <div className="flex flex-col items-center gap-2 min-w-[80px] shrink-0">
-          <div className="w-9 h-9 rounded-full bg-red-500 text-white flex items-center justify-center ring-4 ring-red-100">
+          <div className="w-9 h-9 rounded-full bg-danger-soft0 text-white flex items-center justify-center ring-4 ring-danger-soft">
             <XCircle className="w-4 h-4" />
           </div>
-          <span className="text-[11px] font-semibold text-red-700 text-center leading-tight">Đã hủy</span>
+          <span className="text-xs font-semibold text-danger text-center leading-tight">Đã hủy</span>
         </div>
       </div>
     );
@@ -71,13 +71,13 @@ function OrderTimeline({ status }: { status: OrderStatus }) {
 
   if (status === 'RETURNED') {
     return (
-      <div className="flex items-center gap-3 rounded-xl bg-gray-100 px-4 py-3 border border-gray-200">
-        <div className="w-9 h-9 rounded-full bg-gray-500 text-white flex items-center justify-center shrink-0">
+      <div className="flex items-center gap-3 rounded-xl bg-surface-alt px-4 py-3 border border-border-strong">
+        <div className="w-9 h-9 rounded-full bg-surface0 text-white flex items-center justify-center shrink-0">
           <RotateCcw className="w-5 h-5" />
         </div>
         <div>
-          <p className="text-sm font-bold text-gray-700">Đơn hàng đã được trả lại</p>
-          <p className="text-xs text-gray-500">Vui lòng liên hệ shop để được hỗ trợ hoàn tiền.</p>
+          <p className="text-sm font-bold text-text">Đơn hàng đã được trả lại</p>
+          <p className="text-xs text-muted">Vui lòng liên hệ shop để được hỗ trợ hoàn tiền.</p>
         </div>
       </div>
     );
@@ -99,16 +99,16 @@ function OrderTimeline({ status }: { status: OrderStatus }) {
                 className={`w-9 h-9 rounded-full flex items-center justify-center transition-colors ${
                   isDone
                     ? isCurrent
-                      ? 'bg-blue-600 text-white ring-4 ring-blue-100'
-                      : 'bg-emerald-500 text-white'
-                    : 'bg-gray-100 text-gray-400'
+                      ? 'bg-primary text-white ring-4 ring-primary-soft'
+                      : 'bg-success text-white'
+                    : 'bg-surface-alt text-muted'
                 }`}
               >
                 <Icon className="w-4 h-4" />
               </div>
               <span
-                className={`text-[11px] font-semibold text-center leading-tight ${
-                  isDone ? 'text-gray-800' : 'text-gray-400'
+                className={`text-xs font-semibold text-center leading-tight ${
+                  isDone ? 'text-text' : 'text-muted'
                 }`}
               >
                 {ORDER_STATUS_LABELS[step]}
@@ -117,7 +117,7 @@ function OrderTimeline({ status }: { status: OrderStatus }) {
             {!isLast && (
               <div
                 className={`h-1 w-6 sm:w-10 rounded-full mt-[-18px] ${
-                  index < currentIndex ? 'bg-emerald-500' : 'bg-gray-200'
+                  index < currentIndex ? 'bg-success' : 'bg-border'
                 }`}
               />
             )}
@@ -131,8 +131,8 @@ function OrderTimeline({ status }: { status: OrderStatus }) {
 function InfoRow({ label, value }: { label: React.ReactNode; value: React.ReactNode }) {
   return (
     <div className="flex items-start justify-between gap-4 py-2.5">
-      <span className="text-sm text-gray-500 shrink-0">{label}</span>
-      <span className="text-sm font-semibold text-gray-900 text-right break-words">{value}</span>
+      <span className="text-sm text-muted shrink-0">{label}</span>
+      <span className="text-sm font-semibold text-text text-right break-words">{value}</span>
     </div>
   );
 }
@@ -140,13 +140,13 @@ function InfoRow({ label, value }: { label: React.ReactNode; value: React.ReactN
 function DetailSkeleton() {
   return (
     <div className="space-y-6 animate-pulse">
-      <div className="h-32 rounded-2xl bg-gray-100" />
+      <div className="h-32 rounded-2xl bg-surface-alt" />
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="h-48 rounded-2xl bg-gray-100" />
-        <div className="h-48 rounded-2xl bg-gray-100" />
+        <div className="h-48 rounded-2xl bg-surface-alt" />
+        <div className="h-48 rounded-2xl bg-surface-alt" />
       </div>
-      <div className="h-64 rounded-2xl bg-gray-100" />
-      <div className="h-40 rounded-2xl bg-gray-100" />
+      <div className="h-64 rounded-2xl bg-surface-alt" />
+      <div className="h-40 rounded-2xl bg-surface-alt" />
     </div>
   );
 }
@@ -154,8 +154,8 @@ function DetailSkeleton() {
 // TODO: Backend OrderItemResponse chưa trả imageUrl - tạm dùng placeholder icon Package.
 function ProductThumb() {
   return (
-    <div className="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center shrink-0">
-      <Package className="w-5 h-5 text-gray-400" />
+    <div className="w-12 h-12 rounded-lg bg-surface-alt flex items-center justify-center shrink-0">
+      <Package className="w-5 h-5 text-muted" />
     </div>
   );
 }
@@ -218,13 +218,13 @@ export default function AccountOrderDetail() {
         useCustomContent
       >
         {/* Header card */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 mb-6">
+        <div className="bg-surface rounded-2xl border border-border shadow-sm p-6 mb-6">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div className="min-w-0">
-              <h1 className="text-2xl lg:text-3xl font-black text-gray-900">Chi tiết đơn hàng</h1>
+              <h1 className="text-wrap-balance text-2xl lg:text-3xl font-black text-text">Chi tiết đơn hàng</h1>
               <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mt-2">
-                <span className="text-sm font-bold text-gray-900">#{orderId}</span>
-                {order && <span className="text-sm text-gray-500">{formatDateTime(order.createdAt)}</span>}
+                <span className="text-sm font-bold text-text">#{orderId}</span>
+                {order && <span className="text-sm text-muted">{formatDateTime(order.createdAt)}</span>}
               </div>
               {order && (
                 <div className="flex items-center gap-2 mt-3">
@@ -236,13 +236,13 @@ export default function AccountOrderDetail() {
             <div className="flex flex-col items-end gap-3">
               {order && (
                 <div className="text-right">
-                  <p className="text-xs text-gray-500">Tổng tiền</p>
-                  <p className="text-2xl lg:text-3xl font-black text-blue-600">{formatVnd(order.totalAmount)}</p>
+                  <p className="text-xs text-muted">Tổng tiền</p>
+                  <p className="text-2xl lg:text-3xl font-black text-primary">{formatVnd(order.totalAmount)}</p>
                 </div>
               )}
               <Link
                 to="/account/orders"
-                className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-semibold text-gray-700 bg-white border border-gray-200 hover:bg-gray-50 transition-colors"
+                className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-semibold text-text bg-surface border border-border-strong hover:bg-surface transition-colors"
               >
                 <ArrowLeft className="w-4 h-4" />
                 Quay lại danh sách
@@ -252,21 +252,21 @@ export default function AccountOrderDetail() {
         </div>
 
         {loading && (
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 lg:p-8">
+          <div className="bg-surface rounded-2xl shadow-sm border border-border p-6 lg:p-8">
             <DetailSkeleton />
           </div>
         )}
 
         {!loading && error && (
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 lg:p-8">
+          <div className="bg-surface rounded-2xl shadow-sm border border-border p-6 lg:p-8">
             <div className="flex flex-col items-center justify-center py-16 text-center">
-              <div className="w-14 h-14 bg-red-50 text-red-500 rounded-full flex items-center justify-center mb-4">
+              <div className="w-14 h-14 bg-danger-soft text-danger rounded-full flex items-center justify-center mb-4">
                 <XCircle className="w-7 h-7" />
               </div>
-              <p className="text-red-600 font-medium mb-4">{error}</p>
+              <p className="text-danger font-medium mb-4">{error}</p>
               <button
                 onClick={refetch}
-                className="px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 transition-colors"
+                className="px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-primary hover:bg-primary-hover transition-colors"
               >
                 Thử lại
               </button>
@@ -277,17 +277,17 @@ export default function AccountOrderDetail() {
         {!loading && !error && order && (
           <div className="space-y-6">
             {/* Timeline */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 lg:p-8">
-              <h2 className="text-lg font-bold text-gray-900 mb-5">Trạng thái đơn hàng</h2>
+            <div className="bg-surface rounded-2xl shadow-sm border border-border p-6 lg:p-8">
+              <h2 className="text-lg font-bold text-text mb-5">Trạng thái đơn hàng</h2>
               <OrderTimeline status={order.status} />
             </div>
 
             {/* Shipping + Payment */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 lg:p-7">
-                <div className="flex items-center gap-2 mb-4 pb-3 border-b border-gray-100">
-                  <MapPin className="w-5 h-5 text-blue-600" />
-                  <h2 className="text-lg font-bold text-gray-900">Thông tin giao hàng</h2>
+              <div className="bg-surface rounded-2xl shadow-sm border border-border p-6 lg:p-7">
+                <div className="flex items-center gap-2 mb-4 pb-3 border-b border-border">
+                  <MapPin className="w-5 h-5 text-primary" />
+                  <h2 className="text-lg font-bold text-text">Thông tin giao hàng</h2>
                 </div>
                 <div className="divide-y divide-gray-100">
                   <InfoRow label="Người nhận" value={order.recipientName} />
@@ -297,10 +297,10 @@ export default function AccountOrderDetail() {
                 </div>
               </div>
 
-              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 lg:p-7">
-                <div className="flex items-center gap-2 mb-4 pb-3 border-b border-gray-100">
-                  <CreditCard className="w-5 h-5 text-blue-600" />
-                  <h2 className="text-lg font-bold text-gray-900">Phương thức thanh toán</h2>
+              <div className="bg-surface rounded-2xl shadow-sm border border-border p-6 lg:p-7">
+                <div className="flex items-center gap-2 mb-4 pb-3 border-b border-border">
+                  <CreditCard className="w-5 h-5 text-primary" />
+                  <h2 className="text-lg font-bold text-text">Phương thức thanh toán</h2>
                 </div>
                 {order.payment ? (
                   <div className="divide-y divide-gray-100">
@@ -315,18 +315,18 @@ export default function AccountOrderDetail() {
                     )}
                   </div>
                 ) : (
-                  <p className="text-sm text-gray-500 py-4">Chưa có thông tin thanh toán.</p>
+                  <p className="text-sm text-muted py-4">Chưa có thông tin thanh toán.</p>
                 )}
               </div>
             </div>
 
             {/* Items */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-              <div className="flex items-center gap-2 p-6 lg:p-7 pb-4 border-b border-gray-100">
-                <Package className="w-5 h-5 text-blue-600" />
-                <h2 className="text-lg font-bold text-gray-900">Sản phẩm trong đơn</h2>
+            <div className="bg-surface rounded-2xl shadow-sm border border-border overflow-hidden">
+              <div className="flex items-center gap-2 p-6 lg:p-7 pb-4 border-b border-border">
+                <Package className="w-5 h-5 text-primary" />
+                <h2 className="text-lg font-bold text-text">Sản phẩm trong đơn</h2>
               </div>
-              <div className="hidden md:grid grid-cols-12 gap-4 px-6 lg:px-7 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide bg-gray-50/60">
+              <div className="hidden md:grid grid-cols-12 gap-4 px-6 lg:px-7 py-3 text-xs font-semibold text-muted uppercase tracking-wide bg-surface/60">
                 <div className="col-span-6">Sản phẩm</div>
                 <div className="col-span-2 text-center">Đơn giá</div>
                 <div className="col-span-1 text-center">SL</div>
@@ -343,24 +343,24 @@ export default function AccountOrderDetail() {
                       <div className="min-w-0">
                         <Link
                           to={`/products/${item.productId}`}
-                          className="text-sm font-semibold text-gray-900 hover:text-blue-600 transition-colors block truncate"
+                          className="text-sm font-semibold text-text hover:text-primary transition-colors block truncate"
                         >
                           {item.productName}
                         </Link>
-                        <p className="text-xs text-gray-500 truncate">
+                        <p className="text-xs text-muted truncate">
                           {item.variantName} · SKU: {item.sku}
                         </p>
                       </div>
                     </div>
-                    <div className="col-span-4 md:col-span-2 text-sm text-gray-700 md:text-center">
-                      <span className="md:hidden text-xs text-gray-400 mr-1">Đơn giá:</span>
+                    <div className="col-span-4 md:col-span-2 text-sm text-text md:text-center">
+                      <span className="md:hidden text-xs text-muted mr-1">Đơn giá:</span>
                       {formatVnd(item.unitPrice)}
                     </div>
-                    <div className="col-span-2 md:col-span-1 text-sm text-gray-700 md:text-center">
-                      <span className="md:hidden text-xs text-gray-400 mr-1">SL:</span>
+                    <div className="col-span-2 md:col-span-1 text-sm text-text md:text-center">
+                      <span className="md:hidden text-xs text-muted mr-1">SL:</span>
                       {item.quantity}
                     </div>
-                    <div className="col-span-6 md:col-span-3 text-sm font-bold text-gray-900 text-right">
+                    <div className="col-span-6 md:col-span-3 text-sm font-bold text-text text-right">
                       {formatVnd(item.lineTotal)}
                     </div>
                   </div>
@@ -369,10 +369,10 @@ export default function AccountOrderDetail() {
             </div>
 
             {/* Totals */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 lg:p-7">
-              <div className="flex items-center gap-2 mb-4 pb-3 border-b border-gray-100">
-                <Receipt className="w-5 h-5 text-blue-600" />
-                <h2 className="text-lg font-bold text-gray-900">Tổng kết đơn hàng</h2>
+            <div className="bg-surface rounded-2xl shadow-sm border border-border p-6 lg:p-7">
+              <div className="flex items-center gap-2 mb-4 pb-3 border-b border-border">
+                <Receipt className="w-5 h-5 text-primary" />
+                <h2 className="text-lg font-bold text-text">Tổng kết đơn hàng</h2>
               </div>
               <div className="max-w-md ml-auto space-y-2.5">
                 <InfoRow label="Tạm tính" value={formatVnd(order.subtotalAmount)} />
@@ -381,28 +381,28 @@ export default function AccountOrderDetail() {
                   <InfoRow
                     label={
                       <span className="inline-flex items-center gap-1">
-                        <Tag className="w-3.5 h-3.5 text-emerald-600" />
+                        <Tag className="w-3.5 h-3.5 text-success" />
                         Giảm giá{order.couponCode ? ` (${order.couponCode})` : ''}
                       </span>
                     }
-                    value={<span className="text-emerald-600">-{formatVnd(order.discountAmount)}</span>}
+                    value={<span className="text-success">-{formatVnd(order.discountAmount)}</span>}
                   />
                 )}
                 {order.couponCode && order.discountAmount === 0 && (
                   <InfoRow label="Mã giảm giá" value={order.couponCode} />
                 )}
-                <div className="flex items-center justify-between gap-4 pt-3 mt-2 border-t border-gray-100">
-                  <span className="text-sm font-semibold text-gray-700">Tổng cộng</span>
-                  <span className="text-2xl lg:text-3xl font-black text-blue-600">{formatVnd(order.totalAmount)}</span>
+                <div className="flex items-center justify-between gap-4 pt-3 mt-2 border-t border-border">
+                  <span className="text-sm font-semibold text-text">Tổng cộng</span>
+                  <span className="text-2xl lg:text-3xl font-black text-primary">{formatVnd(order.totalAmount)}</span>
                 </div>
               </div>
             </div>
 
             {/* Actions */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 lg:p-6 flex flex-wrap items-center justify-between gap-3">
+            <div className="bg-surface rounded-2xl shadow-sm border border-border p-5 lg:p-6 flex flex-wrap items-center justify-between gap-3">
               <Link
                 to="/account/orders"
-                className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors"
+                className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-semibold text-text bg-surface-alt hover:bg-border transition-colors"
               >
                 <ArrowLeft className="w-4 h-4" />
                 Quay lại danh sách
@@ -413,7 +413,7 @@ export default function AccountOrderDetail() {
                     type="button"
                     onClick={() => setModalMode('cancel')}
                     disabled={actionLoading}
-                    className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-semibold text-red-600 bg-red-50 hover:bg-red-100 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                    className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-semibold text-danger bg-danger-soft hover:bg-danger-soft transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
                   >
                     <XCircle className="w-4 h-4" />
                     Hủy đơn
@@ -424,7 +424,7 @@ export default function AccountOrderDetail() {
                     type="button"
                     onClick={() => setModalMode('cancel_request')}
                     disabled={actionLoading}
-                    className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-semibold text-amber-700 bg-amber-50 hover:bg-amber-100 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                    className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-semibold text-warning bg-warning-soft hover:bg-warning-soft transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
                   >
                     <AlertTriangle className="w-4 h-4" />
                     Yêu cầu hủy
@@ -435,7 +435,7 @@ export default function AccountOrderDetail() {
                     type="button"
                     onClick={() => setReceiptOpen(true)}
                     disabled={actionLoading}
-                    className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                    className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-semibold text-white bg-success hover:bg-success transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
                   >
                     {actionLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
                     {actionLoading ? 'Đang xử lý...' : 'Tôi đã nhận hàng'}
@@ -447,7 +447,7 @@ export default function AccountOrderDetail() {
                     onClick={handleReview}
                     disabled
                     title="Tính năng đánh giá sẽ ra mắt soon"
-                    className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-semibold text-gray-400 bg-gray-50 cursor-not-allowed"
+                    className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-semibold text-muted bg-surface cursor-not-allowed"
                   >
                     <Star className="w-4 h-4" />
                     Đánh giá

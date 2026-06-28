@@ -14,7 +14,7 @@ export default function AvatarPreview({ avatarUrl, onChange }: AvatarPreviewProp
 
   return (
     <div className="flex flex-col items-center justify-start lg:pl-10 mt-6 lg:mt-0 lg:w-1/3 shrink-0">
-      <div className="w-28 h-28 sm:w-36 sm:h-36 rounded-full overflow-hidden bg-gray-50 mb-5 border-[3px] border-gray-100 flex items-center justify-center shrink-0 shadow-sm relative group transition-all hover:border-nexa-blue/30">
+      <div className="w-28 h-28 sm:w-36 sm:h-36 rounded-full overflow-hidden bg-surface mb-5 border-[3px] border-border flex items-center justify-center shrink-0 shadow-sm relative group transition-all hover:border-primary/30">
         {!showFallback ? (
           <img 
             src={displayUrl} 
@@ -24,7 +24,7 @@ export default function AvatarPreview({ avatarUrl, onChange }: AvatarPreviewProp
             onLoad={() => setImgError(false)}
           />
         ) : (
-          <Camera className="w-10 h-10 text-gray-300" />
+          <Camera className="w-10 h-10 text-subtle" />
         )}
         
         {displayUrl && (
@@ -39,9 +39,9 @@ export default function AvatarPreview({ avatarUrl, onChange }: AvatarPreviewProp
           </button>
         )}
       </div>
-      <div className="text-sm text-gray-500 text-center px-4 max-w-[200px]">
-        <p className="font-medium text-gray-800 mb-1.5">Ảnh đại diện từ URL</p>
-        <p className="text-xs text-gray-400">
+      <div className="text-sm text-muted text-center px-4 max-w-[200px]">
+        <p className="font-medium text-text mb-1.5">Ảnh đại diện từ URL</p>
+        <p className="text-xs text-muted">
           Sử dụng link ảnh http/https hợp lệ.
         </p>
       </div>

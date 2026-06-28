@@ -1,4 +1,4 @@
-Ôªøimport { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { RefreshCw, Search, Users, Ban, CheckCircle, ChevronLeft, ChevronRight } from "lucide-react";
 import { AdminBadge } from "../../../../components/admin/AdminBadge";
 import { getAdminUsers, updateAdminUserStatus } from "../adminUserApi";
@@ -25,7 +25,7 @@ export default function CustomersPageContent() {
       setError("");
     } catch (requestError) {
       console.error("Failed to load users:", requestError);
-      setError("Kh√¥ng th·ªÉ t·∫£i danh s√°ch kh√°ch h√†ng");
+      setError("KhÙng th? t?i danh s·ch kh·ch h‡ng");
     } finally {
       setLoading(false);
     }
@@ -80,8 +80,8 @@ export default function CustomersPageContent() {
 
   const statusFilters: Array<{ label: string; value: StatusFilter; color: string }> = [
     { label: "All", value: "ALL", color: "" },
-    { label: "Active", value: "ACTIVE", color: "text-emerald-600" },
-    { label: "Inactive", value: "INACTIVE", color: "text-red-500" },
+    { label: "Active", value: "ACTIVE", color: "text-success" },
+    { label: "Inactive", value: "INACTIVE", color: "text-danger" },
   ];
 
   return (
@@ -89,16 +89,16 @@ export default function CustomersPageContent() {
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h2 className="text-[22px] font-bold text-slate-900">Customers</h2>
-          <p className="mt-1 text-[13px] text-slate-500">
-            Qu·∫£n l√Ω t√†i kho·∫£n kh√°ch h√†ng ‚Äì Ban/Unban tr·ª±c ti·∫øp.
+          <h2 className="text-2xl font-bold text-text">Customers</h2>
+          <p className="mt-1 text-sm text-muted">
+            Qu?n l˝ t‡i kho?n kh·ch h‡ng ñ Ban/Unban tr?c ti?p.
           </p>
         </div>
         <button
           type="button"
           onClick={loadUsers}
           disabled={loading}
-          className="flex items-center gap-2 rounded-2xl border border-slate-100 bg-white px-4 py-2.5 text-[13px] font-bold text-slate-700 shadow-sm transition-colors hover:bg-slate-50 disabled:opacity-50"
+          className="flex items-center gap-2 rounded-2xl border border-border bg-surface px-4 py-2.5 text-sm font-bold text-text shadow-sm transition-colors hover:bg-surface disabled:opacity-50"
         >
           <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
           Refresh
@@ -107,45 +107,45 @@ export default function CustomersPageContent() {
 
       {/* Stat cards */}
       <div className="grid gap-4 md:grid-cols-3">
-        <div className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm transition-shadow hover:shadow-md">
-          <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Total Users</p>
-          <p className="mt-3 text-3xl font-extrabold text-slate-900">{users.length}</p>
-          <p className="mt-1 text-[12px] text-slate-500">Registered accounts</p>
+        <div className="rounded-2xl border border-border bg-surface p-5 shadow-sm transition-shadow hover:shadow-md">
+          <p className="text-xs font-semibold text-muted">Total Users</p>
+          <p className="mt-3 text-3xl font-extrabold text-text">{users.length}</p>
+          <p className="mt-1 text-xs text-muted">Registered accounts</p>
         </div>
-        <div className="rounded-xl border border-emerald-100 bg-emerald-50 p-5 shadow-sm transition-shadow hover:shadow-md">
-          <p className="text-[11px] font-bold uppercase tracking-wider text-emerald-600">Active</p>
-          <p className="mt-3 text-3xl font-extrabold text-emerald-700">{activeCount}</p>
-          <p className="mt-1 text-[12px] text-emerald-600">Can login & purchase</p>
+        <div className="rounded-xl border border-success-soft bg-success-soft p-5 shadow-sm transition-shadow hover:shadow-md">
+          <p className="text-xs font-bold uppercase tracking-wider text-success">Active</p>
+          <p className="mt-3 text-3xl font-extrabold text-success">{activeCount}</p>
+          <p className="mt-1 text-xs text-success">Can login & purchase</p>
         </div>
-        <div className="rounded-xl border border-red-100 bg-red-50 p-5 shadow-sm transition-shadow hover:shadow-md">
-          <p className="text-[11px] font-bold uppercase tracking-wider text-red-500">Banned</p>
-          <p className="mt-3 text-3xl font-extrabold text-red-600">{users.length - activeCount}</p>
-          <p className="mt-1 text-[12px] text-red-500">Access restricted</p>
+        <div className="rounded-xl border border-danger-soft bg-danger-soft p-5 shadow-sm transition-shadow hover:shadow-md">
+          <p className="text-xs font-bold uppercase tracking-wider text-danger">Banned</p>
+          <p className="mt-3 text-3xl font-extrabold text-danger">{users.length - activeCount}</p>
+          <p className="mt-1 text-xs text-danger">Access restricted</p>
         </div>
       </div>
 
       {/* Table card */}
-      <div className="rounded-2xl border border-slate-100 bg-white shadow-sm">
+      <div className="rounded-2xl border border-border bg-surface shadow-sm">
         {/* Toolbar */}
-        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 p-5">
-          <div className="flex items-center gap-2 text-[13px] font-bold text-slate-700">
-            <Users className="h-4 w-4 text-emerald-600" />
+        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border p-5">
+          <div className="flex items-center gap-2 text-sm font-bold text-text">
+            <Users className="h-4 w-4 text-success" />
             User directory
-            <span className="ml-1 rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-bold text-slate-500">
+            <span className="ml-1 rounded-full bg-surface-alt px-2 py-0.5 text-xs font-bold text-muted">
               {filteredUsers.length}
             </span>
           </div>
           <div className="flex flex-wrap items-center gap-3">
             {/* Status filter */}
-            <div className="flex rounded-lg border border-slate-200 bg-slate-50 p-1">
+            <div className="flex rounded-lg border border-border-strong bg-surface p-1">
               {statusFilters.map((opt) => (
                 <button
                   key={opt.value}
                   type="button"
                   onClick={() => handleFilterChange(opt.value)}
                   className={`rounded-md px-3 py-1.5 text-xs font-bold transition-colors ${statusFilter === opt.value
-                      ? "bg-white shadow-sm text-emerald-700"
-                      : `text-slate-500 hover:text-slate-800 ${opt.color}`
+                      ? "bg-surface shadow-sm text-success"
+                      : `text-muted hover:text-text ${opt.color}`
                     }`}
                 >
                   {opt.label}
@@ -155,26 +155,26 @@ export default function CustomersPageContent() {
 
             {/* Search */}
             <div className="relative w-full sm:w-72">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
               <input
                 value={searchTerm}
                 onChange={(e) => handleSearchChange(e.target.value)}
                 placeholder="Search name, email, phone"
-                className="w-full rounded-lg border border-slate-200 bg-slate-50 py-2.5 pl-9 pr-3 text-[13px] outline-none transition focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
+                className="w-full rounded-lg border border-border-strong bg-surface py-2.5 pl-9 pr-3 text-sm outline-none transition focus:border-success focus:ring-1 focus:ring-success"
               />
             </div>
           </div>
         </div>
 
         {error && (
-          <div className="border-b border-red-100 bg-red-50 px-5 py-3 text-[13px] font-medium text-red-600">
+          <div className="border-b border-danger-soft bg-danger-soft px-5 py-3 text-sm font-medium text-danger">
             {error}
           </div>
         )}
 
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-[13px]">
-            <thead className="sticky top-0 z-10 bg-slate-50 text-[11px] font-bold uppercase tracking-wider text-slate-500">
+          <table className="w-full text-left text-sm">
+            <thead className="sticky top-0 z-10 bg-surface text-xs font-semibold text-muted">
               <tr>
                 <th className="px-5 py-3">Name</th>
                 <th className="px-5 py-3">Email</th>
@@ -184,10 +184,10 @@ export default function CustomersPageContent() {
                 <th className="px-5 py-3 text-right">Action</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-border">
               {loading ? (
                 <tr>
-                  <td colSpan={6} className="px-5 py-10 text-center text-slate-400">
+                  <td colSpan={6} className="px-5 py-10 text-center text-muted">
                     <RefreshCw className="mx-auto h-5 w-5 animate-spin mb-2" />
                     Loading users...
                   </td>
@@ -195,10 +195,10 @@ export default function CustomersPageContent() {
               ) : pagedUsers.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="px-5 py-14 text-center">
-                    <Users className="mx-auto mb-3 h-10 w-10 text-gray-200" />
-                    <p className="text-[13px] font-semibold text-slate-400">No users found</p>
+                    <Users className="mx-auto mb-3 h-10 w-10 text-subtle" />
+                    <p className="text-sm font-semibold text-muted">No users found</p>
                     {searchTerm && (
-                      <p className="mt-1 text-[12px] text-slate-400">Try a different search term</p>
+                      <p className="mt-1 text-xs text-muted">Try a different search term</p>
                     )}
                   </td>
                 </tr>
@@ -209,31 +209,31 @@ export default function CustomersPageContent() {
                   return (
                     <tr
                       key={user.id}
-                      className="transition-colors hover:bg-slate-50"
+                      className="transition-colors hover:bg-surface"
                     >
                       <td className="px-5 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-100 text-[12px] font-bold text-emerald-700 shrink-0">
+                          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-success-soft text-xs font-bold text-success shrink-0">
                             {((user.fullName || user.email || "?")[0] || "?").toUpperCase()}
                           </div>
-                          <span className="font-semibold text-slate-900">{user.fullName}</span>
+                          <span className="font-semibold text-text">{user.fullName}</span>
                         </div>
                       </td>
-                      <td className="px-5 py-4 text-slate-500">{user.email}</td>
-                      <td className="px-5 py-4 text-slate-500">{user.phoneNumber || "‚Äî"}</td>
+                      <td className="px-5 py-4 text-muted">{user.email}</td>
+                      <td className="px-5 py-4 text-muted">{user.phoneNumber || "ó"}</td>
                       <td className="px-5 py-4">
                         <div className="flex flex-wrap gap-1">
                           {user.roles?.length ? (
                             user.roles.map((role) => (
                               <span
                                 key={role.name}
-                                className="rounded-md bg-indigo-50 px-2 py-0.5 text-[11px] font-bold text-indigo-700"
+                                className="rounded-md bg-indigo-50 px-2 py-0.5 text-xs font-bold text-indigo-700"
                               >
                                 {role.name}
                               </span>
                             ))
                           ) : (
-                            <span className="rounded-md bg-slate-100 px-2 py-0.5 text-[11px] font-bold text-slate-500">
+                            <span className="rounded-md bg-surface-alt px-2 py-0.5 text-xs font-bold text-muted">
                               USER
                             </span>
                           )}
@@ -253,9 +253,9 @@ export default function CustomersPageContent() {
                           onClick={() => toggleUserStatus(user)}
                           disabled={isBusy}
                           title={isActive ? "Ban user" : "Unban user"}
-                          className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-[12px] font-bold transition-all disabled:opacity-50 ${isActive
-                              ? "border-red-200 bg-red-50 text-red-600 hover:bg-red-100"
-                              : "border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
+                          className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-bold transition-all disabled:opacity-50 ${isActive
+                              ? "border-danger-soft bg-danger-soft text-danger hover:bg-danger-soft"
+                              : "border-success-soft bg-success-soft text-success hover:bg-success-soft"
                             }`}
                         >
                           {isBusy ? (
@@ -278,9 +278,9 @@ export default function CustomersPageContent() {
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="flex items-center justify-between border-t border-slate-100 px-5 py-3">
-            <p className="text-[12px] text-slate-500">
-              Showing {(currentPage - 1) * PAGE_SIZE + 1}‚Äì
+          <div className="flex items-center justify-between border-t border-border px-5 py-3">
+            <p className="text-xs text-muted">
+              Showing {(currentPage - 1) * PAGE_SIZE + 1}ñ
               {Math.min(currentPage * PAGE_SIZE, filteredUsers.length)} of {filteredUsers.length}
             </p>
             <div className="flex items-center gap-1">
@@ -288,7 +288,7 @@ export default function CustomersPageContent() {
                 type="button"
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={currentPage === 1}
-                className="rounded-md border border-slate-200 p-1.5 text-slate-500 transition-colors hover:bg-slate-50 disabled:opacity-40"
+                className="rounded-md border border-border-strong p-1.5 text-muted transition-colors hover:bg-surface disabled:opacity-40"
               >
                 <ChevronLeft className="h-4 w-4" />
               </button>
@@ -297,14 +297,14 @@ export default function CustomersPageContent() {
                 .map((p, idx, arr) => (
                   <span key={p}>
                     {idx > 0 && arr[idx - 1] !== p - 1 && (
-                      <span className="px-1 text-slate-400">‚Ä¶</span>
+                      <span className="px-1 text-muted">Ö</span>
                     )}
                     <button
                       type="button"
                       onClick={() => setPage(p)}
-                      className={`min-w-[32px] rounded-md border px-2 py-1 text-[12px] font-bold transition-colors ${p === currentPage
-                          ? "border-emerald-500 bg-emerald-500 text-white"
-                          : "border-slate-200 text-slate-600 hover:bg-slate-50"
+                      className={`min-w-[32px] rounded-md border px-2 py-1 text-xs font-bold transition-colors ${p === currentPage
+                          ? "border-success bg-success text-white"
+                          : "border-border-strong text-muted hover:bg-surface"
                         }`}
                     >
                       {p}
@@ -315,7 +315,7 @@ export default function CustomersPageContent() {
                 type="button"
                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 disabled={currentPage === totalPages}
-                className="rounded-md border border-slate-200 p-1.5 text-slate-500 transition-colors hover:bg-slate-50 disabled:opacity-40"
+                className="rounded-md border border-border-strong p-1.5 text-muted transition-colors hover:bg-surface disabled:opacity-40"
               >
                 <ChevronRight className="h-4 w-4" />
               </button>

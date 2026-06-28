@@ -23,19 +23,19 @@ export default function AccountPageLayout({
   headerRight,
 }: AccountPageLayoutProps) {
   return (
-    <div className="bg-[#f5f7fb] min-h-screen py-8">
+    <div className="bg-canvas min-h-screen py-8">
       <div className="w-full max-w-[1200px] mx-auto px-4">
         {/* Breadcrumb */}
-        <nav className="flex items-center gap-2 text-sm text-gray-500 mb-8">
-          <Link to="/" className="hover:text-blue-600 transition-colors">
+        <nav className="flex items-center gap-2 text-sm text-muted mb-8">
+          <Link to="/" className="hover:text-primary transition-colors">
             Trang chủ
           </Link>
-          <ChevronRight className="w-4 h-4 text-gray-400" />
-          <Link to="/account" className="hover:text-blue-600 transition-colors">
+          <ChevronRight className="w-4 h-4 text-muted" />
+          <Link to="/account" className="hover:text-primary transition-colors">
             Tài khoản
           </Link>
-          <ChevronRight className="w-4 h-4 text-gray-400" />
-          <span className="text-gray-900 font-medium">{breadcrumbCurrent}</span>
+          <ChevronRight className="w-4 h-4 text-muted" />
+          <span className="text-text font-medium">{breadcrumbCurrent}</span>
         </nav>
 
         {/* Layout */}
@@ -47,12 +47,12 @@ export default function AccountPageLayout({
               {children}
             </div>
           ) : (
-            <div className="flex-1 w-full bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-              <div className="p-6 lg:p-8 border-b border-gray-100 flex flex-wrap items-center justify-between gap-4">
+            <div className="flex-1 w-full bg-surface rounded-2xl shadow-sm border border-border overflow-hidden">
+              <div className="p-6 lg:p-8 border-b border-border flex flex-wrap items-center justify-between gap-4">
                 <div>
-                  <h1 className="text-2xl font-bold text-gray-900">{title}</h1>
+                  <h1 className="text-wrap-balance text-2xl font-bold text-text">{title}</h1>
                   {description && (
-                    <p className="text-gray-500 text-sm mt-2">{description}</p>
+                    <p className="text-muted text-sm mt-2">{description}</p>
                   )}
                 </div>
                 {headerRight && (

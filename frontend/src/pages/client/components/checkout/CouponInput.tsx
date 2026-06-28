@@ -34,21 +34,21 @@ export default function CouponInput({ currentCoupon, onApply, onRemove, error }:
   };
 
   return (
-    <div className="bg-white rounded-xl p-6 border border-gray-100 shadow-sm mb-6">
-      <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2 mb-4">
-        <Ticket className="w-5 h-5 text-blue-600" /> Khuyến mãi
+    <div className="bg-surface rounded-xl p-6 border border-border shadow-sm mb-6">
+      <h2 className="text-lg font-bold text-text flex items-center gap-2 mb-4">
+        <Ticket className="w-5 h-5 text-primary" /> Khuyến mãi
       </h2>
 
       {currentCoupon ? (
-        <div className="flex items-center justify-between bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <div className="flex items-center gap-3 text-blue-800 font-medium">
-            <CheckCircle2 className="w-5 h-5 text-green-500" />
+        <div className="flex items-center justify-between bg-primary-soft border border-primary-soft rounded-lg p-4">
+          <div className="flex items-center gap-3 text-primary font-medium">
+            <CheckCircle2 className="w-5 h-5 text-success" />
             Đã áp dụng mã: <span className="font-bold uppercase">{currentCoupon}</span>
           </div>
           <button
             onClick={handleRemove}
             disabled={loading}
-            className="text-gray-500 hover:text-red-500 font-medium text-sm transition-colors disabled:opacity-50"
+            className="text-muted hover:text-danger font-medium text-sm transition-colors disabled:opacity-50"
           >
             Bỏ chọn
           </button>
@@ -60,20 +60,20 @@ export default function CouponInput({ currentCoupon, onApply, onRemove, error }:
             value={code}
             onChange={e => setCode(e.target.value)}
             placeholder="Nhập mã giảm giá..."
-            className="flex-1 border border-gray-300 rounded-lg px-4 py-2 text-sm focus:border-blue-600 focus:ring-1 focus:ring-blue-600 outline-none uppercase placeholder:normal-case"
+            className="flex-1 border border-border-strong rounded-lg px-4 py-2 text-sm focus:border-primary focus:ring-1 focus:ring-blue-600 outline-none uppercase placeholder:normal-case"
             disabled={loading}
           />
           <button
             type="submit"
             disabled={!code.trim() || loading}
-            className="bg-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50 transition-colors"
+            className="bg-primary text-white px-6 py-2 rounded-lg font-medium hover:bg-primary-hover disabled:opacity-50 transition-colors"
           >
             Áp dụng
           </button>
         </form>
       )}
 
-      {error && <p className="text-red-500 text-sm mt-2 flex items-center gap-1"><AlertCircle className="w-4 h-4" /> {error}</p>}
+      {error && <p className="text-danger text-sm mt-2 flex items-center gap-1"><AlertCircle className="w-4 h-4" /> {error}</p>}
     </div>
   );
 }

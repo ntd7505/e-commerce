@@ -24,7 +24,7 @@ export default function ProductGallery({ media, productName }: ProductGalleryPro
 
   return (
     <div className="lg:w-[400px] xl:w-[450px] flex flex-col gap-3 shrink-0">
-      <div className="w-full aspect-square rounded-2xl bg-gray-50 border border-gray-100 overflow-hidden flex items-center justify-center p-4">
+      <div className="w-full aspect-square rounded-2xl bg-surface border border-border overflow-hidden flex items-center justify-center p-4">
         {currentImage ? (
           <img 
             src={currentImage} 
@@ -32,7 +32,7 @@ export default function ProductGallery({ media, productName }: ProductGalleryPro
             className="w-full h-full object-contain mix-blend-multiply" 
           />
         ) : (
-          <div className="text-gray-400 text-sm font-medium">Chưa có ảnh</div>
+          <div className="text-muted text-sm font-medium">Chưa có ảnh</div>
         )}
       </div>
       
@@ -47,14 +47,14 @@ export default function ProductGallery({ media, productName }: ProductGalleryPro
                 <button
                   key={item.id}
                   onClick={() => setActiveImage(item.url)}
-                  className="relative aspect-square rounded-lg border border-gray-100 overflow-hidden bg-white hover:border-blue-600 transition-all group"
+                  className="relative aspect-square rounded-lg border border-border overflow-hidden bg-surface hover:border-primary transition-all group"
                 >
                   <img 
                     src={item.url} 
                     alt={item.altText || productName} 
                     className="w-full h-full object-cover" 
                   />
-                  <div className="absolute inset-0 bg-gray-900/50 flex items-center justify-center text-xs font-medium text-white">
+                  <div className="absolute inset-0 bg-black/50 flex items-center justify-center text-xs font-medium text-white">
                     +{remaining}
                   </div>
                 </button>
@@ -65,10 +65,10 @@ export default function ProductGallery({ media, productName }: ProductGalleryPro
               <button
                 key={item.id}
                 onClick={() => setActiveImage(item.url)}
-                className={`aspect-square rounded-lg overflow-hidden bg-white transition-all ${
+                className={`aspect-square rounded-lg overflow-hidden bg-surface transition-all ${
                   currentImage === item.url 
-                    ? 'border-2 border-blue-600' 
-                    : 'border border-gray-100 hover:border-blue-600'
+                    ? 'border-2 border-primary' 
+                    : 'border border-border hover:border-primary'
                 }`}
               >
                 <img 
@@ -83,22 +83,22 @@ export default function ProductGallery({ media, productName }: ProductGalleryPro
       )}
 
       {/* Trust Badges */}
-      <div className="grid grid-cols-2 gap-3 mt-4 pt-4 border-t border-gray-100">
+      <div className="grid grid-cols-2 gap-3 mt-4 pt-4 border-t border-border">
         <div className="flex items-center gap-2">
-          <ShieldCheck className="w-4 h-4 text-blue-600 shrink-0" />
-          <span className="text-xs text-gray-700 font-medium">Chính hãng 100%</span>
+          <ShieldCheck className="w-4 h-4 text-primary shrink-0" />
+          <span className="text-xs text-text font-medium">Chính hãng 100%</span>
         </div>
         <div className="flex items-center gap-2">
-          <RotateCcw className="w-4 h-4 text-blue-600 shrink-0" />
-          <span className="text-xs text-gray-700 font-medium">Đổi trả 30 ngày</span>
+          <RotateCcw className="w-4 h-4 text-primary shrink-0" />
+          <span className="text-xs text-text font-medium">Đổi trả 30 ngày</span>
         </div>
         <div className="flex items-center gap-2">
-          <PenTool className="w-4 h-4 text-blue-600 shrink-0" />
-          <span className="text-xs text-gray-700 font-medium">Bảo hành chính hãng</span>
+          <PenTool className="w-4 h-4 text-primary shrink-0" />
+          <span className="text-xs text-text font-medium">Bảo hành chính hãng</span>
         </div>
         <div className="flex items-center gap-2">
-          <Zap className="w-4 h-4 text-blue-600 shrink-0" />
-          <span className="text-xs text-gray-700 font-medium">Giao nhanh 2h</span>
+          <Zap className="w-4 h-4 text-primary shrink-0" />
+          <span className="text-xs text-text font-medium">Giao nhanh 2h</span>
         </div>
       </div>
     </div>

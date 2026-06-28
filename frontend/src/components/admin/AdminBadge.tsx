@@ -12,20 +12,20 @@ type AdminBadgeProps = {
 };
 
 const variantClass: Record<BadgeVariant, string> = {
-    success: "bg-emerald-50 text-emerald-700",
-    warning: "bg-amber-50 text-amber-700",
-    danger: "bg-red-50 text-red-600",
-    neutral: "bg-slate-100 text-slate-600",
-    info: "bg-blue-50 text-blue-700",
+    success: "bg-success-soft text-success",
+    warning: "bg-warning-soft text-warning",
+    danger: "bg-danger-soft text-danger",
+    neutral: "bg-surface-alt text-muted",
+    info: "bg-primary-soft text-primary",
     purple: "bg-purple-50 text-purple-700",
 };
 
 const dotClass: Record<BadgeVariant, string> = {
-    success: "bg-emerald-500",
-    warning: "bg-amber-500",
-    danger: "bg-red-400",
-    neutral: "bg-slate-400",
-    info: "bg-blue-500",
+    success: "bg-success",
+    warning: "bg-warning-soft0",
+    danger: "bg-danger",
+    neutral: "bg-border-strong",
+    info: "bg-primary-soft0",
     purple: "bg-purple-500",
 };
 

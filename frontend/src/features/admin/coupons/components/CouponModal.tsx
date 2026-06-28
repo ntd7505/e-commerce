@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import type { CouponRequest, CouponResponse, DiscountType } from "../adminCouponTypes";
 
 type CouponModalProps = {
@@ -134,9 +134,9 @@ export function CouponModal({
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
             <form
                 onSubmit={handleSubmit}
-                className="w-full max-w-xl rounded-lg bg-white p-6 shadow-xl"
+                className="w-full max-w-xl rounded-lg bg-surface p-6 shadow-xl"
             >
-                <h3 className="text-lg font-bold text-slate-900">
+                <h3 className="text-lg font-bold text-text">
                     {editingCoupon ? "Edit Coupon" : "Add Coupon"}
                 </h3>
 
@@ -146,10 +146,11 @@ export function CouponModal({
                             value={formValues.code}
                             onChange={(event) => updateField("code", event.target.value)}
                             placeholder="Code"
-                            className="w-full rounded-lg border border-slate-200 px-4 py-2 text-sm"
+                            aria-label="Coupon code"
+                            className="w-full rounded-lg border border-border-strong px-4 py-2 text-sm"
                         />
                         {formErrors.code && (
-                            <p className="mt-1 text-xs font-medium text-red-600">{formErrors.code}</p>
+                            <p className="mt-1 text-xs font-medium text-danger">{formErrors.code}</p>
                         )}
                     </div>
 
@@ -158,10 +159,11 @@ export function CouponModal({
                             value={formValues.name}
                             onChange={(event) => updateField("name", event.target.value)}
                             placeholder="Name"
-                            className="w-full rounded-lg border border-slate-200 px-4 py-2 text-sm"
+                            aria-label="Coupon name"
+                            className="w-full rounded-lg border border-border-strong px-4 py-2 text-sm"
                         />
                         {formErrors.name && (
-                            <p className="mt-1 text-xs font-medium text-red-600">{formErrors.name}</p>
+                            <p className="mt-1 text-xs font-medium text-danger">{formErrors.name}</p>
                         )}
                     </div>
 
@@ -170,7 +172,8 @@ export function CouponModal({
                         onChange={(event) =>
                             updateField("discountType", event.target.value as DiscountType)
                         }
-                        className="rounded-lg border border-slate-200 px-4 py-2 text-sm"
+                        aria-label="Discount type"
+                        className="rounded-lg border border-border-strong px-4 py-2 text-sm"
                     >
                         <option value="PERCENT">Percent</option>
                         <option value="FIXED_AMOUNT">Fixed amount</option>
@@ -184,10 +187,11 @@ export function CouponModal({
                                 updateField("discountValue", Number(event.target.value))
                             }
                             placeholder="Discount value"
-                            className="w-full rounded-lg border border-slate-200 px-4 py-2 text-sm"
+                            aria-label="Discount value"
+                            className="w-full rounded-lg border border-border-strong px-4 py-2 text-sm"
                         />
                         {formErrors.discountValue && (
-                            <p className="mt-1 text-xs font-medium text-red-600">
+                            <p className="mt-1 text-xs font-medium text-danger">
                                 {formErrors.discountValue}
                             </p>
                         )}
@@ -205,10 +209,11 @@ export function CouponModal({
                                     )
                                 }
                                 placeholder="Min order amount"
-                                className="w-full rounded-lg border border-slate-200 px-4 py-2 text-sm"
+                                aria-label="Minimum order amount"
+                                className="w-full rounded-lg border border-border-strong px-4 py-2 text-sm"
                             />
                             {formErrors.minOrderAmount && (
-                                <p className="mt-1 text-xs font-medium text-red-600">
+                                <p className="mt-1 text-xs font-medium text-danger">
                                     {formErrors.minOrderAmount}
                                 </p>
                             )}
@@ -225,10 +230,11 @@ export function CouponModal({
                                     )
                                 }
                                 placeholder="Max discount amount"
-                                className="w-full rounded-lg border border-slate-200 px-4 py-2 text-sm"
+                                aria-label="Maximum discount amount"
+                                className="w-full rounded-lg border border-border-strong px-4 py-2 text-sm"
                             />
                             {formErrors.maxDiscountAmount && (
-                                <p className="mt-1 text-xs font-medium text-red-600">
+                                <p className="mt-1 text-xs font-medium text-danger">
                                     {formErrors.maxDiscountAmount}
                                 </p>
                             )}
@@ -247,10 +253,11 @@ export function CouponModal({
                                     )
                                 }
                                 placeholder="Usage limit"
-                                className="w-full rounded-lg border border-slate-200 px-4 py-2 text-sm"
+                                aria-label="Usage limit"
+                                className="w-full rounded-lg border border-border-strong px-4 py-2 text-sm"
                             />
                             {formErrors.usageLimit && (
-                                <p className="mt-1 text-xs font-medium text-red-600">
+                                <p className="mt-1 text-xs font-medium text-danger">
                                     {formErrors.usageLimit}
                                 </p>
                             )}
@@ -267,10 +274,11 @@ export function CouponModal({
                                     )
                                 }
                                 placeholder="Per user limit"
-                                className="w-full rounded-lg border border-slate-200 px-4 py-2 text-sm"
+                                aria-label="Per user limit"
+                                className="w-full rounded-lg border border-border-strong px-4 py-2 text-sm"
                             />
                             {formErrors.perUserLimit && (
-                                <p className="mt-1 text-xs font-medium text-red-600">
+                                <p className="mt-1 text-xs font-medium text-danger">
                                     {formErrors.perUserLimit}
                                 </p>
                             )}
@@ -284,7 +292,8 @@ export function CouponModal({
                             onChange={(event) =>
                                 updateField("startAt", event.target.value || undefined)
                             }
-                            className="rounded-lg border border-slate-200 px-4 py-2 text-sm"
+                            aria-label="Start date"
+                            className="rounded-lg border border-border-strong px-4 py-2 text-sm"
                         />
 
                         <div>
@@ -294,10 +303,11 @@ export function CouponModal({
                                 onChange={(event) =>
                                     updateField("endAt", event.target.value || undefined)
                                 }
-                                className="w-full rounded-lg border border-slate-200 px-4 py-2 text-sm"
+                                aria-label="End date"
+                                className="w-full rounded-lg border border-border-strong px-4 py-2 text-sm"
                             />
                             {formErrors.endAt && (
-                                <p className="mt-1 text-xs font-medium text-red-600">
+                                <p className="mt-1 text-xs font-medium text-danger">
                                     {formErrors.endAt}
                                 </p>
                             )}
@@ -308,7 +318,8 @@ export function CouponModal({
                         value={formValues.description ?? ""}
                         onChange={(event) => updateField("description", event.target.value)}
                         placeholder="Description"
-                        className="rounded-lg border border-slate-200 px-4 py-2 text-sm"
+                        aria-label="Description"
+                        className="rounded-lg border border-border-strong px-4 py-2 text-sm"
                     />
                 </div>
 
@@ -320,7 +331,7 @@ export function CouponModal({
                     <button
                         type="submit"
                         disabled={saving}
-                        className="rounded-lg bg-emerald-500 px-4 py-2 font-semibold text-white disabled:opacity-60"
+                        className="rounded-lg bg-success px-4 py-2 font-semibold text-white disabled:opacity-60"
                     >
                         {saving ? "Saving..." : "Save"}
                     </button>

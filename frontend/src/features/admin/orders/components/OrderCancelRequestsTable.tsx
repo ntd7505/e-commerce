@@ -1,4 +1,4 @@
-﻿import { CheckCircle2, Search, XCircle } from "lucide-react";
+import { CheckCircle2, Search, XCircle } from "lucide-react";
 import { useState } from "react";
 import { AdminBadge } from "../../../../components/admin/AdminBadge";
 import { badgeVariantForStatus } from "../../../../utils/badgeUtils";
@@ -69,17 +69,17 @@ export function OrderCancelRequestsTable({
     }
 
     return (
-        <div className="overflow-hidden rounded-2xl border border-slate-100 bg-white">
-            <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 p-5">
+        <div className="overflow-hidden rounded-2xl border border-border bg-surface">
+            <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border p-5">
                 <div>
-                    <h3 className="font-bold text-slate-900">Cancel Requests</h3>
-                    <p className="mt-1 text-xs font-medium text-slate-500">
+                    <h3 className="font-bold text-text">Cancel Requests</h3>
+                    <p className="mt-1 text-xs font-medium text-muted">
                         Showing {filteredRequests.length} of {requests.length} requests
                     </p>
                 </div>
 
                 <div className="flex flex-wrap items-center gap-3">
-                    <div className="flex rounded-lg border border-slate-200 bg-slate-50 p-1">
+                    <div className="flex rounded-lg border border-border-strong bg-surface p-1">
                         {statusFilters.map((option) => (
                             <button
                                 key={option.value}
@@ -87,8 +87,8 @@ export function OrderCancelRequestsTable({
                                 onClick={() => setStatusFilter(option.value)}
                                 className={`rounded-md px-3 py-1.5 text-xs font-bold transition-colors ${
                                     statusFilter === option.value
-                                        ? "bg-white text-emerald-700 shadow-sm"
-                                        : "text-slate-500 hover:text-slate-800"
+                                        ? "bg-surface text-success shadow-sm"
+                                        : "text-muted hover:text-text"
                                 }`}
                             >
                                 {option.label}
@@ -97,12 +97,12 @@ export function OrderCancelRequestsTable({
                     </div>
 
                     <div className="relative w-72">
-                        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
                         <input
                             value={searchTerm}
                             onChange={(event) => setSearchTerm(event.target.value)}
                             placeholder="Search request, order, reason"
-                            className="w-full rounded-lg border border-slate-200 bg-slate-50 py-2 pl-9 pr-3 text-sm outline-none focus:border-emerald-500"
+                            className="w-full rounded-lg border border-border-strong bg-surface py-2 pl-9 pr-3 text-sm outline-none focus:border-success"
                         />
                     </div>
 
@@ -110,7 +110,7 @@ export function OrderCancelRequestsTable({
                         <button
                             type="button"
                             onClick={clearFilters}
-                            className="rounded-2xl border border-slate-100 bg-white px-3 py-2 text-xs font-bold text-slate-600 transition-colors hover:bg-slate-50"
+                            className="rounded-2xl border border-border bg-surface px-3 py-2 text-xs font-bold text-muted transition-colors hover:bg-surface"
                         >
                             Clear
                         </button>
@@ -118,16 +118,16 @@ export function OrderCancelRequestsTable({
                 </div>
             </div>
 
-            {loading && <div className="p-6 text-sm text-slate-500">Loading cancel requests...</div>}
-            {!loading && error && <div className="p-6 text-sm font-semibold text-red-600">{error}</div>}
+            {loading && <div className="p-6 text-sm text-muted">Loading cancel requests...</div>}
+            {!loading && error && <div className="p-6 text-sm font-semibold text-danger">{error}</div>}
             {!loading && !error && filteredRequests.length === 0 && (
-                <div className="p-6 text-sm text-slate-500">No cancel requests found.</div>
+                <div className="p-6 text-sm text-muted">No cancel requests found.</div>
             )}
 
             {!loading && !error && filteredRequests.length > 0 && (
                 <div className="overflow-x-auto">
                     <table className="w-full min-w-[960px] text-left text-sm">
-                        <thead className="bg-slate-50 text-xs uppercase text-slate-500">
+                        <thead className="bg-surface text-xs uppercase text-muted">
                             <tr>
                                 <th className="px-5 py-3">Request</th>
                                 <th className="px-5 py-3">Order</th>
@@ -138,29 +138,29 @@ export function OrderCancelRequestsTable({
                                 <th className="px-5 py-3 text-right">Actions</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-slate-100">
+                        <tbody className="divide-y divide-border">
                             {filteredRequests.map((request) => {
                                 const busy = actionRequestId === request.id;
                                 const pending = request.status === "PENDING";
 
                                 return (
                                     <tr key={request.id}>
-                                        <td className="px-5 py-4 font-bold text-slate-900">#{request.id}</td>
-                                        <td className="px-5 py-4 font-semibold text-slate-800">#{request.orderId}</td>
-                                        <td className="px-5 py-4 text-slate-700">
+                                        <td className="px-5 py-4 font-bold text-text">#{request.id}</td>
+                                        <td className="px-5 py-4 font-semibold text-text">#{request.orderId}</td>
+                                        <td className="px-5 py-4 text-text">
                                             <p className="max-w-md truncate">{request.reason}</p>
-                                            <p className="mt-1 text-xs text-slate-500">Requested by user #{request.requestedBy}</p>
+                                            <p className="mt-1 text-xs text-muted">Requested by user #{request.requestedBy}</p>
                                         </td>
                                         <td className="px-5 py-4">
                                             <AdminBadge variant={badgeVariantForStatus(request.status)}>
                                                 {request.status}
                                             </AdminBadge>
                                         </td>
-                                        <td className="px-5 py-4 text-slate-600">{formatDate(request.requestedAt)}</td>
-                                        <td className="px-5 py-4 text-slate-600">
+                                        <td className="px-5 py-4 text-muted">{formatDate(request.requestedAt)}</td>
+                                        <td className="px-5 py-4 text-muted">
                                             {formatDate(request.reviewedAt)}
                                             {request.reviewedBy && (
-                                                <p className="mt-1 text-xs text-slate-500">By admin #{request.reviewedBy}</p>
+                                                <p className="mt-1 text-xs text-muted">By admin #{request.reviewedBy}</p>
                                             )}
                                         </td>
                                         <td className="px-5 py-4">
@@ -169,7 +169,7 @@ export function OrderCancelRequestsTable({
                                                     type="button"
                                                     onClick={() => onAction(request.id, "APPROVE")}
                                                     disabled={!pending || busy}
-                                                    className="rounded-md p-2 text-emerald-600 transition-colors hover:bg-emerald-50 disabled:cursor-not-allowed disabled:opacity-40"
+                                                    className="rounded-md p-2 text-success transition-colors hover:bg-success-soft disabled:cursor-not-allowed disabled:opacity-40"
                                                     aria-label="Approve cancel request"
                                                 >
                                                     <CheckCircle2 className="h-4 w-4" />
@@ -178,7 +178,7 @@ export function OrderCancelRequestsTable({
                                                     type="button"
                                                     onClick={() => onAction(request.id, "REJECT")}
                                                     disabled={!pending || busy}
-                                                    className="rounded-md p-2 text-red-500 transition-colors hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-40"
+                                                    className="rounded-md p-2 text-danger transition-colors hover:bg-danger-soft disabled:cursor-not-allowed disabled:opacity-40"
                                                     aria-label="Reject cancel request"
                                                 >
                                                     <XCircle className="h-4 w-4" />

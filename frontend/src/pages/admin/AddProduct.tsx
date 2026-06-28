@@ -21,7 +21,7 @@ export default function AddProduct() {
       />
 
       {editor.hasExampleMedia && (
-        <div className="flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-[13px] font-bold text-amber-800">
+        <div className="flex items-center gap-2 rounded-lg border border-warning-soft bg-warning-soft px-4 py-3 text-sm font-bold text-warning">
           <AlertTriangle className="h-5 w-5 flex-shrink-0" />
           Sản phẩm đang có ảnh mẫu (example.com). Upload ảnh thật qua Cloudinary để thay thế, sau đó nhấn Save cho từng ảnh.
         </div>

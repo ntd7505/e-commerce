@@ -10,7 +10,7 @@ export default function ProductDescription({ product }: ProductDescriptionProps)
 
   if (description && description.length > 50) {
     return (
-      <div className="prose max-w-none text-gray-600 leading-relaxed whitespace-pre-line">
+      <div className="prose max-w-none text-muted leading-relaxed whitespace-pre-line">
         {description}
       </div>
     );
@@ -18,9 +18,9 @@ export default function ProductDescription({ product }: ProductDescriptionProps)
 
   // Fallback content when description is too short or missing
   return (
-    <div className="flex flex-col gap-8 text-sm text-gray-600 leading-relaxed">
+    <div className="flex flex-col gap-8 text-sm text-muted leading-relaxed">
       <section>
-        <h3 className="text-lg font-bold text-gray-900 mb-3">Đặc điểm nổi bật</h3>
+        <h3 className="text-lg font-bold text-text mb-3">Đặc điểm nổi bật</h3>
         <ul className="list-disc pl-5 space-y-2">
           <li>Thiết kế hiện đại, tinh tế phù hợp với xu hướng mới nhất.</li>
           <li>Chất liệu cao cấp, đảm bảo độ bền và an toàn khi sử dụng.</li>
@@ -30,7 +30,7 @@ export default function ProductDescription({ product }: ProductDescriptionProps)
       </section>
 
       <section>
-        <h3 className="text-lg font-bold text-gray-900 mb-3">Thông tin sản phẩm</h3>
+        <h3 className="text-lg font-bold text-text mb-3">Thông tin sản phẩm</h3>
         <p className="mb-2">
           <strong>{name}</strong> là một trong những sản phẩm nổi bật {category?.name ? `thuộc danh mục ${category.name}` : 'của chúng tôi'}. 
           Với sự chăm chút tỉ mỉ từ khâu thiết kế đến sản xuất, sản phẩm cam kết mang lại trải nghiệm tuyệt vời nhất cho người dùng.
@@ -41,7 +41,7 @@ export default function ProductDescription({ product }: ProductDescriptionProps)
       </section>
 
       <section>
-        <h3 className="text-lg font-bold text-gray-900 mb-3">Bộ sản phẩm gồm</h3>
+        <h3 className="text-lg font-bold text-text mb-3">Bộ sản phẩm gồm</h3>
         <ul className="list-disc pl-5 space-y-2">
           <li>01 x {name} nguyên seal.</li>
           <li>01 x Sách hướng dẫn sử dụng.</li>
@@ -51,7 +51,7 @@ export default function ProductDescription({ product }: ProductDescriptionProps)
       </section>
 
       <section>
-        <h3 className="text-lg font-bold text-gray-900 mb-3">Chính sách bảo hành</h3>
+        <h3 className="text-lg font-bold text-text mb-3">Chính sách bảo hành</h3>
         <p>
           Bảo hành chính hãng uy tín. Đổi trả miễn phí trong vòng 30 ngày đầu tiên nếu có lỗi từ nhà sản xuất. 
           Vui lòng giữ lại bao bì và hóa đơn mua hàng để được hỗ trợ tốt nhất.

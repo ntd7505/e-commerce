@@ -5,7 +5,7 @@ type AdminSpinnerProps = {
 export function AdminSpinner({ className = "h-5 w-5" }: AdminSpinnerProps) {
     return (
         <svg
-            className={`animate-spin text-emerald-600 ${className}`}
+            className={`animate-spin text-success ${className}`}
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"

@@ -143,17 +143,17 @@ export default function ProductDetail() {
   return (
     <div className="flex-1 w-full max-w-[1200px] mx-auto px-4 py-4">
       {/* Breadcrumb */}
-      <nav className="flex items-center gap-2 text-sm text-gray-500 mb-6">
-        <Link to="/" className="hover:text-blue-600 transition-colors">Trang chủ</Link>
-        <ChevronRight className="w-4 h-4 text-gray-400" />
-        <Link to={`/products?categoryId=${product.category?.id}`} className="hover:text-blue-600 transition-colors">
+      <nav className="flex items-center gap-2 text-sm text-muted mb-6">
+        <Link to="/" className="hover:text-primary transition-colors">Trang chủ</Link>
+        <ChevronRight className="w-4 h-4 text-muted" />
+        <Link to={`/products?categoryId=${product.category?.id}`} className="hover:text-primary transition-colors">
           {product.category?.name}
         </Link>
-        <ChevronRight className="w-4 h-4 text-gray-400" />
-        <span className="text-gray-900 font-medium line-clamp-1">{product.name}</span>
+        <ChevronRight className="w-4 h-4 text-muted" />
+        <span className="text-text font-medium line-clamp-1">{product.name}</span>
       </nav>
 
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 flex flex-col lg:flex-row gap-6 mb-10">
+      <div className="bg-surface rounded-2xl border border-border shadow-sm p-6 flex flex-col lg:flex-row gap-6 mb-10">
         {/* Left: Gallery */}
         <ProductGallery media={product.media || []} productName={product.name} />
 

@@ -209,35 +209,35 @@ export default function Cart() {
     return (
       <div className="min-h-[60vh] flex flex-col items-center justify-center gap-4">
         <ErrorState message={error} />
-        <button onClick={() => refreshCart()} className="text-blue-600 hover:underline">Thử lại</button>
+        <button onClick={() => refreshCart()} className="text-primary hover:underline">Thử lại</button>
       </div>
     );
   }
 
   return (
-    <div className="bg-[#f5f7f8] min-h-screen pb-20">
+    <div className="bg-canvas min-h-screen pb-20">
       <div className="max-w-[1280px] mx-auto w-full px-4 md:px-10">
         {/* Breadcrumbs */}
         <div className="flex flex-wrap gap-2 py-4">
-          <Link to="/" className="text-gray-500 text-sm font-medium hover:text-blue-600 transition-colors">Trang chủ</Link>
-          <span className="text-gray-500 text-sm font-medium">/</span>
-          <span className="text-gray-900 text-sm font-medium">Giỏ hàng</span>
+          <Link to="/" className="text-muted text-sm font-medium hover:text-primary transition-colors">Trang chủ</Link>
+          <span className="text-muted text-sm font-medium">/</span>
+          <span className="text-text text-sm font-medium">Giỏ hàng</span>
         </div>
 
         <div className="flex flex-wrap justify-between gap-3 pb-6 pt-2">
-          <h1 className="text-gray-900 text-2xl md:text-3xl font-black leading-tight tracking-[-0.033em]">
+          <h1 className="text-wrap-balance text-text text-2xl md:text-3xl font-black leading-tight tracking-[-0.033em]">
             Giỏ hàng của bạn ({cart?.totalItems || 0})
           </h1>
         </div>
 
         {items.length === 0 ? (
-          <div className="bg-white rounded-xl p-10 flex flex-col items-center justify-center shadow-sm text-center">
+          <div className="bg-surface rounded-xl p-10 flex flex-col items-center justify-center shadow-sm text-center">
             <div className="w-32 h-32 mb-6">
               <img src="https://cdni.iconscout.com/illustration/premium/thumb/empty-cart-7359557-6024626.png" alt="Empty Cart" className="w-full h-full object-contain" />
             </div>
-            <h3 className="text-xl font-bold text-gray-900 mb-2">Giỏ hàng của bạn còn trống</h3>
-            <p className="text-gray-500 mb-6">Hãy tìm thêm các sản phẩm công nghệ tuyệt vời khác nhé!</p>
-            <Link to="/products" className="bg-blue-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-blue-700 transition-colors">
+            <h3 className="text-xl font-bold text-text mb-2">Giỏ hàng của bạn còn trống</h3>
+            <p className="text-muted mb-6">Hãy tìm thêm các sản phẩm công nghệ tuyệt vời khác nhé!</p>
+            <Link to="/products" className="bg-primary text-white font-bold py-3 px-8 rounded-lg hover:bg-primary-hover transition-colors">
               Tiếp tục mua sắm
             </Link>
           </div>
@@ -246,20 +246,20 @@ export default function Cart() {
             {/* Left Side: Cart Items */}
             <div className="flex-1">
               {/* Bulk Actions */}
-              <div className="bg-white rounded-xl px-6 py-4 mb-4 flex items-center justify-between border border-gray-100 shadow-sm">
+              <div className="bg-surface rounded-xl px-6 py-4 mb-4 flex items-center justify-between border border-border shadow-sm">
                 <label className="flex items-center gap-x-3 cursor-pointer group">
                   <input
                     type="checkbox"
                     checked={allSelected}
                     onChange={(e) => handleSelectAll(e.target.checked)}
-                    className="h-5 w-5 rounded border-gray-300 border-2 text-blue-600 focus:ring-0 transition-all cursor-pointer"
+                    className="h-5 w-5 rounded border-border-strong border-2 text-primary focus:ring-0 transition-all cursor-pointer"
                   />
-                  <span className="text-gray-900 text-sm font-medium group-hover:text-blue-600 transition-colors">Chọn tất cả</span>
+                  <span className="text-text text-sm font-medium group-hover:text-primary transition-colors">Chọn tất cả</span>
                 </label>
                 <button
                   onClick={handleDeleteSelected}
                   disabled={selectedIds.size === 0}
-                  className="flex items-center gap-2 px-3 py-2 text-gray-700 hover:text-red-500 text-sm font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex items-center gap-2 px-3 py-2 text-text hover:text-danger text-sm font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <Trash2 className="w-4 h-4" />
                   <span className="hidden sm:inline">Xóa mục đã chọn</span>
@@ -285,16 +285,16 @@ export default function Cart() {
             <div className="w-full lg:w-[360px] xl:w-[400px] flex-shrink-0">
               <div className="sticky top-[100px] flex flex-col gap-4">
                 {/* Giao tới card */}
-                <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+                <div className="bg-surface rounded-2xl p-6 border border-border shadow-sm">
                   <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-                      <MapPin className="w-5 h-5 text-blue-600" />
+                    <h2 className="text-lg font-bold text-text flex items-center gap-2">
+                      <MapPin className="w-5 h-5 text-primary" />
                       Giao tới
                     </h2>
                     {addresses.length > 0 && (
                       <button
                         onClick={() => setAddressSelectModalOpen(true)}
-                        className="text-blue-600 font-bold text-sm hover:underline inline-flex items-center gap-1"
+                        className="text-primary font-bold text-sm hover:underline inline-flex items-center gap-1"
                       >
                         Thay đổi
                         <ChevronRight className="w-3.5 h-3.5" />
@@ -304,34 +304,34 @@ export default function Cart() {
 
                   {addressLoading ? (
                     <div className="animate-pulse flex flex-col gap-2.5">
-                      <div className="h-4 bg-gray-100 rounded w-1/3" />
-                      <div className="h-4 bg-gray-100 rounded w-2/3" />
-                      <div className="h-5 w-20 rounded-full bg-gray-100" />
+                      <div className="h-4 bg-surface-alt rounded w-1/3" />
+                      <div className="h-4 bg-surface-alt rounded w-2/3" />
+                      <div className="h-5 w-20 rounded-full bg-surface-alt" />
                     </div>
                   ) : selectedAddress ? (
                     <div>
                       <div className="flex flex-wrap items-center gap-2 mb-1.5">
-                        <span className="font-bold text-gray-900">{selectedAddress.recipientName}</span>
-                        <span className="text-gray-300">|</span>
-                        <span className="inline-flex items-center gap-1.5 text-sm text-gray-600 font-medium">
-                          <Phone className="w-3.5 h-3.5 text-gray-400" />
+                        <span className="font-bold text-text">{selectedAddress.recipientName}</span>
+                        <span className="text-subtle">|</span>
+                        <span className="inline-flex items-center gap-1.5 text-sm text-muted font-medium">
+                          <Phone className="w-3.5 h-3.5 text-muted" />
                           {selectedAddress.phoneNumber}
                         </span>
                       </div>
-                      <div className="text-sm text-gray-600 leading-relaxed">
+                      <div className="text-sm text-muted leading-relaxed">
                         {buildAddressLine(selectedAddress)}
                       </div>
                       <div className="flex flex-wrap items-center gap-2 mt-2.5">
                         <span
-                          className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] font-bold ${getAddressTypeBadgeClass(
+                          className={`inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-bold ${getAddressTypeBadgeClass(
                             selectedAddress.addressType,
                           )}`}
                         >
                           {getAddressTypeLabel(selectedAddress.addressType)}
                         </span>
                         {selectedAddress.isDefault && (
-                          <span className="inline-flex items-center gap-1 rounded-full border border-blue-200 bg-blue-50 px-2 py-0.5 text-[11px] font-bold text-blue-700">
-                            <Star className="w-2.5 h-2.5 fill-blue-500 text-blue-500" />
+                          <span className="inline-flex items-center gap-1 rounded-full border border-primary-soft bg-primary-soft px-2 py-0.5 text-xs font-bold text-primary">
+                            <Star className="w-2.5 h-2.5 fill-primary text-primary" />
                             Mặc định
                           </span>
                         )}
@@ -339,10 +339,10 @@ export default function Cart() {
                     </div>
                   ) : (
                     <div className="flex flex-col items-start gap-3 py-1">
-                      <p className="text-gray-500 text-sm">Bạn chưa có địa chỉ giao hàng</p>
+                      <p className="text-muted text-sm">Bạn chưa có địa chỉ giao hàng</p>
                       <button
                         onClick={() => setAddressModalOpen(true)}
-                        className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 transition-colors"
+                        className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold text-white bg-primary hover:bg-primary-hover transition-colors"
                       >
                         <Plus className="w-4 h-4" />
                         Thêm địa chỉ
@@ -352,49 +352,49 @@ export default function Cart() {
                 </div>
 
                 {/* Khuyến mãi placeholder */}
-                <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
-                  <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2 mb-3">
-                    <Tag className="w-5 h-5 text-blue-600" />
+                <div className="bg-surface rounded-2xl p-6 border border-border shadow-sm">
+                  <h2 className="text-lg font-bold text-text flex items-center gap-2 mb-3">
+                    <Tag className="w-5 h-5 text-primary" />
                     Khuyến mãi
                   </h2>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-muted">
                     Áp dụng mã giảm giá ở bước thanh toán.
                   </p>
                 </div>
 
                 {/* Summary card */}
-                <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
-                  <h2 className="text-lg font-bold text-gray-900 mb-5">Thanh toán</h2>
+                <div className="bg-surface rounded-2xl p-6 border border-border shadow-sm">
+                  <h2 className="text-lg font-bold text-text mb-5">Thanh toán</h2>
 
                   <div className="flex flex-col gap-3.5 text-sm mb-4">
                     <div className="flex justify-between">
-                      <span className="text-gray-500">Tạm tính ({totalItems} sản phẩm)</span>
-                      <span className="font-bold text-gray-900">{formatCurrency(subtotal)}</span>
+                      <span className="text-muted">Tạm tính ({totalItems} sản phẩm)</span>
+                      <span className="font-bold text-text">{formatCurrency(subtotal)}</span>
                     </div>
 
                     {discount > 0 && (
-                      <div className="flex justify-between text-green-600">
+                      <div className="flex justify-between text-success">
                         <span>Giảm giá</span>
                         <span className="font-bold">-{formatCurrency(discount)}</span>
                       </div>
                     )}
 
                     <div className="flex justify-between">
-                      <span className="text-gray-500">Phí vận chuyển</span>
-                      <span className="font-bold text-gray-900 text-right">
+                      <span className="text-muted">Phí vận chuyển</span>
+                      <span className="font-bold text-text text-right">
                         {selectedIds.size === 0 ? (
-                          <span className="text-gray-400">—</span>
+                          <span className="text-muted">—</span>
                         ) : !selectedAddress ? (
-                          <span className="text-gray-500 font-medium">Chọn địa chỉ để tính phí</span>
+                          <span className="text-muted font-medium">Chọn địa chỉ để tính phí</span>
                         ) : previewLoading ? (
-                          <span className="inline-flex items-center gap-1.5 text-gray-400 font-medium">
+                          <span className="inline-flex items-center gap-1.5 text-muted font-medium">
                             <Loader2 className="w-3.5 h-3.5 animate-spin" />
                             Đang tính...
                           </span>
                         ) : previewError ? (
-                          <span className="text-gray-400 font-medium">Chưa khả dụng</span>
+                          <span className="text-muted font-medium">Chưa khả dụng</span>
                         ) : shippingFee === 0 ? (
-                          <span className="text-green-600">Miễn phí</span>
+                          <span className="text-success">Miễn phí</span>
                         ) : (
                           formatCurrency(shippingFee ?? 0)
                         )}
@@ -403,32 +403,32 @@ export default function Cart() {
                   </div>
 
                   {previewError && (
-                    <div className="flex items-start gap-2 mb-4 rounded-xl bg-amber-50 border border-amber-200 px-3 py-2.5">
-                      <AlertCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
-                      <p className="text-xs text-amber-700 font-medium leading-relaxed">
+                    <div className="flex items-start gap-2 mb-4 rounded-xl bg-warning-soft border border-warning-soft px-3 py-2.5">
+                      <AlertCircle className="w-4 h-4 text-warning shrink-0 mt-0.5" />
+                      <p className="text-xs text-warning font-medium leading-relaxed">
                         {previewError}
                       </p>
                     </div>
                   )}
 
-                  <div className="border-t border-gray-100 my-3"></div>
+                  <div className="border-t border-border my-3"></div>
 
                   <div className="flex justify-between items-end mb-6">
-                    <span className="font-bold text-gray-900">Tổng cộng</span>
+                    <span className="font-bold text-text">Tổng cộng</span>
                     <div className="text-right">
-                      <span className="text-2xl font-black text-blue-600">{formatCurrency(total)}</span>
-                      <p className="text-[11px] text-gray-400 mt-1">(Đã bao gồm VAT nếu có)</p>
+                      <span className="text-2xl font-black text-primary">{formatCurrency(total)}</span>
+                      <p className="text-xs text-muted mt-1">(Đã bao gồm VAT nếu có)</p>
                     </div>
                   </div>
 
                   <button
                     onClick={handleCheckout}
                     disabled={selectedIds.size === 0}
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-4 rounded-xl shadow-md shadow-blue-200 transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full bg-primary hover:bg-primary-hover text-white font-black py-4 rounded-xl shadow-md shadow-blue-200 transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     MUA HÀNG ({selectedIds.size})
                   </button>
-                  <p className="text-center text-[11px] text-gray-500 mt-3 italic">
+                  <p className="text-center text-xs text-muted mt-3 italic">
                     Nhấn "Mua hàng" để chuyển đến bước thanh toán bảo mật.
                   </p>
 
@@ -436,15 +436,15 @@ export default function Cart() {
                   <div className="mt-8 flex items-center justify-center gap-6 opacity-60 border-t border-gray-50 pt-6">
                     <div className="flex flex-col items-center gap-1 text-center">
                       <ShieldCheck className="w-6 h-6" />
-                      <span className="text-[10px] font-bold uppercase">Bảo mật</span>
+                      <span className="text-xs font-bold uppercase">Bảo mật</span>
                     </div>
                     <div className="flex flex-col items-center gap-1 text-center">
                       <RotateCcw className="w-6 h-6" />
-                      <span className="text-[10px] font-bold uppercase">Đổi trả 30 ngày</span>
+                      <span className="text-xs font-bold uppercase">Đổi trả 30 ngày</span>
                     </div>
                     <div className="flex flex-col items-center gap-1 text-center">
                       <Headset className="w-6 h-6" />
-                      <span className="text-[10px] font-bold uppercase">Hỗ trợ 24/7</span>
+                      <span className="text-xs font-bold uppercase">Hỗ trợ 24/7</span>
                     </div>
                   </div>
                 </div>

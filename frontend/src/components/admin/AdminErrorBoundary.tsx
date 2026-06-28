@@ -31,15 +31,15 @@ export class AdminErrorBoundary extends Component<Props, State> {
 
     return (
       <div className="flex min-h-[60vh] flex-col items-center justify-center px-6 text-center">
-        <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-red-50 text-red-500">
+        <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-danger-soft text-danger">
           <AlertTriangle className="h-8 w-8" />
         </div>
-        <h2 className="text-xl font-bold text-slate-900">Trang gặp lỗi</h2>
-        <p className="mt-2 max-w-md text-sm text-slate-500">
+        <h2 className="text-xl font-bold text-text">Trang gặp lỗi</h2>
+        <p className="mt-2 max-w-md text-sm text-muted">
           Đã có lỗi xảy ra khi hiển thị trang này. Vui lòng thử lại hoặc tải lại trang.
         </p>
         {this.state.error && (
-          <pre className="mt-4 max-w-xl overflow-x-auto rounded-xl bg-slate-50 px-4 py-3 text-left text-xs text-slate-400">
+          <pre className="mt-4 max-w-xl overflow-x-auto rounded-xl bg-surface px-4 py-3 text-left text-xs text-muted">
             {this.state.error.message}
           </pre>
         )}
@@ -47,7 +47,7 @@ export class AdminErrorBoundary extends Component<Props, State> {
           <button
             type="button"
             onClick={this.handleReset}
-            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50"
+            className="inline-flex items-center gap-1.5 rounded-xl border border-border-strong bg-surface px-4 py-2.5 text-sm font-semibold text-text transition-colors hover:bg-surface"
           >
             <RotateCcw className="h-4 w-4" />
             Thử lại
@@ -55,7 +55,7 @@ export class AdminErrorBoundary extends Component<Props, State> {
           <button
             type="button"
             onClick={this.handleReload}
-            className="rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-emerald-700"
+            className="rounded-xl bg-success px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-success"
           >
             Tải lại trang
           </button>

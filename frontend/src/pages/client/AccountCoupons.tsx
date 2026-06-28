@@ -83,15 +83,15 @@ const categoryIcon: Record<CouponCategory, typeof Ticket> = {
 };
 
 const categoryColor: Record<CouponCategory, string> = {
-  NEXAMART: 'bg-blue-100 text-blue-600',
+  NEXAMART: 'bg-primary-soft text-primary',
   PAYMENT: 'bg-violet-100 text-violet-600',
-  SHIPPING: 'bg-emerald-100 text-emerald-600',
+  SHIPPING: 'bg-success-soft text-success',
 };
 
 const statusStyle: Record<ClientCoupon['status'], string> = {
-  ACTIVE: 'border-emerald-200 bg-emerald-50 text-emerald-700',
-  EXPIRED: 'border-gray-200 bg-gray-50 text-gray-500',
-  USED: 'border-amber-200 bg-amber-50 text-amber-700',
+  ACTIVE: 'border-success-soft bg-success-soft text-success',
+  EXPIRED: 'border-border-strong bg-surface text-muted',
+  USED: 'border-warning-soft bg-warning-soft text-warning',
 };
 
 const statusLabel: Record<ClientCoupon['status'], string> = {
@@ -105,7 +105,7 @@ function CouponCard({ coupon, onUse }: { coupon: ClientCoupon; onUse: (code: str
   const inactive = coupon.status !== 'ACTIVE';
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+    <div className="bg-surface rounded-2xl border border-border shadow-sm hover:shadow-md transition-shadow overflow-hidden">
       <div className="flex">
         {/* Left brand block */}
         <div className={`w-20 shrink-0 flex items-center justify-center ${categoryColor[coupon.category]} ${inactive ? 'opacity-40' : ''}`}>
@@ -115,25 +115,25 @@ function CouponCard({ coupon, onUse }: { coupon: ClientCoupon; onUse: (code: str
         {/* Main content */}
         <div className="flex-1 p-5 min-w-0">
           <div className="flex flex-wrap items-start justify-between gap-2 mb-1.5">
-            <h3 className="font-bold text-gray-900">{coupon.title}</h3>
-            <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-[11px] font-bold ${statusStyle[coupon.status]}`}>
+            <h3 className="font-bold text-text">{coupon.title}</h3>
+            <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-bold ${statusStyle[coupon.status]}`}>
               {statusLabel[coupon.status]}
             </span>
           </div>
 
-          <p className="text-sm text-gray-500 leading-relaxed mb-3">{coupon.description}</p>
+          <p className="text-sm text-muted leading-relaxed mb-3">{coupon.description}</p>
 
           <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 mb-3">
-            <span className="inline-flex items-center gap-1.5 rounded-lg bg-gray-50 border border-dashed border-gray-300 px-2.5 py-1 text-sm font-bold text-blue-600">
+            <span className="inline-flex items-center gap-1.5 rounded-lg bg-surface border border-dashed border-border-strong px-2.5 py-1 text-sm font-bold text-primary">
               {coupon.code}
             </span>
-            <span className="inline-flex items-center gap-1 text-xs text-gray-500">
-              <Calendar className="w-3.5 h-3.5 text-gray-400" />
+            <span className="inline-flex items-center gap-1 text-xs text-muted">
+              <Calendar className="w-3.5 h-3.5 text-muted" />
               Hết hạn: {formatDate(coupon.expiresAt)}
             </span>
             {coupon.minOrderAmount && (
-              <span className="inline-flex items-center gap-1 text-xs text-gray-500">
-                <Info className="w-3.5 h-3.5 text-gray-400" />
+              <span className="inline-flex items-center gap-1 text-xs text-muted">
+                <Info className="w-3.5 h-3.5 text-muted" />
                 Đơn tối thiểu: {formatVnd(coupon.minOrderAmount)}
               </span>
             )}
@@ -144,14 +144,14 @@ function CouponCard({ coupon, onUse }: { coupon: ClientCoupon; onUse: (code: str
               type="button"
               onClick={() => onUse(coupon.code)}
               disabled={inactive}
-              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-semibold text-white bg-primary hover:bg-primary-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Copy className="w-4 h-4" />
               {inactive ? 'Không khả dụng' : 'Dùng ngay'}
             </button>
             <Link
               to="/cart"
-              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-semibold text-gray-700 bg-gray-50 hover:bg-gray-100 transition-colors"
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-semibold text-text bg-surface hover:bg-surface-alt transition-colors"
             >
               <ShoppingCart className="w-4 h-4" />
               Đi tới giỏ hàng
@@ -235,24 +235,24 @@ export default function AccountCoupons() {
               if (e.key === 'Enter') handleApplyCode();
             }}
             placeholder="Nhập mã giảm giá"
-            className="flex-1 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 outline-none transition-colors focus:border-blue-600 focus:ring-2 focus:ring-blue-100 uppercase"
+            className="flex-1 rounded-xl border border-border-strong bg-surface px-4 py-2.5 text-sm text-text placeholder:text-muted outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary-soft uppercase"
           />
           <button
             type="button"
             onClick={handleApplyCode}
-            className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 transition-colors"
+            className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-primary hover:bg-primary-hover transition-colors"
           >
             <CheckCircle2 className="w-4 h-4" />
             Áp dụng
           </button>
         </div>
-        <p className="mt-2 text-xs text-gray-400">
+        <p className="mt-2 text-xs text-muted">
           Mã sẽ được lưu và áp dụng tự động ở bước thanh toán.
         </p>
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-6 border-b border-gray-100 mb-6 overflow-x-auto scrollbar-hide">
+      <div className="flex gap-6 border-b border-border mb-6 overflow-x-auto scrollbar-hide">
         {CATEGORY_TABS.map((tab) => (
           <button
             key={tab.key}
@@ -260,8 +260,8 @@ export default function AccountCoupons() {
             onClick={() => setActiveCategory(tab.key)}
             className={`pb-3 text-sm font-semibold border-b-2 transition-colors whitespace-nowrap ${
               activeCategory === tab.key
-                ? 'border-blue-600 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-800'
+                ? 'border-primary text-primary'
+                : 'border-transparent text-muted hover:text-text'
             }`}
           >
             {tab.label}
@@ -271,17 +271,17 @@ export default function AccountCoupons() {
 
       {/* Coupon list */}
       {filteredCoupons.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-16 text-center bg-gray-50/50 rounded-2xl border border-gray-100 border-dashed">
-          <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm mb-4">
-            <Ticket className="w-8 h-8 text-gray-400" />
+        <div className="flex flex-col items-center justify-center py-16 text-center bg-surface/50 rounded-2xl border border-border border-dashed">
+          <div className="w-16 h-16 bg-surface rounded-full flex items-center justify-center shadow-sm mb-4">
+            <Ticket className="w-8 h-8 text-muted" />
           </div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-1">Bạn chưa có mã giảm giá nào.</h3>
-          <p className="text-gray-500 max-w-sm mx-auto mb-6">
+          <h3 className="text-lg font-semibold text-text mb-1">Bạn chưa có mã giảm giá nào.</h3>
+          <p className="text-muted max-w-sm mx-auto mb-6">
             Khi có mã ưu đãi, chúng sẽ xuất hiện tại đây để bạn sử dụng.
           </p>
           <Link
             to="/products"
-            className="px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 transition-colors"
+            className="px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-primary hover:bg-primary-hover transition-colors"
           >
             Tiếp tục mua sắm
           </Link>

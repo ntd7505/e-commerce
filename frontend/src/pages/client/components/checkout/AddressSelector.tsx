@@ -71,15 +71,15 @@ export default function AddressSelector({ selectedAddressId, onSelect, preferred
   const selectedAddress = addresses.find((a) => a.id === selectedAddressId);
 
   return (
-    <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm mb-6">
+    <div className="bg-surface rounded-2xl p-6 border border-border shadow-sm mb-6">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-          <MapPin className="w-5 h-5 text-blue-600" />
+        <h2 className="text-lg font-bold text-text flex items-center gap-2">
+          <MapPin className="w-5 h-5 text-primary" />
           Giao tới
         </h2>
         <button
           onClick={() => setShowListModal(true)}
-          className="text-blue-600 font-bold text-sm hover:underline inline-flex items-center gap-1"
+          className="text-primary font-bold text-sm hover:underline inline-flex items-center gap-1"
         >
           Thay đổi
           <ChevronRight className="w-3.5 h-3.5" />
@@ -88,34 +88,34 @@ export default function AddressSelector({ selectedAddressId, onSelect, preferred
 
       {loading ? (
         <div className="animate-pulse flex flex-col gap-2.5">
-          <div className="h-4 bg-gray-100 rounded w-1/3" />
-          <div className="h-4 bg-gray-100 rounded w-2/3" />
-          <div className="h-5 w-20 rounded-full bg-gray-100" />
+          <div className="h-4 bg-surface-alt rounded w-1/3" />
+          <div className="h-4 bg-surface-alt rounded w-2/3" />
+          <div className="h-5 w-20 rounded-full bg-surface-alt" />
         </div>
       ) : selectedAddress ? (
         <div>
           <div className="flex flex-wrap items-center gap-2 mb-1.5">
-            <span className="font-bold text-gray-900">{selectedAddress.recipientName}</span>
-            <span className="text-gray-300">|</span>
-            <span className="inline-flex items-center gap-1.5 text-sm text-gray-600 font-medium">
-              <Phone className="w-3.5 h-3.5 text-gray-400" />
+            <span className="font-bold text-text">{selectedAddress.recipientName}</span>
+            <span className="text-subtle">|</span>
+            <span className="inline-flex items-center gap-1.5 text-sm text-muted font-medium">
+              <Phone className="w-3.5 h-3.5 text-muted" />
               {selectedAddress.phoneNumber}
             </span>
           </div>
-          <div className="text-sm text-gray-600 leading-relaxed">
+          <div className="text-sm text-muted leading-relaxed">
             {buildAddressLine(selectedAddress)}
           </div>
           <div className="flex flex-wrap items-center gap-2 mt-2.5">
             <span
-              className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] font-bold ${getAddressTypeBadgeClass(
+              className={`inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-bold ${getAddressTypeBadgeClass(
                 selectedAddress.addressType,
               )}`}
             >
               {getAddressTypeLabel(selectedAddress.addressType)}
             </span>
             {selectedAddress.isDefault && (
-              <span className="inline-flex items-center gap-1 rounded-full border border-blue-200 bg-blue-50 px-2 py-0.5 text-[11px] font-bold text-blue-700">
-                <Star className="w-2.5 h-2.5 fill-blue-500 text-blue-500" />
+              <span className="inline-flex items-center gap-1 rounded-full border border-primary-soft bg-primary-soft px-2 py-0.5 text-xs font-bold text-primary">
+                <Star className="w-2.5 h-2.5 fill-primary text-primary" />
                 Mặc định
               </span>
             )}
@@ -123,10 +123,10 @@ export default function AddressSelector({ selectedAddressId, onSelect, preferred
         </div>
       ) : (
         <div className="flex flex-col items-start gap-3 py-2">
-          <p className="text-gray-500 text-sm">Chưa có địa chỉ giao hàng.</p>
+          <p className="text-muted text-sm">Chưa có địa chỉ giao hàng.</p>
           <button
             onClick={() => setShowFormModal(true)}
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 transition-colors"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold text-white bg-primary hover:bg-primary-hover transition-colors"
           >
             <Plus className="w-4 h-4" />
             Thêm địa chỉ mới

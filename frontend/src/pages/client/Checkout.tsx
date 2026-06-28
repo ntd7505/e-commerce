@@ -138,16 +138,16 @@ export default function Checkout() {
   if (cartItemIds.length === 0) return null; // Wait for redirect
 
   return (
-    <div className="bg-[#f5f7f8] min-h-screen pb-20">
+    <div className="bg-canvas min-h-screen pb-20">
       <div className="max-w-[1280px] mx-auto w-full px-4 md:px-10">
         {/* Breadcrumbs */}
         <div className="flex flex-wrap gap-2 py-4">
-          <Link to="/cart" className="text-gray-500 text-sm font-medium hover:text-blue-600 transition-colors">Giỏ hàng</Link>
-          <span className="text-gray-500 text-sm font-medium">/</span>
-          <span className="text-gray-900 text-sm font-medium">Thanh toán</span>
+          <Link to="/cart" className="text-muted text-sm font-medium hover:text-primary transition-colors">Giỏ hàng</Link>
+          <span className="text-muted text-sm font-medium">/</span>
+          <span className="text-text text-sm font-medium">Thanh toán</span>
         </div>
         
-        <h1 className="text-gray-900 text-2xl md:text-3xl font-black leading-tight tracking-[-0.033em] mb-8">
+        <h1 className="text-wrap-balance text-text text-2xl md:text-3xl font-black leading-tight tracking-[-0.033em] mb-8">
           Thanh toán
         </h1>
 
@@ -160,34 +160,34 @@ export default function Checkout() {
               preferredAddressId={preferredAddressId}
             />
 
-            <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm mb-6">
-              <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2 mb-4">
-                <Box className="w-5 h-5 text-blue-600" /> Sản phẩm
+            <div className="bg-surface rounded-2xl p-6 border border-border shadow-sm mb-6">
+              <h2 className="text-lg font-bold text-text flex items-center gap-2 mb-4">
+                <Box className="w-5 h-5 text-primary" /> Sản phẩm
               </h2>
               {loading && !preview ? (
                 <div className="py-10"><LoadingState /></div>
               ) : error ? (
-                <div className="py-4 text-red-500">{error}</div>
+                <div className="py-4 text-danger">{error}</div>
               ) : (
                 <div className="flex flex-col divide-y divide-gray-50">
                   {preview?.items.map((item) => (
                     <div key={item.id} className="flex gap-4 py-4 first:pt-0 last:pb-0">
-                      <div className="w-16 h-16 md:w-20 md:h-20 bg-gray-50 rounded-lg flex-shrink-0 flex items-center justify-center border border-gray-100 overflow-hidden">
+                      <div className="w-16 h-16 md:w-20 md:h-20 bg-surface rounded-lg flex-shrink-0 flex items-center justify-center border border-border overflow-hidden">
                         {item.thumbnailUrl ? (
                           <img src={item.thumbnailUrl} alt={item.productName} className="w-full h-full object-contain" />
                         ) : (
-                          <Box className="w-6 h-6 text-gray-300" />
+                          <Box className="w-6 h-6 text-subtle" />
                         )}
                       </div>
                       <div className="flex-1 flex flex-col justify-center min-w-0">
-                        <h4 className="font-bold text-gray-900 line-clamp-1">{item.productName}</h4>
-                        <p className="text-sm text-gray-500 line-clamp-1">Phân loại: {item.variantName}</p>
+                        <h4 className="font-bold text-text line-clamp-1">{item.productName}</h4>
+                        <p className="text-sm text-muted line-clamp-1">Phân loại: {item.variantName}</p>
                         <div className="flex items-center justify-between mt-2">
-                          <span className="text-sm text-gray-500 font-medium">x{item.quantity}</span>
+                          <span className="text-sm text-muted font-medium">x{item.quantity}</span>
                           <div className="text-right">
-                            <span className="font-bold text-blue-600 block leading-tight">{formatCurrency(item.lineTotal)}</span>
+                            <span className="font-bold text-primary block leading-tight">{formatCurrency(item.lineTotal)}</span>
                             {item.quantity > 1 && (
-                              <span className="text-xs text-gray-400">{formatCurrency(item.unitPrice)}/sp</span>
+                              <span className="text-xs text-muted">{formatCurrency(item.unitPrice)}/sp</span>
                             )}
                           </div>
                         </div>
@@ -197,20 +197,20 @@ export default function Checkout() {
                 </div>
               )}
 
-              <div className="mt-6 rounded-xl bg-slate-50/60 border border-slate-100 p-4">
-                <label htmlFor="seller-note" className="block text-sm font-bold text-gray-900 mb-2">
+              <div className="mt-6 rounded-xl bg-surface/60 border border-border p-4">
+                <label htmlFor="seller-note" className="block text-sm font-bold text-text mb-2">
                   Lời nhắn cho người bán (tùy chọn)
                 </label>
                 <textarea
                   id="seller-note"
                   rows={2}
                   maxLength={500}
-                  className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 outline-none transition-colors resize-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                  className="w-full rounded-xl border border-border-strong bg-surface px-4 py-3 text-sm text-text placeholder:text-muted outline-none transition-colors resize-none focus:border-primary focus:ring-2 focus:ring-primary-soft"
                   placeholder="Ví dụ: Giao giờ hành chính, gọi trước khi giao..."
                   value={note}
                   onChange={e => setNote(e.target.value)}
                 />
-                <p className="mt-1.5 text-right text-xs text-gray-400">{note.length}/500</p>
+                <p className="mt-1.5 text-right text-xs text-muted">{note.length}/500</p>
               </div>
             </div>
 
@@ -221,70 +221,70 @@ export default function Checkout() {
               error={couponError} 
             />
 
-            <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm mb-6 lg:mb-0">
-              <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2 mb-4">
-                <CreditCard className="w-5 h-5 text-blue-600" /> Phương thức thanh toán
+            <div className="bg-surface rounded-2xl p-6 border border-border shadow-sm mb-6 lg:mb-0">
+              <h2 className="text-lg font-bold text-text flex items-center gap-2 mb-4">
+                <CreditCard className="w-5 h-5 text-primary" /> Phương thức thanh toán
               </h2>
               {preview?.paymentMethods && preview.paymentMethods.length > 0 ? (
                 <div className="flex flex-col gap-3">
                   {preview.paymentMethods.map(method => (
-                    <label key={method} className={`flex items-center gap-3 p-4 border rounded-xl cursor-pointer transition-colors ${paymentMethod === method ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-blue-400'}`}>
+                    <label key={method} className={`flex items-center gap-3 p-4 border rounded-xl cursor-pointer transition-colors ${paymentMethod === method ? 'border-primary bg-primary-soft' : 'border-border-strong hover:border-primary'}`}>
                       <input 
                         type="radio" 
                         name="paymentMethod" 
                         value={method} 
                         checked={paymentMethod === method}
                         onChange={() => setPaymentMethod(method)}
-                        className="w-5 h-5 text-blue-600 focus:ring-0"
+                        className="w-5 h-5 text-primary focus:ring-0"
                       />
-                      <span className="font-medium text-gray-900">{method === 'COD' ? 'Thanh toán khi nhận hàng (COD)' : method}</span>
+                      <span className="font-medium text-text">{method === 'COD' ? 'Thanh toán khi nhận hàng (COD)' : method}</span>
                     </label>
                   ))}
                 </div>
               ) : (
-                <div className="text-gray-500 text-sm">Đang tải phương thức thanh toán...</div>
+                <div className="text-muted text-sm">Đang tải phương thức thanh toán...</div>
               )}
             </div>
           </div>
 
           {/* Right Column (Summary) */}
           <div className="w-full lg:w-[360px] xl:w-[400px] flex-shrink-0">
-            <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm sticky top-[100px]">
-              <h2 className="text-lg font-bold text-gray-900 mb-6">Chi tiết đơn hàng</h2>
+            <div className="bg-surface rounded-2xl p-6 border border-border shadow-sm sticky top-[100px]">
+              <h2 className="text-lg font-bold text-text mb-6">Chi tiết đơn hàng</h2>
               
               <div className="flex flex-col gap-4 text-sm mb-6">
                 <div className="flex justify-between">
-                  <span className="text-gray-500">Tạm tính ({preview?.totalItems || 0} sản phẩm)</span>
-                  <span className="font-bold text-gray-900">{formatCurrency(preview?.subtotalAmount || 0)}</span>
+                  <span className="text-muted">Tạm tính ({preview?.totalItems || 0} sản phẩm)</span>
+                  <span className="font-bold text-text">{formatCurrency(preview?.subtotalAmount || 0)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-500">Phí vận chuyển</span>
-                  <span className="font-bold text-gray-900">
-                    {preview?.shippingFee === 0 ? <span className="text-green-600">Miễn phí</span> : formatCurrency(preview?.shippingFee || 0)}
+                  <span className="text-muted">Phí vận chuyển</span>
+                  <span className="font-bold text-text">
+                    {preview?.shippingFee === 0 ? <span className="text-success">Miễn phí</span> : formatCurrency(preview?.shippingFee || 0)}
                   </span>
                 </div>
                 {preview?.discountAmount ? (
-                  <div className="flex justify-between text-green-600">
+                  <div className="flex justify-between text-success">
                     <span>Giảm giá</span>
                     <span className="font-bold">-{formatCurrency(preview.discountAmount)}</span>
                   </div>
                 ) : null}
               </div>
               
-              <div className="border-t border-gray-100 my-4"></div>
+              <div className="border-t border-border my-4"></div>
               
               <div className="flex justify-between items-end mb-6">
-                <span className="font-bold text-gray-900">Tổng thanh toán</span>
+                <span className="font-bold text-text">Tổng thanh toán</span>
                 <div className="text-right">
-                  <span className="text-2xl font-black text-blue-600">{formatCurrency(preview?.totalAmount || 0)}</span>
-                  <p className="text-[11px] text-gray-400 mt-1">Đã bao gồm VAT</p>
+                  <span className="text-2xl font-black text-primary">{formatCurrency(preview?.totalAmount || 0)}</span>
+                  <p className="text-xs text-muted mt-1">Đã bao gồm VAT</p>
                 </div>
               </div>
 
               <button
                 onClick={handleSubmitOrder}
                 disabled={submitting || loading || !selectedAddress || !paymentMethod}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-4 rounded-xl shadow-md shadow-blue-200 transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="w-full bg-primary hover:bg-primary-hover text-white font-black py-4 rounded-xl shadow-md shadow-blue-200 transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
                 ĐẶT HÀNG

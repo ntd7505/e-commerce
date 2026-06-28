@@ -40,11 +40,11 @@ const RecommendedSection: React.FC<Props> = ({ products, loading, error }) => {
           ))}
         </div>
       ) : error ? (
-        <div className="flex flex-col items-center justify-center py-12 text-center bg-red-900/20 rounded-xl border border-red-500/20 border-dashed">
+        <div className="flex flex-col items-center justify-center py-12 text-center bg-danger-soft rounded-xl border border-danger-soft border-dashed">
           <div className="w-14 h-14 bg-[var(--surface-1)] rounded-full flex items-center justify-center shadow-sm mb-3">
-            <AlertCircle className="w-7 h-7 text-red-400" />
+            <AlertCircle className="w-7 h-7 text-danger" />
           </div>
-          <p className="text-red-400 font-medium mb-1">Không thể tải sản phẩm</p>
+          <p className="text-danger font-medium mb-1">Không thể tải sản phẩm</p>
           <p className="text-[var(--text-muted)] text-sm">{error}</p>
         </div>
       ) : products.length === 0 ? (

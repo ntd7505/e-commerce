@@ -15,14 +15,14 @@ export default function RelatedProducts({ products }: RelatedProductsProps) {
   if (!products || products.length === 0) return null;
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 mb-10 min-h-[400px]">
+    <div className="bg-surface rounded-2xl border border-border shadow-sm p-6 mb-10 min-h-[400px]">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-bold text-gray-900">Sản phẩm liên quan</h2>
+        <h2 className="text-xl font-bold text-text">Sản phẩm liên quan</h2>
         <div className="flex gap-2">
-          <button className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-white hover:border-blue-600 transition-colors">
+          <button className="w-8 h-8 rounded-full border border-border-strong flex items-center justify-center text-muted hover:bg-surface hover:border-primary transition-colors">
             <ChevronLeft className="w-5 h-5" />
           </button>
-          <button className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-white hover:border-blue-600 transition-colors">
+          <button className="w-8 h-8 rounded-full border border-border-strong flex items-center justify-center text-muted hover:bg-surface hover:border-primary transition-colors">
             <ChevronRight className="w-5 h-5" />
           </button>
         </div>

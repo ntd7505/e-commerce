@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { RefreshCw, ShieldCheck, KeyRound, Plus, CheckCircle2 } from "lucide-react";
 import { createRole, getPermissions, getRoles } from "../adminRoleApi";
 import type { PermissionResponse, RoleResponse } from "../adminRoleTypes";
@@ -25,7 +25,7 @@ export default function RoleManagementPageContent() {
       setPermissions(permissionData);
       setError("");
     } catch {
-      setError("Không thể tải dữ liệu phân quyền");
+      setError("Kh�ng th? t?i d? li?u ph�n quy?n");
     } finally {
       setLoading(false);
     }
@@ -47,10 +47,10 @@ export default function RoleManagementPageContent() {
   const handleCreateRole = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formValues.name.trim() || !formValues.description.trim()) {
-      setError("Vui lòng nhập tên và mô tả role"); return;
+      setError("Vui l�ng nh?p t�n v� m� t? role"); return;
     }
     if (formValues.permissions.length === 0) {
-      setError("Vui lòng chọn ít nhất một permission"); return;
+      setError("Vui l�ng ch?n �t nh?t m?t permission"); return;
     }
     try {
       setSaving(true);
@@ -62,10 +62,10 @@ export default function RoleManagementPageContent() {
       setRoles((prev) => [...prev, created]);
       setFormValues(emptyForm);
       setError("");
-      setSuccessMsg(`Role "${created.name}" đã được tạo thành công!`);
+      setSuccessMsg(`Role "${created.name}" d� du?c t?o th�nh c�ng!`);
       setTimeout(() => setSuccessMsg(""), 3000);
     } catch {
-      setError("Không thể tạo role. Kiểm tra tên hoặc permissions.");
+      setError("Kh�ng th? t?o role. Ki?m tra t�n ho?c permissions.");
     } finally {
       setSaving(false);
     }
@@ -81,14 +81,14 @@ export default function RoleManagementPageContent() {
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h2 className="text-[22px] font-bold text-slate-900">Roles & Permissions</h2>
-          <p className="mt-1 text-[13px] text-slate-500">Quản lý vai trò và quyền hạn trong hệ thống.</p>
+          <h2 className="text-2xl font-bold text-text">Roles & Permissions</h2>
+          <p className="mt-1 text-sm text-muted">Qu?n l� vai tr� v� quy?n h?n trong h? th?ng.</p>
         </div>
         <button
           type="button"
           onClick={loadData}
           disabled={loading}
-          className="flex items-center gap-2 rounded-2xl border border-slate-100 bg-white px-4 py-2.5 text-[13px] font-bold text-slate-700 shadow-sm transition-colors hover:bg-slate-50 disabled:opacity-50"
+          className="flex items-center gap-2 rounded-2xl border border-border bg-surface px-4 py-2.5 text-sm font-bold text-text shadow-sm transition-colors hover:bg-surface disabled:opacity-50"
         >
           <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
           Refresh
@@ -96,34 +96,34 @@ export default function RoleManagementPageContent() {
       </div>
 
       {error && (
-        <div className="rounded-lg border border-red-100 bg-red-50 px-4 py-3 text-[13px] font-medium text-red-600">
+        <div className="rounded-lg border border-danger-soft bg-danger-soft px-4 py-3 text-sm font-medium text-danger">
           {error}
         </div>
       )}
       {successMsg && (
-        <div className="flex items-center gap-2 rounded-lg border border-emerald-100 bg-emerald-50 px-4 py-3 text-[13px] font-medium text-emerald-700">
+        <div className="flex items-center gap-2 rounded-lg border border-success-soft bg-success-soft px-4 py-3 text-sm font-medium text-success">
           <CheckCircle2 className="h-4 w-4 shrink-0" />
           {successMsg}
         </div>
       )}
 
       {/* Tabs */}
-      <div className="flex w-fit rounded-xl border border-slate-200 bg-slate-50 p-1">
+      <div className="flex w-fit rounded-xl border border-border-strong bg-surface p-1">
         {tabs.map((tab) => (
           <button
             key={tab.value}
             type="button"
             onClick={() => setActiveTab(tab.value)}
-            className={`flex items-center gap-2 rounded-lg px-5 py-2.5 text-[13px] font-bold transition-all ${activeTab === tab.value
-                ? "bg-white text-emerald-700 shadow-sm"
-                : "text-slate-500 hover:text-slate-800"
+            className={`flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-bold transition-all ${activeTab === tab.value
+                ? "bg-surface text-success shadow-sm"
+                : "text-muted hover:text-text"
               }`}
           >
             <tab.icon className="h-4 w-4" />
             {tab.label}
             {tab.count !== undefined && (
               <span
-                className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${activeTab === tab.value ? "bg-emerald-100 text-emerald-700" : "bg-slate-200 text-slate-500"
+                className={`rounded-full px-2 py-0.5 text-xs font-bold ${activeTab === tab.value ? "bg-success-soft text-success" : "bg-border text-muted"
                   }`}
               >
                 {tab.count}
@@ -137,31 +137,31 @@ export default function RoleManagementPageContent() {
       {activeTab === "ROLES" && (
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_420px]">
           {/* Roles list */}
-          <section className="rounded-2xl border border-slate-100 bg-white shadow-sm">
-            <div className="flex items-center gap-2 border-b border-slate-100 p-5 text-[13px] font-bold text-slate-700">
-              <ShieldCheck className="h-4 w-4 text-emerald-600" />
+          <section className="rounded-2xl border border-border bg-surface shadow-sm">
+            <div className="flex items-center gap-2 border-b border-border p-5 text-sm font-bold text-text">
+              <ShieldCheck className="h-4 w-4 text-success" />
               Existing Roles
-              <span className="ml-1 rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-bold text-slate-500">
+              <span className="ml-1 rounded-full bg-surface-alt px-2 py-0.5 text-xs font-bold text-muted">
                 {roles.length}
               </span>
             </div>
-            <div className="divide-y divide-slate-100">
+            <div className="divide-y divide-border">
               {loading ? (
-                <div className="p-8 text-center text-[13px] text-slate-400">Loading roles...</div>
+                <div className="p-8 text-center text-sm text-muted">Loading roles...</div>
               ) : roles.length === 0 ? (
                 <div className="p-8 text-center">
-                  <ShieldCheck className="mx-auto mb-3 h-10 w-10 text-gray-200" />
-                  <p className="text-[13px] text-slate-400">No roles yet. Create one →</p>
+                  <ShieldCheck className="mx-auto mb-3 h-10 w-10 text-subtle" />
+                  <p className="text-sm text-muted">No roles yet. Create one ?</p>
                 </div>
               ) : (
                 roles.map((role) => (
-                  <article key={role.name} className="p-5 transition-colors hover:bg-slate-50">
+                  <article key={role.name} className="p-5 transition-colors hover:bg-surface">
                     <div className="flex flex-wrap items-start justify-between gap-3">
                       <div>
-                        <h3 className="text-[15px] font-extrabold text-slate-900">{role.name}</h3>
-                        <p className="mt-1 text-[13px] text-slate-500">{role.description || "No description"}</p>
+                        <h3 className="text-sm font-extrabold text-text">{role.name}</h3>
+                        <p className="mt-1 text-sm text-muted">{role.description || "No description"}</p>
                       </div>
-                      <span className="rounded-full bg-emerald-50 px-3 py-1 text-[11px] font-bold text-emerald-700">
+                      <span className="rounded-full bg-success-soft px-3 py-1 text-xs font-bold text-success">
                         {role.permissions?.length ?? 0} permissions
                       </span>
                     </div>
@@ -170,7 +170,7 @@ export default function RoleManagementPageContent() {
                         {role.permissions.map((p) => (
                           <span
                             key={p.name}
-                            className="rounded-md bg-slate-100 px-2 py-0.5 text-[11px] font-bold text-slate-600"
+                            className="rounded-md bg-surface-alt px-2 py-0.5 text-xs font-bold text-muted"
                           >
                             {p.name}
                           </span>
@@ -184,47 +184,47 @@ export default function RoleManagementPageContent() {
           </section>
 
           {/* Create role form */}
-          <form onSubmit={handleCreateRole} className="h-fit rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
+          <form onSubmit={handleCreateRole} className="h-fit rounded-2xl border border-border bg-surface p-5 shadow-sm">
             <div className="flex items-center gap-2 mb-5">
-              <Plus className="h-4 w-4 text-emerald-600" />
-              <h3 className="text-[16px] font-bold text-slate-900">Create Role</h3>
+              <Plus className="h-4 w-4 text-success" />
+              <h3 className="text-base font-bold text-text">Create Role</h3>
             </div>
             <div className="space-y-4">
               <div>
-                <label className="mb-1.5 block text-[12px] font-bold uppercase text-slate-500">
+                <label className="mb-1.5 block text-sm font-semibold text-muted">
                   Role Name
                 </label>
                 <input
                   value={formValues.name}
                   onChange={(e) => setFormValues((p) => ({ ...p, name: e.target.value }))}
                   placeholder="ROLE_MANAGER"
-                  className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5 text-[13px] font-bold uppercase outline-none transition focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
+                  className="w-full rounded-lg border border-border-strong bg-surface px-3 py-2.5 text-sm font-bold uppercase outline-none transition focus:border-success focus:ring-1 focus:ring-success"
                 />
               </div>
               <div>
-                <label className="mb-1.5 block text-[12px] font-bold uppercase text-slate-500">
+                <label className="mb-1.5 block text-sm font-semibold text-muted">
                   Description
                 </label>
                 <textarea
                   value={formValues.description}
                   onChange={(e) => setFormValues((p) => ({ ...p, description: e.target.value }))}
-                  placeholder="Mô tả vai trò..."
+                  placeholder="M� t? vai tr�..."
                   rows={3}
-                  className="w-full resize-none rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5 text-[13px] outline-none transition focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
+                  className="w-full resize-none rounded-lg border border-border-strong bg-surface px-3 py-2.5 text-sm outline-none transition focus:border-success focus:ring-1 focus:ring-success"
                 />
               </div>
               <div>
-                <p className="mb-2 text-[12px] font-bold uppercase text-slate-500">
+                <p className="mb-2 text-sm font-semibold text-muted">
                   Permissions
-                  <span className="ml-1 normal-case font-normal text-slate-400">
+                  <span className="ml-1 normal-case font-normal text-muted">
                     ({formValues.permissions.length} selected)
                   </span>
                 </p>
-                <div className="max-h-64 space-y-1 overflow-y-auto rounded-lg border border-slate-200 bg-slate-50 p-2">
+                <div className="max-h-64 space-y-1 overflow-y-auto rounded-lg border border-border-strong bg-surface p-2">
                   {permissions.map((permission) => (
                     <label
                       key={permission.name}
-                      className="flex cursor-pointer items-start gap-2 rounded-md px-2 py-1.5 transition-colors hover:bg-white"
+                      className="flex cursor-pointer items-start gap-2 rounded-md px-2 py-1.5 transition-colors hover:bg-surface"
                     >
                       <input
                         type="checkbox"
@@ -233,9 +233,9 @@ export default function RoleManagementPageContent() {
                         className="mt-0.5 h-4 w-4 accent-emerald-500"
                       />
                       <span>
-                        <span className="block text-[12px] font-bold text-slate-800">{permission.name}</span>
+                        <span className="block text-xs font-bold text-text">{permission.name}</span>
                         {permission.description && (
-                          <span className="text-[11px] text-slate-400">{permission.description}</span>
+                          <span className="text-xs text-muted">{permission.description}</span>
                         )}
                       </span>
                     </label>
@@ -245,7 +245,7 @@ export default function RoleManagementPageContent() {
               <button
                 type="submit"
                 disabled={saving}
-                className="w-full rounded-lg bg-emerald-600 px-4 py-2.5 text-[13px] font-bold text-white transition-colors hover:bg-emerald-700 disabled:opacity-50"
+                className="w-full rounded-lg bg-success px-4 py-2.5 text-sm font-bold text-white transition-colors hover:bg-success disabled:opacity-50"
               >
                 {saving ? "Creating..." : "Create Role"}
               </button>
@@ -256,23 +256,23 @@ export default function RoleManagementPageContent() {
 
       {/* Tab: Permissions */}
       {activeTab === "PERMISSIONS" && (
-        <section className="rounded-2xl border border-slate-100 bg-white shadow-sm">
-          <div className="flex items-center gap-2 border-b border-slate-100 p-5 text-[13px] font-bold text-slate-700">
-            <KeyRound className="h-4 w-4 text-emerald-600" />
+        <section className="rounded-2xl border border-border bg-surface shadow-sm">
+          <div className="flex items-center gap-2 border-b border-border p-5 text-sm font-bold text-text">
+            <KeyRound className="h-4 w-4 text-success" />
             All Permissions
-            <span className="ml-1 rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-bold text-slate-500">
+            <span className="ml-1 rounded-full bg-surface-alt px-2 py-0.5 text-xs font-bold text-muted">
               {permissions.length}
             </span>
           </div>
           {loading ? (
-            <div className="p-8 text-center text-[13px] text-slate-400">Loading permissions...</div>
+            <div className="p-8 text-center text-sm text-muted">Loading permissions...</div>
           ) : (
-            <div className="grid gap-px bg-slate-100 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-px bg-surface-alt sm:grid-cols-2 lg:grid-cols-3">
               {permissions.map((p) => (
-                <div key={p.name} className="bg-white p-4 transition-colors hover:bg-slate-50">
-                  <p className="text-[13px] font-bold text-slate-900">{p.name}</p>
+                <div key={p.name} className="bg-surface p-4 transition-colors hover:bg-surface">
+                  <p className="text-sm font-bold text-text">{p.name}</p>
                   {p.description && (
-                    <p className="mt-1 text-[12px] text-slate-400">{p.description}</p>
+                    <p className="mt-1 text-xs text-muted">{p.description}</p>
                   )}
                 </div>
               ))}

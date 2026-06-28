@@ -1,4 +1,4 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 import { Edit, RotateCcw, Search, Tag, Trash2 } from "lucide-react";
 import { AdminBadge } from "../../../../components/admin/AdminBadge";
 import { AdminEmptyState } from "../../../../components/admin/AdminEmptyState";
@@ -117,17 +117,17 @@ export function CouponTable({
     }
 
     return (
-        <div className="overflow-hidden rounded-2xl border border-slate-100 bg-white">
-            <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 p-5">
+        <div className="overflow-hidden rounded-2xl border border-border bg-surface">
+            <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border p-5">
                 <div>
-                    <h3 className="font-bold text-slate-900">Coupon List</h3>
-                    <p className="mt-1 text-xs font-medium text-slate-500">
+                    <h3 className="font-bold text-text">Coupon List</h3>
+                    <p className="mt-1 text-xs font-medium text-muted">
                         Showing {filteredCoupons.length} of {coupons.length} coupons
                     </p>
                 </div>
 
                 <div className="flex flex-wrap items-center gap-3">
-                    <div className="flex rounded-lg border border-slate-200 bg-slate-50 p-1">
+                    <div className="flex rounded-lg border border-border-strong bg-surface p-1">
                         {viewOptions.map((option) => (
                             <button
                                 key={option.value}
@@ -135,8 +135,8 @@ export function CouponTable({
                                 onClick={() => changeViewMode(option.value)}
                                 className={`rounded-md px-3 py-1.5 text-xs font-bold transition-colors ${
                                     viewMode === option.value
-                                        ? "bg-white text-emerald-700 shadow-sm"
-                                        : "text-slate-500 hover:text-slate-800"
+                                        ? "bg-surface text-success shadow-sm"
+                                        : "text-muted hover:text-text"
                                 }`}
                             >
                                 {option.label}
@@ -145,7 +145,7 @@ export function CouponTable({
                     </div>
 
                     {viewMode === "ACTIVE" && (
-                        <div className="flex rounded-lg border border-slate-200 bg-slate-50 p-1">
+                        <div className="flex rounded-lg border border-border-strong bg-surface p-1">
                             {filterOptions.map((option) => (
                                 <button
                                     key={option.value}
@@ -153,8 +153,8 @@ export function CouponTable({
                                     onClick={() => setStatusFilter(option.value)}
                                     className={`rounded-md px-3 py-1.5 text-xs font-bold transition-colors ${
                                         statusFilter === option.value
-                                            ? "bg-white text-emerald-700 shadow-sm"
-                                            : "text-slate-500 hover:text-slate-800"
+                                            ? "bg-surface text-success shadow-sm"
+                                            : "text-muted hover:text-text"
                                     }`}
                                 >
                                     {option.label}
@@ -164,12 +164,12 @@ export function CouponTable({
                     )}
 
                     <div className="relative w-72">
-                        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
                         <input
                             value={searchTerm}
                             onChange={(event) => setSearchTerm(event.target.value)}
                             placeholder="Search coupons"
-                            className="w-full rounded-lg border border-slate-200 bg-slate-50 py-2 pl-9 pr-3 text-sm outline-none focus:border-emerald-500"
+                            className="w-full rounded-lg border border-border-strong bg-surface py-2 pl-9 pr-3 text-sm outline-none focus:border-success"
                         />
                     </div>
 
@@ -177,7 +177,7 @@ export function CouponTable({
                         <button
                             type="button"
                             onClick={clearFilters}
-                            className="rounded-2xl border border-slate-100 bg-white px-3 py-2 text-xs font-bold text-slate-600 transition-colors hover:bg-slate-50"
+                            className="rounded-2xl border border-border bg-surface px-3 py-2 text-xs font-bold text-muted transition-colors hover:bg-surface"
                         >
                             Clear
                         </button>
@@ -188,7 +188,7 @@ export function CouponTable({
             {loading && <AdminSkeletonTable columns={8} rows={4} />}
 
             {!loading && error && (
-                <div className="p-6 text-sm font-semibold text-red-600">{error}</div>
+                <div className="p-6 text-sm font-semibold text-danger">{error}</div>
             )}
 
             {!loading && !error && filteredCoupons.length === 0 && (
@@ -203,7 +203,7 @@ export function CouponTable({
             {!loading && !error && filteredCoupons.length > 0 && (
                 <div className="overflow-x-auto">
                     <table className="w-full min-w-[1120px] text-left text-sm">
-                        <thead className="bg-slate-50 text-xs uppercase text-slate-500">
+                        <thead className="bg-surface text-xs uppercase text-muted">
                             <tr>
                                 <th className="px-5 py-3">Code</th>
                                 <th className="px-5 py-3">Name</th>
@@ -216,36 +216,36 @@ export function CouponTable({
                             </tr>
                         </thead>
 
-                        <tbody className="divide-y divide-slate-100">
+                        <tbody className="divide-y divide-border">
                             {filteredCoupons.map((coupon) => {
                                 const busy = actionCouponId === coupon.id;
 
                                 return (
                                     <tr key={coupon.id}>
-                                        <td className="px-5 py-4 font-bold text-slate-900">{coupon.code}</td>
-                                        <td className="px-5 py-4 text-slate-700">{coupon.name}</td>
-                                        <td className="px-5 py-4 text-slate-700">
+                                        <td className="px-5 py-4 font-bold text-text">{coupon.code}</td>
+                                        <td className="px-5 py-4 text-text">{coupon.name}</td>
+                                        <td className="px-5 py-4 text-text">
                                             {coupon.discountType === "PERCENT"
                                                 ? `${coupon.discountValue}%`
                                                 : formatMoney(coupon.discountValue)}
                                             {coupon.maxDiscountAmount !== null && (
-                                                <p className="mt-1 text-xs text-slate-500">
+                                                <p className="mt-1 text-xs text-muted">
                                                     Max {formatMoney(coupon.maxDiscountAmount)}
                                                 </p>
                                             )}
                                         </td>
-                                        <td className="px-5 py-4 text-slate-700">
+                                        <td className="px-5 py-4 text-text">
                                             <p>Min order: {formatMoney(coupon.minOrderAmount)}</p>
-                                            <p className="mt-1 text-xs text-slate-500">
+                                            <p className="mt-1 text-xs text-muted">
                                                 Per user: {coupon.perUserLimit ?? "Unlimited"}
                                             </p>
                                         </td>
-                                        <td className="px-5 py-4 text-slate-700">
+                                        <td className="px-5 py-4 text-text">
                                             {coupon.usedCount}/{coupon.usageLimit ?? "Unlimited"}
                                         </td>
-                                        <td className="px-5 py-4 text-slate-700">
+                                        <td className="px-5 py-4 text-text">
                                             <p>{formatDate(coupon.startAt)}</p>
-                                            <p className="mt-1 text-xs text-slate-500">to {formatDate(coupon.endAt)}</p>
+                                            <p className="mt-1 text-xs text-muted">to {formatDate(coupon.endAt)}</p>
                                         </td>
                                         <td className="px-5 py-4">
                                             {viewMode === "DELETED" ? (
@@ -260,7 +260,7 @@ export function CouponTable({
                                                 </AdminBadge>
                                             )}
                                             {isExpired(coupon) && (
-                                                <p className="mt-2 text-xs font-semibold text-amber-600">Expired</p>
+                                                <p className="mt-2 text-xs font-semibold text-warning">Expired</p>
                                             )}
                                         </td>
                                         <td className="px-5 py-4">
@@ -270,7 +270,7 @@ export function CouponTable({
                                                         type="button"
                                                         onClick={() => onRestore(coupon.id)}
                                                         disabled={busy}
-                                                        className="rounded-md p-2 text-emerald-600 transition-colors hover:bg-emerald-50 disabled:cursor-not-allowed disabled:opacity-60"
+                                                        className="rounded-md p-2 text-success transition-colors hover:bg-success-soft disabled:cursor-not-allowed disabled:opacity-60"
                                                         aria-label="Restore coupon"
                                                     >
                                                         <RotateCcw className="h-4 w-4" />
@@ -281,20 +281,20 @@ export function CouponTable({
                                                             type="button"
                                                             onClick={() => onEdit(coupon)}
                                                             disabled={busy}
-                                                            className="rounded-md p-2 transition-colors hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-60"
+                                                            className="rounded-md p-2 transition-colors hover:bg-surface-alt disabled:cursor-not-allowed disabled:opacity-60"
                                                             aria-label="Edit coupon"
                                                         >
-                                                            <Edit className="h-4 w-4 text-slate-500" />
+                                                            <Edit className="h-4 w-4 text-muted" />
                                                         </button>
 
                                                         <button
                                                             type="button"
                                                             onClick={() => onDelete(coupon.id)}
                                                             disabled={busy}
-                                                            className="rounded-md p-2 transition-colors hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-60"
+                                                            className="rounded-md p-2 transition-colors hover:bg-danger-soft disabled:cursor-not-allowed disabled:opacity-60"
                                                             aria-label="Delete coupon"
                                                         >
-                                                            <Trash2 className="h-4 w-4 text-red-500" />
+                                                            <Trash2 className="h-4 w-4 text-danger" />
                                                         </button>
                                                     </>
                                                 )}

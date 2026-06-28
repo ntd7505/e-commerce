@@ -4,7 +4,7 @@ import { ShieldCheck, RotateCcw, Rocket, Lock, Headset } from 'lucide-react';
 const BenefitsBar = () => {
   return (
     <div className="bg-[var(--surface-2)] border-b border-[var(--border)]" data-purpose="benefits-bar">
-      <div className="container-custom py-3 flex items-center justify-center gap-10 text-[11px] text-[var(--text-secondary)]">
+      <div className="container-custom py-3 flex items-center justify-center gap-10 text-xs text-[var(--text-secondary)]">
         <div className="flex items-center gap-2">
           <ShieldCheck className="w-4 h-4 text-[var(--color-primary)]" /> 100% chính hãng
         </div>

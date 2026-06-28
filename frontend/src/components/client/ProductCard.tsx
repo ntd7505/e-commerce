@@ -21,7 +21,7 @@ type ProductCardProps = {
 };
 
 const IMAGE_FALLBACK = (
-  <div className="w-full h-full flex flex-col items-center justify-center gap-2 text-gray-400">
+  <div className="w-full h-full flex flex-col items-center justify-center gap-2 text-muted">
     <ImageIcon className="w-8 h-8" />
     <span className="text-xs font-medium">Chưa có ảnh</span>
   </div>
@@ -68,13 +68,13 @@ const ProductCard: React.FC<ProductCardProps> = ({
   return (
     <Link
       to={`/products/${slug}`}
-      className="bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-0.5 hover:border-slate-200 transition-all duration-300 h-full flex flex-col group cursor-pointer block no-underline text-inherit"
+      className="bg-surface rounded-xl overflow-hidden border border-border shadow-sm hover:shadow-md hover:-translate-y-0.5 hover:border-border-strong transition-all duration-300 h-full flex flex-col group cursor-pointer block no-underline text-inherit"
     >
       {/* Image container */}
-      <div className="relative bg-slate-50 aspect-square overflow-hidden">
+      <div className="relative bg-surface aspect-square overflow-hidden">
         {/* Discount badge */}
         {discountBadge && (
-          <span className="absolute top-2 left-2 z-10 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-lg shadow-sm">
+          <span className="absolute top-2 left-2 z-10 bg-danger-soft0 text-white text-xs font-bold px-2 py-1 rounded-lg shadow-sm">
             {discountBadge}
           </span>
         )}
@@ -99,7 +99,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
             <button
               onClick={handleAddToCart}
               disabled={addingToCart}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2 rounded-lg flex items-center justify-center gap-1.5 transition-colors disabled:opacity-70 border-0 shadow-sm"
+              className="w-full bg-primary hover:bg-primary-hover text-white text-sm font-semibold py-2 rounded-lg flex items-center justify-center gap-1.5 transition-colors disabled:opacity-70 border-0 shadow-sm"
               aria-label={`Thêm ${name} vào giỏ hàng`}
             >
               {addingToCart ? (
@@ -119,7 +119,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
           <div className="absolute bottom-2 left-2 right-2 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-all duration-300 z-10">
             <button
               disabled
-              className="w-full bg-gray-200 text-gray-500 text-sm font-semibold py-2 rounded-lg flex items-center justify-center gap-1.5 cursor-not-allowed border-0"
+              className="w-full bg-border text-muted text-sm font-semibold py-2 rounded-lg flex items-center justify-center gap-1.5 cursor-not-allowed border-0"
             >
               <Ban className="w-4 h-4" />
               Hết hàng
@@ -129,23 +129,23 @@ const ProductCard: React.FC<ProductCardProps> = ({
       </div>
 
       {/* Content */}
-      <div className="p-3 flex flex-col flex-grow bg-white">
-        <h4 className="text-sm font-medium text-slate-800 line-clamp-2 min-h-[40px] group-hover:text-blue-600 transition-colors leading-[1.4] mb-1.5">
+      <div className="p-3 flex flex-col flex-grow bg-surface">
+        <h4 className="text-sm font-medium text-text line-clamp-2 min-h-[40px] group-hover:text-primary transition-colors leading-[1.4] mb-1.5">
           {name}
         </h4>
 
         {/* Rating and Sold */}
         <div className="flex items-center gap-1.5 mb-2.5">
-          <Star className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400 shrink-0" />
-          <span className="text-xs font-medium text-slate-700">
-            {mockRating} <span className="text-slate-300 mx-0.5">|</span> <span className="font-normal text-slate-500">Đã bán {mockSoldCount >= 1000 ? (mockSoldCount/1000).toFixed(1) + 'k' : mockSoldCount}</span>
+          <Star className="w-3.5 h-3.5 fill-warning text-warning shrink-0" />
+          <span className="text-xs font-medium text-text">
+            {mockRating} <span className="text-subtle mx-0.5">|</span> <span className="font-normal text-muted">Đã bán {mockSoldCount >= 1000 ? (mockSoldCount/1000).toFixed(1) + 'k' : mockSoldCount}</span>
           </span>
         </div>
 
         {/* Tags */}
         <div className="flex flex-wrap gap-1 mb-2.5">
           {defaultTags.map((tag, idx) => (
-            <span key={idx} className="text-[10px] font-medium px-1.5 py-0.5 border border-blue-200 bg-blue-50 text-blue-600 rounded whitespace-nowrap">
+            <span key={idx} className="text-xs font-medium px-1.5 py-0.5 border border-primary-soft bg-primary-soft text-primary rounded whitespace-nowrap">
               {tag}
             </span>
           ))}
@@ -153,11 +153,11 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
         {/* Price */}
         <div className="flex items-end gap-2 mt-auto flex-wrap">
-          <span className="text-red-500 font-bold text-lg leading-none">
+          <span className="text-danger font-bold text-lg leading-none">
             {price || 'Chưa có giá'}
           </span>
           {originalPrice && (
-            <span className="text-gray-400 line-through text-xs leading-none mb-0.5">
+            <span className="text-muted line-through text-xs leading-none mb-0.5">
               {originalPrice}
             </span>
           )}
@@ -166,16 +166,16 @@ const ProductCard: React.FC<ProductCardProps> = ({
         {/* Footer (Flash Sale Progress or Delivery Date) */}
         {isFlashSale && !saleEnded ? (
           <div className="mt-3">
-            <div className="w-full bg-red-100 h-[14px] rounded-full overflow-hidden relative flex items-center">
-              <div className="absolute top-0 left-0 bottom-0 bg-red-500 rounded-full" style={{ width: `${defaultProgress}%` }}></div>
-              <span className="absolute w-full text-center text-[10px] font-bold text-white uppercase z-10 leading-none drop-shadow-sm mix-blend-normal">
+            <div className="w-full bg-danger-soft h-[14px] rounded-full overflow-hidden relative flex items-center">
+              <div className="absolute top-0 left-0 bottom-0 bg-danger-soft0 rounded-full" style={{ width: `${defaultProgress}%` }}></div>
+              <span className="absolute w-full text-center text-xs font-bold text-white uppercase z-10 leading-none drop-shadow-sm mix-blend-normal">
                 Đã bán {defaultProgress}%
               </span>
             </div>
           </div>
         ) : (
           !isFlashSale && deliveryDate && (
-            <div className="text-xs text-gray-500 mt-2 font-medium">
+            <div className="text-xs text-muted mt-2 font-medium">
               Giao hàng {deliveryDate}
             </div>
           )

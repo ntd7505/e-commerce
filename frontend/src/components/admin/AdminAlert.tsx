@@ -7,10 +7,10 @@ type AdminAlertProps = {
 };
 
 const toneClass: Record<AdminAlertProps["tone"], string> = {
-  success: "border-emerald-100 bg-emerald-50 text-emerald-700",
-  error: "border-red-100 bg-red-50 text-red-600",
-  info: "border-blue-100 bg-blue-50 text-blue-700",
-  warning: "border-amber-100 bg-amber-50 text-amber-700",
+  success: "border-success-soft bg-success-soft text-success",
+  error: "border-danger-soft bg-danger-soft text-danger",
+  info: "border-primary-soft bg-primary-soft text-primary",
+  warning: "border-warning-soft bg-warning-soft text-warning",
 };
 
 export function AdminAlert({ tone, children, className = "" }: AdminAlertProps) {

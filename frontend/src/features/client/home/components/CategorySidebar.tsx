@@ -6,8 +6,8 @@ import { clientProductApi, type CategorySummaryResponse } from '../clientProduct
 /* ──────────── Skeleton items ──────────── */
 const SkeletonItem = () => (
   <li className="flex items-center gap-3 p-3 animate-pulse">
-    <div className="w-5 h-5 bg-gray-200 rounded" />
-    <div className="h-4 bg-gray-200 rounded w-3/4" />
+    <div className="w-5 h-5 bg-border rounded" />
+    <div className="h-4 bg-border rounded w-3/4" />
   </li>
 );
 
@@ -82,17 +82,17 @@ const CategorySidebar = () => {
 
   return (
     <aside className="w-full bg-[var(--surface-2)] border-[0.5px] border-[var(--border)] rounded-[10px] py-4 h-max" data-purpose="category-sidebar">
-      <div className="text-[10px] text-[var(--text-muted)] uppercase tracking-[0.1em] font-medium px-4 mb-3">Danh mục</div>
+      <div className="text-xs text-[var(--text-muted)] uppercase tracking-[0.1em] font-medium px-4 mb-3">Danh mục</div>
       <ul className="flex flex-col px-2 gap-0.5">
         {loading ? (
           Array.from({ length: 6 }).map((_, i) => <SkeletonItem key={i} />)
         ) : error ? (
-          <li className="p-3 text-center text-[var(--text-muted)] text-[12px]">
+          <li className="p-3 text-center text-[var(--text-muted)] text-xs">
             <AlertCircle className="w-4 h-4 text-[var(--text-muted)] mb-1 block mx-auto" />
             Lỗi tải danh mục
           </li>
         ) : parentCategories.length === 0 ? (
-          <li className="p-3 text-center text-[var(--text-muted)] text-[12px]">
+          <li className="p-3 text-center text-[var(--text-muted)] text-xs">
             Chưa có danh mục nào
           </li>
         ) : (
@@ -112,7 +112,7 @@ const CategorySidebar = () => {
                       : 'hover:bg-[var(--surface-0)] text-[var(--text-primary)]'
                   }`}
                 >
-                  <span className="text-[13px] leading-[1.3] pr-2 flex-1">{cat.name}</span>
+                  <span className="text-sm leading-[1.3] pr-2 flex-1">{cat.name}</span>
                   {hasChildren ? (
                     <button
                       type="button"
@@ -138,7 +138,7 @@ const CategorySidebar = () => {
                         <li
                           key={child.id}
                           onClick={() => navigate(`/products?categoryId=${child.id}`)}
-                          className={`flex items-center justify-between px-3 py-2 cursor-pointer transition-colors text-[12px] rounded-r-[6px] ${
+                          className={`flex items-center justify-between px-3 py-2 cursor-pointer transition-colors text-xs rounded-r-[6px] ${
                             isSubActive
                               ? 'text-[var(--color-primary)] font-medium bg-[var(--surface-0)]'
                               : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-0)]'

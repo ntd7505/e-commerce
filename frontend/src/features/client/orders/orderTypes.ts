@@ -131,40 +131,40 @@ export function getPaymentMethodLabel(method: PaymentMethod): string {
 export function getOrderStatusBadgeClass(status: OrderStatus): string {
   switch (status) {
     case "PENDING":
-      return "bg-yellow-50 text-yellow-700 border-yellow-200";
+      return "bg-warning-soft text-warning border-warning-soft";
     case "CONFIRMED":
-      return "bg-blue-50 text-blue-700 border-blue-200";
+      return "bg-primary-soft text-primary border-primary-soft";
     case "PROCESSING":
       return "bg-indigo-50 text-indigo-700 border-indigo-200";
     case "SHIPPING":
       return "bg-purple-50 text-purple-700 border-purple-200";
     case "DELIVERED":
-      return "bg-emerald-50 text-emerald-700 border-emerald-200";
+      return "bg-success-soft text-success border-success-soft";
     case "COMPLETED":
-      return "bg-green-50 text-green-700 border-green-200";
+      return "bg-success-soft text-success border-success-soft";
     case "CANCELLED":
-      return "bg-red-50 text-red-700 border-red-200";
+      return "bg-danger-soft text-danger border-danger-soft";
     case "RETURNED":
-      return "bg-gray-100 text-gray-700 border-gray-200";
+      return "bg-surface-alt text-text border-border-strong";
     default:
-      return "bg-gray-100 text-gray-700 border-gray-200";
+      return "bg-surface-alt text-text border-border-strong";
   }
 }
 
 export function getPaymentStatusBadgeClass(status: PaymentStatus): string {
   switch (status) {
     case "PAID":
-      return "bg-green-50 text-green-700 border-green-200";
+      return "bg-success-soft text-success border-success-soft";
     case "UNPAID":
-      return "bg-yellow-50 text-yellow-700 border-yellow-200";
+      return "bg-warning-soft text-warning border-warning-soft";
     case "FAILED":
-      return "bg-red-50 text-red-700 border-red-200";
+      return "bg-danger-soft text-danger border-danger-soft";
     case "CANCELLED":
-      return "bg-gray-100 text-gray-700 border-gray-200";
+      return "bg-surface-alt text-text border-border-strong";
     case "REFUNDED":
       return "bg-indigo-50 text-indigo-700 border-indigo-200";
     default:
-      return "bg-gray-100 text-gray-700 border-gray-200";
+      return "bg-surface-alt text-text border-border-strong";
   }
 }
 

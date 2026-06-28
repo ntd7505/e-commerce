@@ -14,13 +14,13 @@ type Props = {
 
 /* ──────────── Skeleton card ──────────── */
 const SkeletonCard = () => (
-  <div className="bg-white rounded-lg overflow-hidden border border-gray-100 h-full flex flex-col animate-pulse">
-    <div className="w-full aspect-square bg-gray-200" />
+  <div className="bg-surface rounded-lg overflow-hidden border border-border h-full flex flex-col animate-pulse">
+    <div className="w-full aspect-square bg-border" />
     <div className="p-3 flex flex-col gap-2">
-      <div className="h-4 bg-gray-200 rounded w-full" />
-      <div className="h-4 bg-gray-200 rounded w-2/3" />
-      <div className="h-5 bg-gray-200 rounded w-1/2 mt-1" />
-      <div className="h-3 bg-gray-100 rounded w-1/3" />
+      <div className="h-4 bg-border rounded w-full" />
+      <div className="h-4 bg-border rounded w-2/3" />
+      <div className="h-5 bg-border rounded w-1/2 mt-1" />
+      <div className="h-3 bg-surface-alt rounded w-1/3" />
     </div>
   </div>
 );
@@ -57,7 +57,7 @@ const FlashSaleSection: React.FC<Props> = ({ products, loading, error }) => {
 
   return (
     <section className="w-full" data-purpose="flash-sale-section">
-      <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+      <div className="bg-surface border border-border-strong rounded-2xl p-4 shadow-sm">
         {/* Header */}
         <div className="flex justify-between items-center mb-5">
           <div className="flex items-center gap-4">
@@ -72,13 +72,13 @@ const FlashSaleSection: React.FC<Props> = ({ products, loading, error }) => {
                 <div className="bg-[var(--color-navy)] text-white text-sm px-2 py-1 rounded-[4px] font-bold leading-none">{formatTime(seconds)}</div>
               </div>
             ) : (
-               <div className="text-[12px] text-[var(--text-muted)] font-medium">Đã kết thúc</div>
+               <div className="text-xs text-[var(--text-muted)] font-medium">Đã kết thúc</div>
             )}
           </div>
           {products.length > 0 && (
             <Link 
               to="/products"
-              className="text-[var(--color-primary)] text-[12px] font-medium hover:underline flex items-center gap-1"
+              className="text-[var(--color-primary)] text-xs font-medium hover:underline flex items-center gap-1"
             >
               Xem tất cả &rarr;
             </Link>
@@ -93,11 +93,11 @@ const FlashSaleSection: React.FC<Props> = ({ products, loading, error }) => {
             ))}
           </div>
         ) : error ? (
-          <div className="flex flex-col items-center justify-center py-12 text-center bg-red-900/20 rounded-xl border border-red-500/20 border-dashed">
+          <div className="flex flex-col items-center justify-center py-12 text-center bg-danger-soft rounded-xl border border-danger-soft border-dashed">
             <div className="w-14 h-14 bg-[var(--surface-1)] rounded-full flex items-center justify-center shadow-sm mb-3">
-              <AlertCircle className="w-7 h-7 text-red-400" />
+              <AlertCircle className="w-7 h-7 text-danger" />
             </div>
-            <p className="text-red-400 font-medium mb-1">Không thể tải Flash Sale</p>
+            <p className="text-danger font-medium mb-1">Không thể tải Flash Sale</p>
             <p className="text-[var(--text-muted)] text-sm">{error}</p>
           </div>
         ) : products.length === 0 ? (

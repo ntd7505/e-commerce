@@ -22,16 +22,16 @@ export default function ProductTabs({
   ] as const;
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm mb-10 overflow-hidden">
-      <div className="flex border-b border-gray-100 overflow-x-auto hide-scrollbar">
+    <div className="bg-surface rounded-2xl border border-border shadow-sm mb-10 overflow-hidden">
+      <div className="flex border-b border-border overflow-x-auto hide-scrollbar">
         {tabs.map(tab => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id as 'description' | 'specs' | 'reviews')}
             className={`px-8 py-4 text-sm font-bold whitespace-nowrap transition-colors ${
               activeTab === tab.id
-                ? 'border-b-2 border-blue-600 text-blue-600'
-                : 'text-gray-500 hover:text-blue-600'
+                ? 'border-b-2 border-primary text-primary'
+                : 'text-muted hover:text-primary'
             }`}
           >
             {tab.label}

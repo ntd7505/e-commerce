@@ -40,13 +40,13 @@ export default function ClientLogin() {
 
   return (
     <div className="min-h-[70vh] flex items-center justify-center p-4">
-      <div className="max-w-md w-full bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Đăng nhập</h1>
-        <p className="text-gray-500 mb-8">Chào mừng bạn quay lại NexaMart</p>
+      <div className="max-w-md w-full bg-surface p-8 rounded-2xl shadow-sm border border-border">
+        <h1 className="text-wrap-balance text-3xl font-bold text-text mb-2">Đăng nhập</h1>
+        <p className="text-muted mb-8">Chào mừng bạn quay lại NexaMart</p>
 
         <form onSubmit={handleLogin} className="space-y-5">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+            <label className="block text-sm font-medium text-text mb-1">Email</label>
             <div className="relative">
               <input
                 type="email"
@@ -54,16 +54,16 @@ export default function ClientLogin() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Nhập email của bạn"
                 required
-                className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
+                className="w-full pl-10 pr-4 py-3 rounded-lg border border-border-strong focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-colors"
               />
-              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted" />
             </div>
           </div>
 
           <div>
             <div className="flex justify-between items-center mb-1">
-              <label className="block text-sm font-medium text-gray-700">Mật khẩu</label>
-              <a href="#" className="text-sm text-blue-600 hover:text-blue-700">Quên mật khẩu?</a>
+              <label className="block text-sm font-medium text-text">Mật khẩu</label>
+              <a href="#" className="text-sm text-primary hover:text-primary">Quên mật khẩu?</a>
             </div>
             <div className="relative">
               <input
@@ -72,14 +72,14 @@ export default function ClientLogin() {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
                 required
-                className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
+                className="w-full pl-10 pr-4 py-3 rounded-lg border border-border-strong focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-colors"
               />
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted" />
             </div>
           </div>
 
           {error && (
-            <div className="p-3 bg-red-50 text-red-600 text-sm rounded-lg">
+            <div className="p-3 bg-danger-soft text-danger text-sm rounded-lg">
               {error}
             </div>
           )}
@@ -87,16 +87,16 @@ export default function ClientLogin() {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full flex items-center justify-center gap-2 bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
+            className="w-full flex items-center justify-center gap-2 bg-primary text-white py-3 rounded-lg font-medium hover:bg-primary-hover transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
           >
             {isLoading ? 'Đang xử lý...' : 'Đăng nhập'}
             <ArrowRight className="w-4 h-4" />
           </button>
         </form>
 
-        <div className="mt-6 text-center text-sm text-gray-500">
+        <div className="mt-6 text-center text-sm text-muted">
           Chưa có tài khoản?{' '}
-          <Link to="/register" className="text-blue-600 font-medium hover:text-blue-700">
+          <Link to="/register" className="text-primary font-medium hover:text-primary">
             Đăng ký ngay
           </Link>
         </div>

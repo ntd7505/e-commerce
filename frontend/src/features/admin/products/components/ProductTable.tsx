@@ -1,4 +1,4 @@
-﻿import { Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { ChevronLeft, ChevronRight, Edit, Filter, MoreHorizontal, Package, Search } from "lucide-react";
 import { AdminBadge } from "../../../../components/admin/AdminBadge";
 import { AdminEmptyState } from "../../../../components/admin/AdminEmptyState";
@@ -54,13 +54,13 @@ export function ProductTable({
 
     const tabClass = (tab: "all" | "active" | "inactive") =>
         statusFilter === tab
-            ? "rounded-md border border-slate-200/60 bg-white px-5 py-2 text-[13px] font-bold text-emerald-800 shadow-sm"
-            : "rounded-md px-5 py-2 text-[13px] font-bold text-slate-500 transition-colors hover:text-slate-900";
+            ? "rounded-md border border-border-strong/60 bg-surface px-5 py-2 text-sm font-bold text-success shadow-sm"
+            : "rounded-md px-5 py-2 text-sm font-bold text-muted transition-colors hover:text-text";
 
     return (
-        <div className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm">
-            <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 p-4">
-                <div className="flex items-center gap-1 rounded-lg border border-slate-100 bg-slate-50 p-1.5 shadow-inner">
+        <div className="overflow-hidden rounded-2xl border border-border bg-surface shadow-sm">
+            <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border p-4">
+                <div className="flex items-center gap-1 rounded-lg border border-border bg-surface p-1.5 shadow-inner">
                     <button className={tabClass("all")} onClick={() => onStatusFilterChange("all")}>
                         All Products ({products.length})
                     </button>
@@ -79,14 +79,14 @@ export function ProductTable({
                             value={searchTerm}
                             onChange={(event) => onSearchChange(event.target.value)}
                             placeholder="Search products"
-                            className="w-72 rounded-lg border border-slate-200 bg-slate-50/50 py-2.5 pl-4 pr-10 text-[13px] font-medium outline-none placeholder:font-normal placeholder:text-slate-400 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
+                            className="w-72 rounded-lg border border-border-strong bg-surface/50 py-2.5 pl-4 pr-10 text-sm font-medium outline-none placeholder:font-normal placeholder:text-muted focus:border-success focus:ring-1 focus:ring-success"
                         />
-                        <Search className="absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                        <Search className="absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
                     </div>
-                    <button className="rounded-2xl border border-slate-100 bg-white p-2.5 text-slate-500 shadow-sm transition-colors hover:bg-slate-50 hover:text-slate-800">
+                    <button className="rounded-2xl border border-border bg-surface p-2.5 text-muted shadow-sm transition-colors hover:bg-surface hover:text-text">
                         <Filter className="h-4 w-4" />
                     </button>
-                    <button className="rounded-2xl border border-slate-100 bg-white p-2.5 text-slate-500 shadow-sm transition-colors hover:bg-slate-50 hover:text-slate-800">
+                    <button className="rounded-2xl border border-border bg-surface p-2.5 text-muted shadow-sm transition-colors hover:bg-surface hover:text-text">
                         <MoreHorizontal className="h-4 w-4" />
                     </button>
                 </div>
@@ -95,7 +95,7 @@ export function ProductTable({
             {loading && <AdminSkeletonTable columns={8} rows={4} />}
 
             {!loading && error && (
-                <div className="p-6 text-center text-sm font-semibold text-red-600">{error}</div>
+                <div className="p-6 text-center text-sm font-semibold text-danger">{error}</div>
             )}
 
             {!loading && !error && filteredProducts.length === 0 && (
@@ -103,12 +103,12 @@ export function ProductTable({
                     icon={Package}
                     title={
                         statusFilter === "all"
-                            ? "Chưa có sản phẩm nào"
+                            ? "Chua c� s?n ph?m n�o"
                             : statusFilter === "active"
-                                ? "Không có sản phẩm active"
-                                : "Không có sản phẩm inactive"
+                                ? "Kh�ng c� s?n ph?m active"
+                                : "Kh�ng c� s?n ph?m inactive"
                     }
-                    description="Sản phẩm sẽ xuất hiện ở đây sau khi được tạo."
+                    description="S?n ph?m s? xu?t hi?n ? d�y sau khi du?c t?o."
                     compact
                 />
             )}
@@ -116,20 +116,20 @@ export function ProductTable({
             {!loading && !error && filteredProducts.length > 0 && (
                 <>
                 <div className="overflow-x-auto px-5 py-4">
-                    <table className="w-full text-left text-[14px]">
+                    <table className="w-full text-left text-sm">
                         <thead>
-                            <tr className="border-none bg-emerald-50/60 font-bold text-emerald-900">
-                                <th className="rounded-l-lg px-4 py-4 text-[13px] font-bold">Product</th>
-                                <th className="px-4 py-4 text-[13px] font-bold">Brand</th>
-                                <th className="px-4 py-4 text-[13px] font-bold">Category</th>
-                                <th className="px-4 py-4 text-[13px] font-bold">Price</th>
-                                <th className="px-4 py-4 text-[13px] font-bold">Stock</th>
-                                <th className="px-4 py-4 text-[13px] font-bold">Created</th>
-                                <th className="px-4 py-4 text-[13px] font-bold">Status</th>
-                                <th className="rounded-r-lg px-4 py-4 text-right text-[13px] font-bold">Action</th>
+                            <tr className="border-none bg-success-soft/60 font-bold text-success">
+                                <th className="rounded-l-lg px-4 py-4 text-sm font-bold">Product</th>
+                                <th className="px-4 py-4 text-sm font-bold">Brand</th>
+                                <th className="px-4 py-4 text-sm font-bold">Category</th>
+                                <th className="px-4 py-4 text-sm font-bold">Price</th>
+                                <th className="px-4 py-4 text-sm font-bold">Stock</th>
+                                <th className="px-4 py-4 text-sm font-bold">Created</th>
+                                <th className="px-4 py-4 text-sm font-bold">Status</th>
+                                <th className="rounded-r-lg px-4 py-4 text-right text-sm font-bold">Action</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-slate-100">
+                        <tbody className="divide-y divide-border">
                             {paginatedProducts.map((product) => {
                                 const thumbnail = getProductThumbnail(product);
                                 const variant = getPrimaryVariant(product);
@@ -138,10 +138,10 @@ export function ProductTable({
                                 const displayPrice = salePrice > 0 ? salePrice : price;
 
                                 return (
-                                    <tr key={product.id} className="group transition-colors hover:bg-slate-50/50">
+                                    <tr key={product.id} className="group transition-colors hover:bg-surface/50">
                                         <td className="px-4 py-4">
                                             <div className="flex items-center gap-4">
-                                                <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg border border-slate-100 bg-slate-50 p-1.5">
+                                                <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg border border-border bg-surface p-1.5">
                                                     <AdminImage
                                                         src={thumbnail}
                                                         alt={product.name}
@@ -151,33 +151,33 @@ export function ProductTable({
                                                     />
                                                 </div>
                                                 <div>
-                                                    <p className="font-bold leading-snug text-slate-900 transition-colors group-hover:text-emerald-600">
+                                                    <p className="font-bold leading-snug text-text transition-colors group-hover:text-success">
                                                         {product.name}
                                                     </p>
-                                                    <p className="mt-1 text-[12px] font-medium text-slate-500">{product.slug}</p>
+                                                    <p className="mt-1 text-xs font-medium text-muted">{product.slug}</p>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td className="px-4 py-4 text-[13px] font-bold text-slate-900">
+                                        <td className="px-4 py-4 text-sm font-bold text-text">
                                             {product.brand?.name ?? "-"}
                                         </td>
-                                        <td className="px-4 py-4 text-[13px] font-bold text-slate-900">
+                                        <td className="px-4 py-4 text-sm font-bold text-text">
                                             {product.category?.name ?? "-"}
                                         </td>
                                         <td className="px-4 py-4">
-                                            <div className="text-[13px] font-extrabold text-slate-900">
+                                            <div className="text-sm font-extrabold text-text">
                                                 {currencyFormatter.format(displayPrice)}
                                             </div>
                                             {salePrice > 0 && price > salePrice && (
-                                                <div className="mt-1 text-[12px] font-semibold text-slate-400 line-through">
+                                                <div className="mt-1 text-xs font-semibold text-muted line-through">
                                                     {currencyFormatter.format(price)}
                                                 </div>
                                             )}
                                         </td>
-                                        <td className="px-4 py-4 text-[13px] font-bold text-slate-900">
+                                        <td className="px-4 py-4 text-sm font-bold text-text">
                                             {variant?.stockQuantity ?? 0}
                                         </td>
-                                        <td className="px-4 py-4 text-[13px] font-semibold text-slate-500">
+                                        <td className="px-4 py-4 text-sm font-semibold text-muted">
                                             {formatProductDate(product.createdAt)}
                                         </td>
                                         <td className="px-4 py-4">
@@ -193,7 +193,7 @@ export function ProductTable({
                                             <div className="flex items-center justify-end gap-3">
                                                 <Link
                                                     to={`/admin/products/${product.id}/edit`}
-                                                    className="text-slate-400 transition-colors hover:text-emerald-600"
+                                                    className="text-muted transition-colors hover:text-success"
                                                 >
                                                     <Edit className="h-4 w-4" />
                                                 </Link>
@@ -206,8 +206,8 @@ export function ProductTable({
                     </table>
                 </div>
 
-                <div className="flex items-center justify-between border-t border-slate-100 px-5 py-3">
-                    <p className="text-[12px] font-medium text-slate-500">
+                <div className="flex items-center justify-between border-t border-border px-5 py-3">
+                    <p className="text-xs font-medium text-muted">
                         {filteredProducts.length > 0
                             ? `Showing ${startItem}-${endItem} of ${filteredProducts.length}`
                             : "No results"}
@@ -217,19 +217,19 @@ export function ProductTable({
                             type="button"
                             onClick={() => onPageChange(page - 1)}
                             disabled={page <= 1}
-                            className="flex items-center gap-1 rounded-2xl border border-slate-100 bg-white px-3 py-1.5 text-[12px] font-bold text-slate-600 shadow-sm hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40"
+                            className="flex items-center gap-1 rounded-2xl border border-border bg-surface px-3 py-1.5 text-xs font-bold text-muted shadow-sm hover:bg-surface disabled:cursor-not-allowed disabled:opacity-40"
                         >
                             <ChevronLeft className="h-3.5 w-3.5" />
                             Previous
                         </button>
-                        <span className="text-[12px] font-bold text-slate-700">
+                        <span className="text-xs font-bold text-text">
                             Page {page} of {totalPages}
                         </span>
                         <button
                             type="button"
                             onClick={() => onPageChange(page + 1)}
                             disabled={page >= totalPages}
-                            className="flex items-center gap-1 rounded-2xl border border-slate-100 bg-white px-3 py-1.5 text-[12px] font-bold text-slate-600 shadow-sm hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40"
+                            className="flex items-center gap-1 rounded-2xl border border-border bg-surface px-3 py-1.5 text-xs font-bold text-muted shadow-sm hover:bg-surface disabled:cursor-not-allowed disabled:opacity-40"
                         >
                             Next
                             <ChevronRight className="h-3.5 w-3.5" />
