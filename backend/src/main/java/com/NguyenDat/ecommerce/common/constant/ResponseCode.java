@@ -7,6 +7,7 @@ public enum ResponseCode {
     // 1000 - Common
     SUCCESS(1000, "Success"),
     NO_DATA_FOUND(1005, "No data found"),
+    DASHBOARD_FETCHED(1010, "Dashboard fetched successfully"),
 
     // 1100 - User
     USER_CREATED(1100, "User created successfully"),
@@ -40,6 +41,8 @@ public enum ResponseCode {
     PRODUCT_MEDIA_UPDATED(3013, "Product media updated successfully"),
     PRODUCT_MEDIA_DELETED(3014, "Product media deleted successfully"),
     PRODUCT_MEDIA_REORDERED(3015, "Product media reordered successfully"),
+    PRODUCT_DESCRIPTION_BLOCKS_UPDATED(3016, "Product description blocks updated successfully"),
+    PRODUCT_SPECIFICATIONS_UPDATED(3017, "Product specifications updated successfully"),
 
     // 4000 - Role
     ROLE_CREATED(4000, "Role created successfully"),
@@ -81,6 +84,8 @@ public enum ResponseCode {
     COUPON_VALIDATED(8007, "Coupon validated successfully"),
     COUPON_APPLIED(8008, "Coupon applied successfully"),
     COUPON_RESTORED(8009, "Coupon restored successfully"),
+    AVAILABLE_COUPONS_FETCHED(8010, "Available coupons fetched successfully"),
+    MY_COUPONS_FETCHED(8011, "My coupons fetched successfully"),
 
     // 9000 - Address
     ADDRESS_CREATED(9000, "Address created successfully"),
@@ -127,7 +132,9 @@ public enum ResponseCode {
     PRODUCT_REVIEW_DELETED(13004, "Product review deleted successfully"),
     PRODUCT_REVIEW_STATUS_UPDATED(13005, "Product review status updated successfully"),
     PRODUCT_REVIEW_SUMMARY_FETCHED(13006, "Product review summary fetched successfully"),
-    PRODUCT_REVIEW_MEDIA_FETCHED(13007, "Product review media fetched successfully");
+    PRODUCT_REVIEW_MEDIA_FETCHED(13007, "Product review media fetched successfully"),
+    PRODUCT_REVIEW_ELIGIBILITY_FETCHED(13008, "Product review eligibility fetched successfully"),
+    PRODUCT_REVIEW_MODERATED(13009, "Product review moderated successfully");
 
     private final int code;
     private final String message;

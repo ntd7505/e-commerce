@@ -19,6 +19,8 @@ public interface ProductMapper {
     @Mapping(target = "deleted", ignore = true)
     @Mapping(target = "variants", ignore = true)
     @Mapping(target = "media", ignore = true)
+    @Mapping(target = "descriptionBlocks", ignore = true)
+    @Mapping(target = "specifications", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     Product toProduct(ProductCreateRequest productCreateRequest);
@@ -33,6 +35,8 @@ public interface ProductMapper {
     @Mapping(target = "deleted", ignore = true)
     @Mapping(target = "variants", ignore = true)
     @Mapping(target = "media", ignore = true)
+    @Mapping(target = "descriptionBlocks", ignore = true)
+    @Mapping(target = "specifications", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     void updateProduct(@MappingTarget Product product, ProductUpdateRequest productUpdateRequest);

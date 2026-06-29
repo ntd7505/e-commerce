@@ -37,6 +37,12 @@ public interface ProductService {
 
     void deleteProductMediaById(Long mediaId);
 
+    ProductResponse updateProductDescriptionBlocks(
+            Long productId, ProductDescriptionBlockBulkRequest productDescriptionBlockBulkRequest);
+
+    ProductResponse updateProductSpecifications(
+            Long productId, ProductSpecificationBulkRequest productSpecificationBulkRequest);
+
     List<ProductResponse> showAllProducts();
 
     ProductResponse showProductBySlug(String slug);

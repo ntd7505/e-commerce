@@ -180,6 +180,24 @@ public class AdminProductController {
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.PRODUCT_MEDIA_DELETED, null));
     }
 
+    @PutMapping("/products/{productId}/description-blocks")
+    public ResponseEntity<ApiResponse<ProductResponse>> updateProductDescriptionBlocks(
+            @PathVariable Long productId,
+            @RequestBody @Valid ProductDescriptionBlockBulkRequest request) {
+        return ResponseEntity.ok(ApiResponse.of(
+                ResponseCode.PRODUCT_DESCRIPTION_BLOCKS_UPDATED,
+                productService.updateProductDescriptionBlocks(productId, request)));
+    }
+
+    @PutMapping("/products/{productId}/specifications")
+    public ResponseEntity<ApiResponse<ProductResponse>> updateProductSpecifications(
+            @PathVariable Long productId,
+            @RequestBody @Valid ProductSpecificationBulkRequest request) {
+        return ResponseEntity.ok(ApiResponse.of(
+                ResponseCode.PRODUCT_SPECIFICATIONS_UPDATED,
+                productService.updateProductSpecifications(productId, request)));
+    }
+
     @DeleteMapping("/products/{id}")
     public ResponseEntity<ApiResponse<Void>> deleteProductById(@PathVariable Long id) {
         productService.deleteProductById(id);

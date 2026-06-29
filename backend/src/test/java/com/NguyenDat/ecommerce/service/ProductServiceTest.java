@@ -17,8 +17,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.NguyenDat.ecommerce.common.exception.AppException;
 import com.NguyenDat.ecommerce.common.exception.ErrorCode;
 import com.NguyenDat.ecommerce.dto.request.product.ProductCreateRequest;
+import com.NguyenDat.ecommerce.dto.request.product.ProductDescriptionBlockBulkRequest;
+import com.NguyenDat.ecommerce.dto.request.product.ProductDescriptionBlockRequest;
 import com.NguyenDat.ecommerce.dto.request.product.ProductMediaRequest;
 import com.NguyenDat.ecommerce.dto.request.product.ProductMediaUpdateRequest;
+import com.NguyenDat.ecommerce.dto.request.product.ProductSpecificationBulkRequest;
+import com.NguyenDat.ecommerce.dto.request.product.ProductSpecificationRequest;
 import com.NguyenDat.ecommerce.dto.request.product.ProductUpdateRequest;
 import com.NguyenDat.ecommerce.dto.request.product.ProductVariantRequest;
 import com.NguyenDat.ecommerce.dto.request.product.ProductVariantUpdateRequest;
@@ -30,15 +34,22 @@ import com.NguyenDat.ecommerce.dto.response.category.CategorySummaryResponse;
 import com.NguyenDat.ecommerce.entity.Brand;
 import com.NguyenDat.ecommerce.entity.Category;
 import com.NguyenDat.ecommerce.entity.Product;
+import com.NguyenDat.ecommerce.entity.ProductDescriptionBlock;
 import com.NguyenDat.ecommerce.entity.ProductMedia;
+import com.NguyenDat.ecommerce.entity.ProductSpecification;
 import com.NguyenDat.ecommerce.entity.ProductVariant;
+import com.NguyenDat.ecommerce.enums.ProductDescriptionBlockType;
+import com.NguyenDat.ecommerce.mapper.ProductDescriptionBlockMapper;
 import com.NguyenDat.ecommerce.mapper.ProductMapper;
 import com.NguyenDat.ecommerce.mapper.ProductMediaMapper;
+import com.NguyenDat.ecommerce.mapper.ProductSpecificationMapper;
 import com.NguyenDat.ecommerce.mapper.ProductVariantMapper;
 import com.NguyenDat.ecommerce.repository.BrandRepository;
 import com.NguyenDat.ecommerce.repository.CategoryRepository;
+import com.NguyenDat.ecommerce.repository.ProductDescriptionBlockRepository;
 import com.NguyenDat.ecommerce.repository.ProductMediaRepository;
 import com.NguyenDat.ecommerce.repository.ProductRepository;
+import com.NguyenDat.ecommerce.repository.ProductSpecificationRepository;
 import com.NguyenDat.ecommerce.repository.ProductVariantRepository;
 import com.NguyenDat.ecommerce.service.impl.ProductServiceImpl;
 
@@ -65,6 +76,12 @@ public class ProductServiceTest {
     ProductMediaRepository productMediaRepository;
 
     @Mock
+    ProductDescriptionBlockRepository productDescriptionBlockRepository;
+
+    @Mock
+    ProductSpecificationRepository productSpecificationRepository;
+
+    @Mock
     ProductMapper productMapper;
 
     @Mock
@@ -72,6 +89,12 @@ public class ProductServiceTest {
 
     @Mock
     ProductMediaMapper productMediaMapper;
+
+    @Mock
+    ProductDescriptionBlockMapper productDescriptionBlockMapper;
+
+    @Mock
+    ProductSpecificationMapper productSpecificationMapper;
 
     @InjectMocks
     ProductServiceImpl productService;
@@ -342,6 +365,87 @@ public class ProductServiceTest {
         assertEquals("Ao Hoodie", result.getName());
         assertEquals("Ao Hoodie Updated", product.getName());
         verify(productRepository).save(product);
+    }
+
+    @Test
+    void updateProductDescriptionBlocks_shouldReplaceExistingBlocks_whenRequestIsValid() {
+        product.setVariants(new ArrayList<>());
+        product.setMedia(new ArrayList<>());
+        ProductDescriptionBlock existingBlock = new ProductDescriptionBlock();
+        existingBlock.setId(1L);
+        existingBlock.setProduct(product);
+        existingBlock.setActive(true);
+        existingBlock.setDeleted(false);
+        ProductDescriptionBlockRequest blockRequest = ProductDescriptionBlockRequest.builder()
+                .type(ProductDescriptionBlockType.TEXT_IMAGE)
+                .title("Thiết kế")
+                .content("Màn hình đẹp")
+                .imageUrl("https://cdn.test/description.jpg")
+                .altText("Ảnh mô tả")
+                .sortOrder(1)
+                .active(true)
+                .build();
+        ProductDescriptionBlockBulkRequest request = ProductDescriptionBlockBulkRequest.builder()
+                .blocks(List.of(blockRequest))
+                .build();
+        ProductDescriptionBlock newBlock = new ProductDescriptionBlock();
+        newBlock.setType(ProductDescriptionBlockType.TEXT_IMAGE);
+        newBlock.setTitle("Thiết kế");
+        when(productRepository.findByIdAndDeletedFalse(10L)).thenReturn(Optional.of(product));
+        when(productDescriptionBlockRepository.findAllByProductIdAndDeletedFalseOrderBySortOrderAsc(10L))
+                .thenReturn(List.of(existingBlock));
+        when(productDescriptionBlockMapper.toProductDescriptionBlock(blockRequest)).thenReturn(newBlock);
+        when(productMapper.toProductResponse(product)).thenReturn(productResponse);
+
+        ProductResponse result = productService.updateProductDescriptionBlocks(10L, request);
+
+        assertEquals("Ao Hoodie", result.getName());
+        assertTrue(existingBlock.isDeleted());
+        assertFalse(existingBlock.isActive());
+        assertEquals(product, newBlock.getProduct());
+        assertTrue(newBlock.isActive());
+        verify(productDescriptionBlockRepository).saveAll(List.of(existingBlock));
+        verify(productDescriptionBlockRepository).saveAll(List.of(newBlock));
+    }
+
+    @Test
+    void updateProductSpecifications_shouldReplaceExistingSpecificationsAndNormalizeValues_whenRequestIsValid() {
+        product.setVariants(new ArrayList<>());
+        product.setMedia(new ArrayList<>());
+        ProductSpecification existingSpecification = new ProductSpecification();
+        existingSpecification.setId(1L);
+        existingSpecification.setProduct(product);
+        existingSpecification.setActive(true);
+        existingSpecification.setDeleted(false);
+        ProductSpecificationRequest specificationRequest = ProductSpecificationRequest.builder()
+                .groupName("  Màn hình  ")
+                .specKey("  Kích thước  ")
+                .specValue("  6.1 inch  ")
+                .sortOrder(0)
+                .active(null)
+                .build();
+        ProductSpecificationBulkRequest request = ProductSpecificationBulkRequest.builder()
+                .specifications(List.of(specificationRequest))
+                .build();
+        ProductSpecification newSpecification = new ProductSpecification();
+        when(productRepository.findByIdAndDeletedFalse(10L)).thenReturn(Optional.of(product));
+        when(productSpecificationRepository.findAllByProductIdAndDeletedFalseOrderBySortOrderAsc(10L))
+                .thenReturn(List.of(existingSpecification));
+        when(productSpecificationMapper.toProductSpecification(specificationRequest)).thenReturn(newSpecification);
+        when(productMapper.toProductResponse(product)).thenReturn(productResponse);
+
+        ProductResponse result = productService.updateProductSpecifications(10L, request);
+
+        assertEquals("Ao Hoodie", result.getName());
+        assertTrue(existingSpecification.isDeleted());
+        assertFalse(existingSpecification.isActive());
+        assertEquals(product, newSpecification.getProduct());
+        assertEquals("Màn hình", newSpecification.getGroupName());
+        assertEquals("Kích thước", newSpecification.getSpecKey());
+        assertEquals("6.1 inch", newSpecification.getSpecValue());
+        assertTrue(newSpecification.isActive());
+        verify(productSpecificationRepository).saveAll(List.of(existingSpecification));
+        verify(productSpecificationRepository).saveAll(List.of(newSpecification));
     }
 
     @Test

@@ -25,5 +25,7 @@ public class ProductResponse {
     boolean active;
     List<ProductVariantResponse> variants;
     List<ProductMediaResponse> media;
+    List<ProductDescriptionBlockResponse> descriptionBlocks;
+    List<ProductSpecificationResponse> specifications;
     LocalDateTime createdAt;
 }

@@ -22,8 +22,10 @@ import com.NguyenDat.ecommerce.dto.response.ProductMediaResponse;
 import com.NguyenDat.ecommerce.dto.response.ProductResponse;
 import com.NguyenDat.ecommerce.dto.response.ProductVariantResponse;
 import com.NguyenDat.ecommerce.entity.*;
+import com.NguyenDat.ecommerce.mapper.ProductDescriptionBlockMapper;
 import com.NguyenDat.ecommerce.mapper.ProductMapper;
 import com.NguyenDat.ecommerce.mapper.ProductMediaMapper;
+import com.NguyenDat.ecommerce.mapper.ProductSpecificationMapper;
 import com.NguyenDat.ecommerce.mapper.ProductVariantMapper;
 import com.NguyenDat.ecommerce.repository.*;
 import com.NguyenDat.ecommerce.repository.specification.ProductSpecification;
@@ -49,6 +51,10 @@ public class ProductServiceImpl implements ProductService {
     ProductMapper productMapper;
     ProductVariantMapper productVariantMapper;
     ProductMediaMapper productMediaMapper;
+    ProductDescriptionBlockMapper productDescriptionBlockMapper;
+    ProductSpecificationMapper productSpecificationMapper;
+    ProductDescriptionBlockRepository productDescriptionBlockRepository;
+    ProductSpecificationRepository productSpecificationRepository;
 
     @Transactional
     public ProductResponse createProduct(ProductCreateRequest productCreateRequest) {
@@ -246,6 +252,16 @@ public class ProductServiceImpl implements ProductService {
                 .sorted(Comparator.comparingInt(ProductMedia::getSortOrder))
                 .map(productMediaMapper::toProductMediaResponse)
                 .toList());
+        response.setDescriptionBlocks(product.getDescriptionBlocks().stream()
+                .filter(block -> !block.isDeleted())
+                .sorted(Comparator.comparingInt(ProductDescriptionBlock::getSortOrder))
+                .map(productDescriptionBlockMapper::toProductDescriptionBlockResponse)
+                .toList());
+        response.setSpecifications(product.getSpecifications().stream()
+                .filter(specification -> !specification.isDeleted())
+                .sorted(Comparator.comparingInt(com.NguyenDat.ecommerce.entity.ProductSpecification::getSortOrder))
+                .map(productSpecificationMapper::toProductSpecificationResponse)
+                .toList());
         return response;
     }
 
@@ -300,6 +316,74 @@ public class ProductServiceImpl implements ProductService {
         productMediaRepository.save(productMedia);
     }
 
+    @Transactional
+    @CacheEvict(cacheNames = CacheName.PRODUCT_DETAILS, allEntries = true)
+    public ProductResponse updateProductDescriptionBlocks(
+            Long productId, ProductDescriptionBlockBulkRequest productDescriptionBlockBulkRequest) {
+        Product product = productRepository
+                .findByIdAndDeletedFalse(productId)
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+
+        List<ProductDescriptionBlock> existingBlocks =
+                productDescriptionBlockRepository.findAllByProductIdAndDeletedFalseOrderBySortOrderAsc(productId);
+        existingBlocks.forEach(block -> {
+            block.setDeleted(true);
+            block.setActive(false);
+        });
+
+        List<ProductDescriptionBlock> newBlocks = productDescriptionBlockBulkRequest.getBlocks().stream()
+                .map(request -> {
+                    ProductDescriptionBlock block =
+                            productDescriptionBlockMapper.toProductDescriptionBlock(request);
+                    block.setProduct(product);
+                    block.setActive(request.getActive() == null || request.getActive());
+                    return block;
+                })
+                .toList();
+
+        productDescriptionBlockRepository.saveAll(existingBlocks);
+        productDescriptionBlockRepository.saveAll(newBlocks);
+
+        return toProductResponse(productRepository.findByIdAndDeletedFalse(productId)
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND)));
+    }
+
+    @Transactional
+    @CacheEvict(cacheNames = CacheName.PRODUCT_DETAILS, allEntries = true)
+    public ProductResponse updateProductSpecifications(
+            Long productId, ProductSpecificationBulkRequest productSpecificationBulkRequest) {
+        Product product = productRepository
+                .findByIdAndDeletedFalse(productId)
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+
+        List<com.NguyenDat.ecommerce.entity.ProductSpecification> existingSpecifications =
+                productSpecificationRepository.findAllByProductIdAndDeletedFalseOrderBySortOrderAsc(productId);
+        existingSpecifications.forEach(specification -> {
+            specification.setDeleted(true);
+            specification.setActive(false);
+        });
+
+        List<com.NguyenDat.ecommerce.entity.ProductSpecification> newSpecifications =
+                productSpecificationBulkRequest.getSpecifications().stream()
+                .map(request -> {
+                    com.NguyenDat.ecommerce.entity.ProductSpecification specification =
+                            productSpecificationMapper.toProductSpecification(request);
+                    specification.setProduct(product);
+                    specification.setGroupName(normalizeBlank(request.getGroupName()));
+                    specification.setSpecKey(request.getSpecKey().trim());
+                    specification.setSpecValue(request.getSpecValue().trim());
+                    specification.setActive(request.getActive() == null || request.getActive());
+                    return specification;
+                })
+                .toList();
+
+        productSpecificationRepository.saveAll(existingSpecifications);
+        productSpecificationRepository.saveAll(newSpecifications);
+
+        return toProductResponse(productRepository.findByIdAndDeletedFalse(productId)
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND)));
+    }
+
     @Override
     public List<ProductResponse> showAllProducts() {
         return productRepository.findAllByDeletedFalseAndActiveTrue().stream()
@@ -335,6 +419,16 @@ public class ProductServiceImpl implements ProductService {
         product.getMedia().forEach(media -> {
             media.setDeleted(true);
             media.setActive(false);
+        });
+
+        product.getDescriptionBlocks().forEach(block -> {
+            block.setDeleted(true);
+            block.setActive(false);
+        });
+
+        product.getSpecifications().forEach(specification -> {
+            specification.setDeleted(true);
+            specification.setActive(false);
         });
 
         productRepository.save(product);
@@ -378,6 +472,25 @@ public class ProductServiceImpl implements ProductService {
                 .map(productMediaMapper::toProductMediaResponse)
                 .toList());
 
+        response.setDescriptionBlocks(product.getDescriptionBlocks().stream()
+                .filter(block -> !block.isDeleted() && block.isActive())
+                .sorted(Comparator.comparingInt(ProductDescriptionBlock::getSortOrder))
+                .map(productDescriptionBlockMapper::toProductDescriptionBlockResponse)
+                .toList());
+
+        response.setSpecifications(product.getSpecifications().stream()
+                .filter(specification -> !specification.isDeleted() && specification.isActive())
+                .sorted(Comparator.comparingInt(com.NguyenDat.ecommerce.entity.ProductSpecification::getSortOrder))
+                .map(productSpecificationMapper::toProductSpecificationResponse)
+                .toList());
+
         return response;
+    }
+
+    private String normalizeBlank(String value) {
+        if (value == null || value.trim().isBlank()) {
+            return null;
+        }
+        return value.trim();
     }
 }

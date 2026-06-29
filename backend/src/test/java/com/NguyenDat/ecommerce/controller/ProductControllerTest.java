@@ -27,8 +27,12 @@ import com.NguyenDat.ecommerce.common.exception.AppException;
 import com.NguyenDat.ecommerce.common.exception.ErrorCode;
 import com.NguyenDat.ecommerce.controller.admin.AdminProductController;
 import com.NguyenDat.ecommerce.dto.request.product.ProductCreateRequest;
+import com.NguyenDat.ecommerce.dto.request.product.ProductDescriptionBlockBulkRequest;
+import com.NguyenDat.ecommerce.dto.request.product.ProductDescriptionBlockRequest;
 import com.NguyenDat.ecommerce.dto.request.product.ProductMediaRequest;
 import com.NguyenDat.ecommerce.dto.request.product.ProductMediaUpdateRequest;
+import com.NguyenDat.ecommerce.dto.request.product.ProductSpecificationBulkRequest;
+import com.NguyenDat.ecommerce.dto.request.product.ProductSpecificationRequest;
 import com.NguyenDat.ecommerce.dto.request.product.ProductUpdateRequest;
 import com.NguyenDat.ecommerce.dto.request.product.ProductVariantRequest;
 import com.NguyenDat.ecommerce.dto.request.product.ProductVariantUpdateRequest;
@@ -37,6 +41,7 @@ import com.NguyenDat.ecommerce.dto.response.ProductMediaResponse;
 import com.NguyenDat.ecommerce.dto.response.ProductResponse;
 import com.NguyenDat.ecommerce.dto.response.ProductVariantResponse;
 import com.NguyenDat.ecommerce.dto.response.category.CategorySummaryResponse;
+import com.NguyenDat.ecommerce.enums.ProductDescriptionBlockType;
 import com.NguyenDat.ecommerce.service.ProductService;
 
 import lombok.AccessLevel;
@@ -305,6 +310,58 @@ public class ProductControllerTest {
                 .andExpect(jsonPath("$.data.name").value("Ao Hoodie"));
 
         verify(productService).updateProductById(any(ProductUpdateRequest.class), eq(10L));
+    }
+
+    @Test
+    void updateProductDescriptionBlocks_shouldReturnUpdatedResponse_whenRequestIsValid() throws Exception {
+        ProductDescriptionBlockBulkRequest request = ProductDescriptionBlockBulkRequest.builder()
+                .blocks(List.of(ProductDescriptionBlockRequest.builder()
+                        .type(ProductDescriptionBlockType.TEXT_IMAGE)
+                        .title("Thiết kế")
+                        .content("Mô tả bằng chữ và ảnh")
+                        .imageUrl("https://cdn.test/description.jpg")
+                        .altText("Ảnh mô tả")
+                        .sortOrder(0)
+                        .active(true)
+                        .build()))
+                .build();
+        when(productService.updateProductDescriptionBlocks(eq(10L), any(ProductDescriptionBlockBulkRequest.class)))
+                .thenReturn(productResponse);
+
+        mockMvc.perform(put("/api/v1/admin/products/{productId}/description-blocks", 10L)
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(ResponseCode.PRODUCT_DESCRIPTION_BLOCKS_UPDATED.getCode()))
+                .andExpect(jsonPath("$.message").value(ResponseCode.PRODUCT_DESCRIPTION_BLOCKS_UPDATED.getMessage()))
+                .andExpect(jsonPath("$.data.id").value(10));
+
+        verify(productService).updateProductDescriptionBlocks(eq(10L), any(ProductDescriptionBlockBulkRequest.class));
+    }
+
+    @Test
+    void updateProductSpecifications_shouldReturnUpdatedResponse_whenRequestIsValid() throws Exception {
+        ProductSpecificationBulkRequest request = ProductSpecificationBulkRequest.builder()
+                .specifications(List.of(ProductSpecificationRequest.builder()
+                        .groupName("Màn hình")
+                        .specKey("Kích thước")
+                        .specValue("6.1 inch")
+                        .sortOrder(0)
+                        .active(true)
+                        .build()))
+                .build();
+        when(productService.updateProductSpecifications(eq(10L), any(ProductSpecificationBulkRequest.class)))
+                .thenReturn(productResponse);
+
+        mockMvc.perform(put("/api/v1/admin/products/{productId}/specifications", 10L)
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(ResponseCode.PRODUCT_SPECIFICATIONS_UPDATED.getCode()))
+                .andExpect(jsonPath("$.message").value(ResponseCode.PRODUCT_SPECIFICATIONS_UPDATED.getMessage()))
+                .andExpect(jsonPath("$.data.id").value(10));
+
+        verify(productService).updateProductSpecifications(eq(10L), any(ProductSpecificationBulkRequest.class));
     }
 
     @Test
