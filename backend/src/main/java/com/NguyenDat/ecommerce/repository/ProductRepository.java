@@ -25,6 +25,10 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
 
     List<Product> findAllByDeletedFalseAndActiveTrue();
 
+    long countByDeletedFalse();
+
+    long countByDeletedFalseAndActiveTrue();
+
     Page<Product> findAllByDeletedFalseAndActiveTrue(Pageable pageable);
 
     Optional<Product> findByIdAndDeletedFalse(Long id);
