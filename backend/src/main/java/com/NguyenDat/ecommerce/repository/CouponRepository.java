@@ -2,6 +2,7 @@ package com.NguyenDat.ecommerce.repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.LockModeType;
 
@@ -55,4 +56,16 @@ public interface CouponRepository extends JpaRepository<Coupon, Long> {
 				WHERE c.id = :id
 			""")
     Optional<Coupon> findByIdForUpdate(@Param("id") Long id);
+
+    @Query("""
+            SELECT c
+            FROM Coupon c
+            WHERE c.deleted = false
+                AND c.active = true
+                AND (c.startAt IS NULL OR c.startAt <= :now)
+                AND (c.endAt IS NULL OR c.endAt >= :now)
+                AND (c.usageLimit IS NULL OR c.usedCount < c.usageLimit)
+            ORDER BY c.endAt ASC NULLS LAST, c.id DESC
+            """)
+    List<Coupon> findAvailableClientCoupons(@Param("now") LocalDateTime now);
 }

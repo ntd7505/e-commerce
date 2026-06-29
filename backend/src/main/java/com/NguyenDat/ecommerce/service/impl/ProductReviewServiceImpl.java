@@ -4,6 +4,7 @@ import com.NguyenDat.ecommerce.common.dto.response.PageResponse;
 import com.NguyenDat.ecommerce.common.exception.AppException;
 import com.NguyenDat.ecommerce.common.exception.ErrorCode;
 import com.NguyenDat.ecommerce.dto.request.ProductReviewFilterRequest;
+import com.NguyenDat.ecommerce.dto.request.ProductReviewModerationRequest;
 import com.NguyenDat.ecommerce.dto.request.product_review.ProductReviewCreateRequest;
 import com.NguyenDat.ecommerce.dto.request.product_review.ProductReviewMediaRequest;
 import com.NguyenDat.ecommerce.dto.response.ProductReviewEligibilityResponse;
@@ -213,6 +214,48 @@ public class ProductReviewServiceImpl implements ProductReviewService {
         return hasCompletedOrder
                 ? eligibility(false, null, "ALREADY_REVIEWED")
                 : eligibility(false, null, "ORDER_NOT_COMPLETED");
+    }
+
+    @Override
+    public PageResponse<ProductReviewResponse> getMyReviews(Pageable pageable) {
+        User user = currentUserService.getCurrentUser();
+        Page<ProductReviewResponse> page = productReviewRepository
+                .findAllByUserIdAndDeletedFalse(user.getId(), pageable)
+                .map(productReviewMapper::toProductReviewResponse);
+
+        return PageResponse.from(page);
+    }
+
+    @Override
+    public PageResponse<ProductReviewResponse> getReviewsForAdmin(Pageable pageable) {
+        Page<ProductReviewResponse> page = productReviewRepository
+                .findAllByDeletedFalse(pageable)
+                .map(productReviewMapper::toProductReviewResponse);
+
+        return PageResponse.from(page);
+    }
+
+    @Override
+    @Transactional
+    public ProductReviewResponse moderateReview(Long reviewId, ProductReviewModerationRequest request) {
+        ProductReview review = productReviewRepository.findById(reviewId)
+                .filter(item -> !item.isDeleted())
+                .orElseThrow(() -> new AppException(ErrorCode.REVIEW_NOT_FOUND));
+
+        review.setActive(request.getActive());
+        return productReviewMapper.toProductReviewResponse(productReviewRepository.save(review));
+    }
+
+    @Override
+    @Transactional
+    public void deleteReviewForAdmin(Long reviewId) {
+        ProductReview review = productReviewRepository.findById(reviewId)
+                .filter(item -> !item.isDeleted())
+                .orElseThrow(() -> new AppException(ErrorCode.REVIEW_NOT_FOUND));
+
+        review.setDeleted(true);
+        review.setActive(false);
+        productReviewRepository.save(review);
     }
 
     private ProductReviewEligibilityResponse eligibility(

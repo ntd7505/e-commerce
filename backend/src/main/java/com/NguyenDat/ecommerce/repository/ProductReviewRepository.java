@@ -1,9 +1,13 @@
 package com.NguyenDat.ecommerce.repository;
 
-import com.NguyenDat.ecommerce.entity.ProductReview;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+
+import com.NguyenDat.ecommerce.entity.ProductReview;
 
 import java.util.List;
 
@@ -15,4 +19,15 @@ public interface ProductReviewRepository extends JpaRepository<ProductReview, Lo
     boolean existsByOrderItemId(Long orderItemId);
 
     long countByProductIdAndDeletedFalseAndActiveTrue(Long productId);
+
+    Page<ProductReview> findAllByUserIdAndDeletedFalse(Long userId, Pageable pageable);
+
+    Page<ProductReview> findAllByDeletedFalse(Pageable pageable);
+
+    long countByDeletedFalse();
+
+    long countByDeletedFalseAndActiveTrue();
+
+    @Query("SELECT COALESCE(AVG(r.rating), 0) FROM ProductReview r WHERE r.deleted = false AND r.active = true")
+    Double averageRatingForActiveReviews();
 }

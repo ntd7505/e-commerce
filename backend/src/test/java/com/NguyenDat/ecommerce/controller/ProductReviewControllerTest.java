@@ -24,6 +24,7 @@ import com.NguyenDat.ecommerce.common.dto.response.PageResponse;
 import com.NguyenDat.ecommerce.controller.client.ProductReviewController;
 import com.NguyenDat.ecommerce.dto.request.ProductReviewFilterRequest;
 import com.NguyenDat.ecommerce.dto.request.product_review.ProductReviewCreateRequest;
+import com.NguyenDat.ecommerce.dto.response.ProductReviewEligibilityResponse;
 import com.NguyenDat.ecommerce.dto.response.product_review.ProductReviewResponse;
 import com.NguyenDat.ecommerce.dto.response.product_review.ProductReviewSummaryResponse;
 import com.NguyenDat.ecommerce.service.ProductReviewService;
@@ -101,5 +102,44 @@ class ProductReviewControllerTest {
 
         verify(productReviewService).getReviews(eq(1L), any(ProductReviewFilterRequest.class));
         verify(productReviewService).getReviewSummaryByProductId(1L);
+    }
+
+    @Test
+    void getReviewEligibility_shouldReturnEligibilityData() throws Exception {
+        when(productReviewService.getReviewEligibility(1L))
+                .thenReturn(ProductReviewEligibilityResponse.builder()
+                        .eligible(true)
+                        .orderItemId(10L)
+                        .build());
+
+        mockMvc.perform(get("/api/v1/client/products/{productId}/review-eligibility", 1L))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(ResponseCode.PRODUCT_REVIEW_ELIGIBILITY_FETCHED.getCode()))
+                .andExpect(jsonPath("$.data.eligible").value(true))
+                .andExpect(jsonPath("$.data.orderItemId").value(10));
+
+        verify(productReviewService).getReviewEligibility(1L);
+    }
+
+    @Test
+    void getMyReviews_shouldReturnPagedCurrentUserReviews() throws Exception {
+        when(productReviewService.getMyReviews(any()))
+                .thenReturn(PageResponse.<ProductReviewResponse>builder()
+                        .content(List.of(ProductReviewResponse.builder().id(5L).rating(5).build()))
+                        .page(0)
+                        .size(10)
+                        .totalElements(1)
+                        .totalPages(1)
+                        .first(true)
+                        .last(true)
+                        .build());
+
+        mockMvc.perform(get("/api/v1/client/reviews/me").param("page", "0").param("size", "10"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(ResponseCode.PRODUCT_REVIEWS_FETCHED.getCode()))
+                .andExpect(jsonPath("$.data.content[0].id").value(5))
+                .andExpect(jsonPath("$.data.content[0].rating").value(5));
+
+        verify(productReviewService).getMyReviews(any());
     }
 }

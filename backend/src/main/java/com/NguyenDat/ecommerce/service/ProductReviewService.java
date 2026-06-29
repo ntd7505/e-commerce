@@ -1,6 +1,7 @@
 package com.NguyenDat.ecommerce.service;
 
 import com.NguyenDat.ecommerce.common.dto.response.PageResponse;
+import com.NguyenDat.ecommerce.dto.request.ProductReviewModerationRequest;
 import com.NguyenDat.ecommerce.dto.request.ProductReviewFilterRequest;
 import com.NguyenDat.ecommerce.dto.request.product_review.ProductReviewCreateRequest;
 import com.NguyenDat.ecommerce.dto.response.ProductReviewEligibilityResponse;
@@ -31,4 +32,12 @@ public interface ProductReviewService {
     );
 
     ProductReviewEligibilityResponse getReviewEligibility(Long productId);
+
+    PageResponse<ProductReviewResponse> getMyReviews(Pageable pageable);
+
+    PageResponse<ProductReviewResponse> getReviewsForAdmin(Pageable pageable);
+
+    ProductReviewResponse moderateReview(Long reviewId, ProductReviewModerationRequest request);
+
+    void deleteReviewForAdmin(Long reviewId);
 }

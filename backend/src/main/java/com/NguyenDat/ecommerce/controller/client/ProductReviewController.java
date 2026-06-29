@@ -6,6 +6,7 @@ import com.NguyenDat.ecommerce.common.dto.response.ApiResponse;
 import com.NguyenDat.ecommerce.common.dto.response.PageResponse;
 import com.NguyenDat.ecommerce.dto.request.ProductReviewFilterRequest;
 import com.NguyenDat.ecommerce.dto.request.product_review.ProductReviewCreateRequest;
+import com.NguyenDat.ecommerce.dto.response.ProductReviewEligibilityResponse;
 import com.NguyenDat.ecommerce.dto.response.product_review.ProductReviewMediaResponse;
 import com.NguyenDat.ecommerce.dto.response.product_review.ProductReviewResponse;
 import com.NguyenDat.ecommerce.dto.response.product_review.ProductReviewSummaryResponse;
@@ -37,6 +38,30 @@ public class ProductReviewController {
                 .body(ApiResponse.of(
                         ResponseCode.PRODUCT_REVIEW_CREATED,
                         productReviewService.createProductReview(productReviewCreateRequest)));
+    }
+
+    @GetMapping("/reviews/me")
+    public ResponseEntity<ApiResponse<PageResponse<ProductReviewResponse>>> getMyReviews(
+            @RequestParam(defaultValue = "0") @Min(0) int page,
+            @RequestParam(defaultValue = "10") @Min(1) @Max(50) int size,
+            @RequestParam(defaultValue = "desc") String sortDir
+    ) {
+        Sort sort = sortDir.equalsIgnoreCase("asc")
+                ? Sort.by("createdAt").ascending()
+                : Sort.by("createdAt").descending();
+        Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size, sort);
+
+        return ResponseEntity.ok(ApiResponse.of(
+                ResponseCode.PRODUCT_REVIEWS_FETCHED,
+                productReviewService.getMyReviews(pageable)));
+    }
+
+    @GetMapping("/products/{productId}/review-eligibility")
+    public ResponseEntity<ApiResponse<ProductReviewEligibilityResponse>> getReviewEligibility(
+            @PathVariable Long productId) {
+        return ResponseEntity.ok(ApiResponse.of(
+                ResponseCode.PRODUCT_REVIEW_ELIGIBILITY_FETCHED,
+                productReviewService.getReviewEligibility(productId)));
     }
 
     @GetMapping("/products/{productId}/reviews")

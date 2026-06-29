@@ -12,11 +12,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.NguyenDat.ecommerce.common.exception.AppException;
 import com.NguyenDat.ecommerce.common.exception.ErrorCode;
+import com.NguyenDat.ecommerce.common.dto.response.PageResponse;
+import com.NguyenDat.ecommerce.dto.request.ProductReviewModerationRequest;
 import com.NguyenDat.ecommerce.dto.request.product_review.ProductReviewCreateRequest;
 import com.NguyenDat.ecommerce.dto.request.product_review.ProductReviewMediaRequest;
 import com.NguyenDat.ecommerce.dto.response.product_review.ProductReviewResponse;
@@ -172,6 +176,53 @@ class ProductReviewServiceTest {
         List<ProductReviewResponse> result = productReviewService.getAllReviewsProduct(1L);
 
         assertEquals(List.of(response), result);
+    }
+
+    @Test
+    void getReviewsForAdmin_shouldReturnNonDeletedReviewsPage() {
+        ProductReview review = reviewWithRating(5);
+        ProductReviewResponse response = ProductReviewResponse.builder().id(1L).build();
+        PageRequest pageable = PageRequest.of(0, 10);
+        when(productReviewRepository.findAllByDeletedFalse(pageable))
+                .thenReturn(new PageImpl<>(List.of(review), pageable, 1));
+        when(productReviewMapper.toProductReviewResponse(review)).thenReturn(response);
+
+        PageResponse<ProductReviewResponse> result = productReviewService.getReviewsForAdmin(pageable);
+
+        assertEquals(1, result.getTotalElements());
+        assertEquals(List.of(response), result.getContent());
+    }
+
+    @Test
+    void moderateReview_shouldUpdateActiveStatus() {
+        ProductReview review = reviewWithRating(5);
+        review.setDeleted(false);
+        ProductReviewResponse response = ProductReviewResponse.builder().id(1L).active(false).build();
+        ProductReviewModerationRequest request = ProductReviewModerationRequest.builder()
+                .active(false)
+                .build();
+        when(productReviewRepository.findById(1L)).thenReturn(Optional.of(review));
+        when(productReviewRepository.save(review)).thenReturn(review);
+        when(productReviewMapper.toProductReviewResponse(review)).thenReturn(response);
+
+        ProductReviewResponse result = productReviewService.moderateReview(1L, request);
+
+        assertFalse(review.isActive());
+        assertEquals(response, result);
+    }
+
+    @Test
+    void deleteReviewForAdmin_shouldSoftDeleteAndDeactivateReview() {
+        ProductReview review = reviewWithRating(5);
+        review.setActive(true);
+        review.setDeleted(false);
+        when(productReviewRepository.findById(1L)).thenReturn(Optional.of(review));
+
+        productReviewService.deleteReviewForAdmin(1L);
+
+        assertTrue(review.isDeleted());
+        assertFalse(review.isActive());
+        verify(productReviewRepository).save(review);
     }
 
     private ProductReview reviewWithRating(int rating) {

@@ -1,6 +1,7 @@
 package com.NguyenDat.ecommerce.repository;
 
 import java.util.Optional;
+import java.util.List;
 
 import jakarta.persistence.LockModeType;
 
@@ -21,6 +22,8 @@ public interface CouponUsageRepository extends JpaRepository<CouponUsage, Long> 
     Optional<CouponUsage> findByOrderId(Long orderId);
 
     boolean existsByOrderId(Long orderId);
+
+    List<CouponUsage> findAllByUserIdOrderByCreatedAtDesc(Long userId);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("""
