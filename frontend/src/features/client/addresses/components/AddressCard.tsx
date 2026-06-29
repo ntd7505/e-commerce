@@ -77,7 +77,16 @@ export function AddressCard({
           {deleting ? "Đang xóa..." : "Xóa"}
         </button>
         
-        {!address.isDefault && (
+        {address.isDefault ? (
+          <button
+            type="button"
+            disabled
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-bold border border-primary bg-primary text-white ml-auto cursor-default opacity-90 shadow-sm"
+          >
+            <Check className="w-4 h-4" />
+            Mặc định
+          </button>
+        ) : (
           <button
             type="button"
             onClick={() => onSetDefault(address)}

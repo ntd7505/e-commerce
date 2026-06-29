@@ -1,10 +1,8 @@
 /* eslint-disable react-refresh/only-export-components */
 import React, { createContext, useContext, useEffect, useState, useCallback, type ReactNode } from 'react';
 import { cartApi } from './cartApi';
-import type { CartResponse, AddCartItemRequest, UpdateCartItemRequest } from './cartTypes';
+import type { CartResponse, AddCartItemRequest, UpdateCartItemRequest, AddressResponse } from './cartTypes';
 import { useAuth } from '../../auth/AuthProvider';
-import { clientProductApi } from '../home/clientProductApi';
-
 const createEmptyCart = (): CartResponse => ({
   id: 0,
   status: 'ACTIVE',
@@ -20,33 +18,6 @@ const recalculateCart = (cart: CartResponse, items: CartResponse['items']): Cart
   subtotalAmount: items.reduce((sum, item) => sum + item.lineTotal, 0),
 });
 
-// Giữ cache cho thumbnail để tránh call nhiều lần
-let thumbnailCache: Map<number, string> | null = null;
-
-const augmentCartWithThumbnails = async (cart: CartResponse): Promise<CartResponse> => {
-  if (!cart || !cart.items || cart.items.length === 0) return cart;
-  
-  try {
-    if (!thumbnailCache) {
-      const productsPage = await clientProductApi.getProductsPageable({ size: 1000 });
-      thumbnailCache = new Map();
-      productsPage.content.forEach(p => {
-        const thumb = p.media?.find(m => m.thumbnail)?.url || p.media?.[0]?.url;
-        if (thumb) thumbnailCache!.set(p.id, thumb);
-      });
-    }
-
-    const nextItems = cart.items.map(item => ({
-      ...item,
-      thumbnailUrl: item.thumbnailUrl || thumbnailCache?.get(item.productId)
-    }));
-
-    return { ...cart, items: nextItems };
-  } catch (e) {
-    console.warn("Could not fetch thumbnails for cart items", e);
-    return cart;
-  }
-};
 
 interface CartContextType {
   cart: CartResponse | null;
@@ -57,6 +28,8 @@ interface CartContextType {
   updateItem: (itemId: number, data: UpdateCartItemRequest) => Promise<void>;
   removeItem: (itemId: number) => Promise<void>;
   clearCart: () => Promise<void>;
+  activeDeliveryAddress: AddressResponse | null;
+  setActiveDeliveryAddress: (address: AddressResponse | null) => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -66,6 +39,19 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [cart, setCart] = useState<CartResponse | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+
+  const [activeDeliveryAddress, setActiveDeliveryAddress] = useState<AddressResponse | null>(() => {
+    const saved = sessionStorage.getItem('activeDeliveryAddress');
+    return saved ? JSON.parse(saved) : null;
+  });
+
+  useEffect(() => {
+    if (activeDeliveryAddress) {
+      sessionStorage.setItem('activeDeliveryAddress', JSON.stringify(activeDeliveryAddress));
+    } else {
+      sessionStorage.removeItem('activeDeliveryAddress');
+    }
+  }, [activeDeliveryAddress]);
 
   const refreshCart = useCallback(async () => {
     if (!isAuthenticated) {
@@ -77,8 +63,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setError(null);
     try {
       const data = await cartApi.getCart();
-      const augmentedData = await augmentCartWithThumbnails(data);
-      setCart(augmentedData);
+      setCart(data);
     } catch (err: unknown) {
       // Bỏ qua lỗi 404 (Cart not found - chưa có cart)
       if ((err as { response?: { status: number } }).response?.status === 404) {
@@ -104,8 +89,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setError(null);
     try {
       const updatedCart = await cartApi.addItem(data);
-      const augmentedCart = await augmentCartWithThumbnails(updatedCart);
-      setCart(augmentedCart);
+      setCart(updatedCart);
     } catch (err: unknown) {
       setError((err as { response?: { data?: { message?: string } } }).response?.data?.message || 'Không thể thêm vào giỏ hàng');
       throw err;
@@ -119,8 +103,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setError(null);
     try {
       const updatedCart = await cartApi.updateItemQuantity(itemId, data);
-      const augmentedCart = await augmentCartWithThumbnails(updatedCart);
-      setCart(augmentedCart);
+      setCart(updatedCart);
     } catch (err: unknown) {
       setError((err as { response?: { data?: { message?: string } } }).response?.data?.message || 'Không thể cập nhật số lượng');
       throw err;
@@ -172,6 +155,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
         updateItem,
         removeItem,
         clearCart,
+        activeDeliveryAddress,
+        setActiveDeliveryAddress,
       }}
     >
       {children}

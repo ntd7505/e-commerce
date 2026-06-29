@@ -6,6 +6,8 @@ import { ProductEditorHeader } from '../../features/admin/products/components/Pr
 import { ProductInitialVariantForm } from '../../features/admin/products/components/ProductInitialVariantForm';
 import { ProductMediaEditor } from '../../features/admin/products/components/ProductMediaEditor';
 import { ProductVariantsEditor } from '../../features/admin/products/components/ProductVariantsEditor';
+import { ProductDescriptionBlocksEditor } from '../../features/admin/products/components/ProductDescriptionBlocksEditor';
+import { ProductSpecificationsEditor } from '../../features/admin/products/components/ProductSpecificationsEditor';
 import { useAdminProductEditor } from '../../features/admin/products/hooks/useAdminProductEditor';
 
 export default function AddProduct() {
@@ -95,6 +97,22 @@ export default function AddProduct() {
           )}
         </div>
       </div>
+
+      {editor.isEditMode && editor.product && (
+        <div className="mt-6 space-y-6">
+          <ProductDescriptionBlocksEditor
+            productId={editor.productId!}
+            initialBlocks={editor.product.descriptionBlocks || []}
+            onReload={() => editor.reloadProduct(editor.productId!)}
+          />
+
+          <ProductSpecificationsEditor
+            productId={editor.productId!}
+            initialSpecs={editor.product.specifications || []}
+            onReload={() => editor.reloadProduct(editor.productId!)}
+          />
+        </div>
+      )}
     </div>
   );
 }

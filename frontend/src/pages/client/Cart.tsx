@@ -18,7 +18,7 @@ import { formatCurrency } from '../../utils/formatters';
 import { LoadingState, ErrorState } from '../../components/common/States';
 
 export default function Cart() {
-  const { cart, loading, error, updateItem, removeItem, clearCart, refreshCart } = useCart();
+  const { cart, activeDeliveryAddress, setActiveDeliveryAddress, loading, error, updateItem, removeItem, clearCart, refreshCart } = useCart();
   const navigate = useNavigate();
   const { showToast } = useToast();
 
@@ -65,7 +65,7 @@ export default function Cart() {
         setAddresses(active);
         if (active.length > 0) {
           const defaultAddr = active.find((a) => a.isDefault) ?? active[0];
-          setSelectedAddress(defaultAddr);
+          setSelectedAddress(activeDeliveryAddress ?? defaultAddr);
         } else {
           setSelectedAddress(null);
         }
@@ -80,7 +80,16 @@ export default function Cart() {
     return () => {
       cancelled = true;
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Thay đổi selectedAddress nếu user chọn địa chỉ khác trên Header
+  useEffect(() => {
+    if (activeDeliveryAddress && addresses.length > 0) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setSelectedAddress(activeDeliveryAddress);
+    }
+  }, [activeDeliveryAddress, addresses]);
 
   const items = useMemo(() => cart?.items || [], [cart?.items]);
   const allSelected = items.length > 0 && selectedIds.size === items.length;
@@ -462,7 +471,10 @@ export default function Cart() {
         loading={addressLoading}
         title="Chọn địa chỉ giao hàng"
         onClose={() => setAddressSelectModalOpen(false)}
-        onSelect={setSelectedAddress}
+        onSelect={(addr) => {
+          setSelectedAddress(addr);
+          setActiveDeliveryAddress(addr);
+        }}
         onAddNew={() => {
           setAddressSelectModalOpen(false);
           setAddressModalOpen(true);

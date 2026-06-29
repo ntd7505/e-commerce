@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { Search, ShoppingCart, User, MapPin } from 'lucide-react';
+import { Search, ShoppingCart, User, MapPin, ChevronDown, Check, Loader2 } from 'lucide-react';
+import { cartApi } from '../../features/client/cart/cartApi';
+import type { AddressResponse } from '../../features/client/cart/cartTypes';
 import { useAuth } from '../../features/auth/AuthProvider';
 import { useCart } from '../../features/client/cart/CartProvider';
 
@@ -9,11 +11,33 @@ const Header = () => {
   const [searchParams] = useSearchParams();
   const keywordParam = searchParams.get('keyword') || '';
   const { user } = useAuth();
-  const { cart } = useCart();
+  const { cart, activeDeliveryAddress, setActiveDeliveryAddress } = useCart();
   const [isBouncing, setIsBouncing] = useState(false);
   const [prevTotalItems, setPrevTotalItems] = useState(cart?.totalItems || 0);
 
   const [searchQuery, setSearchQuery] = useState(keywordParam);
+
+  const [addresses, setAddresses] = useState<AddressResponse[]>([]);
+  const [loadingAddresses, setLoadingAddresses] = useState(false);
+  const [showLocationMenu, setShowLocationMenu] = useState(false);
+  const [locationTimer, setLocationTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    if (user) {
+      setLoadingAddresses(true);
+      cartApi.getAddresses()
+        .then(data => setAddresses(data.filter(a => !a.deleted)))
+        .catch(console.error)
+        .finally(() => setLoadingAddresses(false));
+    } else {
+      setAddresses([]);
+    }
+  }, [user]);
+
+  const activeAddress = activeDeliveryAddress || addresses.find(a => a.isDefault) || addresses[0];
+  const locationText = user 
+    ? (activeAddress ? `${activeAddress.districtName}, ${activeAddress.provinceName}` : "Chọn địa chỉ") 
+    : "Thanh Xuân, HN";
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -47,12 +71,16 @@ const Header = () => {
   return (
     <header className="bg-[var(--surface-2)] border-b border-[var(--border)] py-4" data-purpose="primary-header">
       <div className="container-custom flex items-center justify-between gap-4 md:gap-5">
-        <Link to="/" className="text-2xl font-bold tracking-tight shrink-0 no-underline">
-          <span className="text-[var(--text-primary)]">Nexa</span><span className="text-[var(--color-primary)]">Mart</span>
-        </Link>
+        
+        {/* Left: Logo */}
+        <div className="flex-1 min-w-0 flex items-center justify-start">
+          <Link to="/" className="text-2xl font-bold tracking-tight shrink-0 no-underline">
+            <span className="text-[var(--text-primary)]">Nexa</span><span className="text-[var(--color-primary)]">Mart</span>
+          </Link>
+        </div>
 
-        {/* Search bar */}
-        <div className="flex-grow max-w-[520px] relative hidden sm:block">
+        {/* Center: Search bar */}
+        <div className="flex-[2] max-w-[520px] relative hidden sm:block mx-auto w-full">
           <div className="flex items-center bg-[var(--surface-0)] border-[0.5px] border-[var(--border)] rounded-md px-3 h-10 transition-colors">
             <Search className="w-4 h-4 text-[var(--text-muted)] mr-2 shrink-0" />
             <input
@@ -74,12 +102,64 @@ const Header = () => {
           </div>
         </div>
 
-        {/* Right actions */}
-        <div className="flex items-center gap-6 shrink-0">
+        {/* Right: Actions */}
+        <div className="flex-1 min-w-0 flex items-center justify-end gap-4 md:gap-6 shrink-0">
           {/* Location */}
-          <div className="flex items-center gap-2 text-[var(--text-secondary)] text-sm cursor-pointer hover:text-[var(--text-primary)] transition-colors hidden md:flex">
+          <div 
+            className="relative flex items-center gap-1.5 text-[var(--text-secondary)] text-sm cursor-pointer hover:text-[var(--text-primary)] transition-colors hidden md:flex"
+            onMouseEnter={() => {
+              if (locationTimer) clearTimeout(locationTimer);
+              setShowLocationMenu(true);
+            }}
+            onMouseLeave={() => {
+              const timer = setTimeout(() => setShowLocationMenu(false), 200);
+              setLocationTimer(timer);
+            }}
+          >
             <MapPin className="w-5 h-5 text-[var(--text-primary)]" />
-            <span>Thanh Xuân, HN</span>
+            <span className="max-w-[140px] truncate font-medium">{locationText}</span>
+            <ChevronDown className="w-3.5 h-3.5 opacity-60" />
+
+            {/* Dropdown */}
+            {showLocationMenu && user && (
+              <div className="absolute top-full right-0 mt-3 w-80 bg-[var(--surface-0)] border border-[var(--border)] shadow-lg rounded-xl overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+                <div className="p-3 bg-[var(--surface-1)] border-b border-[var(--border)]">
+                  <h4 className="font-bold text-[var(--text-primary)] text-sm">Địa chỉ giao hàng</h4>
+                </div>
+                <div className="max-h-[300px] overflow-y-auto p-2 scrollbar-thin scrollbar-thumb-[var(--border-strong)] scrollbar-track-transparent">
+                  {loadingAddresses ? (
+                    <div className="flex justify-center p-6"><Loader2 className="w-5 h-5 animate-spin text-[var(--text-muted)]" /></div>
+                  ) : addresses.length === 0 ? (
+                    <div className="p-6 text-center text-sm text-[var(--text-muted)]">Bạn chưa có địa chỉ nào.</div>
+                  ) : (
+                    addresses.map(addr => {
+                      const isActive = activeAddress?.id === addr.id;
+                      return (
+                        <div 
+                          key={addr.id}
+                          className={`cursor-pointer block p-3 rounded-lg flex items-start gap-3 transition-colors no-underline mb-1 ${isActive ? 'bg-[var(--color-primary-soft)]' : 'hover:bg-[var(--surface-1)]'}`}
+                          onClick={() => {
+                            setActiveDeliveryAddress(addr);
+                            setShowLocationMenu(false);
+                          }}
+                        >
+                           <MapPin className={`w-4 h-4 shrink-0 mt-0.5 ${isActive ? 'text-[var(--color-primary)]' : 'text-[var(--text-muted)]'}`} />
+                           <div className="flex-1 min-w-0">
+                             <div className="font-bold text-[var(--text-primary)] text-sm mb-0.5 flex justify-between items-center gap-2">
+                               <span className="truncate">{addr.recipientName}</span>
+                               {isActive && <Check className="w-4 h-4 text-[var(--color-primary)] shrink-0" />}
+                             </div>
+                             <div className="text-xs text-[var(--text-secondary)] line-clamp-2 leading-relaxed">
+                               {addr.fullAddress}, {addr.wardName}, {addr.districtName}, {addr.provinceName}
+                             </div>
+                           </div>
+                        </div>
+                      );
+                    })
+                  )}
+                </div>
+              </div>
+            )}
           </div>
           
           {/* Account */}

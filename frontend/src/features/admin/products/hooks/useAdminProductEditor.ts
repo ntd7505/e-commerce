@@ -57,6 +57,7 @@ export function useAdminProductEditor() {
     const [savingVariantIndex, setSavingVariantIndex] = useState<number | null>(null);
     const [savingMediaIndex, setSavingMediaIndex] = useState<number | null>(null);
     const [uploadingKey, setUploadingKey] = useState<string | null>(null);
+    const [product, setProduct] = useState<any>(null);
 
     useEffect(() => {
         let ignore = false;
@@ -95,6 +96,7 @@ export function useAdminProductEditor() {
 
     const reloadProduct = async (currentProductId: number) => {
         const product = await getProductById(currentProductId);
+        setProduct(product);
         setFormValues(toProductFormValues(product));
         setProductActive(product.active);
         setVariants((product.variants ?? []).map(variantToDraft));
@@ -130,6 +132,7 @@ export function useAdminProductEditor() {
                 const product = await getProductById(currentProductId);
 
                 if (!ignore) {
+                    setProduct(product);
                     setFormValues(toProductFormValues(product));
                     setProductActive(product.active);
                     setVariants((product.variants ?? []).map(variantToDraft));
@@ -535,6 +538,9 @@ export function useAdminProductEditor() {
         formValues.mediaUrls.some((u) => u && DUMMY_DOMAINS.some((d) => u.includes(d)));
 
     return {
+        product,
+        productId,
+        reloadProduct,
         brands,
         brandsLoading,
         brandsError,

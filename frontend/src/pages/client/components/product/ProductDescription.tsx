@@ -6,8 +6,40 @@ interface ProductDescriptionProps {
 }
 
 export default function ProductDescription({ product }: ProductDescriptionProps) {
-  const { description, name, brand, category } = product;
+  const { description, descriptionBlocks, name, brand, category } = product;
 
+  // Use active description blocks if available
+  const activeBlocks = (descriptionBlocks || [])
+    .filter((block) => block.active)
+    .sort((a, b) => a.sortOrder - b.sortOrder);
+
+  if (activeBlocks.length > 0) {
+    return (
+      <div className="flex flex-col gap-10">
+        {activeBlocks.map((block) => (
+          <div key={block.id} className="flex flex-col gap-4">
+            {(block.type === 'TEXT' || block.type === 'TEXT_IMAGE') && (
+              <div className="prose max-w-none text-muted leading-relaxed">
+                {block.title && <h3 className="text-xl font-bold text-text mb-3">{block.title}</h3>}
+                {block.content && <div className="whitespace-pre-line">{block.content}</div>}
+              </div>
+            )}
+            {(block.type === 'IMAGE' || block.type === 'TEXT_IMAGE') && block.imageUrl && (
+              <div className="w-full">
+                <img
+                  src={block.imageUrl}
+                  alt={block.altText || block.title || name}
+                  className="w-full rounded-xl object-contain bg-surface border border-border"
+                />
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  // Fallback to legacy description
   if (description && description.length > 50) {
     return (
       <div className="prose max-w-none text-muted leading-relaxed whitespace-pre-line">

@@ -9,14 +9,15 @@ import type {
   CheckoutPreviewRequest,
   CheckoutPreviewResponse,
   CreateOrderRequest,
-  OrderBasicResponse
+  OrderBasicResponse,
+  CouponResponse,
+  CouponValidationResponse
 } from './cartTypes';
 
 export const cartApi = {
   // Cart
   getCart: async (): Promise<CartResponse> => {
     const res = await apiClient.get<ApiResponse<CartResponse>>('/api/v1/client/cart');
-    console.log('CART RESPONSE:', res.data.data);
     return res.data.data;
   },
 
@@ -40,18 +41,23 @@ export const cartApi = {
 
   // Addresses
   getAddresses: async (): Promise<AddressResponse[]> => {
-    const res = await apiClient.get<ApiResponse<AddressResponse[]>>('/api/v1/client/addresses');
-    return res.data.data;
+    const res = await apiClient.get<ApiResponse<any>>('/api/v1/client/addresses');
+    return res.data.data.map((addr: any) => ({
+      ...addr,
+      isDefault: addr.isDefault ?? addr.default
+    }));
   },
 
   createAddress: async (data: AddressRequest): Promise<AddressResponse> => {
-    const res = await apiClient.post<ApiResponse<AddressResponse>>('/api/v1/client/addresses', data);
-    return res.data.data;
+    const res = await apiClient.post<ApiResponse<any>>('/api/v1/client/addresses', data);
+    const addr = res.data.data;
+    return { ...addr, isDefault: addr.isDefault ?? addr.default };
   },
 
   updateAddress: async (id: number, data: AddressRequest): Promise<AddressResponse> => {
-    const res = await apiClient.patch<ApiResponse<AddressResponse>>(`/api/v1/client/addresses/${id}`, data);
-    return res.data.data;
+    const res = await apiClient.patch<ApiResponse<any>>(`/api/v1/client/addresses/${id}`, data);
+    const addr = res.data.data;
+    return { ...addr, isDefault: addr.isDefault ?? addr.default };
   },
 
   deleteAddress: async (id: number): Promise<void> => {
@@ -71,6 +77,17 @@ export const cartApi = {
 
   getOrderBasic: async (orderId: number | string): Promise<OrderBasicResponse> => {
     const res = await apiClient.get<ApiResponse<OrderBasicResponse>>(`/api/v1/client/orders/${orderId}`);
+    return res.data.data;
+  },
+
+  // Coupons
+  getAvailableCoupons: async (): Promise<CouponResponse[]> => {
+    const res = await apiClient.get<ApiResponse<CouponResponse[]>>('/api/v1/client/coupons/available');
+    return res.data.data;
+  },
+
+  validateCoupon: async (data: { code: string; subtotalAmount: number }): Promise<CouponValidationResponse> => {
+    const res = await apiClient.post<ApiResponse<CouponValidationResponse>>('/api/v1/client/coupons/validate', data);
     return res.data.data;
   }
 };

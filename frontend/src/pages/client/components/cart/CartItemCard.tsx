@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { Box, Minus, Plus, Trash2 } from 'lucide-react';
 import type { CartItemResponse } from '../../../../features/client/cart/cartTypes';
 import { formatCurrency } from '../../../../utils/formatters';
@@ -50,6 +51,8 @@ export default function CartItemCard({
     }
   };
 
+  const productHref = item.productSlug ? `/products/${item.productSlug}` : '/products';
+
   return (
     <div className={`bg-surface rounded-xl p-6 flex flex-col md:flex-row items-center gap-6 border border-border shadow-sm transition-opacity ${loading ? 'opacity-50 pointer-events-none' : ''}`}>
       <input
@@ -58,17 +61,19 @@ export default function CartItemCard({
         onChange={(e) => onSelect(item.id, e.target.checked)}
         className="h-5 w-5 rounded border-border-strong border-2 text-primary focus:ring-0 cursor-pointer"
       />
-      <div className="w-24 h-24 rounded-lg bg-surface flex-shrink-0 flex items-center justify-center overflow-hidden border border-border">
+      <Link to={productHref} className="w-24 h-24 rounded-lg bg-surface flex-shrink-0 flex items-center justify-center overflow-hidden border border-border group">
         {item.thumbnailUrl ? (
-          <img src={item.thumbnailUrl} alt={item.productName} className="w-full h-full object-contain mix-blend-multiply" />
+          <img src={item.thumbnailUrl} alt={item.productName} className="w-full h-full object-contain mix-blend-multiply transition-transform duration-300 group-hover:scale-105" />
         ) : (
-          <div className="text-muted">
+          <div className="text-muted group-hover:scale-105 transition-transform duration-300">
             <Box className="w-8 h-8" />
           </div>
         )}
-      </div>
+      </Link>
       <div className="flex-1 flex flex-col gap-1 w-full md:w-auto">
-        <h3 className="text-text text-base md:text-lg font-bold leading-tight line-clamp-2">{item.productName}</h3>
+        <Link to={productHref} className="text-text text-base md:text-lg font-bold leading-tight line-clamp-2 hover:text-primary transition-colors">
+          {item.productName}
+        </Link>
         <p className="text-muted text-sm">Phân loại: {item.variantName}</p>
         <p className="text-muted text-xs">SKU: {item.sku}</p>
         <div className="mt-2 text-primary font-bold text-lg">{formatCurrency(item.unitPrice)}</div>

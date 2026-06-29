@@ -1,6 +1,32 @@
 import { publicClient } from "../../../api/publicClient";
 import { unwrapApiList, type ApiResponse, type PageResponse } from "../../../types/api";
 
+export type ProductDescriptionBlockType = "TEXT" | "IMAGE" | "TEXT_IMAGE";
+
+export interface ProductDescriptionBlockResponse {
+  id: number;
+  type: ProductDescriptionBlockType;
+  title?: string | null;
+  content?: string | null;
+  imageUrl?: string | null;
+  altText?: string | null;
+  sortOrder: number;
+  active: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface ProductSpecificationResponse {
+  id: number;
+  groupName?: string | null;
+  specKey: string;
+  specValue: string;
+  sortOrder: number;
+  active: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
 export interface BrandSummaryResponse {
   id: number;
   name: string;
@@ -61,6 +87,8 @@ export interface ProductResponse {
   active: boolean;
   variants: ProductVariantResponse[];
   media: ProductMediaResponse[];
+  descriptionBlocks?: ProductDescriptionBlockResponse[];
+  specifications?: ProductSpecificationResponse[];
   createdAt: string; 
 }
 

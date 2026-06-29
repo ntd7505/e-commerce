@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { cartApi } from '../../features/client/cart/cartApi';
 import type { CheckoutPreviewResponse, AddressResponse } from '../../features/client/cart/cartTypes';
@@ -11,41 +11,39 @@ import { Box, CreditCard, Loader2 } from 'lucide-react';
 
 export default function Checkout() {
   const navigate = useNavigate();
-  const { refreshCart } = useCart();
+  const { refreshCart, activeDeliveryAddress, setActiveDeliveryAddress } = useCart();
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [preview, setPreview] = useState<CheckoutPreviewResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  // Initialize synchronously from sessionStorage
+  const draftData = useMemo(() => {
+    const draftStr = sessionStorage.getItem('checkoutDraft');
+    if (!draftStr) return null;
+    try {
+      return JSON.parse(draftStr);
+    } catch {
+      return null;
+    }
+  }, []);
+
   // Draft state
-  const [cartItemIds, setCartItemIds] = useState<number[]>([]);
-  const [preferredAddressId, setPreferredAddressId] = useState<number | undefined>(undefined);
+  const [cartItemIds, setCartItemIds] = useState<number[]>(draftData?.cartItemIds || []);
+  const [preferredAddressId, setPreferredAddressId] = useState<number | undefined>(
+    draftData?.addressId || activeDeliveryAddress?.id || undefined
+  );
   const [selectedAddress, setSelectedAddress] = useState<AddressResponse | null>(null);
-  const [couponCode, setCouponCode] = useState<string | null>(null);
+  const [couponCode, setCouponCode] = useState<string | null>(draftData?.couponCode || null);
   const [couponError, setCouponError] = useState<string | null>(null);
   const [paymentMethod, setPaymentMethod] = useState<string>('');
   const [note, setNote] = useState<string>('');
 
   useEffect(() => {
-    const draftStr = sessionStorage.getItem('checkoutDraft');
-    if (!draftStr) {
-      navigate('/cart', { replace: true });
-      return;
-    }
-    try {
-      const draft = JSON.parse(draftStr);
-      if (!draft.cartItemIds || draft.cartItemIds.length === 0) {
-        navigate('/cart', { replace: true });
-        return;
-      }
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setCartItemIds(draft.cartItemIds);
-      if (draft.addressId) setPreferredAddressId(draft.addressId);
-      if (draft.couponCode) setCouponCode(draft.couponCode);
-    } catch {
+    if (!draftData || !draftData.cartItemIds || draftData.cartItemIds.length === 0) {
       navigate('/cart', { replace: true });
     }
-  }, [navigate]);
+  }, [navigate, draftData]);
 
   useEffect(() => {
     if (cartItemIds.length === 0) return;
@@ -156,8 +154,11 @@ export default function Checkout() {
           <div className="flex-1">
             <AddressSelector
               selectedAddressId={selectedAddress?.id}
-              onSelect={setSelectedAddress}
               preferredAddressId={preferredAddressId}
+              onSelect={(addr) => {
+                setSelectedAddress(addr);
+                setActiveDeliveryAddress(addr);
+              }}
             />
 
             <div className="bg-surface rounded-2xl p-6 border border-border shadow-sm mb-6">
@@ -216,6 +217,7 @@ export default function Checkout() {
 
             <CouponInput 
               currentCoupon={couponCode} 
+              subtotalAmount={preview?.subtotalAmount || 0}
               onApply={handleApplyCoupon} 
               onRemove={handleRemoveCoupon} 
               error={couponError} 

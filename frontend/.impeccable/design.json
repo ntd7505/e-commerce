@@ -1,0 +1,188 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-06-28T00:00:00+07:00",
+  "title": "Design System: NexaMart",
+  "extensions": {
+    "colorMeta": {
+      "trust-blue": {
+        "role": "primary",
+        "displayName": "Trust Blue",
+        "canonical": "oklch(51% 0.22 265)",
+        "tonalRamp": ["#061b3f","#0a2d6b","#0e3f97","#1555cf","#2563eb","#7ba3f3","#bdd5fa","#e6f0ff"]
+      },
+      "trust-blue-deep": {
+        "role": "primary-hover",
+        "displayName": "Trust Blue Deep",
+        "canonical": "oklch(43% 0.22 265)",
+        "tonalRamp": ["#041634","#08255a","#0c3480","#1043a6","#1d4ed8","#6b98f0","#b3cbf8","#e0e9fc"]
+      },
+      "alert-red": {
+        "role": "semantic-danger",
+        "displayName": "Alert Red",
+        "canonical": "oklch(55% 0.24 25)",
+        "tonalRamp": ["#3d0505","#6c1010","#9a1717","#c81e1e","#ef4444","#f28b8b","#f9c5c5","#fdeee9"]
+      },
+      "confirm-green": {
+        "role": "semantic-success",
+        "displayName": "Confirm Green",
+        "canonical": "oklch(67% 0.18 145)",
+        "tonalRamp": ["#052e0c","#0a4e14","#0f6e1c","#148e24","#22c55e","#79e09b","#bcf0ce","#eafbef"]
+      },
+      "caution-amber": {
+        "role": "semantic-warning",
+        "displayName": "Caution Amber",
+        "canonical": "oklch(73% 0.18 85)",
+        "tonalRamp": ["#3e2500","#6b3f00","#985a00","#c57400","#f59e0b","#f8c471","#fce2b3","#fef3e2"]
+      },
+      "page-canvas": {
+        "role": "neutral-bg",
+        "displayName": "Page Canvas",
+        "canonical": "oklch(97% 0.002 240)",
+        "tonalRamp": ["#e8eaec","#ebedef","#edf0f1","#f1f3f5","#f5f7f8","#f7f8f9","#fafbfb","#fdfdfd"]
+      },
+      "card-white": {
+        "role": "neutral-surface",
+        "displayName": "Card White",
+        "canonical": "oklch(100% 0 0)",
+        "tonalRamp": ["#e6e6e6","#eaeaea","#efefef","#f5f5f5","#ffffff","#ffffff","#ffffff","#ffffff"]
+      },
+      "ink": {
+        "role": "neutral-text",
+        "displayName": "Ink",
+        "canonical": "oklch(22% 0.01 260)",
+        "tonalRamp": ["#050608","#0a0d12","#0f131c","#151a26","#111827","#4b5563","#9ca3af","#f3f4f6"]
+      }
+    },
+    "typographyMeta": {
+      "display":   { "displayName": "Display",   "purpose": "Hero headlines and primary section headings. Use text-wrap: balance." },
+      "headline":  { "displayName": "Headline",   "purpose": "Secondary section headings, large card titles." },
+      "title":     { "displayName": "Title",      "purpose": "Card titles, widget headings, category names." },
+      "body":      { "displayName": "Body",       "purpose": "Main body text: product descriptions, content. Max 65-75ch line length." },
+      "label":     { "displayName": "Label",      "purpose": "Badge text, chip text, meta info, price notation. Always 12px." }
+    },
+    "shadows": [
+      { "name": "card-rest",     "value": "none",                              "purpose": "Card at rest. Border does the layering." },
+      { "name": "card-hover",    "value": "0 1px 4px 0 rgba(0,0,0,0.06)",     "purpose": "Card on hover — barely perceptible lift." },
+      { "name": "sticky-panel",  "value": "0 1px 3px 0 rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.04)", "purpose": "Sticky header, sidebar, summary panel during scroll." },
+      { "name": "modal",         "value": "0 4px 16px rgba(0,0,0,0.08)",      "purpose": "Modal, popover, dropdown menu — clear separation from page." }
+    ],
+    "motion": [
+      { "name": "ease-standard",   "value": "cubic-bezier(0.4, 0, 0.2, 1)",   "purpose": "Default state transition: hover, focus, active." },
+      { "name": "ease-out",        "value": "cubic-bezier(0, 0, 0.2, 1)",     "purpose": "Elements entering the screen." },
+      { "name": "duration-fast",   "value": "150ms",                          "purpose": "Micro-interactions: button press, icon toggle." },
+      { "name": "duration-normal", "value": "200ms",                          "purpose": "Standard transitions: hover, card lift, color change." },
+      { "name": "duration-slow",   "value": "300ms",                          "purpose": "Modal enter/exit, page transitions." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" },
+      { "name": "xl", "value": "1280px" },
+      { "name": "2xl", "value": "1536px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "CTA chính. Trust Blue nền, text trắng, font-semibold. Hover → đậm hơn, active → scale(0.98).",
+      "html": "<button class=\"ds-btn-primary\">Mua ngay</button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: var(--color-primary); color: #fff; font-family: Inter, ui-sans-serif, system-ui, sans-serif; font-size: 14px; font-weight: 600; line-height: 1; border-radius: 10px; padding: 0 20px; height: 44px; border: none; cursor: pointer; white-space: nowrap; transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1); user-select: none; } .ds-btn-primary:hover { background: var(--color-primary-hover); } .ds-btn-primary:focus-visible { outline: none; box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.4); outline-offset: 1px; } .ds-btn-primary:active { transform: scale(0.98); } .ds-btn-primary:disabled { opacity: 0.5; cursor: not-allowed; pointer-events: none; }"
+    },
+    {
+      "name": "Outline Button",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "Nút phụ. Nền trắng, viền Border Strong, Ink text. Hover → nền Page Canvas.",
+      "html": "<button class=\"ds-btn-outline\">Xem thêm</button>",
+      "css": ".ds-btn-outline { display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: #fff; color: #111827; font-family: Inter, ui-sans-serif, system-ui, sans-serif; font-size: 14px; font-weight: 600; line-height: 1; border-radius: 10px; padding: 0 20px; height: 44px; border: 1px solid #d1d5db; cursor: pointer; white-space: nowrap; transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1); user-select: none; } .ds-btn-outline:hover { background: var(--color-canvas); } .ds-btn-outline:focus-visible { outline: none; box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.4); outline-offset: 1px; } .ds-btn-outline:active { transform: scale(0.98); }"
+    },
+    {
+      "name": "Danger Button",
+      "kind": "button",
+      "refersTo": "button-danger",
+      "description": "Nút huỷ/xoá. Chỉ dùng cho hành động phá huỷ. Alert Red nền, text trắng.",
+      "html": "<button class=\"ds-btn-danger\">Xoá</button>",
+      "css": ".ds-btn-danger { display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: var(--color-danger); color: #fff; font-family: Inter, ui-sans-serif, system-ui, sans-serif; font-size: 14px; font-weight: 600; line-height: 1; border-radius: 10px; padding: 0 20px; height: 44px; border: none; cursor: pointer; white-space: nowrap; transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1); user-select: none; } .ds-btn-danger:hover { background: var(--color-danger-hover); } .ds-btn-danger:focus-visible { outline: none; box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.4); outline-offset: 1px; } .ds-btn-danger:active { transform: scale(0.98); }"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Input text tiêu chuẩn. Viền Border Strong, focus → Trust Blue ring nhẹ.",
+      "html": "<input class=\"ds-input\" placeholder=\"Tìm kiếm sản phẩm...\" type=\"text\" />",
+      "css": ".ds-input { width: 100%; height: 40px; padding: 0 12px; background: #fff; color: #111827; font-family: Inter, ui-sans-serif, system-ui, sans-serif; font-size: 14px; line-height: 1.5; border: 1px solid #d1d5db; border-radius: 8px; transition: border-color 200ms cubic-bezier(0.4, 0, 0.2, 1), box-shadow 200ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-input::placeholder { color: #6b7280; } .ds-input:focus { outline: none; border-color: var(--color-primary); box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.3); } .ds-input:disabled { opacity: 0.5; cursor: not-allowed; }"
+    },
+    {
+      "name": "Product Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Card sản phẩm trong grid. Nền trắng, viền nhẹ, padding 16px. Hover → shadow nhẹ.",
+      "html": "<div class=\"ds-card\"><div class=\"ds-card-img\">📱</div><div class=\"ds-card-body\"><span class=\"ds-card-title\">iPhone 15 Pro Max</span><span class=\"ds-card-price\">28.990.000₫</span></div></div>",
+      "css": ".ds-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 16px; transition: box-shadow 200ms cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; } .ds-card:hover { box-shadow: 0 1px 4px 0 rgba(0,0,0,0.06); } .ds-card-title { display: block; font-family: Inter, ui-sans-serif, system-ui, sans-serif; font-size: 14px; font-weight: 500; color: #111827; line-height: 1.4; margin-top: 8px; } .ds-card-price { display: block; font-family: Inter, ui-sans-serif, system-ui, sans-serif; font-size: 16px; font-weight: 700; color: var(--color-danger); line-height: 1; margin-top: 6px; }"
+    },
+    {
+      "name": "Badge",
+      "kind": "chip",
+      "refersTo": "badge-primary",
+      "description": "Badge pill. Nền mist, text cùng màu, font-bold 12px. Có tuỳ chọn dot bên trái.",
+      "html": "<span class=\"ds-badge ds-badge-primary\"><span class=\"ds-dot\"></span>Flash Sale</span>",
+      "css": ".ds-badge { display: inline-flex; align-items: center; gap: 4px; border-radius: 9999px; font-family: Inter, ui-sans-serif, system-ui, sans-serif; font-size: 12px; font-weight: 700; line-height: 1; padding: 4px 10px; letter-spacing: 0.01em; } .ds-badge-primary { background: #e6f0ff; color: #2563eb; } .ds-badge-danger { background: #fdeee9; color: #ef4444; } .ds-badge-success { background: #eafbef; color: #22c55e; } .ds-dot { display: inline-block; width: 6px; height: 6px; border-radius: 9999px; background: currentColor; flex-shrink: 0; }"
+    },
+    {
+      "name": "Chip / Filter Tag",
+      "kind": "chip",
+      "refersTo": "chip",
+      "description": "Chip filter, tag danh mục. Nền trắng viền nhẹ, Ink Muted text. Active → Trust Blue.",
+      "html": "<span class=\"ds-chip\">Điện thoại</span>",
+      "css": ".ds-chip { display: inline-flex; align-items: center; background: #fff; color: #6b7280; font-family: Inter, ui-sans-serif, system-ui, sans-serif; font-size: 12px; font-weight: 500; line-height: 1; padding: 4px 12px; border-radius: 9999px; border: 1px solid #e5e7eb; cursor: pointer; transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-chip:hover { border-color: #d1d5db; color: #111827; } .ds-chip-active { background: #e6f0ff; color: #2563eb; border-color: #2563eb; }"
+    },
+    {
+      "name": "Breadcrumb",
+      "kind": "nav",
+      "refersTo": "breadcrumb",
+      "description": "Đường dẫn breadcrumb. Text-sm Ink Muted, separator ChevronRight. Item cuối Ink font-medium.",
+      "html": "<nav class=\"ds-breadcrumb\"><a class=\"ds-crumb-link\" href=\"#\">Trang chủ</a><svg class=\"ds-crumb-sep\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><polyline points=\"9,18 15,12 9,6\"/></svg><a class=\"ds-crumb-link\" href=\"#\">Điện thoại</a><svg class=\"ds-crumb-sep\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><polyline points=\"9,18 15,12 9,6\"/></svg><span class=\"ds-crumb-current\">iPhone 15</span></nav>",
+      "css": ".ds-breadcrumb { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-family: Inter, ui-sans-serif, system-ui, sans-serif; font-size: 14px; color: #6b7280; } .ds-crumb-link { color: #6b7280; text-decoration: none; transition: color 200ms; } .ds-crumb-link:hover { color: #2563eb; } .ds-crumb-sep { width: 16px; height: 16px; color: #9ca3af; flex-shrink: 0; } .ds-crumb-current { color: #111827; font-weight: 500; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Efficiency Engine",
+    "overview": "NexaMart là một cỗ máy tối ưu chuyển đổi — mỗi pixel, mỗi token, mỗi khoảng trắng đều phục vụ một mục đích: giúp người Việt tìm và mua thiết bị điện tử nhanh nhất có thể. Hệ thống vận hành trên nguyên tắc dense but legible: mật độ thông tin cao của TMĐT nhưng được tổ chức chặt chẽ bởi phân cấp thị giác rõ ràng. Màu sắc đóng vai trò tín hiệu — Trust Blue dẫn dắt hành động, Alert Red cảnh báo khẩn cấp và giá sale. Từ PRODUCT.md: \"Tin cậy, hiệu quả, dễ tiếp cận.\"",
+    "keyCharacteristics": [
+      "Token-driven: mọi giá trị thị giác đi qua @theme, không hardcode hex",
+      "Phân cấp màu sắc: 1 accent chính + semantic colors, neutral lùi sau",
+      "Phẳng nhẹ: border phân lớp, shadow rất nhẹ chỉ ở trạng thái nổi",
+      "Component restrained: transition mượt, active scale nhẹ, không bounce/elastic",
+      "Font Inter duy nhất, 4 weights"
+    ],
+    "rules": [
+      { "name": "The One Accent Rule", "body": "Trust Blue xuất hiện trên ≤10% diện tích mỗi màn hình. Không có 2 CTA primary trong cùng một fold. Chỉ một hành động chính mỗi viewport.", "section": "colors" },
+      { "name": "The Red Means Money Rule", "body": "Alert Red chỉ dùng cho: giá sale, % giảm, nút xoá, trạng thái lỗi. Không bao giờ dùng làm màu nhấn hay trang trí.", "section": "colors" },
+      { "name": "The No-Black Rule", "body": "Không dùng #000000 hay text-black trong hệ thống. Văn bản tối nhất là Ink (#111827).", "section": "colors" },
+      { "name": "The Single Font Rule", "body": "Một font Inter cho toàn bộ hệ thống. Không pha serif, không mono.", "section": "typography" },
+      { "name": "The Flat-By-Default Rule", "body": "Mọi surface phẳng ở trạng thái nghỉ. Shadow là tín hiệu của trạng thái (hover, focus), không phải trang trí.", "section": "elevation" },
+      { "name": "The No-Ghost-Card Rule", "body": "Không kết hợp border: 1px solid với box-shadow blur ≥8px trên cùng một element.", "section": "elevation" }
+    ],
+    "dos": [
+      "Dùng token Tailwind (bg-primary, text-text, border-border) — không hardcode hex",
+      "Dùng Button component và buttonVariants() cho mọi nút",
+      "Dùng Container (default 1280px / narrow 960px / wide 1440px)",
+      "Giá sale: text-danger font-bold, giá gốc: text-text-muted line-through",
+      "Shadow cực nhẹ (blur ≤4px hover, ≤16px modal)",
+      "Card: rounded-lg (10px), Input: rounded-md (8px), Badge/Chip: rounded-full",
+      "Icon: lucide-react độc quyền; brand icon: inline SVG"
+    ],
+    "donts": [
+      "Không dùng bg-blue-600, bg-red-500, text-black hay hex literal ngoài token",
+      "Không dùng Alert Red cho bất kỳ mục đích nào ngoài sale/xoá/lỗi",
+      "Không border: 1px solid + box-shadow blur ≥8px trên cùng một element",
+      "Không border-radius ≥20px cho card",
+      "Không thêm thư viện icon mới",
+      "Không dark-mode, terminal UI, neon, glassmorphism",
+      "Không casino-style gamification",
+      "Không placeholder text nhạt hơn #6b7280"
+    ]
+  }
+}

@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NexaMart Mockup</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <style>
+    :root {
+      --color-primary: #2563eb;
+      --color-danger: #ef4444;
+      --color-warning: #f59e0b;
+      --color-hero-bg: #0f1b35;
+      --color-navy: #1a1a2e;
+
+      --surface-0: #0a0a0a;
+      --surface-1: #141414;
+      --surface-2: #1f1f1f;
+      
+      --border: rgba(255, 255, 255, 0.1);
+      --border-strong: rgba(255, 255, 255, 0.2);
+      
+      --text-primary: #ffffff;
+      --text-secondary: rgba(255, 255, 255, 0.75);
+      --text-muted: rgba(255, 255, 255, 0.5);
+      
+      --radius: 10px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--surface-0);
+      color: var(--text-primary);
+      font-size: 13px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a {
+      color: var(--color-primary);
+      text-decoration: none;
+    }
+
+    button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      color: inherit;
+    }
+
+    /* 1. TOPBAR */
+    .topbar {
+      background-color: var(--color-navy);
+      color: var(--text-secondary);
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+    }
+    .topbar span {
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    /* 2. HEADER */
+    .header {
+      background-color: var(--surface-2);
+      border-bottom: 0.5px solid var(--border);
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+    .logo {
+      font-size: 22px;
+      font-weight: 500;
+      letter-spacing: -0.5px;
+    }
+    .logo-nexa {
+      color: var(--text-primary);
+    }
+    .logo-mart {
+      color: var(--color-primary);
+    }
+
+    .search-wrapper {
+      flex: 1;
+      max-width: 520px;
+      display: flex;
+      align-items: center;
+      background-color: var(--surface-0);
+      border: 0.5px solid var(--border);
+      border-radius: 6px;
+      padding: 4px 4px 4px 12px;
+      height: 40px;
+    }
+    .search-wrapper i {
+      color: var(--text-muted);
+      font-size: 16px;
+      margin-right: 8px;
+    }
+    .search-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: var(--text-primary);
+      font-size: 13px;
+      outline: none;
+    }
+    .search-input::placeholder {
+      color: var(--text-muted);
+    }
+    .search-btn {
+      background-color: var(--color-primary);
+      color: var(--text-primary);
+      padding: 0 16px;
+      border-radius: 4px;
+      font-size: 13px;
+      font-weight: 500;
+      height: 30px;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+    .action-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-secondary);
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .action-item i {
+      font-size: 20px;
+      color: var(--text-primary);
+    }
+    .action-item:hover {
+      color: var(--text-primary);
+    }
+
+    .cart-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .cart-badge {
+      position: absolute;
+      top: -6px;
+      right: -8px;
+      background-color: var(--color-danger);
+      color: var(--text-primary);
+      font-size: 10px;
+      font-weight: 500;
+      padding: 2px 5px;
+      border-radius: 10px;
+      line-height: 1;
+    }
+
+    /* 3. TRUST BAR */
+    .trust-bar {
+      background-color: var(--surface-2);
+      border-bottom: 0.5px solid var(--border);
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 40px;
+    }
+    .trust-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      color: var(--text-secondary);
+    }
+    .trust-item i {
+      color: var(--color-primary);
+      font-size: 16px;
+    }
+
+    /* 4. MAIN CONTENT */
+    .main-grid {
+      display: grid;
+      grid-template-columns: 180px 1fr;
+      gap: 14px;
+      padding: 16px 20px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    /* LEFT: SIDEBAR */
+    .sidebar {
+      background-color: var(--surface-2);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px 0;
+      height: max-content;
+    }
+    .sidebar-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      padding: 0 16px 8px 16px;
+    }
+    .sidebar-link {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 9px 16px;
+      font-size: 12px;
+      color: var(--text-primary);
+      cursor: pointer;
+    }
+    .sidebar-link:hover {
+      background-color: var(--surface-1);
+    }
+    .sidebar-link i {
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    /* RIGHT CONTENT */
+    .content-area {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      min-width: 0;
+    }
+
+    /* [A] HERO BANNER */
+    .hero {
+      height: 220px;
+      display: grid;
+      grid-template-columns: 1fr 180px;
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 0.5px solid var(--border);
+    }
+    .hero-main {
+      background-color: var(--color-hero-bg);
+      padding: 32px 40px;
+      position: relative;
+    }
+    .hero-eyebrow {
+      font-size: 10px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .hero-title {
+      font-size: 26px;
+      font-weight: 500;
+      color: var(--text-primary);
+      line-height: 1.15;
+      margin-bottom: 8px;
+      max-width: 300px;
+    }
+    .hero-subtitle {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+    }
+    .hero-cta {
+      background-color: var(--color-primary);
+      color: var(--text-primary);
+      font-size: 12px;
+      font-weight: 500;
+      padding: 10px 24px;
+      border-radius: 6px;
+      display: inline-block;
+    }
+    .hero-emoji {
+      position: absolute;
+      right: 20px;
+      bottom: -10px;
+      font-size: 120px;
+      line-height: 1;
+    }
+
+    .hero-side {
+      background-color: var(--surface-2);
+      display: flex;
+      flex-direction: column;
+      border-left: 0.5px solid var(--border);
+    }
+    .promo-card {
+      flex: 1;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+    }
+    .promo-card:first-child {
+      border-bottom: 0.5px solid var(--border);
+    }
+    .promo-label {
+      font-size: 9px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .promo-title {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 2px;
+    }
+    .promo-sub {
+      font-size: 11px;
+      color: var(--color-primary);
+    }
+    .promo-emoji {
+      position: absolute;
+      right: 16px;
+      bottom: 16px;
+      font-size: 32px;
+      line-height: 1;
+    }
+
+    /* [B] QUICK LINKS */
+    .quick-links {
+      background-color: var(--surface-2);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius);
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      padding: 16px 0;
+    }
+    .ql-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      padding: 8px 0;
+      border-radius: 8px;
+      margin: 0 8px;
+    }
+    .ql-item:hover {
+      background-color: var(--surface-1);
+    }
+    .ql-circle {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background-color: var(--surface-1);
+      color: var(--color-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      border: 0.5px solid var(--border);
+    }
+    .ql-label {
+      font-size: 11px;
+      color: var(--text-secondary);
+      text-align: center;
+    }
+
+    /* [C] FLASH SALE */
+    .flash-sale {
+      background-color: var(--surface-2);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+    }
+    .fs-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .fs-header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .fs-badge {
+      background-color: var(--color-danger);
+      color: var(--text-primary);
+      font-size: 11px;
+      font-weight: 500;
+      padding: 4px 8px;
+      border-radius: 4px;
+    }
+    .fs-title {
+      font-size: 15px;
+      font-weight: 500;
+    }
+    .fs-timer {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .timer-block {
+      background-color: var(--color-navy);
+      color: var(--text-primary);
+      font-size: 12px;
+      padding: 4px 6px;
+      border-radius: 4px;
+      font-weight: 500;
+      line-height: 1;
+    }
+    .timer-colon {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+    .fs-link {
+      color: var(--color-primary);
+      font-size: 12px;
+    }
+
+    .fs-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+    }
+    .product-card {
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .product-card:hover {
+      border-color: var(--border-strong);
+    }
+    .product-img {
+      aspect-ratio: 1 / 1;
+      background-color: var(--surface-1);
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 64px;
+    }
+    .product-tag {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      background-color: var(--color-danger);
+      color: var(--text-primary);
+      font-size: 10px;
+      font-weight: 500;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+    .product-info {
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .product-name {
+      font-size: 11px;
+      color: var(--text-secondary);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      line-height: 1.4;
+      height: 30.8px;
+    }
+    .price-row {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+    }
+    .price-current {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--color-danger);
+    }
+    .price-old {
+      font-size: 10px;
+      color: var(--text-muted);
+      text-decoration: line-through;
+    }
+    .product-meta {
+      font-size: 10px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .product-meta i {
+      color: var(--color-warning);
+      font-size: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    Freeship từ 499K · Giảm thêm 5% cho đơn từ 5 triệu — nhập mã <span>NEXA5</span>
+  </div>
+
+  <header class="header">
+    <div class="logo">
+      <span class="logo-nexa">Nexa</span><span class="logo-mart">Mart</span>
+    </div>
+    <div class="search-wrapper">
+      <i class="ti ti-search"></i>
+      <input type="text" class="search-input" placeholder="Tìm kiếm sản phẩm...">
+      <button class="search-btn">Tìm</button>
+    </div>
+    <div class="header-actions">
+      <div class="action-item">
+        <i class="ti ti-map-pin"></i>
+        <span>Thanh Xuân, HN</span>
+      </div>
+      <div class="action-item">
+        <i class="ti ti-user"></i>
+        <span>admin</span>
+      </div>
+      <div class="action-item cart-wrapper">
+        <i class="ti ti-shopping-cart"></i>
+        <div class="cart-badge">3</div>
+      </div>
+    </div>
+  </header>
+
+  <div class="trust-bar">
+    <div class="trust-item"><i class="ti ti-shield-check"></i> 100% chính hãng</div>
+    <div class="trust-item"><i class="ti ti-refresh"></i> Đổi trả 30 ngày</div>
+    <div class="trust-item"><i class="ti ti-rocket"></i> Giao hàng 2h</div>
+    <div class="trust-item"><i class="ti ti-lock"></i> Thanh toán bảo mật</div>
+    <div class="trust-item"><i class="ti ti-headset"></i> Hỗ trợ 24/7</div>
+  </div>
+
+  <main class="main-grid">
+    <aside class="sidebar">
+      <div class="sidebar-label">Danh mục</div>
+      <div class="sidebar-link">
+        <span>Điện thoại & Máy tính bảng</span>
+        <i class="ti ti-chevron-right"></i>
+      </div>
+      <div class="sidebar-link">
+        <span>Laptop & Máy vi tính</span>
+        <i class="ti ti-chevron-right"></i>
+      </div>
+      <div class="sidebar-link">
+        <span>Phụ kiện công nghệ</span>
+        <i class="ti ti-chevron-right"></i>
+      </div>
+      <div class="sidebar-link">
+        <span>Thiết bị gia dụng</span>
+        <i class="ti ti-chevron-right"></i>
+      </div>
+      <div class="sidebar-link">
+        <span>Màn hình máy tính</span>
+        <i class="ti ti-chevron-right"></i>
+      </div>
+      <div class="sidebar-link">
+        <span>Chuột & Bàn phím</span>
+        <i class="ti ti-chevron-right"></i>
+      </div>
+    </aside>
+
+    <div class="content-area">
+      <!-- [A] HERO -->
+      <section class="hero">
+        <div class="hero-main">
+          <div class="hero-eyebrow">Nổi bật tuần này</div>
+          <h1 class="hero-title">Tai nghe Sony<br>WH-1000XM5</h1>
+          <div class="hero-subtitle">Chống ồn đỉnh cao — 30h pin</div>
+          <button class="hero-cta">Xem ngay</button>
+          <div class="hero-emoji">🎧</div>
+        </div>
+        <div class="hero-side">
+          <div class="promo-card">
+            <div class="promo-label">Deal tuần</div>
+            <div class="promo-title">Laptop cao cấp</div>
+            <div class="promo-sub">Giảm đến 50%</div>
+            <div class="promo-emoji">💻</div>
+          </div>
+          <div class="promo-card">
+            <div class="promo-label">Mới về</div>
+            <div class="promo-title">iPhone 15 Series</div>
+            <div class="promo-sub">Từ 19.990.000đ</div>
+            <div class="promo-emoji">📱</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- [B] QUICK LINKS -->
+      <section class="quick-links">
+        <div class="ql-item">
+          <div class="ql-circle"><i class="ti ti-building-store"></i></div>
+          <span class="ql-label">NexaMart Mall</span>
+        </div>
+        <div class="ql-item">
+          <div class="ql-circle"><i class="ti ti-percent"></i></div>
+          <span class="ql-label">Trả góp 0%</span>
+        </div>
+        <div class="ql-item">
+          <div class="ql-circle"><i class="ti ti-bolt"></i></div>
+          <span class="ql-label">Săn deal sốc</span>
+        </div>
+        <div class="ql-item">
+          <div class="ql-circle"><i class="ti ti-wallet"></i></div>
+          <span class="ql-label">Thanh toán ví</span>
+        </div>
+        <div class="ql-item">
+          <div class="ql-circle"><i class="ti ti-world"></i></div>
+          <span class="ql-label">Đặt quốc tế</span>
+        </div>
+      </section>
+
+      <!-- [C] FLASH SALE -->
+      <section class="flash-sale">
+        <div class="fs-header">
+          <div class="fs-header-left">
+            <div class="fs-badge">Flash Sale</div>
+            <div class="fs-title">Kết thúc sau</div>
+            <div class="fs-timer">
+              <div class="timer-block" id="timer-h">01</div>
+              <div class="timer-colon">:</div>
+              <div class="timer-block" id="timer-m">58</div>
+              <div class="timer-colon">:</div>
+              <div class="timer-block" id="timer-s">29</div>
+            </div>
+          </div>
+          <a href="#" class="fs-link">Xem tất cả →</a>
+        </div>
+        
+        <div class="fs-grid">
+          <div class="product-card">
+            <div class="product-img">
+              <div class="product-tag">-13%</div>
+              📱
+            </div>
+            <div class="product-info">
+              <div class="product-name">iPhone 15 128GB</div>
+              <div class="price-row">
+                <span class="price-current">19.990.000đ</span>
+                <span class="price-old">22.990.000đ</span>
+              </div>
+              <div class="product-meta">
+                <i class="ti ti-star"></i> 4.9 · 2.4k đánh giá
+              </div>
+            </div>
+          </div>
+          
+          <div class="product-card">
+            <div class="product-img">
+              <div class="product-tag">-20%</div>
+              📱
+            </div>
+            <div class="product-info">
+              <div class="product-name">Samsung Galaxy S24 5G</div>
+              <div class="price-row">
+                <span class="price-current">18.490.000đ</span>
+                <span class="price-old">22.990.000đ</span>
+              </div>
+              <div class="product-meta">
+                <i class="ti ti-star"></i> 4.8 · 1.8k đánh giá
+              </div>
+            </div>
+          </div>
+
+          <div class="product-card">
+            <div class="product-img">
+              <div class="product-tag">-10%</div>
+              💻
+            </div>
+            <div class="product-info">
+              <div class="product-name">ASUS Zenbook 14 OLED</div>
+              <div class="price-row">
+                <span class="price-current">22.490.000đ</span>
+                <span class="price-old">24.990.000đ</span>
+              </div>
+              <div class="product-meta">
+                <i class="ti ti-star"></i> 4.7 · 892 đánh giá
+              </div>
+            </div>
+          </div>
+
+          <div class="product-card">
+            <div class="product-img">
+              <div class="product-tag">-18%</div>
+              🎧
+            </div>
+            <div class="product-info">
+              <div class="product-name">Sony WH-1000XM5</div>
+              <div class="price-row">
+                <span class="price-current">6.990.000đ</span>
+                <span class="price-old">8.490.000đ</span>
+              </div>
+              <div class="product-meta">
+                <i class="ti ti-star"></i> 4.9 · 3.1k đánh giá
+              </div>
+            </div>
+          </div>
+
+          <div class="product-card">
+            <div class="product-img">
+              <div class="product-tag">-17%</div>
+              🤖
+            </div>
+            <div class="product-info">
+              <div class="product-name">Xiaomi Robot Vacuum S10</div>
+              <div class="price-row">
+                <span class="price-current">7.490.000đ</span>
+                <span class="price-old">8.990.000đ</span>
+              </div>
+              <div class="product-meta">
+                <i class="ti ti-star"></i> 4.6 · 621 đánh giá
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    let timeInSeconds = 1 * 3600 + 58 * 60 + 29;
+
+    const elH = document.getElementById('timer-h');
+    const elM = document.getElementById('timer-m');
+    const elS = document.getElementById('timer-s');
+
+    function updateTimer() {
+      if (timeInSeconds <= 0) return;
+      timeInSeconds--;
+      
+      const h = Math.floor(timeInSeconds / 3600);
+      const m = Math.floor((timeInSeconds % 3600) / 60);
+      const s = timeInSeconds % 60;
+
+      elH.textContent = h.toString().padStart(2, '0');
+      elM.textContent = m.toString().padStart(2, '0');
+      elS.textContent = s.toString().padStart(2, '0');
+    }
+
+    setInterval(updateTimer, 1000);
+  </script>
+</body>
+</html>

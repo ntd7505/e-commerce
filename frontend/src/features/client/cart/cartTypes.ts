@@ -1,6 +1,7 @@
 export interface CartItemResponse {
   id: number;
   productId: number;
+  productSlug?: string;
   productName: string;
   productVariantId: number;
   variantName: string;
@@ -91,4 +92,24 @@ export interface OrderBasicResponse {
   totalAmount: number;
   status: string;
   createdAt: string;
+}
+
+// Coupons
+export interface CouponResponse {
+  code: string;
+  description: string;
+  discountType: 'PERCENTAGE' | 'FIXED_AMOUNT';
+  discountValue: number;
+  minOrderAmount: number;
+  maxDiscountAmount?: number;
+  usageLimit?: number;
+  usedCount?: number;
+  startDate: string;
+  endDate: string;
+}
+
+export interface CouponValidationResponse {
+  valid: boolean;
+  message?: string;
+  coupon?: CouponResponse;
 }

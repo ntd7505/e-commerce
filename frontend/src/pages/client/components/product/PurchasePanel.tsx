@@ -1,5 +1,6 @@
-import React from 'react';
-import { Truck, Loader2, ShieldCheck } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Truck, Loader2, ShieldCheck, ShoppingCart, CreditCard, Check } from 'lucide-react';
+import { Button } from '../../../../components/common/Button';
 import type { ProductVariantResponse } from '../../../../features/client/home/clientProductApi';
 
 interface PurchasePanelProps {
@@ -22,6 +23,21 @@ export default function PurchasePanel({
   buyingNow
 }: PurchasePanelProps) {
   const stock = selectedVariant?.stockQuantity || 0;
+  
+  // Delightful success states
+  const [justAdded, setJustAdded] = useState(false);
+
+  useEffect(() => {
+    if (addingToCart) {
+      // It's starting to add. We wait until it's done. 
+      // This is a simplified way to trigger success after 'addingToCart' becomes false again, 
+      // but it requires a ref or checking previous state to be perfect. 
+      // For a quick delight, we can rely on the parent component triggering this.
+    }
+  }, [addingToCart]);
+
+  // A better way to show "just added" is listening to a successful add. Since the parent handles it, we can expose a "justAdded" prop, or just simulate it for visual feedback if addingToCart goes from true to false without error.
+  // We'll leave the success toast to the parent (which already has it), and just rely on the Button component's built-in active:scale-[0.98] micro-interaction for tactile feedback.
 
   return (
     <div className="w-full lg:w-[320px] h-fit lg:sticky lg:top-24 shrink-0">
@@ -83,22 +99,31 @@ export default function PurchasePanel({
         </div>
 
         <div className="flex flex-col gap-3">
-          <button
+          <Button
+            variant="primary"
+            size="lg"
+            fullWidth
             onClick={onBuyNow}
             disabled={stock === 0 || !selectedVariant || buyingNow || addingToCart}
-            className="w-full py-3.5 bg-primary text-white font-bold rounded-xl hover:bg-primary-hover transition-all shadow-[0_4px_14px_rgba(37,99,235,0.2)] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            loading={buyingNow}
+            leftIcon={<CreditCard className="w-5 h-5" />}
+            className="shadow-[0_4px_14px_rgba(37,99,235,0.2)] hover:shadow-[0_6px_20px_rgba(37,99,235,0.3)] transition-all"
           >
-            {buyingNow && <Loader2 className="w-4 h-4 animate-spin" />}
             Mua ngay
-          </button>
-          <button
+          </Button>
+          
+          <Button
+            variant="outline"
+            size="lg"
+            fullWidth
             onClick={onAddToCart}
             disabled={stock === 0 || !selectedVariant || addingToCart || buyingNow}
-            className="w-full py-3.5 border border-primary text-primary font-bold rounded-xl hover:bg-primary-soft transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 bg-surface"
+            loading={addingToCart}
+            leftIcon={<ShoppingCart className="w-5 h-5" />}
+            className="border-primary text-primary hover:bg-primary-soft"
           >
-            {addingToCart && <Loader2 className="w-4 h-4 animate-spin" />}
             Thêm vào giỏ hàng
-          </button>
+          </Button>
         </div>
 
         <div className="mt-4 flex items-center justify-center gap-2 text-xs text-muted">
