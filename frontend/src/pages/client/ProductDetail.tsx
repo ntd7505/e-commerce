@@ -153,7 +153,7 @@ export default function ProductDetail() {
         <span className="text-text font-medium line-clamp-1">{product.name}</span>
       </nav>
 
-      <div className="bg-surface rounded-2xl border border-border shadow-sm p-6 flex flex-col lg:flex-row gap-6 mb-10">
+      <div className="bg-surface rounded-2xl border border-border shadow-sm p-6 flex flex-col lg:flex-row items-start gap-6 mb-10">
         {/* Left: Gallery */}
         <ProductGallery media={product.media || []} productName={product.name} />
 

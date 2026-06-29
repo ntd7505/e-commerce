@@ -42,7 +42,7 @@ const Home = () => {
   }, [drawerOpen, closeDrawer]);
 
   return (
-    <div className="bg-[var(--surface-0)] py-4">
+    <div className="bg-gradient-to-b from-primary-soft/30 to-surface py-6 min-h-screen">
       <div className="container-custom">
         {/* Mobile category trigger */}
         <div className="lg:hidden mb-3">
@@ -57,14 +57,14 @@ const Home = () => {
           </button>
         </div>
 
-        <div className="flex flex-col lg:flex-row gap-[14px] items-start">
+        <div className="flex flex-col lg:flex-row gap-4 lg:gap-6 items-start mt-2">
           {/* Desktop Sidebar */}
           <div className="w-full lg:w-[180px] shrink-0 lg:sticky lg:top-4 hidden lg:block h-fit max-h-[calc(100vh-32px)] custom-scrollbar overflow-y-auto">
             <CategorySidebar />
           </div>
 
           {/* Main Content */}
-          <div className="flex-1 flex flex-col gap-[14px] w-full min-w-0">
+          <div className="flex-1 flex flex-col gap-6 lg:gap-8 w-full min-w-0">
             <HeroSection />
             <QuickServices />
             <FlashSaleSection

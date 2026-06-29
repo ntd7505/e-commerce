@@ -25,7 +25,7 @@ export default function AccountSidebar() {
   const idleItem = `${baseItem} text-muted font-medium hover:text-primary hover:bg-primary-soft/40 border-transparent cursor-pointer`;
 
   return (
-    <div className="w-full lg:w-64 shrink-0 bg-surface rounded-2xl shadow-sm border border-border overflow-hidden flex flex-col">
+    <div className="w-full lg:w-64 shrink-0 bg-surface rounded-2xl shadow-sm shadow-primary/5 border border-primary/10 overflow-hidden flex flex-col">
       <div className="hidden lg:flex p-5 border-b border-border items-center gap-4 bg-surface/50">
         <div className="w-14 h-14 rounded-full bg-surface flex items-center justify-center overflow-hidden shrink-0 border-2 border-border-strong shadow-sm">
           {user.avatarUrl ? (

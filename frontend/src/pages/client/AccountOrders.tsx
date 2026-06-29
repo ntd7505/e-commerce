@@ -86,7 +86,7 @@ function OrderCard({
 
   return (
     <div className="bg-surface rounded-2xl border border-border shadow-sm hover:shadow-md transition-shadow overflow-hidden">
-      <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-4 border-b border-border bg-surface/40">
+      <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-4 border-b border-border bg-surface-alt/40">
         <div className="flex flex-col">
           <Link
             to={`/account/orders/${order.id}`}
@@ -107,7 +107,7 @@ function OrderCard({
           <Link
             key={item.id}
             to={`/products/${item.productId}`}
-            className="flex items-center gap-3 rounded-xl p-2 -mx-2 hover:bg-surface transition-colors"
+            className="flex items-center gap-3 rounded-xl p-2 -mx-2 hover:bg-primary-soft/40 transition-colors"
           >
             <ProductThumb />
             <div className="min-w-0 flex-1">
@@ -138,7 +138,7 @@ function OrderCard({
             <button
               type="button"
               onClick={() => onCancel(order)}
-              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-semibold text-danger bg-danger-soft hover:bg-danger-soft transition-colors"
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-semibold text-danger bg-danger-soft hover:bg-danger/20 transition-colors"
             >
               <XCircle className="w-4 h-4" />
               Hủy đơn
@@ -148,7 +148,7 @@ function OrderCard({
             <button
               type="button"
               onClick={() => onRequestCancel(order)}
-              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-semibold text-warning bg-warning-soft hover:bg-warning-soft transition-colors"
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-semibold text-warning bg-warning-soft hover:bg-warning/20 transition-colors"
             >
               <AlertTriangle className="w-4 h-4" />
               Yêu cầu hủy
@@ -159,7 +159,7 @@ function OrderCard({
               type="button"
               onClick={() => onConfirmReceipt(order)}
               disabled={receiptLoading}
-              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-semibold text-success bg-success-soft hover:bg-success-soft transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-semibold text-success bg-success-soft hover:bg-success/20 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
             >
               <CheckCircle2 className="w-4 h-4" />
               {receiptLoading ? 'Đang xử lý...' : 'Đã nhận hàng'}

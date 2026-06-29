@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Truck, Loader2, ShieldCheck, ShoppingCart, CreditCard, Check } from 'lucide-react';
+import { Truck, ShieldCheck, ShoppingCart, CreditCard } from 'lucide-react';
 import { Button } from '../../../../components/common/Button';
 import type { ProductVariantResponse } from '../../../../features/client/home/clientProductApi';
 
@@ -23,27 +23,13 @@ export default function PurchasePanel({
   buyingNow
 }: PurchasePanelProps) {
   const stock = selectedVariant?.stockQuantity || 0;
-  
-  // Delightful success states
-  const [justAdded, setJustAdded] = useState(false);
 
-  useEffect(() => {
-    if (addingToCart) {
-      // It's starting to add. We wait until it's done. 
-      // This is a simplified way to trigger success after 'addingToCart' becomes false again, 
-      // but it requires a ref or checking previous state to be perfect. 
-      // For a quick delight, we can rely on the parent component triggering this.
-    }
-  }, [addingToCart]);
-
-  // A better way to show "just added" is listening to a successful add. Since the parent handles it, we can expose a "justAdded" prop, or just simulate it for visual feedback if addingToCart goes from true to false without error.
-  // We'll leave the success toast to the parent (which already has it), and just rely on the Button component's built-in active:scale-[0.98] micro-interaction for tactile feedback.
 
   return (
     <div className="w-full lg:w-[320px] h-fit lg:sticky lg:top-24 shrink-0">
-      <div className="bg-surface border border-border rounded-2xl p-5 shadow-sm">
-        <div className="mb-5 pb-5 border-b border-border">
-          <div className="flex items-center justify-between mb-3">
+      <div className="bg-gradient-to-br from-surface to-primary-soft/10 border border-primary/20 rounded-2xl p-6 shadow-sm shadow-primary/5">
+        <div className="mb-6 pb-6 border-b border-border">
+          <div className="flex items-center justify-between mb-4">
             <span className="text-sm font-bold text-text">Giao tới</span>
             <span className="text-sm font-bold text-text">Toàn quốc</span>
           </div>
@@ -62,8 +48,8 @@ export default function PurchasePanel({
           </div>
         </div>
 
-        <div className="mb-6">
-          <div className="flex items-center justify-between mb-3">
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-4">
             <p className="text-sm font-bold text-text">Số lượng:</p>
             <span className="text-xs font-medium">
               {stock > 0 ? (

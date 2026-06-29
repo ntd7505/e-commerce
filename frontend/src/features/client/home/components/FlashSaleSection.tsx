@@ -57,28 +57,28 @@ const FlashSaleSection: React.FC<Props> = ({ products, loading, error }) => {
 
   return (
     <section className="w-full" data-purpose="flash-sale-section">
-      <div className="bg-surface border border-border-strong rounded-2xl p-4 shadow-sm">
+      <div className="bg-surface border border-danger/10 rounded-2xl p-5 lg:p-6 shadow-sm shadow-danger/5">
         {/* Header */}
-        <div className="flex justify-between items-center mb-5">
+        <div className="flex justify-between items-center mb-6">
           <div className="flex items-center gap-4">
-            <div className="bg-[var(--color-danger)] text-white text-xs font-bold px-3 py-1.5 rounded-[4px] uppercase tracking-wide">Flash Sale</div>
-            <div className="text-sm font-medium text-[var(--text-primary)]">Kết thúc sau</div>
+            <div className="bg-danger text-white text-xs font-bold px-3 py-1.5 rounded-md uppercase tracking-wide">Flash Sale</div>
+            <div className="text-sm font-medium text-text">Kết thúc sau</div>
             {!saleEnded ? (
-              <div className="flex items-center gap-1">
-                <div className="bg-[var(--color-navy)] text-white text-sm px-2 py-1 rounded-[4px] font-bold leading-none">{formatTime(hours)}</div>
-                <div className="text-sm text-[var(--text-muted)] font-bold">:</div>
-                <div className="bg-[var(--color-navy)] text-white text-sm px-2 py-1 rounded-[4px] font-bold leading-none">{formatTime(minutes)}</div>
-                <div className="text-sm text-[var(--text-muted)] font-bold">:</div>
-                <div className="bg-[var(--color-navy)] text-white text-sm px-2 py-1 rounded-[4px] font-bold leading-none">{formatTime(seconds)}</div>
+              <div className="flex items-center gap-1.5">
+                <div className="bg-text text-white text-sm px-2 py-1 rounded font-bold leading-none">{formatTime(hours)}</div>
+                <div className="text-sm text-muted font-bold">:</div>
+                <div className="bg-text text-white text-sm px-2 py-1 rounded font-bold leading-none">{formatTime(minutes)}</div>
+                <div className="text-sm text-muted font-bold">:</div>
+                <div className="bg-text text-white text-sm px-2 py-1 rounded font-bold leading-none">{formatTime(seconds)}</div>
               </div>
             ) : (
-               <div className="text-xs text-[var(--text-muted)] font-medium">Đã kết thúc</div>
+               <div className="text-xs text-muted font-medium">Đã kết thúc</div>
             )}
           </div>
           {products.length > 0 && (
             <Link 
               to="/products"
-              className="text-[var(--color-primary)] text-xs font-medium hover:underline flex items-center gap-1"
+              className="text-primary text-sm font-medium hover:underline flex items-center gap-1"
             >
               Xem tất cả &rarr;
             </Link>
@@ -87,29 +87,28 @@ const FlashSaleSection: React.FC<Props> = ({ products, loading, error }) => {
 
         {/* Content */}
         {loading ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 lg:gap-6">
             {Array.from({ length: 5 }).map((_, i) => (
               <SkeletonCard key={i} />
             ))}
           </div>
         ) : error ? (
           <div className="flex flex-col items-center justify-center py-12 text-center bg-danger-soft rounded-xl border border-danger-soft border-dashed">
-            <div className="w-14 h-14 bg-[var(--surface-1)] rounded-full flex items-center justify-center shadow-sm mb-3">
+            <div className="w-14 h-14 bg-surface rounded-full flex items-center justify-center shadow-sm mb-3">
               <AlertCircle className="w-7 h-7 text-danger" />
             </div>
             <p className="text-danger font-medium mb-1">Không thể tải Flash Sale</p>
-            <p className="text-[var(--text-muted)] text-sm">{error}</p>
+            <p className="text-sm text-danger/70">Vui lòng thử lại sau</p>
           </div>
-        ) : products.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-12 text-center bg-[var(--surface-1)] rounded-xl border border-[var(--border)] border-dashed">
-            <div className="w-14 h-14 bg-[var(--surface-0)] rounded-full flex items-center justify-center mb-3">
-              <Zap className="w-7 h-7 text-[var(--text-muted)]" />
+        ) : displayedProducts.length === 0 ? (
+          <div className="text-center py-12 bg-surface rounded-xl flex flex-col items-center">
+            <div className="w-16 h-16 bg-surface-alt rounded-full flex items-center justify-center mb-3">
+              <Zap className="w-8 h-8 text-muted" />
             </div>
-            <p className="text-[var(--text-primary)] font-medium mb-1">Chưa có sản phẩm Flash Sale</p>
-            <p className="text-[var(--text-muted)] text-sm">Hãy quay lại sau để xem các deal hot nhất!</p>
+            <p className="text-muted font-medium">Chưa có Flash Sale nào đang diễn ra</p>
           </div>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 transition-all">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 lg:gap-6 transition-all">
             {displayedProducts.map((product) => {
               const thumbnailImage = product.media?.find(m => m.thumbnail)?.url || product.media?.[0]?.url || '';
 

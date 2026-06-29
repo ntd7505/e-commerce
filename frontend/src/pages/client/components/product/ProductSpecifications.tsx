@@ -32,7 +32,7 @@ export default function ProductSpecifications({ product, selectedVariant }: Prod
             <div className="border border-border rounded-lg overflow-hidden bg-canvas">
               {specs.map((spec) => (
                 <div key={spec.id || spec.specKey} className="flex flex-col md:flex-row border-b border-border last:border-b-0 text-sm">
-                  <div className="w-full md:w-1/3 bg-[var(--surface-alt)] p-4 text-text-muted font-medium border-b md:border-b-0 md:border-r border-border">
+                  <div className="w-full md:w-1/3 bg-primary-soft p-4 text-text-muted font-medium border-b md:border-b-0 md:border-r border-border">
                     {spec.specKey}
                   </div>
                   <div className="w-full md:w-2/3 p-4 text-text leading-relaxed">
@@ -54,7 +54,7 @@ export default function ProductSpecifications({ product, selectedVariant }: Prod
       <div className="border border-border rounded-lg overflow-hidden bg-canvas">
         
         <div className="flex flex-col md:flex-row border-b border-border text-sm">
-          <div className="w-full md:w-1/3 bg-[var(--surface-alt)] p-4 text-text-muted font-medium border-b md:border-b-0 md:border-r border-border">
+          <div className="w-full md:w-1/3 bg-primary-soft p-4 text-text-muted font-medium border-b md:border-b-0 md:border-r border-border">
             Thương hiệu
           </div>
           <div className="w-full md:w-2/3 p-4 text-text font-medium">
@@ -63,7 +63,7 @@ export default function ProductSpecifications({ product, selectedVariant }: Prod
         </div>
 
         <div className="flex flex-col md:flex-row border-b border-border text-sm">
-          <div className="w-full md:w-1/3 bg-[var(--surface-alt)] p-4 text-text-muted font-medium border-b md:border-b-0 md:border-r border-border">
+          <div className="w-full md:w-1/3 bg-primary-soft p-4 text-text-muted font-medium border-b md:border-b-0 md:border-r border-border">
             Danh mục
           </div>
           <div className="w-full md:w-2/3 p-4 text-text font-medium">
@@ -74,7 +74,7 @@ export default function ProductSpecifications({ product, selectedVariant }: Prod
         {selectedVariant && (
           <>
             <div className="flex flex-col md:flex-row border-b border-border text-sm">
-              <div className="w-full md:w-1/3 bg-[var(--surface-alt)] p-4 text-text-muted font-medium border-b md:border-b-0 md:border-r border-border">
+              <div className="w-full md:w-1/3 bg-primary-soft p-4 text-text-muted font-medium border-b md:border-b-0 md:border-r border-border">
                 SKU
               </div>
               <div className="w-full md:w-2/3 p-4 text-text font-medium uppercase">
@@ -83,7 +83,7 @@ export default function ProductSpecifications({ product, selectedVariant }: Prod
             </div>
 
             <div className="flex flex-col md:flex-row border-b border-border text-sm">
-              <div className="w-full md:w-1/3 bg-[var(--surface-alt)] p-4 text-text-muted font-medium border-b md:border-b-0 md:border-r border-border">
+              <div className="w-full md:w-1/3 bg-primary-soft p-4 text-text-muted font-medium border-b md:border-b-0 md:border-r border-border">
                 Phiên bản
               </div>
               <div className="w-full md:w-2/3 p-4 text-text font-medium">
@@ -92,7 +92,7 @@ export default function ProductSpecifications({ product, selectedVariant }: Prod
             </div>
 
             <div className="flex flex-col md:flex-row border-b border-border text-sm">
-              <div className="w-full md:w-1/3 bg-[var(--surface-alt)] p-4 text-text-muted font-medium border-b md:border-b-0 md:border-r border-border">
+              <div className="w-full md:w-1/3 bg-primary-soft p-4 text-text-muted font-medium border-b md:border-b-0 md:border-r border-border">
                 Tình trạng
               </div>
               <div className={`w-full md:w-2/3 p-4 font-medium ${inStock ? 'text-success' : 'text-danger'}`}>

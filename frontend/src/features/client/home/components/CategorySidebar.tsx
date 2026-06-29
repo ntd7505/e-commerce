@@ -81,8 +81,8 @@ const CategorySidebar = () => {
   const parentCategories = categories.filter((c) => !c.parent);
 
   return (
-    <aside className="w-full bg-[var(--surface-2)] border-[0.5px] border-[var(--border)] rounded-[10px] py-4 h-max" data-purpose="category-sidebar">
-      <div className="text-xs text-[var(--text-muted)] uppercase tracking-[0.1em] font-medium px-4 mb-3">Danh mục</div>
+    <aside className="w-full bg-surface border border-border rounded-xl py-4 h-max shadow-sm shadow-primary/5" data-purpose="category-sidebar">
+      <div className="text-xs text-muted uppercase tracking-[0.1em] font-medium px-4 mb-3">Danh mục</div>
       <ul className="flex flex-col px-2 gap-0.5">
         {loading ? (
           Array.from({ length: 6 }).map((_, i) => <SkeletonItem key={i} />)
@@ -106,10 +106,10 @@ const CategorySidebar = () => {
               <li key={cat.id}>
                 <div
                   onClick={() => handleCategoryClick(cat.id, hasChildren)}
-                  className={`flex items-center justify-between px-3 py-2.5 rounded-[8px] cursor-pointer transition-colors group ${
+                  className={`flex items-center justify-between px-3 py-2.5 rounded-lg cursor-pointer transition-colors group ${
                     isParentActive || isChildActive
-                      ? 'bg-[var(--surface-0)] text-[var(--color-primary)] font-medium'
-                      : 'hover:bg-[var(--surface-0)] text-[var(--text-primary)]'
+                      ? 'bg-primary-soft text-primary font-medium'
+                      : 'hover:bg-primary-soft/50 text-text'
                   }`}
                 >
                   <span className="text-sm leading-[1.3] pr-2 flex-1">{cat.name}</span>
@@ -125,7 +125,7 @@ const CategorySidebar = () => {
                     </button>
                   ) : (
                     <ChevronRight className={`w-3.5 h-3.5 transition-colors ${
-                      isParentActive || isChildActive ? 'text-[var(--color-primary)]' : 'text-transparent group-hover:text-[var(--text-muted)]'
+                      isParentActive || isChildActive ? 'text-primary' : 'text-transparent group-hover:text-muted'
                     }`} />
                   )}
                 </div>
@@ -138,15 +138,15 @@ const CategorySidebar = () => {
                         <li
                           key={child.id}
                           onClick={() => navigate(`/products?categoryId=${child.id}`)}
-                          className={`flex items-center justify-between px-3 py-2 cursor-pointer transition-colors text-xs rounded-r-[6px] ${
+                          className={`flex items-center justify-between px-3 py-2 cursor-pointer transition-colors text-xs rounded-r-md ${
                             isSubActive
-                              ? 'text-[var(--color-primary)] font-medium bg-[var(--surface-0)]'
-                              : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-0)]'
+                              ? 'text-primary font-medium bg-primary-soft'
+                              : 'text-muted hover:text-primary hover:bg-primary-soft/50'
                           }`}
                         >
                           <span className="leading-[1.3] flex-1">{child.name}</span>
                           {isSubActive && (
-                            <Check className="w-3 h-3 text-[var(--color-primary)] ml-2 shrink-0" />
+                            <Check className="w-3 h-3 text-primary ml-2 shrink-0" />
                           )}
                         </li>
                       );

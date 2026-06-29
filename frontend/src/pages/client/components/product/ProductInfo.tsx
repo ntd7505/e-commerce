@@ -90,12 +90,12 @@ export default function ProductInfo({
 
       {/* Price Box */}
       <div className="bg-surface p-4 rounded-xl mb-5 border border-border">
-        <div className="flex items-baseline gap-3">
+        <div className="flex flex-wrap items-baseline gap-2 xl:gap-3">
           <span className="text-3xl font-bold text-danger">{formatCurrency(currentPrice)}</span>
           {originalPrice && (
             <>
-              <span className="text-muted line-through text-lg">{formatCurrency(originalPrice)}</span>
-              <span className="bg-danger-soft text-danger text-xs font-bold px-2 py-1 rounded">
+              <span className="text-muted line-through text-lg shrink-0">{formatCurrency(originalPrice)}</span>
+              <span className="bg-danger-soft text-danger text-xs font-bold px-2 py-1 rounded whitespace-nowrap shrink-0">
                 -{calculateDiscountPercent(originalPrice, currentPrice)}
               </span>
             </>

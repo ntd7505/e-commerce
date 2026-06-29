@@ -16,8 +16,6 @@ export default function ProductGallery({ media, productName }: ProductGalleryPro
       return a.thumbnail ? -1 : 1;
     });
 
-  const defaultImage = activeMedia.length > 0 ? activeMedia[0].url : '';
-
   const [activeImage, setActiveImage] = useState<string>('');
   
   const currentIndex = activeImage 

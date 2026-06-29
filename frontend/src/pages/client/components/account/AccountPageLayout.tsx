@@ -23,7 +23,7 @@ export default function AccountPageLayout({
   headerRight,
 }: AccountPageLayoutProps) {
   return (
-    <div className="bg-canvas min-h-screen py-8">
+    <div className="bg-gradient-to-b from-primary-soft/40 to-surface min-h-screen py-8">
       <div className="w-full max-w-[1200px] mx-auto px-4">
         {/* Breadcrumb */}
         <nav className="flex items-center gap-2 text-sm text-muted mb-8">
@@ -47,7 +47,7 @@ export default function AccountPageLayout({
               {children}
             </div>
           ) : (
-            <div className="flex-1 w-full bg-surface rounded-2xl shadow-sm border border-border overflow-hidden">
+            <div className="flex-1 w-full bg-surface rounded-2xl shadow-sm shadow-primary/5 border border-primary/10 overflow-hidden">
               <div className="p-6 lg:p-8 border-b border-border flex flex-wrap items-center justify-between gap-4">
                 <div>
                   <h1 className="text-wrap-balance text-2xl font-bold text-text">{title}</h1>

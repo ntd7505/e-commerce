@@ -24,7 +24,7 @@ export function AddressCard({
   settingDefault,
 }: AddressCardProps) {
   return (
-    <div className={`bg-canvas border rounded-xl p-5 transition-colors duration-200 flex flex-col h-full ${address.isDefault ? 'border-primary shadow-sm' : 'border-border hover:border-primary/50'}`}>
+    <div className={`bg-surface border rounded-2xl p-5 lg:p-6 transition-all duration-200 flex flex-col h-full ${address.isDefault ? 'border-primary shadow-sm shadow-primary/5 bg-primary-soft/10' : 'border-border hover:border-primary/30 hover:shadow-sm'}`}>
       <div className="flex flex-wrap items-start justify-between gap-3 mb-4">
         <div className="flex items-center gap-2 flex-wrap">
           <span
@@ -81,7 +81,7 @@ export function AddressCard({
           <button
             type="button"
             disabled
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-bold border border-primary bg-primary text-white ml-auto cursor-default opacity-90 shadow-sm"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold border border-primary bg-primary text-white ml-auto cursor-default opacity-90 shadow-sm"
           >
             <Check className="w-4 h-4" />
             Mặc định
@@ -91,7 +91,7 @@ export function AddressCard({
             type="button"
             onClick={() => onSetDefault(address)}
             disabled={settingDefault}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-semibold border border-border text-text-muted hover:border-primary hover:text-primary transition-colors disabled:opacity-60 disabled:cursor-not-allowed ml-auto bg-canvas"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold border border-border text-text-muted hover:border-primary hover:text-primary transition-colors disabled:opacity-60 disabled:cursor-not-allowed ml-auto bg-surface hover:bg-primary-soft/20"
           >
             {settingDefault ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
             {settingDefault ? "Đang đặt..." : "Thiết lập mặc định"}

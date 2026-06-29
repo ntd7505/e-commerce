@@ -224,7 +224,7 @@ export default function Cart() {
   }
 
   return (
-    <div className="bg-canvas min-h-screen pb-20">
+    <div className="bg-gradient-to-b from-primary-soft/40 to-surface min-h-screen pb-20">
       <div className="max-w-[1280px] mx-auto w-full px-4 md:px-10">
         {/* Breadcrumbs */}
         <div className="flex flex-wrap gap-2 py-4">
@@ -255,7 +255,7 @@ export default function Cart() {
             {/* Left Side: Cart Items */}
             <div className="flex-1">
               {/* Bulk Actions */}
-              <div className="bg-surface rounded-xl px-6 py-4 mb-4 flex items-center justify-between border border-border shadow-sm">
+              <div className="bg-surface rounded-2xl px-6 py-4 mb-6 flex items-center justify-between border border-primary/10 shadow-sm shadow-primary/5">
                 <label className="flex items-center gap-x-3 cursor-pointer group">
                   <input
                     type="checkbox"
@@ -276,7 +276,7 @@ export default function Cart() {
               </div>
 
               {/* Item List */}
-              <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-4 lg:gap-6">
                 {items.map(item => (
                   <CartItemCard
                     key={item.id}
@@ -294,8 +294,8 @@ export default function Cart() {
             <div className="w-full lg:w-[360px] xl:w-[400px] flex-shrink-0">
               <div className="sticky top-[100px] flex flex-col gap-4">
                 {/* Giao tới card */}
-                <div className="bg-surface rounded-2xl p-6 border border-border shadow-sm">
-                  <div className="flex items-center justify-between mb-4">
+                <div className="bg-surface rounded-2xl p-6 lg:p-7 border border-primary/10 shadow-sm">
+                  <div className="flex items-center justify-between mb-5">
                     <h2 className="text-lg font-bold text-text flex items-center gap-2">
                       <MapPin className="w-5 h-5 text-primary" />
                       Giao tới
@@ -372,8 +372,8 @@ export default function Cart() {
                 </div>
 
                 {/* Summary card */}
-                <div className="bg-surface rounded-2xl p-6 border border-border shadow-sm">
-                  <h2 className="text-lg font-bold text-text mb-5">Thanh toán</h2>
+                <div className="bg-gradient-to-br from-surface to-primary-soft/10 rounded-2xl p-6 lg:p-7 border border-primary/20 shadow-sm shadow-primary/5">
+                  <h2 className="text-lg font-bold text-text mb-6">Thanh toán</h2>
 
                   <div className="flex flex-col gap-3.5 text-sm mb-4">
                     <div className="flex justify-between">

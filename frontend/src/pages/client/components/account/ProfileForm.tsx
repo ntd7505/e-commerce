@@ -222,7 +222,7 @@ export default function ProfileForm() {
               value={user.email} 
               disabled 
               aria-describedby="email-help"
-              className="w-full bg-surface/70 border border-border-strong rounded-xl px-4 py-3 text-sm text-muted cursor-not-allowed shadow-sm focus:outline-none"
+              className="w-full bg-surface-alt border border-border-strong rounded-xl px-4 py-3 text-sm text-muted cursor-not-allowed shadow-sm focus:outline-none"
             />
             <p id="email-help" className="text-xs text-muted flex items-center gap-1.5 mt-1">
                <AlertCircle className="w-3.5 h-3.5" />

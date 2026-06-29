@@ -165,21 +165,21 @@ export default function ProductList() {
   const currentSortKey = `${sortBy}-${sortDir}`;
 
   return (
-    <div className="bg-surface/30 min-h-screen py-4">
+    <div className="bg-gradient-to-b from-primary-soft/40 to-surface min-h-screen py-6">
       <div className="container-custom">
-        <nav className="flex text-sm text-muted mb-6 gap-2">
+        <nav className="flex text-sm text-muted mb-3 gap-2">
           <a href="/" className="hover:text-primary transition-colors">Trang chủ</a>
           <span>&gt;</span>
           <span className="text-text">{breadcrumbTitle}</span>
         </nav>
 
-        <div className="mb-6">
-          <h1 className="text-wrap-balance text-2xl font-bold text-text mb-4">
-            {headerTitle} <span className="text-lg font-normal text-muted">({totalElements} sản phẩm)</span>
+        <div className="mb-10">
+          <h1 className="text-wrap-balance text-3xl font-extrabold text-text mb-8 tracking-tight">
+            {headerTitle} <span className="text-lg font-normal text-muted tracking-normal">({totalElements} sản phẩm)</span>
           </h1>
 
           {/* Horizontal Filter Bar */}
-          <div className="bg-surface border border-border-strong rounded-xl p-4 shadow-sm flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between filter-dropdown relative z-20">
+          <div className="bg-surface border border-primary/10 rounded-xl p-4 shadow-sm shadow-primary/5 flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between filter-dropdown relative z-20">
             
             {/* Filter Dropdowns */}
             <div className="flex flex-wrap items-center gap-3 w-full lg:w-auto">
@@ -406,7 +406,7 @@ export default function ProductList() {
             </div>
           ) : (
             <>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6 lg:gap-8 mt-4">
                 {products.map(product => {
                   const activeMedia = product.media?.filter(m => m.active !== false).sort((a, b) => a.sortOrder - b.sortOrder) || [];
                   const thumbnailImage = activeMedia.find(m => m.thumbnail)?.url || activeMedia[0]?.url || '';

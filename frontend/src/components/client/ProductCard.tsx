@@ -68,13 +68,13 @@ const ProductCard: React.FC<ProductCardProps> = ({
   return (
     <Link
       to={`/products/${slug}`}
-      className="bg-surface rounded-xl overflow-hidden border border-border shadow-sm hover:shadow-md hover:-translate-y-0.5 hover:border-border-strong transition-all duration-300 h-full flex flex-col group cursor-pointer block no-underline text-inherit"
+      className="bg-surface rounded-xl overflow-hidden border border-border shadow-sm hover:shadow-primary/10 hover:-translate-y-0.5 hover:border-primary/30 transition-all duration-300 h-full flex flex-col group cursor-pointer block no-underline text-inherit"
     >
       {/* Image container */}
       <div className="relative bg-surface aspect-square overflow-hidden">
         {/* Discount badge */}
         {discountBadge && (
-          <span className="absolute top-2 left-2 z-10 bg-danger-soft0 text-white text-xs font-bold px-2 py-1 rounded-lg shadow-sm">
+          <span className="absolute top-2 left-2 z-10 bg-danger text-white text-xs font-bold px-2 py-1 rounded-lg shadow-sm">
             {discountBadge}
           </span>
         )}
@@ -129,8 +129,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
       </div>
 
       {/* Content */}
-      <div className="p-3 flex flex-col flex-grow bg-surface">
-        <h4 className="text-sm font-medium text-text line-clamp-2 min-h-[40px] group-hover:text-primary transition-colors leading-[1.4] mb-1.5">
+      <div className="p-4 md:p-5 flex flex-col flex-grow bg-surface">
+        <h4 className="text-sm md:text-base font-bold text-text line-clamp-2 min-h-[44px] group-hover:text-primary transition-colors leading-snug mb-3">
           {name}
         </h4>
 

@@ -41,9 +41,9 @@ const MainBanner = () => {
   };
 
   return (
-    <div className="h-auto md:h-[380px] flex flex-col md:grid md:grid-cols-[1fr_220px] lg:grid-cols-[1fr_260px] gap-[14px]">
+    <div className="h-auto md:h-[380px] flex flex-col md:grid md:grid-cols-[1fr_220px] lg:grid-cols-[1fr_260px] gap-4 lg:gap-6">
       {/* Main carousel — Left Block */}
-      <div className="relative overflow-hidden group cursor-pointer min-h-[200px] md:min-h-0 flex-1 rounded-[10px] border-[0.5px] border-[var(--border)] bg-surface">
+      <div className="relative overflow-hidden group cursor-pointer min-h-[200px] md:min-h-0 flex-1 rounded-2xl border border-border bg-surface shadow-sm hover:shadow-primary/10 hover:border-primary/20 transition-all">
         <div
           className="flex h-full w-full transition-transform duration-500 ease-out"
           style={{ transform: `translateX(-${currentIndex * 100}%)` }}
@@ -53,7 +53,7 @@ const MainBanner = () => {
               <div className="z-10 w-2/3 md:w-1/2">
                 <h2 className="text-2xl md:text-4xl font-bold mb-3 text-text">{banner.title}</h2>
                 <p className="text-base md:text-xl mb-6 text-text">{banner.subtitle}</p>
-                <button className="bg-[var(--color-primary)] text-white text-sm font-medium px-8 py-3 rounded-lg inline-block border-0 cursor-pointer hover:bg-[var(--color-primary-hover)] transition-colors shadow-sm">Xem ngay</button>
+                <button className="bg-primary text-white text-sm font-bold px-8 py-3 rounded-xl inline-block border-0 cursor-pointer hover:bg-primary-hover hover:-translate-y-0.5 transition-all shadow-sm shadow-primary/20">Xem ngay</button>
               </div>
               <div className="absolute right-0 top-0 h-full w-1/3 md:w-1/2 flex items-center justify-center p-4">
                 <img
@@ -105,15 +105,15 @@ const MainBanner = () => {
       </div>
 
       {/* Promo side banners — Right Block */}
-      <div className="flex flex-col gap-[14px] h-full hidden md:flex">
-        <div className="flex-1 bg-primary-soft/60 p-4 flex flex-col justify-between relative rounded-[10px] overflow-hidden cursor-pointer border-[0.5px] border-[var(--border)] hover:shadow-md transition-shadow">
+      <div className="flex flex-col gap-4 lg:gap-6 h-full hidden md:flex">
+        <div className="flex-1 bg-primary-soft/60 p-5 flex flex-col justify-between relative rounded-2xl overflow-hidden cursor-pointer border border-primary/10 hover:shadow-primary/10 hover:shadow-md transition-shadow">
           <div>
             <h3 className="font-bold text-lg text-text leading-tight">Tuần lễ Laptop</h3>
             <p className="text-sm text-text mt-1">Deal đến 50%</p>
           </div>
           <img alt="Tuần lễ Laptop" className="self-end w-28 lg:w-32 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBSpUHjWhPK24A4ejppWJoEAW9LhB732slfyFtDarQGXNdyLwDHgVmPCEgbHWLxH7QRVm8j31Rxm8UbnBuLoqcgNV2xHYslgkKTDaDtbRz8t0hSNVq89nSEt6BKfZNfgMgf0mwmANKsWZK0gFhab2MWZq9cDyFk2HQ8YDkp0JHNMoB2NsWq9ufEFEIeF71iJVg7DO5dPclAc7x09JS4uvFdAUPs5TpWM7VzIm3XzwhmmFyrrH8BrRN2vq8cKyjoeCQeKy4jRa8oAUYxV" />
         </div>
-        <div className="flex-1 bg-text p-4 flex flex-col justify-between relative rounded-[10px] overflow-hidden cursor-pointer border-[0.5px] border-text hover:shadow-md transition-shadow">
+        <div className="flex-1 bg-text p-5 flex flex-col justify-between relative rounded-2xl overflow-hidden cursor-pointer hover:shadow-lg transition-shadow">
           <div className="z-10">
             <h3 className="font-bold text-lg text-white leading-tight">Tai nghe SONY</h3>
             <p className="text-sm text-subtle mt-1">Âm thanh đỉnh cao</p>

@@ -136,7 +136,7 @@ export default function Checkout() {
   if (cartItemIds.length === 0) return null; // Wait for redirect
 
   return (
-    <div className="bg-canvas min-h-screen pb-20">
+    <div className="bg-gradient-to-b from-primary-soft/40 to-surface min-h-screen pb-20">
       <div className="max-w-[1280px] mx-auto w-full px-4 md:px-10">
         {/* Breadcrumbs */}
         <div className="flex flex-wrap gap-2 py-4">
@@ -161,7 +161,7 @@ export default function Checkout() {
               }}
             />
 
-            <div className="bg-surface rounded-2xl p-6 border border-border shadow-sm mb-6">
+            <div className="bg-surface rounded-2xl p-6 lg:p-7 border border-primary/10 shadow-sm shadow-primary/5 mb-6">
               <h2 className="text-lg font-bold text-text flex items-center gap-2 mb-4">
                 <Box className="w-5 h-5 text-primary" /> Sản phẩm
               </h2>
@@ -198,7 +198,7 @@ export default function Checkout() {
                 </div>
               )}
 
-              <div className="mt-6 rounded-xl bg-surface/60 border border-border p-4">
+              <div className="mt-6 rounded-2xl bg-canvas border border-border p-5 lg:p-6">
                 <label htmlFor="seller-note" className="block text-sm font-bold text-text mb-2">
                   Lời nhắn cho người bán (tùy chọn)
                 </label>
@@ -223,7 +223,7 @@ export default function Checkout() {
               error={couponError} 
             />
 
-            <div className="bg-surface rounded-2xl p-6 border border-border shadow-sm mb-6 lg:mb-0">
+            <div className="bg-surface rounded-2xl p-6 lg:p-7 border border-primary/10 shadow-sm shadow-primary/5 mb-6 lg:mb-0">
               <h2 className="text-lg font-bold text-text flex items-center gap-2 mb-4">
                 <CreditCard className="w-5 h-5 text-primary" /> Phương thức thanh toán
               </h2>
@@ -251,7 +251,7 @@ export default function Checkout() {
 
           {/* Right Column (Summary) */}
           <div className="w-full lg:w-[360px] xl:w-[400px] flex-shrink-0">
-            <div className="bg-surface rounded-2xl p-6 border border-border shadow-sm sticky top-[100px]">
+            <div className="bg-gradient-to-br from-surface to-primary-soft/10 rounded-2xl p-6 lg:p-7 border border-primary/20 shadow-sm shadow-primary/5 sticky top-[100px]">
               <h2 className="text-lg font-bold text-text mb-6">Chi tiết đơn hàng</h2>
               
               <div className="flex flex-col gap-4 text-sm mb-6">
