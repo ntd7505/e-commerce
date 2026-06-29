@@ -21,6 +21,7 @@ import com.NguyenDat.ecommerce.repository.OrderRepository;
 import com.NguyenDat.ecommerce.service.CouponApplicationService;
 import com.NguyenDat.ecommerce.service.OrderCreationService;
 import com.NguyenDat.ecommerce.service.OrderPaymentService;
+import com.NguyenDat.ecommerce.service.OrderStatusHistoryService;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +35,7 @@ public class OrderCreationServiceImpl implements OrderCreationService {
     OrderRepository orderRepository;
     OrderPaymentService orderPaymentService;
     CouponApplicationService couponApplicationService;
+    OrderStatusHistoryService orderStatusHistoryService;
 
     @Override
     @Transactional
@@ -51,7 +53,15 @@ public class OrderCreationServiceImpl implements OrderCreationService {
         couponApplicationService.recordUsage(
                 savedOrder, user, new CouponCalculation(checkout.getCoupon(), checkout.getDiscountAmount()));
 
-        return orderRepository.save(savedOrder);
+        Order finalOrder = orderRepository.save(savedOrder);
+        orderStatusHistoryService.record(
+                finalOrder,
+                user,
+                null,
+                OrderStatus.PENDING,
+                "Customer placed order");
+
+        return finalOrder;
     }
 
     private Order buildOrder(User user, CheckoutRequest request, CheckoutCalculation checkout) {

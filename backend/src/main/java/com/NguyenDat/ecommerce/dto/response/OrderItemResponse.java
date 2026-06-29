@@ -18,6 +18,7 @@ public class OrderItemResponse {
     Long productVariantId;
 
     String productName;
+    String thumbnailUrl;
     String variantName;
     String sku;
 
