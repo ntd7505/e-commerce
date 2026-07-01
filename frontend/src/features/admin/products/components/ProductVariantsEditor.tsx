@@ -19,13 +19,13 @@ export function ProductVariantsEditor({
     onChange,
 }: ProductVariantsEditorProps) {
     return (
-        <section className="rounded-2xl border border-border bg-surface p-6 shadow-sm">
+        <section className="rounded-xl border border-border bg-surface p-6 shadow-sm">
             <div className="mb-6 flex items-center justify-between">
                 <h3 className="text-lg font-bold text-text">Variants</h3>
                 <button
                     type="button"
                     onClick={onAdd}
-                    className="flex items-center gap-2 rounded-2xl border border-border bg-surface px-3 py-2 text-xs font-bold text-muted shadow-sm hover:bg-surface"
+                    className="flex items-center gap-2 rounded-xl border border-border bg-surface px-3 py-2 text-xs font-bold text-muted shadow-sm hover:bg-surface"
                 >
                     <PlusCircle className="h-4 w-4" /> Add variant
                 </button>
@@ -85,7 +85,7 @@ export function ProductVariantsEditor({
                                 <button
                                     type="button"
                                     onClick={() => onDelete(index)}
-                                    className="rounded-2xl border border-border bg-surface p-2 text-muted hover:bg-danger-soft hover:text-danger"
+                                    className="rounded-xl border border-border bg-surface p-2 text-muted hover:bg-danger-soft hover:text-danger"
                                 >
                                     <Trash2 className="h-4 w-4" />
                                 </button>

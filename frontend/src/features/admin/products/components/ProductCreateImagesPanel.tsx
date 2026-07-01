@@ -1,4 +1,4 @@
-import { AlertTriangle, Image as ImageIcon, PlusCircle, Trash2, Upload } from "lucide-react";
+﻿import { AlertTriangle, Image as ImageIcon, PlusCircle, Trash2, Upload } from "lucide-react";
 import { AdminImage } from "../../../../components/admin/AdminImage";
 import type { ProductCreateFormValues } from "../adminProductFormTypes";
 
@@ -24,11 +24,11 @@ export function ProductCreateImagesPanel({
     const isUploading = uploadingKey !== null;
 
     return (
-        <section className="rounded-2xl border border-border bg-surface p-6 shadow-sm">
+        <section className="rounded-xl border border-border bg-surface p-6 shadow-sm">
             <div className="mb-6 flex items-center justify-between gap-4">
                 <h3 className="text-lg font-bold text-text">Product Images</h3>
                 <div className="flex items-center gap-2">
-                    <label className="flex cursor-pointer items-center gap-1.5 rounded-2xl border border-border bg-surface px-3 py-2 text-xs font-bold text-muted shadow-sm hover:bg-surface">
+                    <label className="flex cursor-pointer items-center gap-1.5 rounded-xl border border-border bg-surface px-3 py-2 text-xs font-bold text-muted shadow-sm hover:bg-surface">
                         <Upload className="h-3.5 w-3.5" />
                         {uploadingKey === "create-bulk" ? "Uploading..." : "Upload images"}
                         <input
@@ -47,7 +47,7 @@ export function ProductCreateImagesPanel({
                         type="button"
                         onClick={onAdd}
                         disabled={isUploading}
-                        className="flex items-center gap-1.5 rounded-2xl border border-border bg-surface px-3 py-2 text-xs font-bold text-muted shadow-sm hover:bg-surface disabled:opacity-50"
+                        className="flex items-center gap-1.5 rounded-xl border border-border bg-surface px-3 py-2 text-xs font-bold text-muted shadow-sm hover:bg-surface disabled:opacity-50"
                     >
                         <PlusCircle className="h-3.5 w-3.5" /> Add URL
                     </button>
@@ -81,11 +81,11 @@ export function ProductCreateImagesPanel({
                             className="min-w-0 flex-1 rounded-lg border border-border-strong bg-surface-alt px-4 py-2.5 text-xs focus:border-success focus:outline-none"
                         />
                         {(url.includes("example.com") || url.includes("placeholder.com")) && (
-                            <span className="text-xs font-bold text-warning" title="C?n upload ?nh th?t">
-                                <AlertTriangle className="inline h-3.5 w-3.5" /> ?nh m?u
+                            <span className="text-xs font-bold text-warning" title="Cần upload ảnh thật">
+                                <AlertTriangle className="inline h-3.5 w-3.5" /> Ảnh mẫu
                             </span>
                         )}
-                        <label className="flex cursor-pointer items-center gap-1.5 rounded-2xl border border-border bg-surface px-3 py-2.5 text-xs font-bold text-muted hover:bg-surface">
+                        <label className="flex cursor-pointer items-center gap-1.5 rounded-xl border border-border bg-surface px-3 py-2.5 text-xs font-bold text-muted hover:bg-surface">
                             <Upload className="h-4 w-4" />
                             {uploadingKey === `create-${index}` ? "Uploading..." : "Upload"}
                             <input
@@ -103,7 +103,7 @@ export function ProductCreateImagesPanel({
                             type="button"
                             onClick={() => onRemove(index)}
                             disabled={formValues.mediaUrls.length === 1 && !url.trim()}
-                            className="rounded-2xl border border-border bg-surface p-2.5 text-muted hover:bg-danger-soft hover:text-danger disabled:opacity-40"
+                            className="rounded-xl border border-border bg-surface p-2.5 text-muted hover:bg-danger-soft hover:text-danger disabled:opacity-40"
                         >
                             <Trash2 className="h-4 w-4" />
                         </button>

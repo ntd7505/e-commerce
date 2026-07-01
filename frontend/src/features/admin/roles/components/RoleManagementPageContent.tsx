@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+﻿import React, { useEffect, useMemo, useState } from "react";
 import { RefreshCw, ShieldCheck, KeyRound, Plus, CheckCircle2 } from "lucide-react";
 import { createRole, getPermissions, getRoles } from "../adminRoleApi";
 import type { PermissionResponse, RoleResponse } from "../adminRoleTypes";
@@ -25,7 +25,7 @@ export default function RoleManagementPageContent() {
       setPermissions(permissionData);
       setError("");
     } catch {
-      setError("Kh�ng th? t?i d? li?u ph�n quy?n");
+      setError("Không thể tải dữ liệu phân quyền");
     } finally {
       setLoading(false);
     }
@@ -47,10 +47,10 @@ export default function RoleManagementPageContent() {
   const handleCreateRole = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formValues.name.trim() || !formValues.description.trim()) {
-      setError("Vui l�ng nh?p t�n v� m� t? role"); return;
+      setError("Vui lòng nhập tên và mô tả role"); return;
     }
     if (formValues.permissions.length === 0) {
-      setError("Vui l�ng ch?n �t nh?t m?t permission"); return;
+      setError("Vui lòng chọn ít nhất một permission"); return;
     }
     try {
       setSaving(true);
@@ -62,10 +62,10 @@ export default function RoleManagementPageContent() {
       setRoles((prev) => [...prev, created]);
       setFormValues(emptyForm);
       setError("");
-      setSuccessMsg(`Role "${created.name}" d� du?c t?o th�nh c�ng!`);
+      setSuccessMsg(`Role "${created.name}" đã được tạo thành công!`);
       setTimeout(() => setSuccessMsg(""), 3000);
     } catch {
-      setError("Kh�ng th? t?o role. Ki?m tra t�n ho?c permissions.");
+      setError("Không thể tạo role. Kiểm tra tên hoặc permissions.");
     } finally {
       setSaving(false);
     }
@@ -82,13 +82,13 @@ export default function RoleManagementPageContent() {
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <h2 className="text-2xl font-bold text-text">Roles & Permissions</h2>
-          <p className="mt-1 text-sm text-muted">Qu?n l� vai tr� v� quy?n h?n trong h? th?ng.</p>
+          <p className="mt-1 text-sm text-muted">Quản lý vai trò và quyền hạn trong hệ thống.</p>
         </div>
         <button
           type="button"
           onClick={loadData}
           disabled={loading}
-          className="flex items-center gap-2 rounded-2xl border border-border bg-surface px-4 py-2.5 text-sm font-bold text-text shadow-sm transition-colors hover:bg-surface disabled:opacity-50"
+          className="flex items-center gap-2 rounded-xl border border-border bg-surface px-4 py-2.5 text-sm font-bold text-text shadow-sm transition-colors hover:bg-surface disabled:opacity-50"
         >
           <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
           Refresh
@@ -137,7 +137,7 @@ export default function RoleManagementPageContent() {
       {activeTab === "ROLES" && (
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_420px]">
           {/* Roles list */}
-          <section className="rounded-2xl border border-border bg-surface shadow-sm">
+          <section className="rounded-xl border border-border bg-surface shadow-sm">
             <div className="flex items-center gap-2 border-b border-border p-5 text-sm font-bold text-text">
               <ShieldCheck className="h-4 w-4 text-success" />
               Existing Roles
@@ -184,7 +184,7 @@ export default function RoleManagementPageContent() {
           </section>
 
           {/* Create role form */}
-          <form onSubmit={handleCreateRole} className="h-fit rounded-2xl border border-border bg-surface p-5 shadow-sm">
+          <form onSubmit={handleCreateRole} className="h-fit rounded-xl border border-border bg-surface p-5 shadow-sm">
             <div className="flex items-center gap-2 mb-5">
               <Plus className="h-4 w-4 text-success" />
               <h3 className="text-base font-bold text-text">Create Role</h3>
@@ -208,7 +208,7 @@ export default function RoleManagementPageContent() {
                 <textarea
                   value={formValues.description}
                   onChange={(e) => setFormValues((p) => ({ ...p, description: e.target.value }))}
-                  placeholder="M� t? vai tr�..."
+                  placeholder="Mô t? vai trò..."
                   rows={3}
                   className="w-full resize-none rounded-lg border border-border-strong bg-surface px-3 py-2.5 text-sm outline-none transition focus:border-success focus:ring-1 focus:ring-success"
                 />
@@ -256,7 +256,7 @@ export default function RoleManagementPageContent() {
 
       {/* Tab: Permissions */}
       {activeTab === "PERMISSIONS" && (
-        <section className="rounded-2xl border border-border bg-surface shadow-sm">
+        <section className="rounded-xl border border-border bg-surface shadow-sm">
           <div className="flex items-center gap-2 border-b border-border p-5 text-sm font-bold text-text">
             <KeyRound className="h-4 w-4 text-success" />
             All Permissions

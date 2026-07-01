@@ -21,7 +21,7 @@ export function BrandHeader({ loading, onRefresh, onAdd }: BrandHeaderProps) {
                     type="button"
                     onClick={onRefresh}
                     disabled={loading}
-                    className="rounded-2xl border border-border bg-surface px-4 py-2.5 text-sm font-bold text-text shadow-sm hover:bg-surface disabled:cursor-not-allowed disabled:opacity-60"
+                    className="rounded-xl border border-border bg-surface px-4 py-2.5 text-sm font-bold text-text shadow-sm hover:bg-surface disabled:cursor-not-allowed disabled:opacity-60"
                 >
                     Refresh
                 </button>

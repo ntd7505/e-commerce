@@ -1,4 +1,4 @@
-import { Edit, Filter, MoreHorizontal, Search, Trash2 } from "lucide-react";
+﻿import { Edit, Filter, MoreHorizontal, Search, Trash2 } from "lucide-react";
 import { AdminBadge } from "../../../../components/admin/AdminBadge";
 import { AdminImage } from "../../../../components/admin/AdminImage";
 import type { BrandResponse } from "../adminBrandTypes";
@@ -29,7 +29,7 @@ export function BrandTable({
   onToggleStatus,
 }: BrandTableProps) {
   return (
-    <div className="overflow-hidden rounded-2xl border border-border bg-surface shadow-sm">
+    <div className="overflow-hidden rounded-xl border border-border bg-surface shadow-sm">
       <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border p-4">
         <div className="flex items-center gap-1 rounded-lg border border-border bg-surface p-1.5 shadow-inner">
           <button className="rounded-md border border-border-strong/60 bg-surface px-5 py-2 text-sm font-bold text-success shadow-sm">
@@ -48,10 +48,10 @@ export function BrandTable({
             />
             <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
           </div>
-          <button className="rounded-2xl border border-border bg-surface p-2.5 text-muted shadow-sm hover:bg-surface hover:text-text">
+          <button className="rounded-xl border border-border bg-surface p-2.5 text-muted shadow-sm hover:bg-surface hover:text-text">
             <Filter className="h-4 w-4" />
           </button>
-          <button className="rounded-2xl border border-border bg-surface p-2.5 text-muted shadow-sm hover:bg-surface hover:text-text">
+          <button className="rounded-xl border border-border bg-surface p-2.5 text-muted shadow-sm hover:bg-surface hover:text-text">
             <MoreHorizontal className="h-4 w-4" />
           </button>
         </div>
@@ -59,7 +59,7 @@ export function BrandTable({
 
       {loading && (
         <div className="p-6 text-center text-sm font-semibold text-muted">
-          �ang t?i thuong hi?u...
+          Đang tải thương hiệu...
         </div>
       )}
 
@@ -69,7 +69,7 @@ export function BrandTable({
 
       {!loading && !error && filteredBrands.length === 0 && (
         <div className="p-6 text-center text-sm font-semibold text-muted">
-          Chua c� thuong hi?u ph� h?p.
+          Chưa có thương hiệu phù hợp.
         </div>
       )}
 

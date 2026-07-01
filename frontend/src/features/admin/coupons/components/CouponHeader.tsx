@@ -21,7 +21,7 @@ export function CouponHeader({ loading, onRefresh, onAdd }: CouponHeaderProps) {
                     type="button"
                     onClick={onRefresh}
                     disabled={loading}
-                    className="flex items-center gap-2 rounded-2xl border border-border bg-surface px-4 py-2 text-sm font-semibold text-text hover:bg-surface disabled:opacity-60"
+                    className="flex items-center gap-2 rounded-xl border border-border bg-surface px-4 py-2 text-sm font-semibold text-text hover:bg-surface disabled:opacity-60"
                 >
                     <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
                     Refresh

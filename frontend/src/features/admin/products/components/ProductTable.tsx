@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+﻿import { Link } from "react-router-dom";
 import { ChevronLeft, ChevronRight, Edit, Filter, MoreHorizontal, Package, Search } from "lucide-react";
 import { AdminBadge } from "../../../../components/admin/AdminBadge";
 import { AdminEmptyState } from "../../../../components/admin/AdminEmptyState";
@@ -58,7 +58,7 @@ export function ProductTable({
             : "rounded-md px-5 py-2 text-sm font-bold text-muted transition-colors hover:text-text";
 
     return (
-        <div className="overflow-hidden rounded-2xl border border-border bg-surface shadow-sm">
+        <div className="overflow-hidden rounded-xl border border-border bg-surface shadow-sm">
             <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border p-4">
                 <div className="flex items-center gap-1 rounded-lg border border-border bg-surface p-1.5 shadow-inner">
                     <button className={tabClass("all")} onClick={() => onStatusFilterChange("all")}>
@@ -83,10 +83,10 @@ export function ProductTable({
                         />
                         <Search className="absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
                     </div>
-                    <button className="rounded-2xl border border-border bg-surface p-2.5 text-muted shadow-sm transition-colors hover:bg-surface hover:text-text">
+                    <button className="rounded-xl border border-border bg-surface p-2.5 text-muted shadow-sm transition-colors hover:bg-surface hover:text-text">
                         <Filter className="h-4 w-4" />
                     </button>
-                    <button className="rounded-2xl border border-border bg-surface p-2.5 text-muted shadow-sm transition-colors hover:bg-surface hover:text-text">
+                    <button className="rounded-xl border border-border bg-surface p-2.5 text-muted shadow-sm transition-colors hover:bg-surface hover:text-text">
                         <MoreHorizontal className="h-4 w-4" />
                     </button>
                 </div>
@@ -103,12 +103,12 @@ export function ProductTable({
                     icon={Package}
                     title={
                         statusFilter === "all"
-                            ? "Chua c� s?n ph?m n�o"
+                            ? "Chưa có sản phẩm nào"
                             : statusFilter === "active"
-                                ? "Kh�ng c� s?n ph?m active"
-                                : "Kh�ng c� s?n ph?m inactive"
+                                ? "Không có sản phẩm active"
+                                : "Không có sản phẩm inactive"
                     }
-                    description="S?n ph?m s? xu?t hi?n ? d�y sau khi du?c t?o."
+                    description="Sản phẩm sẽ xuất hiện ở đây sau khi được tạo."
                     compact
                 />
             )}
@@ -217,7 +217,7 @@ export function ProductTable({
                             type="button"
                             onClick={() => onPageChange(page - 1)}
                             disabled={page <= 1}
-                            className="flex items-center gap-1 rounded-2xl border border-border bg-surface px-3 py-1.5 text-xs font-bold text-muted shadow-sm hover:bg-surface disabled:cursor-not-allowed disabled:opacity-40"
+                            className="flex items-center gap-1 rounded-xl border border-border bg-surface px-3 py-1.5 text-xs font-bold text-muted shadow-sm hover:bg-surface disabled:cursor-not-allowed disabled:opacity-40"
                         >
                             <ChevronLeft className="h-3.5 w-3.5" />
                             Previous
@@ -229,7 +229,7 @@ export function ProductTable({
                             type="button"
                             onClick={() => onPageChange(page + 1)}
                             disabled={page >= totalPages}
-                            className="flex items-center gap-1 rounded-2xl border border-border bg-surface px-3 py-1.5 text-xs font-bold text-muted shadow-sm hover:bg-surface disabled:cursor-not-allowed disabled:opacity-40"
+                            className="flex items-center gap-1 rounded-xl border border-border bg-surface px-3 py-1.5 text-xs font-bold text-muted shadow-sm hover:bg-surface disabled:cursor-not-allowed disabled:opacity-40"
                         >
                             Next
                             <ChevronRight className="h-3.5 w-3.5" />

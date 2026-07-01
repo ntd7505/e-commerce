@@ -8,7 +8,7 @@ type ProductInitialVariantFormProps = {
 
 export function ProductInitialVariantForm({ formValues, onChange }: ProductInitialVariantFormProps) {
     return (
-        <section className="rounded-2xl border border-border bg-surface p-6 shadow-sm">
+        <section className="rounded-xl border border-border bg-surface p-6 shadow-sm">
             <h3 className="mb-6 text-lg font-bold text-text">Initial Variant</h3>
             <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
                 <div>

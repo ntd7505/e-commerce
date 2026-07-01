@@ -26,7 +26,7 @@ export function ProductClassificationPanel({
     onChange,
 }: ProductClassificationPanelProps) {
     return (
-        <section className="rounded-2xl border border-border bg-surface p-6 shadow-sm">
+        <section className="rounded-xl border border-border bg-surface p-6 shadow-sm">
             <h3 className="mb-6 text-lg font-bold text-text">Classification</h3>
             <div className="space-y-5">
                 <div>
@@ -37,7 +37,7 @@ export function ProductClassificationPanel({
                             value={formValues.categoryId}
                             onChange={onChange}
                             disabled={categoriesLoading}
-                            className="w-full appearance-none rounded-2xl border border-border bg-surface px-4 py-3 text-sm font-semibold text-text shadow-sm focus:border-success focus:outline-none disabled:opacity-60"
+                            className="w-full appearance-none rounded-xl border border-border bg-surface px-4 py-3 text-sm font-semibold text-text shadow-sm focus:border-success focus:outline-none disabled:opacity-60"
                         >
                             <option value="">{categoriesLoading ? "Loading categories..." : "Select Category"}</option>
                             {categories.map((category) => (
@@ -59,7 +59,7 @@ export function ProductClassificationPanel({
                             value={formValues.brandId}
                             onChange={onChange}
                             disabled={brandsLoading}
-                            className="w-full appearance-none rounded-2xl border border-border bg-surface px-4 py-3 text-sm font-semibold text-text shadow-sm focus:border-success focus:outline-none disabled:opacity-60"
+                            className="w-full appearance-none rounded-xl border border-border bg-surface px-4 py-3 text-sm font-semibold text-text shadow-sm focus:border-success focus:outline-none disabled:opacity-60"
                         >
                             <option value="">{brandsLoading ? "Loading brands..." : "Select Brand"}</option>
                             {brands.map((brand) => (

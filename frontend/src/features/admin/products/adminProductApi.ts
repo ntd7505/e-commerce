@@ -106,26 +106,6 @@ export async function deleteProductVariant(id: number): Promise<void> {
     await apiClient.delete(`/api/v1/admin/products/variants/${id}`);
 }
 
-export async function uploadProductMediaFiles(
-    productId: number,
-    files: File[]
-): Promise<ProductMediaResponse[]> {
-    const formData = new FormData();
-    files.forEach((file) => formData.append("files", file));
-
-    const response = await apiClient.post<ApiResponse<ProductMediaResponse[]>>(
-        `/api/v1/admin/products/${productId}/media/bulk`,
-        formData,
-        {
-            headers: {
-                "Content-Type": "multipart/form-data",
-            },
-        }
-    );
-
-    return unwrapApiList(response.data.data);
-}
-
 export async function updateProductDescriptionBlocks(
     productId: number,
     payload: { blocks: ProductDescriptionBlockRequest[] }

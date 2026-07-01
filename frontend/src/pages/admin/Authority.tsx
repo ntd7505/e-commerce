@@ -30,8 +30,8 @@ export default function Authority() {
       const roleData = await getRoles();
       setRoles(roleData);
     } catch (err) {
-      console.error("Failed to load roles:", err);
-      setRolesError("Kh�ng th? t?i danh s�ch vai tr�. Vui l�ng th? l?i.");
+      console.warn("Failed to load roles:", err);
+      setRolesError("Không thể tải danh sách vai trò. Vui lòng kiểm tra quyền ADMIN hoặc backend roles API.");
     } finally {
       setLoading(false);
     }
@@ -59,7 +59,7 @@ export default function Authority() {
         <div>
           <h2 className="text-2xl font-bold text-text">Control Authority</h2>
           <p className="mt-1 text-sm text-muted">
-            Xem vai tr� c?a t?ng t�i kho?n. �? thay d?i role, d�ng API backend tr?c ti?p.
+            Xem vai trò của từng tài khoản. Để thay đổi role, dùng API backend trực tiếp.
           </p>
         </div>
         <button

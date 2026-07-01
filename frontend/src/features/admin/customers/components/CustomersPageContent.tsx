@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { RefreshCw, Search, Users, Ban, CheckCircle, ChevronLeft, ChevronRight } from "lucide-react";
 import { AdminBadge } from "../../../../components/admin/AdminBadge";
+import { Pagination } from "../../../../components/common/Pagination";
 import { getAdminUsers, updateAdminUserStatus } from "../adminUserApi";
 import type { AdminUserResponse } from "../adminUserTypes";
 
@@ -25,7 +26,7 @@ export default function CustomersPageContent() {
       setError("");
     } catch (requestError) {
       console.error("Failed to load users:", requestError);
-      setError("Kh�ng th? t?i danh s�ch kh�ch h�ng");
+      setError("Không thể tải danh sách khách hàng");
     } finally {
       setLoading(false);
     }
@@ -56,13 +57,26 @@ export default function CustomersPageContent() {
   const activeCount = users.filter((u) => u.status === "ACTIVE").length;
 
   async function toggleUserStatus(user: AdminUserResponse) {
+    if (user.id == null) {
+      setError("Không tìm thấy ID người dùng. Vui lòng restart backend và tải lại danh sách khách hàng.");
+      return;
+    }
+
     const newStatus = user.status === "ACTIVE" ? "INACTIVE" : "ACTIVE";
+    const actionLabel = newStatus === "INACTIVE" ? "ban" : "unban";
+
+    if (!window.confirm(`Bạn có chắc muốn ${actionLabel} tài khoản ${user.email}?`)) {
+      return;
+    }
+
     try {
+      setError("");
       setTogglingId(user.id);
       const updated = await updateAdminUserStatus(user.id, newStatus);
       setUsers((prev) => prev.map((u) => (u.id === updated.id ? updated : u)));
     } catch (err) {
       console.error("Failed to update user status:", err);
+      setError("Không thể cập nhật trạng thái người dùng. Kiểm tra quyền admin hoặc thử lại.");
     } finally {
       setTogglingId(null);
     }
@@ -91,14 +105,14 @@ export default function CustomersPageContent() {
         <div>
           <h2 className="text-2xl font-bold text-text">Customers</h2>
           <p className="mt-1 text-sm text-muted">
-            Qu?n l� t�i kho?n kh�ch h�ng � Ban/Unban tr?c ti?p.
+            Quản lý tài khoản khách hàng – Ban/Unban trực tiếp.
           </p>
         </div>
         <button
           type="button"
           onClick={loadUsers}
           disabled={loading}
-          className="flex items-center gap-2 rounded-2xl border border-border bg-surface px-4 py-2.5 text-sm font-bold text-text shadow-sm transition-colors hover:bg-surface disabled:opacity-50"
+          className="flex items-center gap-2 rounded-xl border border-border bg-surface px-4 py-2.5 text-sm font-bold text-text shadow-sm transition-colors hover:bg-surface disabled:opacity-50"
         >
           <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
           Refresh
@@ -107,7 +121,7 @@ export default function CustomersPageContent() {
 
       {/* Stat cards */}
       <div className="grid gap-4 md:grid-cols-3">
-        <div className="rounded-2xl border border-border bg-surface p-5 shadow-sm transition-shadow hover:shadow-md">
+        <div className="rounded-xl border border-border bg-surface p-5 shadow-sm transition-shadow hover:shadow-md">
           <p className="text-xs font-semibold text-muted">Total Users</p>
           <p className="mt-3 text-3xl font-extrabold text-text">{users.length}</p>
           <p className="mt-1 text-xs text-muted">Registered accounts</p>
@@ -125,7 +139,7 @@ export default function CustomersPageContent() {
       </div>
 
       {/* Table card */}
-      <div className="rounded-2xl border border-border bg-surface shadow-sm">
+      <div className="rounded-xl border border-border bg-surface shadow-sm">
         {/* Toolbar */}
         <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border p-5">
           <div className="flex items-center gap-2 text-sm font-bold text-text">
@@ -205,10 +219,11 @@ export default function CustomersPageContent() {
               ) : (
                 pagedUsers.map((user) => {
                   const isActive = user.status === "ACTIVE";
-                  const isBusy = togglingId === user.id;
+                  const isBusy = user.id != null && togglingId === user.id;
+                  const hasUserId = user.id != null;
                   return (
                     <tr
-                      key={user.id}
+                      key={user.id ?? user.email}
                       className="transition-colors hover:bg-surface"
                     >
                       <td className="px-5 py-4">
@@ -220,7 +235,7 @@ export default function CustomersPageContent() {
                         </div>
                       </td>
                       <td className="px-5 py-4 text-muted">{user.email}</td>
-                      <td className="px-5 py-4 text-muted">{user.phoneNumber || "�"}</td>
+                      <td className="px-5 py-4 text-muted">{user.phoneNumber || "—"}</td>
                       <td className="px-5 py-4">
                         <div className="flex flex-wrap gap-1">
                           {user.roles?.length ? (
@@ -251,8 +266,8 @@ export default function CustomersPageContent() {
                         <button
                           type="button"
                           onClick={() => toggleUserStatus(user)}
-                          disabled={isBusy}
-                          title={isActive ? "Ban user" : "Unban user"}
+                          disabled={isBusy || !hasUserId}
+                          title={!hasUserId ? "Thiếu ID người dùng" : isActive ? "Ban user" : "Unban user"}
                           className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-bold transition-all disabled:opacity-50 ${isActive
                               ? "border-danger-soft bg-danger-soft text-danger hover:bg-danger-soft"
                               : "border-success-soft bg-success-soft text-success hover:bg-success-soft"
@@ -278,48 +293,15 @@ export default function CustomersPageContent() {
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="flex items-center justify-between border-t border-border px-5 py-3">
-            <p className="text-xs text-muted">
-              Showing {(currentPage - 1) * PAGE_SIZE + 1}�
-              {Math.min(currentPage * PAGE_SIZE, filteredUsers.length)} of {filteredUsers.length}
+          <div className="flex flex-col items-center justify-between border-t border-border px-5 py-4 sm:flex-row">
+            <p className="text-sm text-muted mb-4 sm:mb-0">
+              Showing <span className="font-semibold text-text">{(currentPage - 1) * PAGE_SIZE + 1}</span> to <span className="font-semibold text-text">{Math.min(currentPage * PAGE_SIZE, filteredUsers.length)}</span> of <span className="font-semibold text-text">{filteredUsers.length}</span> entries
             </p>
-            <div className="flex items-center gap-1">
-              <button
-                type="button"
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-                disabled={currentPage === 1}
-                className="rounded-md border border-border-strong p-1.5 text-muted transition-colors hover:bg-surface disabled:opacity-40"
-              >
-                <ChevronLeft className="h-4 w-4" />
-              </button>
-              {Array.from({ length: totalPages }, (_, i) => i + 1)
-                .filter((p) => p === 1 || p === totalPages || Math.abs(p - currentPage) <= 1)
-                .map((p, idx, arr) => (
-                  <span key={p}>
-                    {idx > 0 && arr[idx - 1] !== p - 1 && (
-                      <span className="px-1 text-muted">�</span>
-                    )}
-                    <button
-                      type="button"
-                      onClick={() => setPage(p)}
-                      className={`min-w-[32px] rounded-md border px-2 py-1 text-xs font-bold transition-colors ${p === currentPage
-                          ? "border-success bg-success text-white"
-                          : "border-border-strong text-muted hover:bg-surface"
-                        }`}
-                    >
-                      {p}
-                    </button>
-                  </span>
-                ))}
-              <button
-                type="button"
-                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                disabled={currentPage === totalPages}
-                className="rounded-md border border-border-strong p-1.5 text-muted transition-colors hover:bg-surface disabled:opacity-40"
-              >
-                <ChevronRight className="h-4 w-4" />
-              </button>
-            </div>
+            <Pagination 
+              currentPage={currentPage - 1} 
+              totalPages={totalPages} 
+              onPageChange={(p) => setPage(p + 1)} 
+            />
           </div>
         )}
       </div>

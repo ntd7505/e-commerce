@@ -1,4 +1,4 @@
-import { AlertTriangle, Image as ImageIcon, PlusCircle, Trash2, Upload } from "lucide-react";
+﻿import { AlertTriangle, Image as ImageIcon, PlusCircle, Trash2, Upload } from "lucide-react";
 import { AdminImage } from "../../../../components/admin/AdminImage";
 import type { MediaDraft } from "../adminProductFormTypes";
 
@@ -34,11 +34,11 @@ export function ProductMediaEditor({
     const isUploading = uploadingKey !== null;
 
     return (
-        <section className="rounded-2xl border border-border bg-surface p-6 shadow-sm">
+        <section className="rounded-xl border border-border bg-surface p-6 shadow-sm">
             <div className="mb-6 flex items-center justify-between gap-4">
                 <h3 className="text-lg font-bold text-text">Product Media</h3>
                 <div className="flex items-center gap-2">
-                    <label className="flex cursor-pointer items-center gap-1.5 rounded-2xl border border-border bg-surface px-3 py-2 text-xs font-bold text-muted shadow-sm hover:bg-surface">
+                    <label className="flex cursor-pointer items-center gap-1.5 rounded-xl border border-border bg-surface px-3 py-2 text-xs font-bold text-muted shadow-sm hover:bg-surface">
                         <Upload className="h-3.5 w-3.5" />
                         {uploadingKey === "edit-bulk" ? "Uploading..." : "Upload images"}
                         <input
@@ -57,7 +57,7 @@ export function ProductMediaEditor({
                         type="button"
                         onClick={onAdd}
                         disabled={isUploading}
-                        className="flex items-center gap-1.5 rounded-2xl border border-border bg-surface px-3 py-2 text-xs font-bold text-muted shadow-sm hover:bg-surface disabled:opacity-50"
+                        className="flex items-center gap-1.5 rounded-xl border border-border bg-surface px-3 py-2 text-xs font-bold text-muted shadow-sm hover:bg-surface disabled:opacity-50"
                     >
                         <PlusCircle className="h-3.5 w-3.5" /> Add URL
                     </button>
@@ -88,7 +88,7 @@ export function ProductMediaEditor({
                         {hasDummyUrl(media.url) && (
                             <p className="mb-3 flex items-center gap-1 text-xs font-bold text-warning">
                                 <AlertTriangle className="h-3.5 w-3.5" />
-                                URL ch?a example.com � upload ?nh th?t d? thay th?
+                                URL chứa example.com — upload ảnh thật để thay thế
                             </p>
                         )}
                         {!hasDummyUrl(media.url) && <div className="mb-3" />}
@@ -129,7 +129,7 @@ export function ProductMediaEditor({
                                 </label>
                             </div>
                             <div className="flex items-center gap-2">
-                                <label className="flex cursor-pointer items-center gap-1.5 rounded-2xl border border-border bg-surface px-3 py-2 text-xs font-bold text-muted hover:bg-surface">
+                                <label className="flex cursor-pointer items-center gap-1.5 rounded-xl border border-border bg-surface px-3 py-2 text-xs font-bold text-muted hover:bg-surface">
                                     <Upload className="h-4 w-4" />
                                     {uploadingKey === `edit-${index}` ? "Uploading..." : "Upload"}
                                     <input
@@ -154,7 +154,7 @@ export function ProductMediaEditor({
                                 <button
                                     type="button"
                                     onClick={() => onDelete(index)}
-                                    className="rounded-2xl border border-border bg-surface p-2 text-muted hover:bg-danger-soft hover:text-danger"
+                                    className="rounded-xl border border-border bg-surface p-2 text-muted hover:bg-danger-soft hover:text-danger"
                                 >
                                     <Trash2 className="h-4 w-4" />
                                 </button>

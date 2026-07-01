@@ -74,6 +74,41 @@ body {
   --color-nexa-red: var(--color-danger);
   --color-nexa-gray-bg: var(--surface-0);
   --color-nexa-text-gray: var(--text-secondary);
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+
+  --animate-fade-in-up: fade-in-up 0.6s var(--ease-out-expo) forwards;
+  --animate-fade-in: fade-in 0.4s var(--ease-out-quart) forwards;
+
+  @keyframes fade-in-up {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 @utility container-custom {

@@ -1,6 +1,7 @@
 import { 
   MoreVertical, Search, Filter, ArrowUpDown, MoreHorizontal, ArrowLeft, ArrowRight, ArrowUpRight, PlusCircle
 } from 'lucide-react';
+import { Pagination } from "../../../../components/common/Pagination";
 
 const mockTransactions = [
   { id: '#CUST001', name: 'John Doe', date: '01-01-2025', total: '$2,904', method: 'CC', status: 'Complete' },
@@ -112,31 +113,29 @@ export default function Transactions() {
             
             <div className="flex flex-col gap-4">
               <div className="flex gap-4 items-start">
-                 {/* Credit Card Graphic */}
-                 <div className="w-64 h-36 bg-gradient-to-br from-emerald-600 to-teal-800 rounded-xl p-4 text-white relative overflow-hidden shadow-md flex-shrink-0">
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-surface/10 rounded-full blur-2xl -mr-10 -mt-10"></div>
-                    <div className="absolute bottom-0 left-0 w-32 h-32 bg-success/20 rounded-full blur-2xl -ml-10 -mb-10"></div>
+                 {/* Credit Card Graphic - Flattened per Impeccable guidelines */}
+                 <div className="w-64 h-36 bg-surface-alt rounded-xl border border-border p-4 text-text relative overflow-hidden shadow-none flex-shrink-0">
                     
-                    <div className="flex justify-between items-center mb-6 relative z-10">
-                      <span className="font-bold tracking-wider text-sm opacity-90">Finaci</span>
-                      <div className="flex">
-                         <div className="w-6 h-6 rounded-full bg-surface/40 mix-blend-overlay"></div>
-                         <div className="w-6 h-6 rounded-full bg-surface/40 mix-blend-overlay -ml-3"></div>
+                    <div className="flex justify-between items-center mb-6">
+                      <span className="font-bold tracking-wider text-sm">Finaci</span>
+                      <div className="flex gap-1">
+                         <div className="w-6 h-6 rounded-full bg-border-strong"></div>
+                         <div className="w-6 h-6 rounded-full bg-border"></div>
                       </div>
                     </div>
                     
-                    <div className="tracking-widest font-mono mb-4 text-lg relative z-10 text-white/90">
+                    <div className="tracking-widest font-mono mb-4 text-lg font-medium text-text">
                       **** **** **** 2345
                     </div>
                     
-                    <div className="flex justify-between items-end relative z-10">
+                    <div className="flex justify-between items-end">
                       <div>
-                        <p className="text-[8px] uppercase tracking-wider opacity-70 mb-0.5">Card Holder name</p>
-                        <p className="text-xs font-semibold">Noman Manzoor</p>
+                        <p className="text-[10px] uppercase tracking-wider text-muted mb-0.5">Card Holder</p>
+                        <p className="text-xs font-bold text-text">Noman Manzoor</p>
                       </div>
                       <div>
-                        <p className="text-[8px] uppercase tracking-wider opacity-70 mb-0.5 text-right">Expiry Date</p>
-                        <p className="text-xs font-semibold text-right">02/30</p>
+                        <p className="text-[10px] uppercase tracking-wider text-muted mb-0.5 text-right">Expires</p>
+                        <p className="text-xs font-bold text-text text-right">02/30</p>
                       </div>
                     </div>
                  </div>
@@ -225,24 +224,8 @@ export default function Transactions() {
          </div>
 
          {/* Pagination */}
-         <div className="p-6 border-t border-border flex items-center justify-between">
-           <button className="flex items-center gap-2 px-5 py-2.5 border border-border-strong rounded-lg text-sm font-bold text-text hover:bg-surface hover:text-text shadow-sm bg-surface transition-colors">
-              <ArrowLeft className="w-4 h-4" /> Previous
-           </button>
-           
-           <div className="flex items-center gap-2">
-             <button className="w-9 h-9 flex items-center justify-center rounded-lg bg-success-soft text-success font-extrabold text-sm shadow-sm">1</button>
-             <button className="w-9 h-9 flex items-center justify-center rounded-2xl border border-border bg-surface hover:bg-surface text-muted font-bold text-sm">2</button>
-             <button className="w-9 h-9 flex items-center justify-center rounded-2xl border border-border bg-surface hover:bg-surface text-muted font-bold text-sm">3</button>
-             <button className="w-9 h-9 flex items-center justify-center rounded-2xl border border-border bg-surface hover:bg-surface text-muted font-bold text-sm">4</button>
-             <button className="w-9 h-9 flex items-center justify-center rounded-2xl border border-border bg-surface hover:bg-surface text-muted font-bold text-sm">5</button>
-             <span className="text-muted px-1 tracking-widest font-bold">.....</span>
-             <button className="w-9 h-9 flex items-center justify-center rounded-2xl border border-border bg-surface hover:bg-surface text-muted font-bold text-sm">24</button>
-           </div>
-           
-           <button className="flex items-center gap-2 px-5 py-2.5 border border-border-strong rounded-lg text-sm font-bold text-text hover:bg-surface hover:text-text shadow-sm bg-surface transition-colors">
-              Next <ArrowRight className="w-4 h-4" />
-           </button>
+         <div className="p-6 border-t border-border flex items-center justify-center">
+            <Pagination currentPage={0} totalPages={24} onPageChange={() => {}} />
          </div>
       </div>
 

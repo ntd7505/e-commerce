@@ -30,7 +30,7 @@ export function ProductEditorHeader({
             <div className="flex items-center gap-3">
                 <Link
                     to="/admin/products"
-                    className="rounded-2xl border border-border bg-surface px-4 py-2.5 text-sm font-bold text-text shadow-sm hover:bg-surface"
+                    className="rounded-xl border border-border bg-surface px-4 py-2.5 text-sm font-bold text-text shadow-sm hover:bg-surface"
                 >
                     Back
                 </Link>

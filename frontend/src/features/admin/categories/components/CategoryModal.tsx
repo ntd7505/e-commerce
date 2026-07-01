@@ -36,7 +36,7 @@ export function CategoryModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-      <div className="w-full max-w-md overflow-hidden rounded-2xl bg-surface shadow-xl">
+      <div className="w-full max-w-md overflow-hidden rounded-xl bg-surface shadow-xl">
         <div className="flex items-center justify-between border-b border-border bg-surface/50 px-6 py-4">
           <h3 className="text-base font-bold text-text">
             {editingCategory ? "Edit Category" : "Add Category"}
@@ -104,7 +104,7 @@ export function CategoryModal({
             type="button"
             onClick={onClose}
             disabled={saving}
-            className="rounded-2xl border border-border bg-surface px-5 py-2.5 text-sm font-bold text-muted transition-colors hover:bg-surface disabled:cursor-not-allowed disabled:opacity-60"
+            className="rounded-xl border border-border bg-surface px-5 py-2.5 text-sm font-bold text-muted transition-colors hover:bg-surface disabled:cursor-not-allowed disabled:opacity-60"
           >
             Cancel
           </button>

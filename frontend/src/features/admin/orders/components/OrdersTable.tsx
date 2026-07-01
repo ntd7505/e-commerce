@@ -94,7 +94,7 @@ export function OrdersTable({
     }
 
     return (
-        <div className="overflow-hidden rounded-2xl border border-border bg-surface">
+        <div className="overflow-hidden rounded-xl border border-border bg-surface">
             <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border p-5">
                 <div>
                     <h3 className="font-bold text-text">Order List</h3>
@@ -135,7 +135,7 @@ export function OrdersTable({
                         <button
                             type="button"
                             onClick={clearFilters}
-                            className="rounded-2xl border border-border bg-surface px-3 py-2 text-xs font-bold text-muted transition-colors hover:bg-surface"
+                            className="rounded-xl border border-border bg-surface px-3 py-2 text-xs font-bold text-muted transition-colors hover:bg-surface"
                         >
                             Clear
                         </button>
