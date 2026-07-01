@@ -26,6 +26,7 @@ public interface UserMapper {
     @Mapping(target = "updatedAt", ignore = true)
     User toUser(UserCreationRequest userCreationRequest);
 
+    @Mapping(target = "id", source = "id")
     UserResponse toUserResponse(User user);
 
     @Mapping(target = "id", ignore = true)

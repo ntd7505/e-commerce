@@ -14,6 +14,7 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserResponse {
+    Long id;
     String email;
     String fullName;
     String phoneNumber;

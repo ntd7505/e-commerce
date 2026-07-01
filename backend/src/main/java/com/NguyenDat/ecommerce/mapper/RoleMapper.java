@@ -8,6 +8,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 import com.NguyenDat.ecommerce.dto.request.RoleRequest;
+import com.NguyenDat.ecommerce.dto.response.PermissionResponse;
 import com.NguyenDat.ecommerce.dto.response.RoleResponse;
 import com.NguyenDat.ecommerce.entity.Permission;
 import com.NguyenDat.ecommerce.entity.Role;
@@ -24,7 +25,17 @@ public interface RoleMapper {
     default Set<String> mapRoles(Set<Permission> permissions) {
         if (permissions == null) return new HashSet<>();
         return permissions.stream()
-                .map(Permission::getName) // lấy field name trong Role
+                .map(Permission::getName)
+                .collect(Collectors.toSet());
+    }
+
+    default Set<PermissionResponse> mapPermissions(Set<Permission> permissions) {
+        if (permissions == null) return new HashSet<>();
+        return permissions.stream()
+                .map(permission -> PermissionResponse.builder()
+                        .name(permission.getName())
+                        .description(permission.getDescription())
+                        .build())
                 .collect(Collectors.toSet());
     }
 }

@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.NguyenDat.ecommerce.common.exception.AppException;
 import com.NguyenDat.ecommerce.common.exception.ErrorCode;
@@ -30,6 +31,7 @@ public class RoleServiceImpl implements RoleService {
     RoleMapper roleMapper;
     PermissionRepository permissionRepository;
 
+    @Transactional
     public RoleResponse createRole(RoleRequest request) {
         if (roleRepository.existsById(request.getName())) {
             throw new AppException(ErrorCode.ROLE_EXISTED);
@@ -51,8 +53,9 @@ public class RoleServiceImpl implements RoleService {
         return roleMapper.toRoleResponse(role);
     }
 
+    @Transactional(readOnly = true)
     public List<RoleResponse> getAllRole() {
-        return this.roleRepository.findAll().stream()
+        return this.roleRepository.findAllWithPermissions().stream()
                 .map(roleMapper::toRoleResponse)
                 .toList();
     }
