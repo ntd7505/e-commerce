@@ -129,7 +129,7 @@ public class RoleServiceTest {
     void getAllRole_shouldReturnRoleResponseList_whenDataExists() {
         List<RoleResponse> roleResponses = new ArrayList<>();
         roleResponses.add(roleResponse);
-        when(roleRepository.findAll()).thenReturn(List.of(role));
+        when(roleRepository.findAllWithPermissions()).thenReturn(List.of(role));
         when(roleMapper.toRoleResponse(role)).thenReturn(roleResponse);
         List<RoleResponse> rs = roleService.getAllRole();
 
@@ -140,17 +140,17 @@ public class RoleServiceTest {
                 roleResponses.getFirst().getPermissions().iterator().next().getName(),
                 rs.getFirst().getPermissions().iterator().next().getName());
 
-        verify(roleRepository).findAll();
+        verify(roleRepository).findAllWithPermissions();
         verify(roleMapper).toRoleResponse(role);
     }
 
     @Test
     void getAllRole_shouldReturnEmptyList_whenNoDataExists() {
-        when(roleRepository.findAll()).thenReturn(List.of());
+        when(roleRepository.findAllWithPermissions()).thenReturn(List.of());
         List<RoleResponse> rs = roleService.getAllRole();
 
         assertTrue(rs.isEmpty());
-        verify(roleRepository).findAll();
+        verify(roleRepository).findAllWithPermissions();
         verify(roleMapper, never()).toRoleResponse(any());
     }
 }
