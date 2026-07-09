@@ -2,10 +2,11 @@ import React, { useState, useRef, useEffect } from 'react';
 import {
   LayoutDashboard, ShoppingCart, Users, Ticket, LayoutGrid, CreditCard, Award,
   PlusSquare, Image as ImageIcon, ClipboardList, MessageSquare,
-  UserCog, ShieldCheck, Bell, LogOut, Menu,
+  UserCog, ShieldCheck, Bell, LogOut, Menu, Store,
   ChevronLeft, ChevronDown, Settings, X, Package, User,
 } from 'lucide-react';
 import { AdminErrorBoundary } from '../../components/admin/AdminErrorBoundary';
+import { AdminImage } from '../../components/admin/AdminImage';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { clearAuthSession, getStoredUser } from '../../features/auth/authStorage';
 
@@ -332,8 +333,14 @@ export default function AdminLayout() {
                 onClick={() => navigate('/admin/profile')}
                 className="w-full flex items-center gap-3 px-2 py-2 mb-2 rounded-lg hover:bg-surface transition-colors text-left"
               >
-                <div className="w-9 h-9 rounded-full bg-success-soft flex items-center justify-center text-success font-bold text-sm shrink-0">
-                  {initial}
+                <div className="h-9 w-9 shrink-0 overflow-hidden rounded-full border border-success-soft">
+                  <AdminImage
+                    src={user?.avatarUrl}
+                    alt={displayName}
+                    fallbackLabel={displayName}
+                    className="h-full w-full object-cover"
+                    fallbackClassName="flex h-full w-full items-center justify-center bg-success-soft text-sm font-bold text-success"
+                  />
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-bold text-text truncate">{displayName}</p>
@@ -370,6 +377,16 @@ export default function AdminLayout() {
           </div>
 
           <div className="flex items-center gap-3">
+            {/* Store link */}
+            <Link
+              to="/"
+              className="hidden sm:flex items-center gap-2 rounded-xl border border-border-strong bg-surface px-3 py-1.5 transition-colors hover:bg-surface-alt"
+              title="Shop của tôi"
+            >
+              <Store className="h-4 w-4 text-primary" />
+              <span className="text-sm font-bold text-text">Shop của tôi</span>
+            </Link>
+
             {/* Notification bell */}
             <div className="relative" ref={notifRef}>
               <button
@@ -440,8 +457,14 @@ export default function AdminLayout() {
                 aria-expanded={profileOpen}
                 className="flex items-center gap-2 rounded-xl border border-border-strong bg-surface px-2 py-1.5 transition-colors hover:bg-surface"
               >
-                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-success-soft text-xs font-bold text-success border border-success-soft">
-                  {initial}
+                <div className="h-7 w-7 shrink-0 overflow-hidden rounded-full border border-success-soft">
+                  <AdminImage
+                    src={user?.avatarUrl}
+                    alt={displayName}
+                    fallbackLabel={displayName}
+                    className="h-full w-full object-cover"
+                    fallbackClassName="flex h-full w-full items-center justify-center bg-success-soft text-xs font-bold text-success"
+                  />
                 </div>
                 <div className="hidden md:block text-left">
                   <p className="text-xs font-bold text-text leading-none">{displayName}</p>
@@ -453,8 +476,14 @@ export default function AdminLayout() {
               {profileOpen && (
                 <div className="absolute right-0 top-12 z-50 w-56 rounded-2xl border border-border-strong bg-surface  overflow-hidden">
                   <div className="flex items-center gap-3 px-4 py-3 border-b border-border bg-surface/50">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-success-soft text-success font-bold text-sm border border-success-soft">
-                      {initial}
+                    <div className="h-10 w-10 shrink-0 overflow-hidden rounded-full border border-success-soft">
+                      <AdminImage
+                        src={user?.avatarUrl}
+                        alt={displayName}
+                        fallbackLabel={displayName}
+                        className="h-full w-full object-cover"
+                        fallbackClassName="flex h-full w-full items-center justify-center bg-success-soft text-sm font-bold text-success"
+                      />
                     </div>
                     <div className="min-w-0">
                       <p className="text-sm font-bold text-text truncate">{displayName}</p>
@@ -493,7 +522,7 @@ export default function AdminLayout() {
         </header>
 
         {/* Page content */}
-        <main className="flex-1 overflow-y-auto bg-surface p-4 md:p-6">
+        <main className="flex-1 overflow-y-auto bg-canvas p-4 md:p-6">
           <AdminErrorBoundary key={location.pathname}>
             <Outlet />
           </AdminErrorBoundary>

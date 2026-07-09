@@ -64,10 +64,10 @@ body {
   --radius-xl: 12px;
   --radius-2xl: 16px;
 
-  /* No shadows allowed in new design, set to transparent or minimal if needed, but keeping legacy tokens just in case */
-  --shadow-sm: none;
-  --shadow-md: none;
-  --shadow-lg: none;
+  /* Updated shadows according to Elevation system */
+  --shadow-sm: 0 1px 4px 0 rgba(0,0,0,0.06); /* Hover */
+  --shadow-md: 0 1px 3px 0 rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.04); /* Sticky */
+  --shadow-lg: 0 4px 16px rgba(0,0,0,0.08); /* Modal */
 
   /* Legacy aliases (do not remove per rules) */
   --color-nexa-blue: var(--color-primary);

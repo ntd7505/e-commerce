@@ -1,3 +1,4 @@
+import { Container, Section } from "../../components/common";
 import { BrandHeader } from "../../features/admin/brands/components/BrandHeader";
 import { BrandModal } from "../../features/admin/brands/components/BrandModal";
 import { BrandStats } from "../../features/admin/brands/components/BrandStats";
@@ -8,39 +9,41 @@ export default function Brands() {
   const brandsPage = useAdminBrands();
 
   return (
-    <div className="mx-auto max-w-[1400px] space-y-6 pb-10">
-      <BrandHeader
-        loading={brandsPage.loading}
-        onRefresh={brandsPage.loadBrands}
-        onAdd={brandsPage.openCreateModal}
-      />
+    <Container size="wide">
+      <Section spacing="md" className="space-y-6">
+        <BrandHeader
+          loading={brandsPage.loading}
+          onRefresh={brandsPage.loadBrands}
+          onAdd={brandsPage.openCreateModal}
+        />
 
-      <BrandStats brands={brandsPage.brands} />
+        <BrandStats brands={brandsPage.brands} />
 
-      <BrandTable
-        brands={brandsPage.brands}
-        filteredBrands={brandsPage.filteredBrands}
-        loading={brandsPage.loading}
-        error={brandsPage.error}
-        searchTerm={brandsPage.searchTerm}
-        updatingId={brandsPage.updatingId}
-        onSearchChange={brandsPage.setSearchTerm}
-        onEdit={brandsPage.openEditModal}
-        onDelete={brandsPage.removeBrand}
-        onToggleStatus={brandsPage.toggleStatus}
-      />
+        <BrandTable
+          brands={brandsPage.brands}
+          filteredBrands={brandsPage.filteredBrands}
+          loading={brandsPage.loading}
+          error={brandsPage.error}
+          searchTerm={brandsPage.searchTerm}
+          updatingId={brandsPage.updatingId}
+          onSearchChange={brandsPage.setSearchTerm}
+          onEdit={brandsPage.openEditModal}
+          onDelete={brandsPage.removeBrand}
+          onToggleStatus={brandsPage.toggleStatus}
+        />
 
-      <BrandModal
-        show={brandsPage.showModal}
-        editingBrand={brandsPage.editingBrand}
-        brandName={brandsPage.brandName}
-        logoUrl={brandsPage.logoUrl}
-        saving={brandsPage.saving}
-        onNameChange={brandsPage.setBrandName}
-        onLogoChange={brandsPage.setLogoUrl}
-        onClose={brandsPage.closeModal}
-        onSave={brandsPage.saveBrand}
-      />
-    </div>
+        <BrandModal
+          show={brandsPage.showModal}
+          editingBrand={brandsPage.editingBrand}
+          brandName={brandsPage.brandName}
+          logoUrl={brandsPage.logoUrl}
+          saving={brandsPage.saving}
+          onNameChange={brandsPage.setBrandName}
+          onLogoChange={brandsPage.setLogoUrl}
+          onClose={brandsPage.closeModal}
+          onSave={brandsPage.saveBrand}
+        />
+      </Section>
+    </Container>
   );
 }

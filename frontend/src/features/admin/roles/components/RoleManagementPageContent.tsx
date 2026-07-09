@@ -1,7 +1,8 @@
-﻿import React, { useEffect, useMemo, useState } from "react";
-import { RefreshCw, ShieldCheck, KeyRound, Plus, CheckCircle2 } from "lucide-react";
+import React, { useEffect, useMemo, useState } from "react";
+import { RefreshCw, ShieldCheck, KeyRound, Plus, CheckCircle2, AlertCircle, ChevronRight } from "lucide-react";
 import { createRole, getPermissions, getRoles } from "../adminRoleApi";
 import type { PermissionResponse, RoleResponse } from "../adminRoleTypes";
+import { Button, Badge, Modal, Container, Section } from "../../../../components/common";
 
 type Tab = "ROLES" | "PERMISSIONS";
 
@@ -16,6 +17,9 @@ export default function RoleManagementPageContent() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
+  
+  const [selectedRole, setSelectedRole] = useState<RoleResponse | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const loadData = async () => {
     try {
@@ -23,6 +27,15 @@ export default function RoleManagementPageContent() {
       const [roleData, permissionData] = await Promise.all([getRoles(), getPermissions()]);
       setRoles(roleData);
       setPermissions(permissionData);
+      
+      // Auto select the first role if none is selected
+      if (roleData.length > 0) {
+        setSelectedRole(prev => {
+          if (!prev) return roleData[0];
+          const stillExists = roleData.find(r => r.name === prev.name);
+          return stillExists || roleData[0];
+        });
+      }
       setError("");
     } catch {
       setError("Không thể tải dữ liệu phân quyền");
@@ -50,7 +63,7 @@ export default function RoleManagementPageContent() {
       setError("Vui lòng nhập tên và mô tả role"); return;
     }
     if (formValues.permissions.length === 0) {
-      setError("Vui lòng chọn ít nhất một permission"); return;
+      setError("Vui lòng chọn ít nhất một quyền"); return;
     }
     try {
       setSaving(true);
@@ -60,12 +73,14 @@ export default function RoleManagementPageContent() {
         permissions: formValues.permissions,
       });
       setRoles((prev) => [...prev, created]);
+      setSelectedRole(created);
       setFormValues(emptyForm);
       setError("");
       setSuccessMsg(`Role "${created.name}" đã được tạo thành công!`);
+      setIsModalOpen(false);
       setTimeout(() => setSuccessMsg(""), 3000);
     } catch {
-      setError("Không thể tạo role. Kiểm tra tên hoặc permissions.");
+      setError("Không thể tạo role. Kiểm tra tên hoặc quyền.");
     } finally {
       setSaving(false);
     }
@@ -77,30 +92,44 @@ export default function RoleManagementPageContent() {
   ];
 
   return (
-    <div className="mx-auto max-w-[1400px] space-y-6 pb-10">
-      {/* Header */}
+    <Container size="wide">
+      <Section spacing="md" className="space-y-6">
+        {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-text">Roles & Permissions</h2>
+          <h2 className="text-2xl font-bold text-text">Phân quyền & Vai trò</h2>
           <p className="mt-1 text-sm text-muted">Quản lý vai trò và quyền hạn trong hệ thống.</p>
         </div>
-        <button
-          type="button"
-          onClick={loadData}
-          disabled={loading}
-          className="flex items-center gap-2 rounded-xl border border-border bg-surface px-4 py-2.5 text-sm font-bold text-text shadow-sm transition-colors hover:bg-surface disabled:opacity-50"
-        >
-          <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
-          Refresh
-        </button>
+        <div className="flex items-center gap-3">
+          <Button
+            onClick={loadData}
+            disabled={loading}
+            variant="outline"
+            leftIcon={<RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />}
+          >
+            Làm mới
+          </Button>
+          <Button
+            onClick={() => {
+              setFormValues(emptyForm);
+              setError("");
+              setIsModalOpen(true);
+            }}
+            variant="primary"
+            leftIcon={<Plus className="h-4 w-4" />}
+          >
+            Tạo vai trò
+          </Button>
+        </div>
       </div>
 
-      {error && (
-        <div className="rounded-lg border border-danger-soft bg-danger-soft px-4 py-3 text-sm font-medium text-danger">
+      {error && !isModalOpen && (
+        <div className="flex items-center gap-2 rounded-lg border border-danger-soft bg-danger-soft px-4 py-3 text-sm font-medium text-danger">
+          <AlertCircle className="h-4 w-4 shrink-0" />
           {error}
         </div>
       )}
-      {successMsg && (
+      {successMsg && !isModalOpen && (
         <div className="flex items-center gap-2 rounded-lg border border-success-soft bg-success-soft px-4 py-3 text-sm font-medium text-success">
           <CheckCircle2 className="h-4 w-4 shrink-0" />
           {successMsg}
@@ -108,22 +137,22 @@ export default function RoleManagementPageContent() {
       )}
 
       {/* Tabs */}
-      <div className="flex w-fit rounded-xl border border-border-strong bg-surface p-1">
+      <div className="flex w-fit rounded-lg border border-border bg-surface-alt p-1">
         {tabs.map((tab) => (
           <button
             key={tab.value}
             type="button"
             onClick={() => setActiveTab(tab.value)}
-            className={`flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-bold transition-all ${activeTab === tab.value
-                ? "bg-surface text-success shadow-sm"
-                : "text-muted hover:text-text"
+            className={`flex items-center gap-2 rounded-md px-5 py-2 text-sm font-semibold transition-all ${activeTab === tab.value
+                ? "bg-surface text-primary shadow-sm"
+                : "text-muted hover:text-text hover:bg-surface/50"
               }`}
           >
             <tab.icon className="h-4 w-4" />
             {tab.label}
             {tab.count !== undefined && (
               <span
-                className={`rounded-full px-2 py-0.5 text-xs font-bold ${activeTab === tab.value ? "bg-success-soft text-success" : "bg-border text-muted"
+                className={`rounded-full px-2 py-0.5 text-xs font-bold ${activeTab === tab.value ? "bg-primary-soft text-primary" : "bg-border text-muted"
                   }`}
               >
                 {tab.count}
@@ -133,124 +162,119 @@ export default function RoleManagementPageContent() {
         ))}
       </div>
 
-      {/* Tab: Roles */}
+      {/* Tab: Roles (Master-Detail) */}
       {activeTab === "ROLES" && (
-        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_420px]">
-          {/* Roles list */}
-          <section className="rounded-xl border border-border bg-surface shadow-sm">
-            <div className="flex items-center gap-2 border-b border-border p-5 text-sm font-bold text-text">
-              <ShieldCheck className="h-4 w-4 text-success" />
-              Existing Roles
-              <span className="ml-1 rounded-full bg-surface-alt px-2 py-0.5 text-xs font-bold text-muted">
-                {roles.length}
-              </span>
+        <div className="rounded-xl border border-border bg-surface flex flex-col lg:flex-row overflow-hidden min-h-[500px] shadow-sm">
+          {/* Master: Roles List */}
+          <div className="w-full lg:w-[280px] shrink-0 border-b lg:border-b-0 lg:border-r border-border bg-surface-alt/30 flex flex-col">
+            <div className="p-4 border-b border-border bg-surface shrink-0 flex items-center justify-between">
+              <h3 className="font-bold text-text">Danh sách vai trò</h3>
+              <Badge variant="neutral">{roles.length}</Badge>
             </div>
-            <div className="divide-y divide-border">
+            <div className="flex-1 overflow-y-auto p-2">
               {loading ? (
-                <div className="p-8 text-center text-sm text-muted">Loading roles...</div>
+                <div className="p-4 text-center text-sm text-muted">Đang tải...</div>
               ) : roles.length === 0 ? (
-                <div className="p-8 text-center">
-                  <ShieldCheck className="mx-auto mb-3 h-10 w-10 text-subtle" />
-                  <p className="text-sm text-muted">No roles yet. Create one ?</p>
-                </div>
+                <div className="p-4 text-center text-sm text-muted">Chưa có vai trò nào.</div>
               ) : (
-                roles.map((role) => (
-                  <article key={role.name} className="p-5 transition-colors hover:bg-surface">
-                    <div className="flex flex-wrap items-start justify-between gap-3">
-                      <div>
-                        <h3 className="text-sm font-extrabold text-text">{role.name}</h3>
-                        <p className="mt-1 text-sm text-muted">{role.description || "No description"}</p>
-                      </div>
-                      <span className="rounded-full bg-success-soft px-3 py-1 text-xs font-bold text-success">
-                        {role.permissions?.length ?? 0} permissions
-                      </span>
-                    </div>
-                    {role.permissions && role.permissions.length > 0 && (
-                      <div className="mt-4 flex flex-wrap gap-1.5">
-                        {role.permissions.map((p) => (
-                          <span
-                            key={p.name}
-                            className="rounded-md bg-surface-alt px-2 py-0.5 text-xs font-bold text-muted"
-                          >
-                            {p.name}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                  </article>
-                ))
+                <div className="space-y-1">
+                  {roles.map((role) => {
+                    const isSelected = selectedRole?.name === role.name;
+                    return (
+                      <button
+                        key={role.name}
+                        onClick={() => setSelectedRole(role)}
+                        className={`w-full text-left p-3 rounded-r-lg border-l-2 flex items-start gap-3 transition-colors ${
+                          isSelected 
+                            ? "bg-primary-soft text-primary border-primary shadow-sm" 
+                            : "hover:bg-surface-alt text-text border-transparent"
+                        }`}
+                      >
+                        <div className={`mt-0.5 shrink-0 ${isSelected ? "text-primary" : "text-muted"}`}>
+                          <ShieldCheck className="w-4 h-4" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="font-bold text-sm truncate">{role.name}</div>
+                          <p className={`text-xs truncate mt-0.5 ${isSelected ? "text-primary/80" : "text-muted"}`}>
+                            {role.description || "Không có mô tả"}
+                          </p>
+                          <div className="mt-1.5 flex items-center gap-1.5">
+                            <Badge variant={isSelected ? "primary" : "neutral"} size="sm">
+                              {role.permissions?.length ?? 0} quyền
+                            </Badge>
+                          </div>
+                        </div>
+                        {isSelected && (
+                          <ChevronRight className="w-4 h-4 shrink-0 text-primary self-center" />
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
               )}
             </div>
-          </section>
+          </div>
 
-          {/* Create role form */}
-          <form onSubmit={handleCreateRole} className="h-fit rounded-xl border border-border bg-surface p-5 shadow-sm">
-            <div className="flex items-center gap-2 mb-5">
-              <Plus className="h-4 w-4 text-success" />
-              <h3 className="text-base font-bold text-text">Create Role</h3>
-            </div>
-            <div className="space-y-4">
-              <div>
-                <label className="mb-1.5 block text-sm font-semibold text-muted">
-                  Role Name
-                </label>
-                <input
-                  value={formValues.name}
-                  onChange={(e) => setFormValues((p) => ({ ...p, name: e.target.value }))}
-                  placeholder="ROLE_MANAGER"
-                  className="w-full rounded-lg border border-border-strong bg-surface px-3 py-2.5 text-sm font-bold uppercase outline-none transition focus:border-success focus:ring-1 focus:ring-success"
-                />
-              </div>
-              <div>
-                <label className="mb-1.5 block text-sm font-semibold text-muted">
-                  Description
-                </label>
-                <textarea
-                  value={formValues.description}
-                  onChange={(e) => setFormValues((p) => ({ ...p, description: e.target.value }))}
-                  placeholder="Mô t? vai trò..."
-                  rows={3}
-                  className="w-full resize-none rounded-lg border border-border-strong bg-surface px-3 py-2.5 text-sm outline-none transition focus:border-success focus:ring-1 focus:ring-success"
-                />
-              </div>
-              <div>
-                <p className="mb-2 text-sm font-semibold text-muted">
-                  Permissions
-                  <span className="ml-1 normal-case font-normal text-muted">
-                    ({formValues.permissions.length} selected)
-                  </span>
-                </p>
-                <div className="max-h-64 space-y-1 overflow-y-auto rounded-lg border border-border-strong bg-surface p-2">
-                  {permissions.map((permission) => (
-                    <label
-                      key={permission.name}
-                      className="flex cursor-pointer items-start gap-2 rounded-md px-2 py-1.5 transition-colors hover:bg-surface"
-                    >
-                      <input
-                        type="checkbox"
-                        checked={selectedPermissionSet.has(permission.name)}
-                        onChange={() => togglePermission(permission.name)}
-                        className="mt-0.5 h-4 w-4 accent-emerald-500"
-                      />
-                      <span>
-                        <span className="block text-xs font-bold text-text">{permission.name}</span>
-                        {permission.description && (
-                          <span className="text-xs text-muted">{permission.description}</span>
-                        )}
-                      </span>
-                    </label>
-                  ))}
+          {/* Detail: Selected Role */}
+          <div className="flex-1 flex flex-col bg-surface min-w-0">
+            {selectedRole ? (
+              <>
+                {/* Detail Header */}
+                <div className="p-5 sm:p-6 border-b border-border shrink-0 flex flex-col sm:flex-row sm:items-start justify-between gap-4 bg-surface/50">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-2xl bg-primary-soft border border-primary/20 flex items-center justify-center text-primary shrink-0 shadow-sm shadow-primary/5">
+                      <ShieldCheck className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-extrabold text-text tracking-tight">{selectedRole.name}</h3>
+                      <p className="text-sm text-muted mt-1 leading-relaxed max-w-2xl">{selectedRole.description || "Vai trò này chưa có mô tả."}</p>
+                    </div>
+                  </div>
+                  {/* Backend does not currently support Edit/Delete for roles, so buttons are omitted to match BE logic */}
                 </div>
+
+                {/* Permissions List */}
+                <div className="p-5 sm:p-6 flex-1 overflow-y-auto bg-surface-alt/10">
+                  <h4 className="font-bold text-text mb-4 flex items-center gap-2">
+                    <KeyRound className="w-4 h-4 text-primary" />
+                    Quyền hạn được cấp
+                    <Badge variant="neutral" size="sm">{selectedRole.permissions?.length ?? 0}</Badge>
+                  </h4>
+                  {selectedRole.permissions && selectedRole.permissions.length > 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
+                      {selectedRole.permissions.map(p => (
+                        <div key={p.name} className="flex items-start gap-3 p-3.5 rounded-xl border border-border bg-surface transition-colors hover:border-primary/30 hover:shadow-sm">
+                          <CheckCircle2 className="w-4 h-4 text-success shrink-0 mt-0.5" />
+                          <div className="min-w-0">
+                            <span className="block text-sm font-bold text-text truncate">{p.name}</span>
+                            {p.description && (
+                              <span className="block text-xs text-muted mt-1 leading-relaxed line-clamp-2" title={p.description}>{p.description}</span>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center p-10 border border-dashed border-border rounded-2xl bg-surface">
+                      <KeyRound className="mx-auto mb-3 h-8 w-8 text-muted/40" />
+                      <p className="text-sm font-semibold text-text">Không có quyền hạn</p>
+                      <p className="text-xs text-muted mt-1">Vai trò này chưa được cấp bất kỳ quyền nào.</p>
+                    </div>
+                  )}
+                </div>
+              </>
+            ) : (
+              <div className="flex-1 flex flex-col items-center justify-center p-8 text-center h-full min-h-[300px] bg-surface-alt/10">
+                <div className="w-16 h-16 rounded-full bg-surface-alt flex items-center justify-center mb-4">
+                  <ShieldCheck className="w-8 h-8 text-muted/50" />
+                </div>
+                <h3 className="text-lg font-bold text-text">Chưa chọn vai trò</h3>
+                <p className="text-sm text-muted max-w-sm mt-1">
+                  Hãy chọn một vai trò từ danh sách bên trái để xem chi tiết thông tin và quyền hạn.
+                </p>
               </div>
-              <button
-                type="submit"
-                disabled={saving}
-                className="w-full rounded-lg bg-success px-4 py-2.5 text-sm font-bold text-white transition-colors hover:bg-success disabled:opacity-50"
-              >
-                {saving ? "Creating..." : "Create Role"}
-              </button>
-            </div>
-          </form>
+            )}
+          </div>
         </div>
       )}
 
@@ -258,21 +282,21 @@ export default function RoleManagementPageContent() {
       {activeTab === "PERMISSIONS" && (
         <section className="rounded-xl border border-border bg-surface shadow-sm">
           <div className="flex items-center gap-2 border-b border-border p-5 text-sm font-bold text-text">
-            <KeyRound className="h-4 w-4 text-success" />
-            All Permissions
-            <span className="ml-1 rounded-full bg-surface-alt px-2 py-0.5 text-xs font-bold text-muted">
+            <KeyRound className="h-4 w-4 text-primary" />
+            Danh sách tất cả quyền
+            <Badge variant="neutral" className="ml-1">
               {permissions.length}
-            </span>
+            </Badge>
           </div>
           {loading ? (
-            <div className="p-8 text-center text-sm text-muted">Loading permissions...</div>
+            <div className="p-8 text-center text-sm text-muted">Đang tải quyền...</div>
           ) : (
-            <div className="grid gap-px bg-surface-alt sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-px bg-border sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
               {permissions.map((p) => (
-                <div key={p.name} className="bg-surface p-4 transition-colors hover:bg-surface">
-                  <p className="text-sm font-bold text-text">{p.name}</p>
+                <div key={p.name} className="bg-surface p-5 transition-colors hover:bg-surface-alt">
+                  <p className="text-sm font-bold text-text truncate" title={p.name}>{p.name}</p>
                   {p.description && (
-                    <p className="mt-1 text-xs text-muted">{p.description}</p>
+                    <p className="mt-1.5 text-xs text-muted leading-relaxed line-clamp-2" title={p.description}>{p.description}</p>
                   )}
                 </div>
               ))}
@@ -280,6 +304,105 @@ export default function RoleManagementPageContent() {
           )}
         </section>
       )}
-    </div>
+
+      {/* Create Role Modal */}
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => !saving && setIsModalOpen(false)}
+        title="Tạo vai trò mới"
+        maxWidth="max-w-3xl"
+      >
+        <form onSubmit={handleCreateRole} className="space-y-5">
+          {error && (
+            <div className="flex items-center gap-2 rounded-lg border border-danger-soft bg-danger-soft px-4 py-3 text-sm font-medium text-danger">
+              <AlertCircle className="h-4 w-4 shrink-0" />
+              {error}
+            </div>
+          )}
+          <div className="grid sm:grid-cols-2 gap-5">
+            <div className="space-y-1.5">
+              <label className="block text-sm font-semibold text-text">
+                Tên vai trò <span className="text-danger">*</span>
+              </label>
+              <input
+                value={formValues.name}
+                onChange={(e) => setFormValues((p) => ({ ...p, name: e.target.value }))}
+                placeholder="Ví dụ: ROLE_MANAGER"
+                className="w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-text outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-shadow"
+                disabled={saving}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <label className="block text-sm font-semibold text-text">
+                Mô tả <span className="text-danger">*</span>
+              </label>
+              <input
+                value={formValues.description}
+                onChange={(e) => setFormValues((p) => ({ ...p, description: e.target.value }))}
+                placeholder="Ví dụ: Quản lý cửa hàng..."
+                className="w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-text outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-shadow"
+                disabled={saving}
+              />
+            </div>
+          </div>
+          
+          <div>
+            <div className="mb-3 flex items-center justify-between">
+              <label className="block text-sm font-semibold text-text">
+                Cấp quyền hạn <span className="text-danger">*</span>
+              </label>
+              <Badge variant={formValues.permissions.length > 0 ? "primary" : "neutral"} size="sm">
+                Đã chọn {formValues.permissions.length} / {permissions.length}
+              </Badge>
+            </div>
+            
+            <div className="max-h-[300px] overflow-y-auto rounded-xl border border-border bg-surface-alt/30 p-1.5 scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent">
+              <div className="grid sm:grid-cols-2 gap-1.5">
+                {permissions.map((permission) => (
+                  <label
+                    key={permission.name}
+                    className="flex cursor-pointer items-start gap-3 rounded-lg border border-transparent px-3 py-2.5 transition-colors hover:bg-surface hover:border-border"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={selectedPermissionSet.has(permission.name)}
+                      onChange={() => togglePermission(permission.name)}
+                      disabled={saving}
+                      className="mt-0.5 h-4 w-4 rounded border-border text-primary focus:ring-primary accent-primary shrink-0"
+                    />
+                    <span className="min-w-0">
+                      <span className="block text-sm font-semibold text-text truncate">{permission.name}</span>
+                      {permission.description && (
+                        <span className="text-xs text-muted mt-0.5 block line-clamp-1">{permission.description}</span>
+                      )}
+                    </span>
+                  </label>
+                ))}
+              </div>
+            </div>
+          </div>
+          
+          <div className="pt-4 mt-2 border-t border-border flex justify-end gap-3">
+             <Button
+               type="button"
+               variant="outline"
+               onClick={() => setIsModalOpen(false)}
+               disabled={saving}
+             >
+               Hủy
+             </Button>
+             <Button
+               type="submit"
+               variant="primary"
+               disabled={saving}
+               leftIcon={saving ? <RefreshCw className="w-4 h-4 animate-spin" /> : <ShieldCheck className="w-4 h-4" />}
+             >
+               {saving ? "Đang tạo..." : "Xác nhận tạo vai trò"}
+             </Button>
+          </div>
+        </form>
+      </Modal>
+      </Section>
+    </Container>
   );
 }

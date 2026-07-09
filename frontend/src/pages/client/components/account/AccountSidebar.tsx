@@ -1,4 +1,4 @@
-import { User as UserIcon, Package, MapPin, Star, Ticket, LogOut } from 'lucide-react';
+import { User as UserIcon, Package, MapPin, Star, Ticket, LogOut, ShieldCheck } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../../../features/auth/AuthProvider';
 
@@ -18,6 +18,8 @@ export default function AccountSidebar() {
   const active = resolveActiveKey(pathname);
 
   if (!user) return null;
+
+  const isAdmin = user.roles && user.roles.length > 0;
 
   const baseItem =
     'flex items-center gap-3 px-5 py-3 lg:py-3.5 lg:rounded-lg lg:border-b-0 border-b-2 whitespace-nowrap transition-colors';
@@ -91,7 +93,18 @@ export default function AccountSidebar() {
             Mã giảm giá
           </Link>
         </li>
-        <li className="shrink-0 lg:w-full lg:border-t border-border lg:mt-3 lg:pt-3">
+        {isAdmin && (
+          <li className="shrink-0 lg:w-full lg:border-t border-border lg:mt-3 lg:pt-3">
+            <Link
+              to="/admin/dashboard"
+              className={idleItem}
+            >
+              <ShieldCheck className="w-5 h-5 hidden lg:block" />
+              Trang quản trị
+            </Link>
+          </li>
+        )}
+        <li className={`shrink-0 lg:w-full ${isAdmin ? '' : 'lg:border-t border-border lg:mt-3 lg:pt-3'}`}>
           <button 
             onClick={logout} 
             className="w-full flex items-center gap-3 px-5 py-3 lg:py-3.5 lg:rounded-lg text-muted font-medium hover:text-danger hover:bg-danger-soft transition-colors lg:border-b-0 border-b-2 border-transparent text-left cursor-pointer whitespace-nowrap focus-visible:outline-none focus-visible:bg-danger-soft"

@@ -1,9 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { RefreshCw, Search, Users, Ban, CheckCircle, ChevronLeft, ChevronRight } from "lucide-react";
 import { AdminBadge } from "../../../../components/admin/AdminBadge";
+import { Modal, Container, Section } from "../../../../components/common";
 import { Pagination } from "../../../../components/common/Pagination";
+import { UserDetailsModal } from "./UserDetailsModal";
 import { getAdminUsers, updateAdminUserStatus } from "../adminUserApi";
-import type { AdminUserResponse } from "../adminUserTypes";
+import type { AdminUserResponse, UserStatus } from "../adminUserTypes";
 
 type StatusFilter = "ALL" | "ACTIVE" | "INACTIVE";
 
@@ -17,6 +19,8 @@ export default function CustomersPageContent() {
   const [error, setError] = useState("");
   const [togglingId, setTogglingId] = useState<number | null>(null);
   const [page, setPage] = useState(1);
+  const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
+  const [confirmAction, setConfirmAction] = useState<{ user: AdminUserResponse; newStatus: UserStatus } | null>(null);
 
   const loadUsers = async () => {
     try {
@@ -56,23 +60,15 @@ export default function CustomersPageContent() {
 
   const activeCount = users.filter((u) => u.status === "ACTIVE").length;
 
-  async function toggleUserStatus(user: AdminUserResponse) {
-    if (user.id == null) {
-      setError("Không tìm thấy ID người dùng. Vui lòng restart backend và tải lại danh sách khách hàng.");
-      return;
-    }
-
-    const newStatus = user.status === "ACTIVE" ? "INACTIVE" : "ACTIVE";
-    const actionLabel = newStatus === "INACTIVE" ? "ban" : "unban";
-
-    if (!window.confirm(`Bạn có chắc muốn ${actionLabel} tài khoản ${user.email}?`)) {
-      return;
-    }
-
+  async function handleConfirmToggle() {
+    if (!confirmAction) return;
+    const { user, newStatus } = confirmAction;
+    
     try {
+      setConfirmAction(null);
       setError("");
-      setTogglingId(user.id);
-      const updated = await updateAdminUserStatus(user.id, newStatus);
+      setTogglingId(user.id!);
+      const updated = await updateAdminUserStatus(user.id!, newStatus);
       setUsers((prev) => prev.map((u) => (u.id === updated.id ? updated : u)));
     } catch (err) {
       console.error("Failed to update user status:", err);
@@ -80,6 +76,16 @@ export default function CustomersPageContent() {
     } finally {
       setTogglingId(null);
     }
+  }
+
+  function toggleUserStatus(user: AdminUserResponse) {
+    if (user.id == null) {
+      setError("Không tìm thấy ID người dùng. Vui lòng restart backend và tải lại danh sách khách hàng.");
+      return;
+    }
+
+    const newStatus = user.status === "ACTIVE" ? "INACTIVE" : "ACTIVE";
+    setConfirmAction({ user, newStatus });
   }
 
   function handleSearchChange(value: string) {
@@ -99,8 +105,9 @@ export default function CustomersPageContent() {
   ];
 
   return (
-    <div className="mx-auto max-w-[1400px] space-y-6 pb-10">
-      {/* Header */}
+    <Container size="wide">
+      <Section spacing="md" className="space-y-6">
+        {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <h2 className="text-2xl font-bold text-text">Customers</h2>
@@ -227,19 +234,23 @@ export default function CustomersPageContent() {
                       className="transition-colors hover:bg-surface"
                     >
                       <td className="px-5 py-4">
-                        <div className="flex items-center gap-3">
+                        <div 
+                          className="flex items-center gap-3 group cursor-pointer" 
+                          title="Xem thông tin người dùng"
+                          onClick={() => user.id && setSelectedUserId(user.id)}
+                        >
                           {user.avatarUrl ? (
                             <img 
                                 src={user.avatarUrl} 
                                 alt={user.fullName || user.email} 
-                                className="h-8 w-8 rounded-full object-cover shrink-0" 
+                                className="h-8 w-8 rounded-full object-cover shrink-0 border border-transparent transition-all duration-200 group-hover:scale-110 group-hover:border-primary/50 group-hover:shadow-sm" 
                             />
                           ) : (
-                            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-success-soft text-xs font-bold text-success shrink-0">
+                            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-success-soft text-xs font-bold text-success shrink-0 border border-transparent transition-all duration-200 group-hover:scale-110 group-hover:border-primary/50 group-hover:shadow-sm">
                               {((user.fullName || user.email || "?")[0] || "?").toUpperCase()}
                             </div>
                           )}
-                          <span className="font-semibold text-text">{user.fullName}</span>
+                          <span className="font-semibold text-text transition-colors duration-200 group-hover:text-primary">{user.fullName}</span>
                         </div>
                       </td>
                       <td className="px-5 py-4 text-muted">{user.email}</td>
@@ -313,6 +324,45 @@ export default function CustomersPageContent() {
           </div>
         )}
       </div>
-    </div>
+
+      <UserDetailsModal 
+        isOpen={selectedUserId !== null} 
+        onClose={() => setSelectedUserId(null)} 
+        userId={selectedUserId} 
+      />
+
+      <Modal
+        isOpen={confirmAction !== null}
+        onClose={() => setConfirmAction(null)}
+        title="Xác nhận thao tác"
+      >
+        <div className="p-5">
+          <p className="text-sm text-text">
+            Bạn có chắc muốn {confirmAction?.newStatus === "INACTIVE" ? "khóa (ban)" : "mở khóa (unban)"} tài khoản <span className="font-bold">{confirmAction?.user.email}</span> không?
+          </p>
+          <div className="mt-6 flex justify-end gap-3">
+            <button
+              type="button"
+              onClick={() => setConfirmAction(null)}
+              className="rounded-xl border border-border bg-surface px-4 py-2 text-sm font-bold text-text transition-colors hover:bg-surface-alt"
+            >
+              Hủy
+            </button>
+            <button
+              type="button"
+              onClick={handleConfirmToggle}
+              className={`rounded-xl px-4 py-2 text-sm font-bold text-white transition-colors ${
+                confirmAction?.newStatus === "INACTIVE"
+                  ? "bg-danger hover:bg-danger-hover"
+                  : "bg-success hover:bg-success/90"
+              }`}
+            >
+              Xác nhận
+            </button>
+          </div>
+        </div>
+      </Modal>
+      </Section>
+    </Container>
   );
 }

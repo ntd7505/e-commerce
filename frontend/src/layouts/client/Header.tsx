@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { Search, ShoppingCart, User, MapPin, ChevronDown, Check, Loader2 } from 'lucide-react';
+import { Search, ShoppingCart, User, MapPin, ChevronDown, Check, Loader2, ShieldCheck } from 'lucide-react';
 import { cartApi } from '../../features/client/cart/cartApi';
 import type { AddressResponse } from '../../features/client/cart/cartTypes';
 import { useAuth } from '../../features/auth/AuthProvider';
@@ -14,6 +14,8 @@ const Header = () => {
   const { cart, activeDeliveryAddress, setActiveDeliveryAddress } = useCart();
   const [isBouncing, setIsBouncing] = useState(false);
   const [prevTotalItems, setPrevTotalItems] = useState(cart?.totalItems || 0);
+
+  const isAdmin = user?.roles && user.roles.length > 0;
 
   const [searchQuery, setSearchQuery] = useState(keywordParam);
 

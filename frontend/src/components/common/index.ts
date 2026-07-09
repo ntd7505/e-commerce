@@ -7,4 +7,5 @@ export { default as Badge } from "./Badge";
 export { buttonVariants } from "./buttonVariants";
 export type { ButtonVariants } from "./buttonVariants";
 export { LoadingState, ErrorState, EmptyState } from "./States";
+export * from "./Modal";
 export { Pagination } from "./Pagination";

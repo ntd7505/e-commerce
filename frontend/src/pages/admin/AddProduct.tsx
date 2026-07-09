@@ -9,12 +9,14 @@ import { ProductVariantsEditor } from '../../features/admin/products/components/
 import { ProductDescriptionBlocksEditor } from '../../features/admin/products/components/ProductDescriptionBlocksEditor';
 import { ProductSpecificationsEditor } from '../../features/admin/products/components/ProductSpecificationsEditor';
 import { useAdminProductEditor } from '../../features/admin/products/hooks/useAdminProductEditor';
+import { Container, Section } from "../../components/common";
 
 export default function AddProduct() {
   const editor = useAdminProductEditor();
 
   return (
-    <div className="mx-auto max-w-[1400px] space-y-6 pb-10">
+    <Container size="wide">
+      <Section spacing="md" className="space-y-6">
       <ProductEditorHeader
         isEditMode={editor.isEditMode}
         loading={editor.loading}
@@ -113,6 +115,7 @@ export default function AddProduct() {
           />
         </div>
       )}
-    </div>
+      </Section>
+    </Container>
   );
 }

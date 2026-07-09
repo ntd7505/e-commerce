@@ -18,6 +18,14 @@ export async function getCurrentAdminUser(): Promise<AdminUserResponse> {
   return response.data.data;
 }
 
+export async function getAdminUserById(id: number): Promise<AdminUserResponse> {
+  const response = await apiClient.get<ApiResponse<AdminUserResponse>>(
+    `/api/v1/admin/users/${id}`
+  );
+
+  return response.data.data;
+}
+
 export async function updateAdminUserStatus(
   id: number,
   status: UserStatus
