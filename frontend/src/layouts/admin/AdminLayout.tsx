@@ -122,6 +122,7 @@ const MENU_GROUPS: MenuGroupConfig[] = [
 
 type NotifItem = { id: number; text: string; time: string; read: boolean };
 
+// TODO: Fetch notifications from API once AdminNotificationController is implemented
 const MOCK_NOTIFICATIONS: NotifItem[] = [
   { id: 1, text: 'Đơn hàng #1042 vừa được đặt', time: '2 phút trước', read: false },
   { id: 2, text: 'Yêu cầu hủy đơn #1039 cần xử lý', time: '15 phút trước', read: false },

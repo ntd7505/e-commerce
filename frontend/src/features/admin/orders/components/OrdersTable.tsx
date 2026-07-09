@@ -178,8 +178,23 @@ export function OrdersTable({
                                     <tr key={order.id}>
                                         <td className="px-5 py-4 font-bold text-text">#{order.id}</td>
                                         <td className="px-5 py-4">
-                                            <p className="font-semibold text-text">{order.recipientName}</p>
-                                            <p className="mt-1 text-xs text-muted">{order.phoneNumber}</p>
+                                            <div className="flex items-center gap-3">
+                                                {order.userAvatarUrl ? (
+                                                    <img 
+                                                        src={order.userAvatarUrl} 
+                                                        alt={order.recipientName} 
+                                                        className="h-8 w-8 rounded-full object-cover shrink-0" 
+                                                    />
+                                                ) : (
+                                                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-success-soft text-xs font-bold text-success shrink-0">
+                                                        {((order.recipientName || "?")[0] || "?").toUpperCase()}
+                                                    </div>
+                                                )}
+                                                <div>
+                                                    <p className="font-semibold text-text">{order.recipientName}</p>
+                                                    <p className="mt-1 text-xs text-muted">{order.phoneNumber}</p>
+                                                </div>
+                                            </div>
                                         </td>
                                         <td className="px-5 py-4 font-semibold text-text">
                                             {formatMoney(order.totalAmount)}

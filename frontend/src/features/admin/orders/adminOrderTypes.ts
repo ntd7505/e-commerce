@@ -59,6 +59,7 @@ export type OrderResponse = {
     discountAmount: number;
     totalAmount: number;
     note: string | null;
+    userAvatarUrl: string | null;
     payment: PaymentResponse | null;
     createdAt: string;
     updatedAt: string;

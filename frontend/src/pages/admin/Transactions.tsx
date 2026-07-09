@@ -14,7 +14,7 @@ function formatMoney(value: number) {
 }
 
 function formatDate(value: string | null) {
-  if (!value) return "—";
+  if (!value) return "-";
   return new Date(value).toLocaleString("vi-VN", {
     day: "2-digit",
     month: "2-digit",
@@ -56,8 +56,9 @@ function mapTransactions(orders: OrderResponse[]) {
     paymentStatus: order.paymentStatus,
     method: order.payment?.method ?? "COD",
     amount: order.payment?.amount ?? order.totalAmount,
-    transactionCode: order.payment?.transactionCode ?? "—",
+    transactionCode: order.payment?.transactionCode ?? "-",
     paidAt: order.payment?.paidAt ?? null,
+    userAvatarUrl: order.userAvatarUrl,
     createdAt: order.createdAt,
   }));
 }
@@ -172,7 +173,7 @@ export default function Transactions() {
         <AdminStatCard label="Total" value={transactions.length} />
         <AdminStatCard label="Paid" value={paidCount} />
         <AdminStatCard label="Unpaid" value={unpaidCount} />
-        <AdminStatCard label="Revenue" value={`${formatMoney(totalRevenue)} ?`} />
+        <AdminStatCard label="Revenue" value={`${formatMoney(totalRevenue)} Ä‘`} />
         <div className="hidden">
           <AdminStatCard label="Refunded" value={refundedCount} />
         </div>
@@ -241,14 +242,29 @@ export default function Transactions() {
                   {pagedTransactions.map((transaction) => (
                     <tr key={transaction.orderId} className="transition-colors hover:bg-surface">
                       <td className="px-5 py-4 font-bold text-text">#{transaction.orderId}</td>
-                      <td className="px-5 py-4 font-medium text-text">{transaction.recipientName}</td>
+                      <td className="px-5 py-4">
+                        <div className="flex items-center gap-3">
+                          {transaction.userAvatarUrl ? (
+                            <img
+                              src={transaction.userAvatarUrl}
+                              alt={transaction.recipientName || ""}
+                              className="h-8 w-8 rounded-full object-cover shrink-0"
+                            />
+                          ) : (
+                            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-success-soft text-xs font-bold text-success shrink-0">
+                              {((transaction.recipientName || "?")[0] || "?").toUpperCase()}
+                            </div>
+                          )}
+                          <span className="font-medium text-text">{transaction.recipientName}</span>
+                        </div>
+                      </td>
                       <td className="px-5 py-4">
                         <span className="rounded-md bg-surface-alt px-2 py-0.5 text-xs font-bold text-muted">
                           {transaction.method}
                         </span>
                       </td>
                       <td className="px-5 py-4 text-right font-semibold text-text">
-                        {formatMoney(transaction.amount)} ?
+                        {formatMoney(transaction.amount)} Ä‘
                       </td>
                       <td className="px-5 py-4">
                         <OrderStatusBadge value={transaction.paymentStatus} />
@@ -265,7 +281,7 @@ export default function Transactions() {
             {totalPages > 1 && (
               <div className="flex items-center justify-between border-t border-border px-5 py-3">
                 <p className="text-xs text-muted">
-                  Showing {(currentPage - 1) * PAGE_SIZE + 1}–
+                  Showing {(currentPage - 1) * PAGE_SIZE + 1}-ï¿½
                   {Math.min(currentPage * PAGE_SIZE, filteredTransactions.length)} of {filteredTransactions.length}
                 </p>
                 <div className="flex items-center gap-1">
@@ -282,7 +298,7 @@ export default function Transactions() {
                     .map((p, idx, arr) => (
                       <span key={p}>
                         {idx > 0 && arr[idx - 1] !== p - 1 && (
-                          <span className="px-1 text-muted">…</span>
+                          <span className="px-1 text-muted">ï¿½</span>
                         )}
                         <button
                           type="button"

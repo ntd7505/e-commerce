@@ -151,11 +151,6 @@ export default function ProductInfo({
                   }`}
                 >
                   <span>{variant.variantName}</span>
-                  {isSelected && (
-                    <div className="absolute top-0 right-0 w-0 h-0 border-t-[16px] border-r-[16px] border-t-blue-600 border-r-transparent">
-                      <CheckCircle2 className="absolute -top-[15px] -left-1 w-2.5 h-2.5 text-white" />
-                    </div>
-                  )}
                 </button>
               );
             })}

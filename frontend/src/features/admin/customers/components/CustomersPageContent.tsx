@@ -228,9 +228,17 @@ export default function CustomersPageContent() {
                     >
                       <td className="px-5 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-success-soft text-xs font-bold text-success shrink-0">
-                            {((user.fullName || user.email || "?")[0] || "?").toUpperCase()}
-                          </div>
+                          {user.avatarUrl ? (
+                            <img 
+                                src={user.avatarUrl} 
+                                alt={user.fullName || user.email} 
+                                className="h-8 w-8 rounded-full object-cover shrink-0" 
+                            />
+                          ) : (
+                            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-success-soft text-xs font-bold text-success shrink-0">
+                              {((user.fullName || user.email || "?")[0] || "?").toUpperCase()}
+                            </div>
+                          )}
                           <span className="font-semibold text-text">{user.fullName}</span>
                         </div>
                       </td>
