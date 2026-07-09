@@ -59,3 +59,10 @@ management:
 
 jwt:
   signerKey: ${JWT_SIGNER_KEY}
+
+payment:
+  vietqr:
+    bank-code: ${PAYMENT_BANK_CODE:VPB}
+    bank-account: ${PAYMENT_BANK_ACCOUNT:0987654321}
+    bank-account-name: ${PAYMENT_BANK_ACCOUNT_NAME:NGUYEN VAN A}
+    qr-template: ${PAYMENT_QR_TEMPLATE:compact}

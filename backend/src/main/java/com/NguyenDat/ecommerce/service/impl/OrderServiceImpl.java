@@ -83,14 +83,14 @@ public class OrderServiceImpl implements OrderService {
 
     @Transactional
     public OrderResponse createOrder(CheckoutRequest checkoutRequest) {
-        if (checkoutRequest.getPaymentMethod() != PaymentMethod.COD) {
+        if (checkoutRequest.getPaymentMethod() != PaymentMethod.COD && checkoutRequest.getPaymentMethod() != PaymentMethod.BANK_TRANSFER) {
             throw new AppException(ErrorCode.PAYMENT_METHOD_UNSUPPORTED);
         }
         User user = currentUserService.getCurrentUser();
         CheckoutCalculation checkoutCalculation = checkoutService.calculateForOrder(user, checkoutRequest);
         Order order = orderCreationService.create(user, checkoutRequest, checkoutCalculation);
         inventoryService.decreaseForOrder(order, user);
-        return orderMapper.toOrderResponse(order);
+        return enrichPayment(orderMapper.toOrderResponse(order));
     }
 
     @Override
@@ -101,7 +101,7 @@ public class OrderServiceImpl implements OrderService {
                 .findByIdAndUserId(orderId, user.getId())
                 .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
 
-        return orderMapper.toOrderResponse(order);
+        return enrichPayment(orderMapper.toOrderResponse(order));
     }
 
     @Override
@@ -109,6 +109,7 @@ public class OrderServiceImpl implements OrderService {
         User user = currentUserService.getCurrentUser();
         return orderRepository.findAllByUserId(user.getId()).stream()
                 .map(orderMapper::toOrderResponse)
+                .map(this::enrichPayment)
                 .toList();
     }
 
@@ -116,7 +117,7 @@ public class OrderServiceImpl implements OrderService {
     public PageResponse<OrderResponse> getMyOrdersInPage(Pageable pageable) {
         User user = currentUserService.getCurrentUser();
         Page<Order> page = orderRepository.findAllByUserId(user.getId(), pageable);
-        return PageResponse.from(page.map(orderMapper::toOrderResponse));
+        return PageResponse.from(page.map(orderMapper::toOrderResponse).map(this::enrichPayment));
     }
 
     @Override
@@ -165,7 +166,7 @@ public class OrderServiceImpl implements OrderService {
 
         orderCancelRequestRepository.save(orderCancelRequest);
 
-        return orderMapper.toOrderResponse(savedOrder);
+        return enrichPayment(orderMapper.toOrderResponse(savedOrder));
     }
 
     @Transactional
@@ -184,26 +185,27 @@ public class OrderServiceImpl implements OrderService {
         orderStatusHistoryService.record(
                 order, user, oldStatus, OrderStatus.COMPLETED, "User confirmed received order");
 
-        return orderMapper.toOrderResponse(orderRepository.save(order));
+        return enrichPayment(orderMapper.toOrderResponse(orderRepository.save(order)));
     }
 
     @Override
     public List<OrderResponse> getAllOrders() {
         return orderRepository.findAll().stream()
                 .map(orderMapper::toOrderResponse)
+                .map(this::enrichPayment)
                 .toList();
     }
 
     @Override
     public PageResponse<OrderResponse> getOrdersInPage(Pageable pageable) {
         Page<Order> page = orderRepository.findAll(pageable);
-        return PageResponse.from(page.map(orderMapper::toOrderResponse));
+        return PageResponse.from(page.map(orderMapper::toOrderResponse).map(this::enrichPayment));
     }
 
     @Override
     public OrderResponse getOrderById(Long orderId) {
         Order order = orderRepository.findById(orderId).orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
-        return orderMapper.toOrderResponse(order);
+        return enrichPayment(orderMapper.toOrderResponse(order));
     }
 
     @Transactional
@@ -224,7 +226,7 @@ public class OrderServiceImpl implements OrderService {
 
         orderStatusHistoryService.record(order, admin, oldStatus, CONFIRMED, "Admin confirmed order");
 
-        return orderMapper.toOrderResponse(orderRepository.save(order));
+        return enrichPayment(orderMapper.toOrderResponse(orderRepository.save(order)));
     }
 
     @Transactional
@@ -245,7 +247,7 @@ public class OrderServiceImpl implements OrderService {
 
         orderStatusHistoryService.record(order, admin, oldStatus, PROCESSING, "Admin processed order");
 
-        return orderMapper.toOrderResponse(orderRepository.save(order));
+        return enrichPayment(orderMapper.toOrderResponse(orderRepository.save(order)));
     }
 
     @Transactional
@@ -266,7 +268,7 @@ public class OrderServiceImpl implements OrderService {
 
         orderStatusHistoryService.record(order, admin, oldStatus, SHIPPING, "Admin shipped order");
 
-        return orderMapper.toOrderResponse(orderRepository.save(order));
+        return enrichPayment(orderMapper.toOrderResponse(orderRepository.save(order)));
     }
 
     @Transactional
@@ -287,7 +289,7 @@ public class OrderServiceImpl implements OrderService {
 
         orderStatusHistoryService.record(order, admin, oldStatus, OrderStatus.DELIVERED, "Admin delivered order");
 
-        return orderMapper.toOrderResponse(orderRepository.save(order));
+        return enrichPayment(orderMapper.toOrderResponse(orderRepository.save(order)));
     }
 
     @Override
@@ -383,5 +385,13 @@ public class OrderServiceImpl implements OrderService {
         orderCancelRequest.setReviewedAt(LocalDateTime.now());
         orderCancelRequest.setReviewedBy(user);
         return orderMapper.toOrderCancelRequestResponse(orderCancelRequestRepository.save(orderCancelRequest));
+    }
+
+    private OrderResponse enrichPayment(OrderResponse response) {
+        if (response != null && response.getPayment() != null) {
+            orderPaymentService.enrichPaymentResponse(response.getPayment());
+            response.getPayment().setOrderId(response.getId());
+        }
+        return response;
     }
 }

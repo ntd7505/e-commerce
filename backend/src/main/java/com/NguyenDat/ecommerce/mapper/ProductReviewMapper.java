@@ -28,6 +28,8 @@ public interface ProductReviewMapper {
     @Mapping(target = "productId", source = "product.id")
     @Mapping(target = "orderItemId", source = "orderItem.id")
     @Mapping(target = "productName", source = "product.name")
+    @Mapping(target = "productSlug", source = "product.slug")
+    @Mapping(target = "thumbnailUrl", expression = "java(productReview.getProduct() != null ? com.NguyenDat.ecommerce.common.util.MediaUtils.resolveThumbnailUrl(productReview.getProduct().getMedia()) : null)")
     @Mapping(target = "variantName", source = "orderItem.productVariant.variantName")
     @Mapping(target = "sku", source = "orderItem.productVariant.sku")
     @Mapping(target = "verifiedPurchase", constant = "true")
@@ -40,4 +42,5 @@ public interface ProductReviewMapper {
     ProductReviewMedia toProductReviewMedia(ProductReviewMediaRequest productReviewMediaRequest);
 
     ProductReviewMediaResponse toProductReviewMediaResponse(ProductReviewMedia productReviewMedia);
+
 }

@@ -17,10 +17,12 @@ public interface OrderMapper {
     @Mapping(target = "addressId", source = "address.id")
     @Mapping(target = "couponId", source = "coupon.id")
     @Mapping(target = "couponCode", source = "coupon.code")
+    @Mapping(target = "userAvatarUrl", source = "user.avatarUrl")
     OrderResponse toOrderResponse(Order order);
 
     @Mapping(target = "productVariantId", source = "productVariant.id")
     @Mapping(target = "productId", source = "productVariant.product.id")
+    @Mapping(target = "productSlug", source = "productVariant.product.slug")
     @Mapping(target = "thumbnailUrl", expression = "java(resolveThumbnailUrl(orderItem))")
     OrderItemResponse toOrderItemResponse(OrderItem orderItem);
 

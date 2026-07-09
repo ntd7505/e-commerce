@@ -107,6 +107,9 @@ public enum ResponseCode {
 
     // 11000 - Payment
     PAYMENT_METHODS_FETCHED(11000, "Payment methods fetched successfully"),
+    PAYMENTS_FETCHED(11001, "Payments fetched successfully"),
+    PAYMENT_FETCHED(11002, "Payment fetched successfully"),
+    PAYMENT_STATUS_UPDATED(11003, "Payment status updated successfully"),
 
     // 12000 - Order & Checkout
     CHECKOUT_PREVIEW_CREATED(12000, "Checkout preview created successfully"),

@@ -26,6 +26,8 @@ public class ProductReviewResponse {
     ReviewUserResponse user;
 
     String productName;
+    String productSlug;
+    String thumbnailUrl;
     String variantName;
     String sku;
 

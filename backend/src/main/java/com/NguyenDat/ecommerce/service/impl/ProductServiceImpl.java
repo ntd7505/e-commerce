@@ -55,6 +55,8 @@ public class ProductServiceImpl implements ProductService {
     ProductSpecificationMapper productSpecificationMapper;
     ProductDescriptionBlockRepository productDescriptionBlockRepository;
     ProductSpecificationRepository productSpecificationRepository;
+    ProductReviewRepository productReviewRepository;
+    OrderItemRepository orderItemRepository;
 
     @Transactional
     public ProductResponse createProduct(ProductCreateRequest productCreateRequest) {
@@ -96,10 +98,35 @@ public class ProductServiceImpl implements ProductService {
                 productMediaList.add(productMedia);
             }
         }
+        // description blocks
+        List<ProductDescriptionBlock> descriptionBlockList = new ArrayList<>();
+        if (productCreateRequest.getDescriptionBlocks() != null) {
+            for (ProductDescriptionBlockRequest blockReq : productCreateRequest.getDescriptionBlocks()) {
+                ProductDescriptionBlock block = productDescriptionBlockMapper.toProductDescriptionBlock(blockReq);
+                block.setProduct(product);
+                block.setActive(blockReq.getActive() == null || blockReq.getActive());
+                descriptionBlockList.add(block);
+            }
+        }
+        // specifications
+        List<com.NguyenDat.ecommerce.entity.ProductSpecification> specificationList = new ArrayList<>();
+        if (productCreateRequest.getSpecifications() != null) {
+            for (ProductSpecificationRequest specReq : productCreateRequest.getSpecifications()) {
+                com.NguyenDat.ecommerce.entity.ProductSpecification spec = productSpecificationMapper.toProductSpecification(specReq);
+                spec.setProduct(product);
+                spec.setGroupName(normalizeBlank(specReq.getGroupName()));
+                spec.setSpecKey(specReq.getSpecKey().trim());
+                spec.setSpecValue(specReq.getSpecValue().trim());
+                spec.setActive(specReq.getActive() == null || specReq.getActive());
+                specificationList.add(spec);
+            }
+        }
         product.setVariants(productVariantList);
         product.setMedia(productMediaList);
+        product.setDescriptionBlocks(descriptionBlockList);
+        product.setSpecifications(specificationList);
         Product savedProduct = productRepository.save(product);
-        return toProductResponse(savedProduct);
+        return enrichProductStats(toProductResponse(savedProduct));
     }
 
     @Transactional
@@ -125,16 +152,18 @@ public class ProductServiceImpl implements ProductService {
     }
 
     public List<ProductResponse> getAllProducts() {
-        return productRepository.findAllByDeletedFalse().stream()
+        List<ProductResponse> responses = productRepository.findAllByDeletedFalse().stream()
                 .map(this::toProductResponse)
                 .toList();
+        enrichProductStats(responses);
+        return responses;
     }
 
     public ProductResponse getProductById(Long id) {
         Product product = productRepository
                 .findByIdAndDeletedFalse(id)
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
-        return toProductResponse(product);
+        return enrichProductStats(toProductResponse(product));
     }
 
     public ProductVariantResponse getVariantById(Long id) {
@@ -176,7 +205,7 @@ public class ProductServiceImpl implements ProductService {
             product.setCategory(category);
         }
         Product savedProduct = productRepository.save(product);
-        return toProductResponse(savedProduct);
+        return enrichProductStats(toProductResponse(savedProduct));
     }
 
     @Transactional
@@ -187,7 +216,7 @@ public class ProductServiceImpl implements ProductService {
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
         product.setActive(!product.isActive());
         Product savedProduct = productRepository.save(product);
-        return toProductResponse(savedProduct);
+        return enrichProductStats(toProductResponse(savedProduct));
     }
 
     @Transactional
@@ -344,8 +373,8 @@ public class ProductServiceImpl implements ProductService {
         productDescriptionBlockRepository.saveAll(existingBlocks);
         productDescriptionBlockRepository.saveAll(newBlocks);
 
-        return toProductResponse(productRepository.findByIdAndDeletedFalse(productId)
-                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND)));
+        return enrichProductStats(toProductResponse(productRepository.findByIdAndDeletedFalse(productId)
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND))));
     }
 
     @Transactional
@@ -380,15 +409,17 @@ public class ProductServiceImpl implements ProductService {
         productSpecificationRepository.saveAll(existingSpecifications);
         productSpecificationRepository.saveAll(newSpecifications);
 
-        return toProductResponse(productRepository.findByIdAndDeletedFalse(productId)
-                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND)));
+        return enrichProductStats(toProductResponse(productRepository.findByIdAndDeletedFalse(productId)
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND))));
     }
 
     @Override
     public List<ProductResponse> showAllProducts() {
-        return productRepository.findAllByDeletedFalseAndActiveTrue().stream()
-                .map(productMapper::toProductResponse)
+        List<ProductResponse> responses = productRepository.findAllByDeletedFalseAndActiveTrue().stream()
+                .map(this::toClientProductResponse)
                 .toList();
+        enrichProductStats(responses);
+        return responses;
     }
 
     @Override
@@ -397,7 +428,7 @@ public class ProductServiceImpl implements ProductService {
         Product product = productRepository
                 .findBySlugAndDeletedFalseAndActiveTrue(slug.trim())
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
-        return toClientProductResponse(product);
+        return enrichProductStats(toClientProductResponse(product));
     }
 
     @Override
@@ -437,13 +468,17 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public PageResponse<ProductResponse> getAllProductsInPage(ProductFilterRequest filterRequest, Pageable pageable) {
         Page<Product> page = productRepository.findAll(ProductSpecification.withFilter(filterRequest, false), pageable);
-        return PageResponse.from(page.map(this::toProductResponse));
+        Page<ProductResponse> mappedPage = page.map(this::toProductResponse);
+        enrichProductStats(mappedPage.getContent());
+        return PageResponse.from(mappedPage);
     }
 
     @Override
     public PageResponse<ProductResponse> showProductsInPage(ProductFilterRequest filterRequest, Pageable pageable) {
         Page<Product> page = productRepository.findAll(ProductSpecification.withFilter(filterRequest, true), pageable);
-        return PageResponse.from(page.map(this::toClientProductResponse));
+        Page<ProductResponse> mappedPage = page.map(this::toClientProductResponse);
+        enrichProductStats(mappedPage.getContent());
+        return PageResponse.from(mappedPage);
     }
 
     @Override
@@ -455,7 +490,9 @@ public class ProductServiceImpl implements ProductService {
         Page<Product> relatedProducts = productRepository.findAllByCategoryIdAndIdNotAndActiveTrueAndDeletedFalse(
                 currentProduct.getCategory().getId(), currentProduct.getId(), pageable);
 
-        return PageResponse.from(relatedProducts.map(this::toClientProductResponse));
+        Page<ProductResponse> mappedPage = relatedProducts.map(this::toClientProductResponse);
+        enrichProductStats(mappedPage.getContent());
+        return PageResponse.from(mappedPage);
     }
 
     private ProductResponse toClientProductResponse(Product product) {
@@ -492,5 +529,32 @@ public class ProductServiceImpl implements ProductService {
             return null;
         }
         return value.trim();
+    }
+
+    private void enrichProductStats(List<ProductResponse> responses) {
+        if (responses.isEmpty()) return;
+        List<Long> productIds = responses.stream().map(ProductResponse::getId).toList();
+
+        List<com.NguyenDat.ecommerce.repository.projection.ProductStatProjection> ratings = productReviewRepository.getAverageRatingByProductIds(productIds);
+        java.util.Map<Long, Double> ratingMap = new java.util.HashMap<>();
+        for (com.NguyenDat.ecommerce.repository.projection.ProductStatProjection row : ratings) {
+            ratingMap.put(row.getProductId(), row.getStatValue() != null ? row.getStatValue().doubleValue() : 0.0);
+        }
+
+        List<com.NguyenDat.ecommerce.repository.projection.ProductStatProjection> soldCounts = orderItemRepository.getSoldCountByProductIds(productIds);
+        java.util.Map<Long, Long> soldMap = new java.util.HashMap<>();
+        for (com.NguyenDat.ecommerce.repository.projection.ProductStatProjection row : soldCounts) {
+            soldMap.put(row.getProductId(), row.getStatValue() != null ? row.getStatValue().longValue() : 0L);
+        }
+
+        for (ProductResponse response : responses) {
+            response.setRating(ratingMap.getOrDefault(response.getId(), 0.0));
+            response.setSoldCount(soldMap.getOrDefault(response.getId(), 0L).intValue());
+        }
+    }
+
+    private ProductResponse enrichProductStats(ProductResponse response) {
+        enrichProductStats(List.of(response));
+        return response;
     }
 }

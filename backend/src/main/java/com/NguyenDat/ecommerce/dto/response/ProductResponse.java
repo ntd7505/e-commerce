@@ -22,6 +22,9 @@ public class ProductResponse {
     String description;
     BrandSummaryResponse brand;
     CategorySummaryResponse category;
+    String thumbnailUrl;
+    Double rating;
+    Integer soldCount;
     boolean active;
     List<ProductVariantResponse> variants;
     List<ProductMediaResponse> media;

@@ -7,6 +7,10 @@ public interface OrderPaymentService {
 
     Payment createCodPayment(Order order);
 
+    Payment createBankTransferPayment(Order order);
+
+    void enrichPaymentResponse(com.NguyenDat.ecommerce.dto.response.PaymentResponse response);
+
     void markPaid(Order order);
 
     void markCancelled(Order order);

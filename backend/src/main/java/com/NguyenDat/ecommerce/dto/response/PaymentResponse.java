@@ -25,4 +25,11 @@ public class PaymentResponse {
 
     String transactionCode;
     LocalDateTime paidAt;
+
+    Long orderId;
+    String qrCodeUrl;
+    String bankCode;
+    String bankAccount;
+    String bankAccountName;
+    String transferContent;
 }

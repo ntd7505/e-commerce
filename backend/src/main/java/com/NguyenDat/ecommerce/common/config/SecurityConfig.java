@@ -65,6 +65,9 @@ public class SecurityConfig {
                         jwtConfigurer.decoder(jwtDecoder()).jwtAuthenticationConverter(jwtAuthenticationConverter()))
                 .authenticationEntryPoint(new JwtAuthenticationEntryPoint()));
 
+        httpSecurity.exceptionHandling(exception -> exception
+                .accessDeniedHandler(new CustomAccessDeniedHandler()));
+
         httpSecurity.csrf(AbstractHttpConfigurer::disable);
         return httpSecurity.build();
     }

@@ -30,4 +30,7 @@ public interface ProductReviewRepository extends JpaRepository<ProductReview, Lo
 
     @Query("SELECT COALESCE(AVG(r.rating), 0) FROM ProductReview r WHERE r.deleted = false AND r.active = true")
     Double averageRatingForActiveReviews();
+
+    @Query("SELECT r.product.id AS productId, AVG(r.rating) AS statValue FROM ProductReview r WHERE r.product.id IN :productIds AND r.deleted = false AND r.active = true GROUP BY r.product.id")
+    List<com.NguyenDat.ecommerce.repository.projection.ProductStatProjection> getAverageRatingByProductIds(@org.springframework.data.repository.query.Param("productIds") List<Long> productIds);
 }

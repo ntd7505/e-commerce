@@ -41,6 +41,8 @@ public class OrderResponse {
 
     String note;
 
+    String userAvatarUrl;
+
     PaymentResponse payment;
 
     LocalDateTime createdAt;

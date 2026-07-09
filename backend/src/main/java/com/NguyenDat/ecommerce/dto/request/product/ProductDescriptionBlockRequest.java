@@ -34,4 +34,12 @@ public class ProductDescriptionBlockRequest {
     int sortOrder;
 
     Boolean active;
+
+    @jakarta.validation.constraints.AssertTrue(message = "IMAGE_URL_REQUIRED")
+    public boolean isImageUrlValid() {
+        if (type == ProductDescriptionBlockType.IMAGE) {
+            return imageUrl != null && !imageUrl.isBlank();
+        }
+        return true;
+    }
 }

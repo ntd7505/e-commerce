@@ -82,6 +82,12 @@ public class ProductServiceTest {
     ProductSpecificationRepository productSpecificationRepository;
 
     @Mock
+    com.NguyenDat.ecommerce.repository.OrderItemRepository orderItemRepository;
+
+    @Mock
+    com.NguyenDat.ecommerce.repository.ProductReviewRepository productReviewRepository;
+
+    @Mock
     ProductMapper productMapper;
 
     @Mock

@@ -33,4 +33,7 @@ public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
             ORDER BY SUM(oi.quantity) DESC
             """)
     List<AdminTopProductResponse> findTopProductsByQuantitySold(Pageable pageable);
+
+    @Query("SELECT oi.productVariant.product.id AS productId, SUM(oi.quantity) AS statValue FROM OrderItem oi WHERE oi.order.status IN ('DELIVERED', 'COMPLETED') AND oi.productVariant.product.id IN :productIds GROUP BY oi.productVariant.product.id")
+    List<com.NguyenDat.ecommerce.repository.projection.ProductStatProjection> getSoldCountByProductIds(@org.springframework.data.repository.query.Param("productIds") List<Long> productIds);
 }

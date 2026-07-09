@@ -15,6 +15,7 @@ import com.NguyenDat.ecommerce.entity.Payment;
 import com.NguyenDat.ecommerce.entity.ProductVariant;
 import com.NguyenDat.ecommerce.entity.User;
 import com.NguyenDat.ecommerce.enums.OrderStatus;
+import com.NguyenDat.ecommerce.enums.PaymentMethod;
 import com.NguyenDat.ecommerce.enums.PaymentStatus;
 import com.NguyenDat.ecommerce.enums.ShippingStatus;
 import com.NguyenDat.ecommerce.repository.OrderRepository;
@@ -37,13 +38,19 @@ public class OrderCreationServiceImpl implements OrderCreationService {
     CouponApplicationService couponApplicationService;
     OrderStatusHistoryService orderStatusHistoryService;
 
+
     @Override
     @Transactional
     public Order create(User user, CheckoutRequest request, CheckoutCalculation checkout) {
         Order order = buildOrder(user, request, checkout);
         Order savedOrder = orderRepository.save(order);
 
-        Payment payment = orderPaymentService.createCodPayment(savedOrder);
+        Payment payment;
+        if (request.getPaymentMethod() == PaymentMethod.BANK_TRANSFER) {
+            payment = orderPaymentService.createBankTransferPayment(savedOrder);
+        } else {
+            payment = orderPaymentService.createCodPayment(savedOrder);
+        }
         savedOrder.setPayment(payment);
 
         for (CartItem selectedCartItem : checkout.getSelectedCartItems()) {
