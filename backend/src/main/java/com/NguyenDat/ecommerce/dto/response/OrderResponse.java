@@ -41,6 +41,7 @@ public class OrderResponse {
 
     String note;
 
+    Long userId;
     String userAvatarUrl;
 
     PaymentResponse payment;

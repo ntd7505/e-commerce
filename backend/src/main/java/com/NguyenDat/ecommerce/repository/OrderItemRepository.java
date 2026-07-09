@@ -22,14 +22,17 @@ public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
 
     @Query("""
             SELECT new com.NguyenDat.ecommerce.dto.response.AdminTopProductResponse(
-                oi.productVariant.product.id,
-                oi.productVariant.product.name,
+                p.id,
+                p.name,
+                MAX(pm.url),
                 SUM(oi.quantity),
                 COALESCE(SUM(oi.lineTotal), 0)
             )
             FROM OrderItem oi
+            JOIN oi.productVariant.product p
+            LEFT JOIN p.media pm ON pm.isThumbnail = true
             WHERE oi.order.status IN ('DELIVERED', 'COMPLETED')
-            GROUP BY oi.productVariant.product.id, oi.productVariant.product.name
+            GROUP BY p.id, p.name
             ORDER BY SUM(oi.quantity) DESC
             """)
     List<AdminTopProductResponse> findTopProductsByQuantitySold(Pageable pageable);

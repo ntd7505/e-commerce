@@ -14,6 +14,7 @@ import lombok.experimental.FieldDefaults;
 public class AdminTopProductResponse {
     Long productId;
     String productName;
+    String thumbnailUrl;
     Long quantitySold;
     BigDecimal revenue;
 }
