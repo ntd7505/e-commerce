@@ -1,5 +1,6 @@
 import { Eye, EyeOff, RefreshCw, Search, Star, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useToast } from "../../features/ui/ToastProvider";
 import { AdminImage } from "../../components/admin/AdminImage";
 import { AdminStatCard } from "../../components/admin/AdminStatCard";
 import {
@@ -18,6 +19,7 @@ export default function ProductReviews() {
   const [searchTerm, setSearchTerm] = useState("");
   const [ratingFilter, setRatingFilter] = useState<RatingFilter>("ALL");
   const [actionId, setActionId] = useState<number | null>(null);
+  const { showToast } = useToast();
 
   async function loadReviews() {
     try {
@@ -41,7 +43,7 @@ export default function ProductReviews() {
       setReviews((prev) => prev.map((item) => (item.id === updated.id ? updated : item)));
     } catch (error) {
       console.error("Failed to update review moderation:", error);
-      alert("Không thể cập nhật trạng thái đánh giá.");
+      showToast("Không thể cập nhật trạng thái đánh giá.", "error");
     } finally {
       setActionId(null);
     }
@@ -58,7 +60,7 @@ export default function ProductReviews() {
       setReviews((prev) => prev.filter((item) => item.id !== review.id));
     } catch (error) {
       console.error("Failed to delete review:", error);
-      alert("Không thể xóa đánh giá.");
+      showToast("Không thể xóa đánh giá.", "error");
     } finally {
       setActionId(null);
     }

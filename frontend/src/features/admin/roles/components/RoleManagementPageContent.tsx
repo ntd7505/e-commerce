@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+﻿import React, { useEffect, useMemo, useState } from "react";
 import { RefreshCw, ShieldCheck, KeyRound, Plus, CheckCircle2, AlertCircle, ChevronRight } from "lucide-react";
 import { createRole, getPermissions, getRoles } from "../adminRoleApi";
 import type { PermissionResponse, RoleResponse } from "../adminRoleTypes";
@@ -406,3 +406,4 @@ export default function RoleManagementPageContent() {
     </Container>
   );
 }
+

@@ -34,10 +34,10 @@ export function AdminDashboardCharts({ dashboard }: AdminDashboardChartsProps) {
 
   return (
     <div className="grid gap-6 opacity-0 animate-fade-in-up lg:grid-cols-2" style={{ animationDelay: "250ms" }}>
-      <section className="flex flex-col rounded-xl border border-border bg-surface p-5 shadow-sm">
-        <h3 className="mb-2 text-sm font-bold text-text">Tỷ lệ trạng thái đơn hàng</h3>
-        <p className="mb-6 text-xs text-muted">Phân bổ đơn hàng theo trạng thái hiện tại.</p>
-        <div className="h-[250px] w-full flex-1">
+      <section className="flex flex-col rounded-xl border border-border bg-surface p-5 shadow-sm min-w-0">
+        <h3 className="mb-2 text-sm font-bold text-text">Trạng thái đơn hàng</h3>
+        <p className="mb-6 text-xs text-muted">Phân bổ số lượng đơn hàng theo trạng thái.</p>
+        <div className="h-[250px] w-full flex-1 min-w-0">
           {orderStats.length === 0 ? (
             <div className="flex h-full items-center justify-center text-sm text-muted">Chưa có dữ liệu</div>
           ) : (
@@ -72,10 +72,10 @@ export function AdminDashboardCharts({ dashboard }: AdminDashboardChartsProps) {
         </div>
       </section>
 
-      <section className="flex flex-col rounded-xl border border-border bg-surface p-5 shadow-sm">
-        <h3 className="mb-2 text-sm font-bold text-text">Doanh thu top 5 sản phẩm</h3>
-        <p className="mb-6 text-xs text-muted">Những sản phẩm mang lại giá trị cao nhất.</p>
-        <div className="h-[250px] w-full flex-1">
+      <section className="flex flex-col rounded-xl border border-border bg-surface p-5 shadow-sm min-w-0">
+        <h3 className="mb-2 text-sm font-bold text-text">Sản phẩm bán chạy</h3>
+        <p className="mb-6 text-xs text-muted">Top 5 sản phẩm có doanh thu cao nhất.</p>
+        <div className="h-[250px] w-full flex-1 min-w-0">
           {productStats.length === 0 ? (
             <div className="flex h-full items-center justify-center text-sm text-muted">Chưa có dữ liệu</div>
           ) : (

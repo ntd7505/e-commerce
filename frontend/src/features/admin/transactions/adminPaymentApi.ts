@@ -22,16 +22,32 @@ export async function getPayments(params?: {
   size?: number;
   sort?: string;
 }): Promise<PageResponse<PaymentResponse>> {
-  const { data } = await api.get("/admin/payments", { params });
-  return data.data;
+  const defaultParams = { page: 0, size: 1000, ...params };
+  const { data } = await api.get("/api/v1/admin/payments", { params: defaultParams });
+  
+  if (data?.data?.content) {
+    return data.data;
+  }
+  if (data?.content) {
+    return data;
+  }
+  return { 
+    content: [], 
+    totalElements: 0, 
+    totalPages: 0, 
+    size: defaultParams.size, 
+    page: defaultParams.page,
+    first: true,
+    last: true
+  };
 }
 
 export async function getPaymentById(id: number): Promise<PaymentResponse> {
-  const { data } = await api.get(`/admin/payments/${id}`);
+  const { data } = await api.get(`/api/v1/admin/payments/${id}`);
   return data.data;
 }
 
 export async function updatePaymentStatus(id: number, status: string): Promise<PaymentResponse> {
-  const { data } = await api.patch(`/admin/payments/${id}/status`, { status });
+  const { data } = await api.patch(`/api/v1/admin/payments/${id}/status`, { status });
   return data.data;
 }

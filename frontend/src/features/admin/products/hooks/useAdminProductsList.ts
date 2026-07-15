@@ -1,3 +1,4 @@
+﻿import { useToast } from "../../../../features/ui/ToastProvider";
 import { useEffect, useMemo, useState } from "react";
 import { getProducts, toggleProductStatus } from "../adminProductApi";
 import type { ProductResponse } from "../adminProductTypes";
@@ -6,6 +7,7 @@ import { getPrimaryVariant } from "../adminProductViewUtils";
 export function useAdminProductsList() {
     const [products, setProducts] = useState<ProductResponse[]>([]);
     const [loading, setLoading] = useState(true);
+    const { showToast } = useToast();
     const [error, setError] = useState("");
     const [searchTerm, setSearchTerm] = useState("");
     const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive">("all");
@@ -113,7 +115,7 @@ export function useAdminProductsList() {
             );
         } catch (err) {
             console.error("Failed to update product status:", err);
-            alert("Không thể cập nhật trạng thái sản phẩm");
+            showToast("Không thể cập nhật trạng thái sản phẩm", "error");
         } finally {
             setUpdatingId(null);
         }
@@ -138,3 +140,5 @@ export function useAdminProductsList() {
         toggleStatus,
     };
 }
+
+

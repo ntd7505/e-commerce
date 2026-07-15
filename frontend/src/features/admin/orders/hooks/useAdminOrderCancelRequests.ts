@@ -5,6 +5,7 @@ import {
     rejectOrderCancelRequest,
 } from "../adminOrderCancelApi";
 import type { OrderCancelRequestResponse } from "../adminOrderCancelTypes";
+import { useToast } from "../../../../features/ui/ToastProvider";
 
 type CancelRequestAction = "APPROVE" | "REJECT";
 
@@ -13,13 +14,12 @@ export function useAdminOrderCancelRequests() {
     const [loading, setLoading] = useState(true);
     const [actionRequestId, setActionRequestId] = useState<number | null>(null);
     const [error, setError] = useState("");
-    const [message, setMessage] = useState("");
+    const { showToast } = useToast();
 
     async function refreshRequests() {
         try {
             setLoading(true);
             setError("");
-            setMessage("");
 
             const data = await getOrderCancelRequests();
             setRequests(data);
@@ -40,7 +40,6 @@ export function useAdminOrderCancelRequests() {
         try {
             setActionRequestId(requestId);
             setError("");
-            setMessage("");
 
             const updated =
                 action === "APPROVE"
@@ -52,10 +51,10 @@ export function useAdminOrderCancelRequests() {
                     request.id === updated.id ? updated : request
                 )
             );
-            setMessage(`Cancel request #${updated.id} ${action === "APPROVE" ? "approved" : "rejected"}.`);
+            showToast(`Yêu cầu hủy đơn #${updated.id} đã được ${action === "APPROVE" ? "chấp thuận" : "từ chối"}.`, "success");
         } catch (error) {
             console.error("Failed to update order cancel request:", error);
-            setError("Could not update order cancel request.");
+            showToast("Không thể cập nhật yêu cầu hủy đơn.", "error");
         } finally {
             setActionRequestId(null);
         }
@@ -66,7 +65,6 @@ export function useAdminOrderCancelRequests() {
         loading,
         actionRequestId,
         error,
-        message,
         refreshRequests,
         runCancelRequestAction,
     };

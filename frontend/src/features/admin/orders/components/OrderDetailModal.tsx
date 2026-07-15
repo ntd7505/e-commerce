@@ -1,4 +1,4 @@
-import { X } from "lucide-react";
+﻿import { X } from "lucide-react";
 import type { ReactNode } from "react";
 import type { OrderResponse } from "../adminOrderTypes";
 import { OrderStatusBadge } from "./OrderStatusBadge";
@@ -31,19 +31,19 @@ function formatDate(value: string | null) {
 
 function getNextAction(order: OrderResponse): { label: string; action: "CONFIRM" | "PROCESS" | "SHIP" | "DELIVER" } | null {
     if (order.status === "PENDING") {
-        return { label: "Confirm order", action: "CONFIRM" };
+        return { label: "Xác nhận đơn", action: "CONFIRM" };
     }
 
     if (order.status === "CONFIRMED") {
-        return { label: "Move to processing", action: "PROCESS" };
+        return { label: "Đang xử lý", action: "PROCESS" };
     }
 
     if (order.status === "PROCESSING") {
-        return { label: "Ship order", action: "SHIP" };
+        return { label: "Bắt đầu giao", action: "SHIP" };
     }
 
     if (order.status === "SHIPPING") {
-        return { label: "Mark delivered", action: "DELIVER" };
+        return { label: "Đã giao thành công", action: "DELIVER" };
     }
 
     return null;
@@ -69,55 +69,55 @@ export function OrderDetailModal({
                 <div className="flex items-center justify-between border-b border-border bg-surface px-6 py-4">
                     <div>
                         <h3 className="text-lg font-bold text-text">
-                            {order ? `Order #${order.id}` : "Loading order"}
+                            {order ? `Đơn hàng #${order.id}` : "Đang tải..."}
                         </h3>
-                        {order && <p className="mt-1 text-xs font-medium text-muted">Created {formatDate(order.createdAt)}</p>}
+                        {order && <p className="mt-1 text-xs font-medium text-muted">Tạo lúc {formatDate(order.createdAt)}</p>}
                     </div>
                     <button
                         type="button"
                         onClick={onClose}
                         className="rounded-full p-2 text-muted transition-colors hover:bg-surface-alt hover:text-muted"
-                        aria-label="Close order detail"
+                        aria-label="Đóng"
                     >
                         <X className="h-5 w-5" />
                     </button>
                 </div>
 
-                {loading && <div className="p-6 text-sm text-muted">Loading order detail...</div>}
+                {loading && <div className="p-6 text-sm text-muted">Đang tải thông tin đơn hàng...</div>}
 
                 {order && !loading && (
                     <div className="max-h-[calc(90vh-76px)] overflow-y-auto p-6">
                         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                            <InfoPanel title="Order">
+                            <InfoPanel title="Đơn hàng">
                                 <div className="space-y-3">
-                                    <StatusRow label="Status"><OrderStatusBadge value={order.status} /></StatusRow>
-                                    <StatusRow label="Payment"><OrderStatusBadge value={order.paymentStatus} /></StatusRow>
-                                    <StatusRow label="Shipping"><OrderStatusBadge value={order.shippingStatus} /></StatusRow>
+                                    <StatusRow label="Trạng thái"><OrderStatusBadge value={order.status} /></StatusRow>
+                                    <StatusRow label="Thanh toán"><OrderStatusBadge value={order.paymentStatus} /></StatusRow>
+                                    <StatusRow label="Vận chuyển"><OrderStatusBadge value={order.shippingStatus} /></StatusRow>
                                 </div>
                             </InfoPanel>
 
-                            <InfoPanel title="Recipient">
+                            <InfoPanel title="Người nhận">
                                 <p className="font-semibold text-text">{order.recipientName}</p>
                                 <p className="mt-1 text-sm text-muted">{order.phoneNumber}</p>
                                 <p className="mt-3 text-sm text-muted">{order.shippingAddress}</p>
                             </InfoPanel>
 
-                            <InfoPanel title="Payment">
-                                <p className="text-sm text-muted">Method: {order.payment?.method ?? "-"}</p>
-                                <p className="mt-1 text-sm text-muted">Paid at: {formatDate(order.payment?.paidAt ?? null)}</p>
-                                <p className="mt-1 text-sm text-muted">Code: {order.payment?.transactionCode ?? "-"}</p>
+                            <InfoPanel title="Thanh toán">
+                                <p className="text-sm text-muted">Phương thức: {order.payment?.method ?? "-"}</p>
+                                <p className="mt-1 text-sm text-muted">Thanh toán lúc: {formatDate(order.payment?.paidAt ?? null)}</p>
+                                <p className="mt-1 text-sm text-muted">Mã GD: {order.payment?.transactionCode ?? "-"}</p>
                             </InfoPanel>
                         </div>
 
-                        <div className="mt-6 overflow-hidden rounded-lg border border-border-strong">
+                        <div className="mt-6 overflow-x-auto overflow-hidden rounded-lg border border-border-strong">
                             <table className="w-full text-left text-sm">
                                 <thead className="bg-surface text-xs uppercase text-muted">
                                     <tr>
-                                        <th className="px-5 py-3">Product</th>
-                                        <th className="px-5 py-3">SKU</th>
-                                        <th className="px-5 py-3">Qty</th>
-                                        <th className="px-5 py-3">Unit</th>
-                                        <th className="px-5 py-3 text-right">Total</th>
+                                        <th className="px-5 py-3">Sản phẩm</th>
+                                        <th className="px-5 py-3">Mã SKU</th>
+                                        <th className="px-5 py-3">Số lượng</th>
+                                        <th className="px-5 py-3">Đơn giá</th>
+                                        <th className="px-5 py-3 text-right">Thành tiền</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-border">
@@ -139,19 +139,19 @@ export function OrderDetailModal({
 
                         <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-[1fr_280px]">
                             <div className="rounded-lg border border-border-strong p-5">
-                                <h4 className="font-bold text-text">Note</h4>
-                                <p className="mt-2 text-sm text-muted">{order.note || "No note"}</p>
+                                <h4 className="font-bold text-text">Ghi chú</h4>
+                                <p className="mt-2 text-sm text-muted">{order.note || "Không có ghi chú"}</p>
                                 {order.couponCode && (
-                                    <p className="mt-3 text-sm font-semibold text-success">Coupon: {order.couponCode}</p>
+                                    <p className="mt-3 text-sm font-semibold text-success">Mã giảm giá: {order.couponCode}</p>
                                 )}
                             </div>
 
                             <div className="rounded-lg border border-border-strong p-5">
-                                <PriceRow label="Subtotal" value={order.subtotalAmount} />
-                                <PriceRow label="Shipping" value={order.shippingFee} />
-                                <PriceRow label="Discount" value={-order.discountAmount} />
+                                <PriceRow label="Tạm tính" value={order.subtotalAmount} />
+                                <PriceRow label="Phí vận chuyển" value={order.shippingFee} />
+                                <PriceRow label="Giảm giá" value={-order.discountAmount} />
                                 <div className="mt-3 border-t border-border pt-3">
-                                    <PriceRow label="Total" value={order.totalAmount} strong />
+                                    <PriceRow label="Tổng cộng" value={order.totalAmount} strong />
                                 </div>
                             </div>
                         </div>
@@ -162,7 +162,7 @@ export function OrderDetailModal({
                                 onClick={onClose}
                                 className="rounded-lg border border-border-strong px-4 py-2 text-sm font-bold text-muted transition-colors hover:bg-surface"
                             >
-                                Close
+                                Đóng
                             </button>
                             {nextAction && (
                                 <button
@@ -171,7 +171,7 @@ export function OrderDetailModal({
                                     disabled={busy}
                                     className="rounded-lg bg-success px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-success disabled:cursor-not-allowed disabled:opacity-60"
                                 >
-                                    {busy ? "Updating..." : nextAction.label}
+                                    {busy ? "Đang xử lý..." : nextAction.label}
                                 </button>
                             )}
                         </div>
@@ -208,3 +208,4 @@ function PriceRow({ label, value, strong }: { label: string; value: number; stro
         </div>
     );
 }
+

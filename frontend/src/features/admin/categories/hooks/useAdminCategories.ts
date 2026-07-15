@@ -1,3 +1,4 @@
+﻿import { useToast } from "../../../../features/ui/ToastProvider";
 import { useEffect, useMemo, useState } from "react";
 import {
   createCategory,
@@ -10,6 +11,7 @@ import type { CategoryResponse } from "../adminCategoryTypes";
 export function useAdminCategories() {
   const [categories, setCategories] = useState<CategoryResponse[]>([]);
   const [loading, setLoading] = useState(true);
+    const { showToast } = useToast();
   const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [showModal, setShowModal] = useState(false);
@@ -114,7 +116,7 @@ export function useAdminCategories() {
     const trimmedName = name.trim();
 
     if (!trimmedName) {
-      alert("Vui lòng nhập tên danh mục");
+      showToast("Vui lòng nhập tên danh mục", "error");
       return;
     }
 
@@ -142,7 +144,7 @@ export function useAdminCategories() {
       closeModal();
     } catch (error) {
       console.error("Failed to save category:", error);
-      alert("Không thể lưu danh mục");
+      showToast("Không thể lưu danh mục", "error");
     } finally {
       setSaving(false);
     }
@@ -159,7 +161,7 @@ export function useAdminCategories() {
       setCategories((prev) => prev.filter((item) => item.id !== category.id));
     } catch (error) {
       console.error("Failed to delete category:", error);
-      alert("Không thể xóa danh mục. Danh mục có thể đang có sản phẩm hoặc danh mục con.");
+      showToast("Không thể xóa danh mục. Danh mục có thể đang có sản phẩm hoặc danh mục con.", "error");
     } finally {
       setDeletingId(null);
     }
@@ -192,3 +194,5 @@ export function useAdminCategories() {
     removeCategory,
   };
 }
+
+

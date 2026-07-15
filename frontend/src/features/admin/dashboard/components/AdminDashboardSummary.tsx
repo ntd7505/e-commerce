@@ -1,3 +1,4 @@
+import { useToast } from "../../../../features/ui/ToastProvider";
 import { Link } from "react-router-dom";
 import {
   ArrowUpRight,
@@ -55,6 +56,7 @@ export default function AdminDashboardSummary() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
+  const { showToast } = useToast();
 
   const user = getStoredUser();
   const displayName = user ? (user.fullName || user.email) : 'Admin';
@@ -216,7 +218,7 @@ export default function AdminDashboardSummary() {
                               if (order.userId) {
                                 setSelectedUserId(order.userId);
                               } else {
-                                alert("Đơn hàng này không được gắn với tài khoản người dùng nào (Khách vãng lai) hoặc Backend chưa được cập nhật.");
+                                showToast("Đơn hàng này không được gắn với tài khoản người dùng nào (Khách vãng lai).", "error");
                               }
                             }}
                           >
@@ -318,3 +320,4 @@ export default function AdminDashboardSummary() {
     </Container>
   );
 }
+

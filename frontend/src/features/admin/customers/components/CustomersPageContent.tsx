@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
+﻿import { useEffect, useMemo, useState } from "react";
+import { useToast } from "../../../../features/ui/ToastProvider";
 import { Search, RefreshCw, Users, Ban, CheckCircle } from "lucide-react";
 import { AdminBadge } from "../../../../components/admin/AdminBadge";
 import { Modal, Container, Section } from "../../../../components/common";
@@ -17,6 +18,7 @@ export default function CustomersPageContent() {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("ALL");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const { showToast } = useToast();
   const [togglingId, setTogglingId] = useState<number | null>(null);
   const [page, setPage] = useState(1);
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
@@ -72,7 +74,7 @@ export default function CustomersPageContent() {
       setUsers((prev) => prev.map((u) => (u.id === updated.id ? updated : u)));
     } catch (err) {
       console.error("Failed to update user status:", err);
-      setError("Không thể cập nhật trạng thái người dùng. Kiểm tra quyền admin hoặc thử lại.");
+      showToast("Không thể cập nhật trạng thái người dùng. Kiểm tra quyền admin hoặc thử lại.", "error");
     } finally {
       setTogglingId(null);
     }
@@ -80,7 +82,7 @@ export default function CustomersPageContent() {
 
   function toggleUserStatus(user: AdminUserResponse) {
     if (user.id == null) {
-      setError("Không tìm thấy ID người dùng. Vui lòng restart backend và tải lại danh sách khách hàng.");
+      showToast("Không tìm thấy ID người dùng.", "error");
       return;
     }
 
@@ -366,3 +368,4 @@ export default function CustomersPageContent() {
     </Container>
   );
 }
+

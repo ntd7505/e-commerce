@@ -4,6 +4,7 @@ import { AdminStatCard } from "../../components/admin/AdminStatCard";
 import { getPayments, updatePaymentStatus, type PaymentResponse } from "../../features/admin/transactions/adminPaymentApi";
 import { OrderStatusBadge } from "../../features/admin/orders/components/OrderStatusBadge";
 import { Modal } from "../../components/common";
+import { useToast } from "../../features/ui/ToastProvider";
 import { Button } from "../../components/common";
 
 type PaymentStatusFilter = "ALL" | PaymentResponse["status"];
@@ -59,16 +60,17 @@ export default function Transactions() {
   const [page, setPage] = useState(1);
   const [selectedPayment, setSelectedPayment] = useState<PaymentResponse | null>(null);
   const [updating, setUpdating] = useState(false);
+  const { showToast } = useToast();
 
   async function loadTransactions() {
     try {
       setLoading(true);
       setError("");
       const data = await getPayments({ size: 1000 }); // Getting all for client side filtering for now
-      setPayments(data.content);
+      setPayments(data?.content ?? []);
     } catch (error) {
       console.error("Failed to load transactions:", error);
-      setError("Could not load transactions.");
+      setError("Không thể tải danh sách giao dịch.");
     } finally {
       setLoading(false);
     }
@@ -113,21 +115,22 @@ export default function Transactions() {
       await updatePaymentStatus(selectedPayment.id, status);
       await loadTransactions();
       setSelectedPayment(null);
+      showToast("Đã cập nhật trạng thái giao dịch.", "success");
     } catch (error) {
       console.error("Failed to update payment status:", error);
-      alert("Failed to update status");
+      showToast("Không thể cập nhật trạng thái.", "error");
     } finally {
       setUpdating(false);
     }
   };
 
   const statusOptions: Array<{ label: string; value: PaymentStatusFilter }> = [
-    { label: "All", value: "ALL" },
-    { label: "Paid", value: "PAID" },
-    { label: "Unpaid", value: "UNPAID" },
-    { label: "Failed", value: "FAILED" },
-    { label: "Refunded", value: "REFUNDED" },
-    { label: "Cancelled", value: "CANCELLED" },
+    { label: "Tất cả", value: "ALL" },
+    { label: "Đã TT", value: "PAID" },
+    { label: "Chưa TT", value: "UNPAID" },
+    { label: "Thất bại", value: "FAILED" },
+    { label: "Hoàn tiền", value: "REFUNDED" },
+    { label: "Đã hủy", value: "CANCELLED" },
   ];
 
   const paidCount = payments.filter((t) => t.status === "PAID").length;
@@ -142,19 +145,20 @@ export default function Transactions() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-bold text-text">Transactions</h2>
-          <p className="text-sm text-muted">Manage payments and transactions.</p>
+          <h2 className="text-xl font-bold text-text">Giao dịch</h2>
+          <p className="text-sm text-muted">Quản lý thanh toán và giao dịch.</p>
         </div>
         <div className="flex items-center gap-2">
           <button
             type="button"
+            disabled={!payments || payments.length === 0}
             onClick={() =>
               exportToCsv(filteredTransactions, `transactions_${new Date().toISOString().slice(0, 10)}.csv`)
             }
-            className="flex items-center gap-2 rounded-lg border border-success-soft bg-success-soft px-4 py-2 text-sm font-bold text-success transition-colors hover:bg-success-soft"
+            className="flex items-center gap-2 rounded-lg border border-success-soft bg-success-soft px-4 py-2 text-sm font-bold text-success transition-colors hover:bg-success-soft disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Download className="h-4 w-4" />
-            Export CSV
+            Xuất CSV
           </button>
           <button
             type="button"
@@ -163,19 +167,19 @@ export default function Transactions() {
             className="flex items-center gap-2 rounded-2xl border border-border bg-surface px-4 py-2 text-sm font-semibold text-text transition-colors hover:bg-surface disabled:opacity-60"
           >
             <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
-            Refresh
+            Tải lại
           </button>
         </div>
       </div>
 
       {/* Stats */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
-        <AdminStatCard label="Total" value={payments.length} />
-        <AdminStatCard label="Paid" value={paidCount} />
-        <AdminStatCard label="Unpaid" value={unpaidCount} />
-        <AdminStatCard label="Revenue" value={`${formatMoney(totalRevenue)} đ`} />
+        <AdminStatCard label="Tổng cộng" value={payments.length} />
+        <AdminStatCard label="Đã TT" value={paidCount} />
+        <AdminStatCard label="Chưa TT" value={unpaidCount} />
+        <AdminStatCard label="Doanh thu" value={`${formatMoney(totalRevenue)} đ`} />
         <div className="hidden">
-          <AdminStatCard label="Refunded" value={refundedCount} />
+          <AdminStatCard label="Hoàn tiền" value={refundedCount} />
         </div>
       </div>
 
@@ -183,9 +187,9 @@ export default function Transactions() {
       <div className="overflow-hidden rounded-2xl border border-border bg-surface shadow-sm">
         <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border p-5">
           <div>
-            <h3 className="font-bold text-text">Payment History</h3>
+            <h3 className="font-bold text-text">Lịch sử giao dịch</h3>
             <p className="mt-1 text-xs font-medium text-muted">
-              Showing {filteredTransactions.length} of {payments.length} records
+              Hiển thị {filteredTransactions.length}/{payments.length} bản ghi
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
@@ -207,19 +211,19 @@ export default function Transactions() {
               <input
                 value={searchTerm}
                 onChange={(e) => handleSearch(e.target.value)}
-                placeholder="Search order ID, code"
+                placeholder="Tìm mã đơn, mã tham chiếu"
                 className="w-full rounded-lg border border-border-strong bg-surface py-2 pl-9 pr-3 text-sm outline-none transition focus:border-success focus:ring-1 focus:ring-success"
               />
             </div>
           </div>
         </div>
 
-        {loading && <div className="p-6 text-sm text-muted">Loading transactions...</div>}
+        {loading && <div className="p-6 text-sm text-muted">Đang tải dữ liệu...</div>}
         {!loading && error && <div className="p-6 text-sm font-semibold text-danger">{error}</div>}
         {!loading && !error && filteredTransactions.length === 0 && (
           <div className="p-10 text-center">
             <Download className="mx-auto mb-3 h-10 w-10 text-subtle" />
-            <p className="text-sm font-semibold text-muted">No transactions found</p>
+            <p className="text-sm font-semibold text-muted">Chưa có giao dịch nào</p>
           </div>
         )}
 
@@ -229,13 +233,13 @@ export default function Transactions() {
               <table className="w-full min-w-[900px] text-left text-sm">
                 <thead className="sticky top-0 bg-surface text-xs font-semibold text-muted">
                   <tr>
-                    <th className="px-5 py-3 font-bold">ID</th>
-                    <th className="px-5 py-3 font-bold">Order ID</th>
-                    <th className="px-5 py-3 font-bold">Method</th>
-                    <th className="px-5 py-3 font-bold text-right">Amount</th>
-                    <th className="px-5 py-3 font-bold">Status</th>
-                    <th className="px-5 py-3 font-bold">Reference</th>
-                    <th className="px-5 py-3 font-bold">Paid At</th>
+                    <th className="px-5 py-3 font-bold">Mã GD</th>
+                    <th className="px-5 py-3 font-bold">Mã đơn</th>
+                    <th className="px-5 py-3 font-bold">Phương thức</th>
+                    <th className="px-5 py-3 font-bold text-right">Số tiền</th>
+                    <th className="px-5 py-3 font-bold">Trạng thái</th>
+                    <th className="px-5 py-3 font-bold">Tham chiếu</th>
+                    <th className="px-5 py-3 font-bold">Ngày thanh toán</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
@@ -320,25 +324,25 @@ export default function Transactions() {
       <Modal
         isOpen={!!selectedPayment}
         onClose={() => setSelectedPayment(null)}
-        title="Payment Details"
+        title="Chi tiết giao dịch"
       >
         {selectedPayment && (
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <p className="text-sm font-medium text-muted">Order ID</p>
+                <p className="text-sm font-medium text-muted">Mã đơn</p>
                 <p className="font-semibold text-text">#{selectedPayment.orderId}</p>
               </div>
               <div>
-                <p className="text-sm font-medium text-muted">Amount</p>
+                <p className="text-sm font-medium text-muted">Số tiền</p>
                 <p className="font-semibold text-text">{formatMoney(selectedPayment.amount)} đ</p>
               </div>
               <div>
-                <p className="text-sm font-medium text-muted">Method</p>
+                <p className="text-sm font-medium text-muted">Phương thức</p>
                 <p className="font-semibold text-text">{selectedPayment.method}</p>
               </div>
               <div>
-                <p className="text-sm font-medium text-muted">Status</p>
+                <p className="text-sm font-medium text-muted">Trạng thái</p>
                 <div className="mt-1">
                   {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                   <OrderStatusBadge value={selectedPayment.status as any} />
@@ -348,17 +352,17 @@ export default function Transactions() {
 
             {selectedPayment.method === "BANK_TRANSFER" && (
               <div className="rounded-xl border border-border p-4 bg-surface-alt">
-                <h4 className="font-bold text-text mb-2">Bank Transfer Details</h4>
+                <h4 className="font-bold text-text mb-2">Chi tiết chuyển khoản</h4>
                 <div className="grid grid-cols-2 gap-2 text-sm">
-                  <p className="text-muted">Transaction Code:</p>
+                  <p className="text-muted">Mã GD:</p>
                   <p className="font-medium text-text">{selectedPayment.transactionCode}</p>
-                  <p className="text-muted">Bank Code:</p>
+                  <p className="text-muted">Ngân hàng:</p>
                   <p className="font-medium text-text">{selectedPayment.bankCode || "-"}</p>
-                  <p className="text-muted">Account:</p>
+                  <p className="text-muted">Tài khoản:</p>
                   <p className="font-medium text-text">{selectedPayment.bankAccount || "-"}</p>
-                  <p className="text-muted">Name:</p>
+                  <p className="text-muted">Tên TK:</p>
                   <p className="font-medium text-text">{selectedPayment.bankAccountName || "-"}</p>
-                  <p className="text-muted">Content:</p>
+                  <p className="text-muted">Nội dung:</p>
                   <p className="font-medium text-text">{selectedPayment.transferContent || "-"}</p>
                 </div>
                 {selectedPayment.qrCodeUrl && (
@@ -376,7 +380,7 @@ export default function Transactions() {
                   onClick={() => handleUpdateStatus("PAID")}
                   loading={updating}
                 >
-                  Mark as Paid
+                  Đánh dấu Đã thanh toán
                 </Button>
               )}
               {selectedPayment.status === "PAID" && (
@@ -385,7 +389,7 @@ export default function Transactions() {
                   onClick={() => handleUpdateStatus("REFUNDED")}
                   loading={updating}
                 >
-                  Mark as Refunded
+                  Đánh dấu Đã hoàn tiền
                 </Button>
               )}
             </div>
@@ -395,3 +399,4 @@ export default function Transactions() {
     </div>
   );
 }
+

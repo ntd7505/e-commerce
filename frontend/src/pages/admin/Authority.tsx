@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+﻿import { useEffect, useMemo, useState } from "react";
 import { AlertCircle, RefreshCw, Search, ShieldCheck, Users } from "lucide-react";
 import { AdminAlert } from "../../components/admin/AdminAlert";
 import { AdminBadge } from "../../components/admin/AdminBadge";
@@ -224,3 +224,4 @@ export default function Authority() {
     </Container>
   );
 }
+

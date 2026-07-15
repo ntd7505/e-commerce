@@ -8,6 +8,7 @@ import {
     shipOrder,
 } from "../adminOrderApi";
 import type { OrderResponse } from "../adminOrderTypes";
+import { useToast } from "../../../../features/ui/ToastProvider";
 
 type OrderAction = "CONFIRM" | "PROCESS" | "SHIP" | "DELIVER";
 
@@ -18,13 +19,12 @@ export function useAdminOrders() {
     const [loadingDetail, setLoadingDetail] = useState(false);
     const [actionOrderId, setActionOrderId] = useState<number | null>(null);
     const [error, setError] = useState("");
-    const [message, setMessage] = useState("");
+    const { showToast } = useToast();
 
     async function refreshOrders() {
         try {
             setLoading(true);
             setError("");
-            setMessage("");
 
             const data = await getOrders();
             setOrders(data);
@@ -74,7 +74,6 @@ export function useAdminOrders() {
         try {
             setActionOrderId(orderId);
             setError("");
-            setMessage("");
 
             const updated =
                 action === "CONFIRM"
@@ -86,10 +85,10 @@ export function useAdminOrders() {
                         : await deliverOrder(orderId);
 
             syncOrder(updated);
-            setMessage(`Order #${updated.id} updated successfully.`);
+            showToast(`Đã cập nhật đơn hàng #${updated.id} thành công.`, "success");
         } catch (error) {
             console.error("Failed to update order:", error);
-            setError("Could not update order.");
+            showToast("Không thể cập nhật đơn hàng.", "error");
         } finally {
             setActionOrderId(null);
         }
@@ -102,7 +101,6 @@ export function useAdminOrders() {
         loadingDetail,
         actionOrderId,
         error,
-        message,
         refreshOrders,
         openOrderDetail,
         closeOrderDetail,

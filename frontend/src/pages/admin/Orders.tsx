@@ -33,14 +33,6 @@ export default function Orders() {
         onRefresh={refreshActiveTab}
       />
 
-      {ordersPage.message && (
-        <AdminAlert tone="success">{ordersPage.message}</AdminAlert>
-      )}
-
-      {cancelRequestsPage.message && (
-        <AdminAlert tone="success">{cancelRequestsPage.message}</AdminAlert>
-      )}
-
       <OrderStats orders={ordersPage.orders} />
 
       <div className="flex w-fit rounded-lg border border-border-strong bg-surface p-1" role="tablist">

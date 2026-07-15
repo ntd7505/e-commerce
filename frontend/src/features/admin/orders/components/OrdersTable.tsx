@@ -15,12 +15,12 @@ type OrdersTableProps = {
 };
 
 const orderStatusFilters: Array<{ label: string; value: "ALL" | OrderStatus }> = [
-    { label: "All", value: "ALL" },
-    { label: "Pending", value: "PENDING" },
-    { label: "Confirmed", value: "CONFIRMED" },
-    { label: "Processing", value: "PROCESSING" },
-    { label: "Shipping", value: "SHIPPING" },
-    { label: "Delivered", value: "DELIVERED" },
+    { label: "Tất cả", value: "ALL" },
+    { label: "Chờ xử lý", value: "PENDING" },
+    { label: "Đã xác nhận", value: "CONFIRMED" },
+    { label: "Đang xử lý", value: "PROCESSING" },
+    { label: "Đang giao", value: "SHIPPING" },
+    { label: "Đã giao", value: "DELIVERED" },
 ];
 
 function formatMoney(value: number) {
@@ -39,19 +39,19 @@ function formatDate(value: string) {
 
 function getNextAction(order: OrderResponse): { label: string; action: "CONFIRM" | "PROCESS" | "SHIP" | "DELIVER" } | null {
     if (order.status === "PENDING") {
-        return { label: "Confirm", action: "CONFIRM" };
+        return { label: "Xác nhận", action: "CONFIRM" };
     }
 
     if (order.status === "CONFIRMED") {
-        return { label: "Process", action: "PROCESS" };
+        return { label: "Xử lý", action: "PROCESS" };
     }
 
     if (order.status === "PROCESSING") {
-        return { label: "Ship", action: "SHIP" };
+        return { label: "Giao hàng", action: "SHIP" };
     }
 
     if (order.status === "SHIPPING") {
-        return { label: "Deliver", action: "DELIVER" };
+        return { label: "Đã giao", action: "DELIVER" };
     }
 
     return null;
@@ -97,9 +97,9 @@ export function OrdersTable({
         <div className="overflow-hidden rounded-xl border border-border bg-surface">
             <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border p-5">
                 <div>
-                    <h3 className="font-bold text-text">Order List</h3>
+                    <h3 className="font-bold text-text">Danh sách đơn hàng</h3>
                     <p className="mt-1 text-xs font-medium text-muted">
-                        Showing {filteredOrders.length} of {orders.length} orders
+                        Hiển thị {filteredOrders.length}/{orders.length} đơn hàng
                     </p>
                 </div>
 
@@ -126,7 +126,7 @@ export function OrdersTable({
                         <input
                             value={searchTerm}
                             onChange={(event) => setSearchTerm(event.target.value)}
-                            placeholder="Search order, name, phone"
+                            placeholder="Tìm kiếm mã, tên, SĐT"
                             className="w-full rounded-lg border border-border-strong bg-surface py-2 pl-9 pr-3 text-sm outline-none focus:border-success"
                         />
                     </div>
@@ -137,7 +137,7 @@ export function OrdersTable({
                             onClick={clearFilters}
                             className="rounded-xl border border-border bg-surface px-3 py-2 text-xs font-bold text-muted transition-colors hover:bg-surface"
                         >
-                            Clear
+                            Xóa lọc
                         </button>
                     )}
                 </div>
@@ -148,8 +148,8 @@ export function OrdersTable({
             {!loading && !error && filteredOrders.length === 0 && (
                 <AdminEmptyState
                     icon={ShoppingBag}
-                    title="No orders found"
-                    description="Orders will appear here once placed."
+                    title="Không tìm thấy đơn hàng"
+                    description="Các đơn hàng sẽ hiển thị ở đây."
                     compact
                 />
             )}
@@ -159,14 +159,14 @@ export function OrdersTable({
                     <table className="w-full min-w-[1040px] text-left text-sm">
                         <thead className="bg-surface text-xs uppercase text-muted">
                             <tr>
-                                <th className="px-5 py-3">Order</th>
-                                <th className="px-5 py-3">Customer</th>
-                                <th className="px-5 py-3">Amount</th>
-                                <th className="px-5 py-3">Order Status</th>
-                                <th className="px-5 py-3">Payment</th>
-                                <th className="px-5 py-3">Shipping</th>
-                                <th className="px-5 py-3">Created</th>
-                                <th className="px-5 py-3 text-right">Actions</th>
+                                <th className="px-5 py-3">Mã đơn</th>
+                                <th className="px-5 py-3">Khách hàng</th>
+                                <th className="px-5 py-3">Tổng tiền</th>
+                                <th className="px-5 py-3">Trạng thái</th>
+                                <th className="px-5 py-3">Thanh toán</th>
+                                <th className="px-5 py-3">Vận chuyển</th>
+                                <th className="px-5 py-3">Ngày tạo</th>
+                                <th className="px-5 py-3 text-right">Thao tác</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-border">
@@ -209,7 +209,7 @@ export function OrdersTable({
                                                     type="button"
                                                     onClick={() => onView(order.id)}
                                                     className="rounded-md p-2 text-muted transition-colors hover:bg-surface-alt"
-                                                    aria-label="View order"
+                                                    title="Xem chi tiết"
                                                 >
                                                     <Eye className="h-4 w-4" />
                                                 </button>
@@ -221,7 +221,7 @@ export function OrdersTable({
                                                         disabled={busy}
                                                         className="rounded-lg bg-success px-3 py-2 text-xs font-bold text-white transition-colors hover:bg-success disabled:cursor-not-allowed disabled:opacity-60"
                                                     >
-                                                        {busy ? "Updating..." : nextAction.label}
+                                                        {busy ? "Đang xử lý..." : nextAction.label}
                                                     </button>
                                                 )}
                                             </div>

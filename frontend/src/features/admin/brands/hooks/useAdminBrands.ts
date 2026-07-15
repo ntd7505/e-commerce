@@ -1,3 +1,4 @@
+﻿import { useToast } from "../../../../features/ui/ToastProvider";
 import { useEffect, useMemo, useState } from "react";
 import {
   createBrand,
@@ -11,6 +12,7 @@ import type { BrandResponse } from "../adminBrandTypes";
 export function useAdminBrands() {
   const [brands, setBrands] = useState<BrandResponse[]>([]);
   const [loading, setLoading] = useState(true);
+    const { showToast } = useToast();
   const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [showModal, setShowModal] = useState(false);
@@ -109,7 +111,7 @@ export function useAdminBrands() {
     const trimmedLogoUrl = logoUrl.trim();
 
     if (!trimmedName) {
-      alert("Vui lòng nhập tên thương hiệu");
+      showToast("Vui lòng nhập tên thương hiệu", "error");
       return;
     }
 
@@ -135,7 +137,7 @@ export function useAdminBrands() {
       closeModal();
     } catch (error) {
       console.error("Failed to save brand:", error);
-      alert("Không thể lưu thương hiệu");
+      showToast("Không thể lưu thương hiệu", "error");
     } finally {
       setSaving(false);
     }
@@ -150,7 +152,7 @@ export function useAdminBrands() {
       );
     } catch (error) {
       console.error("Failed to update brand status:", error);
-      alert("Không thể cập nhật trạng thái thương hiệu");
+      showToast("Không thể cập nhật trạng thái thương hiệu", "error");
     } finally {
       setUpdatingId(null);
     }
@@ -167,7 +169,7 @@ export function useAdminBrands() {
       setBrands((prev) => prev.filter((item) => item.id !== brand.id));
     } catch (error) {
       console.error("Failed to delete brand:", error);
-      alert("Không thể xóa thương hiệu. Thương hiệu có thể đang có sản phẩm.");
+      showToast("Không thể xóa thương hiệu. Thương hiệu có thể đang có sản phẩm.", "error");
     } finally {
       setUpdatingId(null);
     }
@@ -197,3 +199,5 @@ export function useAdminBrands() {
     removeBrand,
   };
 }
+
+

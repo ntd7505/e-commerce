@@ -1,5 +1,6 @@
 import { useEffect, useState, type ChangeEvent } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useToast } from "../../../../features/ui/ToastProvider";
 import {
     addProductVariant,
     createProduct,
@@ -38,6 +39,7 @@ function getErrorMessage(error: unknown, fallback: string) {
 
 export function useAdminProductEditor() {
     const navigate = useNavigate();
+    const { showToast } = useToast();
     const { id } = useParams();
     const productId = id ? Number(id) : null;
     const isEditMode = productId !== null && Number.isFinite(productId);
@@ -143,7 +145,7 @@ export function useAdminProductEditor() {
                 console.error("Failed to load product:", error);
 
                 if (!ignore) {
-                    alert("Không thể tải thông tin sản phẩm");
+                    showToast("Không thể tải thông tin sản phẩm", "error");
                     navigate("/admin/products");
                 }
             } finally {
@@ -203,7 +205,7 @@ export function useAdminProductEditor() {
         const invalidFile = selectedFiles.find((file) => validateProductImageFile(file));
 
         if (invalidFile) {
-            alert(validateProductImageFile(invalidFile));
+            showToast(validateProductImageFile(invalidFile)!, "error");
             return [];
         }
 
@@ -217,7 +219,7 @@ export function useAdminProductEditor() {
 
         const validationError = validateProductImageFile(file);
         if (validationError) {
-            alert(validationError);
+            showToast(validationError, "error");
             return "";
         }
 
@@ -226,7 +228,7 @@ export function useAdminProductEditor() {
             return await uploadProductImage(file);
         } catch (error) {
             console.error("Failed to upload image:", error);
-            alert(getErrorMessage(error, "Cannot upload image. Check Cloudinary configuration or try again."));
+            showToast(getErrorMessage(error, "Cannot upload image. Check Cloudinary configuration or try again."), "error");
             return "";
         } finally {
             setUploadingKey(null);
@@ -263,7 +265,7 @@ export function useAdminProductEditor() {
             });
         } catch (error) {
             console.error("Failed to upload product images:", error);
-            alert(getErrorMessage(error, "Cannot upload images. Check Cloudinary configuration or try again."));
+            showToast(getErrorMessage(error, "Cannot upload images. Check Cloudinary configuration or try again."), "error");
         } finally {
             setUploadingKey(null);
         }
@@ -311,7 +313,7 @@ export function useAdminProductEditor() {
             await reloadMediaOnly(productId);
         } catch (error) {
             console.error("Failed to save uploaded media:", error);
-            alert("Image uploaded, but product media could not be saved.");
+            showToast("Image uploaded, but product media could not be saved.", "error");
             updateMediaDraft(index, { url: imageUrl });
         } finally {
             setSavingMediaIndex(null);
@@ -347,7 +349,7 @@ export function useAdminProductEditor() {
             await reloadMediaOnly(productId);
         } catch (error) {
             console.error("Failed to upload product media:", error);
-            alert(getErrorMessage(error, "Cannot upload and save product images."));
+            showToast(getErrorMessage(error, "Cannot upload and save product images."), "error");
         } finally {
             setUploadingKey(null);
         }
@@ -355,17 +357,17 @@ export function useAdminProductEditor() {
 
     const handleSaveProduct = async () => {
         if (uploadingKey) {
-            alert("Please wait for image uploads to finish.");
+            showToast("Please wait for image uploads to finish.", "error");
             return;
         }
 
         if (!formValues.name.trim()) {
-            alert("Vui lòng nhập tên sản phẩm");
+            showToast("Vui lòng nhập tên sản phẩm", "error");
             return;
         }
 
         if (!formValues.brandId || !formValues.categoryId) {
-            alert("Vui lòng chọn thương hiệu và danh mục");
+            showToast("Vui lòng chọn thương hiệu và danh mục", "error");
             return;
         }
 
@@ -374,16 +376,16 @@ export function useAdminProductEditor() {
 
             if (isEditMode && productId) {
                 const response = await updateProduct(productId, toProductUpdateRequest(formValues, productActive));
-                alert(`Đã cập nhật sản phẩm: ${response.name}`);
+                showToast(`Đã cập nhật sản phẩm: ${response.name}`, "success");
                 await reloadProduct(productId);
             } else {
                 const response = await createProduct(toProductCreateRequest(formValues));
-                alert(`Đã tạo sản phẩm: ${response.name}`);
+                showToast(`Đã tạo sản phẩm: ${response.name}`, "success");
                 navigate(`/admin/products/${response.id}/edit`);
             }
         } catch (error) {
             console.error("Failed to save product:", error);
-            alert("Không thể lưu sản phẩm. Vui lòng kiểm tra dữ liệu và thử lại.");
+            showToast("Không thể lưu sản phẩm. Vui lòng kiểm tra dữ liệu và thử lại.", "error");
         } finally {
             setLoading(false);
         }
@@ -408,7 +410,7 @@ export function useAdminProductEditor() {
 
         const variant = variants[index];
         if (!variant.variantName.trim()) {
-            alert("Vui lòng nhập tên biến thể");
+            showToast("Vui lòng nhập tên biến thể", "error");
             return;
         }
 
@@ -432,7 +434,7 @@ export function useAdminProductEditor() {
             }
         } catch (error) {
             console.error("Failed to save variant:", error);
-            alert("Không thể lưu biến thể");
+            showToast("Không thể lưu biến thể", "error");
         } finally {
             setSavingVariantIndex(null);
         }
@@ -455,7 +457,7 @@ export function useAdminProductEditor() {
             setVariants((prev) => prev.filter((_, currentIndex) => currentIndex !== index));
         } catch (error) {
             console.error("Failed to delete variant:", error);
-            alert("Không thể xóa biến thể");
+            showToast("Không thể xóa biến thể", "error");
         }
     };
 
@@ -481,7 +483,7 @@ export function useAdminProductEditor() {
 
         const media = mediaItems[index];
         if (!media.url.trim()) {
-            alert("Vui lòng nhập URL ảnh hoặc upload file");
+            showToast("Vui lòng nhập URL ảnh hoặc upload file", "error");
             return;
         }
 
@@ -505,7 +507,7 @@ export function useAdminProductEditor() {
             await reloadMediaOnly(productId);
         } catch (error) {
             console.error("Failed to save media:", error);
-            alert("Không thể lưu ảnh sản phẩm");
+            showToast("Không thể lưu ảnh sản phẩm", "error");
         } finally {
             setSavingMediaIndex(null);
         }
@@ -528,7 +530,7 @@ export function useAdminProductEditor() {
             setMediaItems((prev) => prev.filter((_, currentIndex) => currentIndex !== index));
         } catch (error) {
             console.error("Failed to delete media:", error);
-            alert("Không thể xóa ảnh sản phẩm");
+            showToast("Không thể xóa ảnh sản phẩm", "error");
         }
     };
 
