@@ -13,10 +13,10 @@ export function OrderStats({ orders }: OrderStatsProps) {
 
     return (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
-            <AdminStatCard label="Total Orders" value={orders.length} />
-            <AdminStatCard label="Pending" value={pending} />
-            <AdminStatCard label="Processing" value={processing} />
-            <AdminStatCard label="Delivered" value={delivered + shipping} helper={`${shipping} shipping`} />
+            <AdminStatCard label="Tổng đơn hàng" value={orders.length} />
+            <AdminStatCard label="Chờ xác nhận" value={pending} />
+            <AdminStatCard label="Đang xử lý" value={processing} />
+            <AdminStatCard label="Đã giao hàng" value={delivered + shipping} helper={`${shipping} đang giao`} />
         </div>
     );
 }

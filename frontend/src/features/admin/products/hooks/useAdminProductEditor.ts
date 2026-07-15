@@ -160,7 +160,7 @@ export function useAdminProductEditor() {
         return () => {
             ignore = true;
         };
-    }, [isEditMode, navigate, productId]);
+    }, [isEditMode, navigate, productId, showToast]);
 
     const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = event.target;

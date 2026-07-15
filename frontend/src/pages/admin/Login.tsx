@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Mail, Lock, ArrowRight, ShieldCheck } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { signIn } from '../../features/auth/authApi';
+import { Button } from '../../components/common';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -108,14 +109,15 @@ export default function Login() {
             </div>
           )}
 
-          <button
+          <Button
             type="submit"
-            disabled={isLoading}
-            className="w-full flex items-center justify-center gap-2 bg-success text-white py-2.5 rounded-lg text-sm font-bold transition-all duration-200 hover:brightness-90 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100"
+            variant="primary"
+            fullWidth
+            loading={isLoading}
+            rightIcon={<ArrowRight className="w-4 h-4" />}
           >
-            {isLoading ? 'Đang xác thực...' : 'Đăng nhập'}
-            <ArrowRight className="w-4 h-4" />
-          </button>
+            Đăng nhập
+          </Button>
         </form>
       </div>
     </div>

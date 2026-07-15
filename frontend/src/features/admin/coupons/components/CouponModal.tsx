@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { X } from "lucide-react";
+import { Button } from "../../../../components/common";
 import type { CouponRequest, CouponResponse, DiscountType } from "../adminCouponTypes";
 
 type CouponModalProps = {
@@ -23,35 +25,35 @@ function validateCouponForm(values: CouponRequest): CouponFormErrors {
     const errors: CouponFormErrors = {};
 
     if (!values.code.trim()) {
-        errors.code = "Code is required.";
+        errors.code = "Vui lòng nhập mã giảm giá.";
     }
 
     if (!values.name.trim()) {
-        errors.name = "Name is required.";
+        errors.name = "Vui lòng nhập tên chương trình.";
     }
 
     if (!Number.isFinite(values.discountValue) || values.discountValue <= 0) {
-        errors.discountValue = "Discount value must be greater than 0.";
+        errors.discountValue = "Giá trị giảm phải lớn hơn 0.";
     }
 
     if (values.discountType === "PERCENT" && values.discountValue > 100) {
-        errors.discountValue = "Percent discount cannot exceed 100.";
+        errors.discountValue = "Phần trăm giảm không được vượt quá 100%.";
     }
 
     if (values.minOrderAmount !== undefined && values.minOrderAmount < 0) {
-        errors.minOrderAmount = "Min order amount cannot be negative.";
+        errors.minOrderAmount = "Đơn hàng tối thiểu không được âm.";
     }
 
     if (values.maxDiscountAmount !== undefined && values.maxDiscountAmount < 0) {
-        errors.maxDiscountAmount = "Max discount amount cannot be negative.";
+        errors.maxDiscountAmount = "Số tiền giảm tối đa không được âm.";
     }
 
     if (values.usageLimit !== undefined && values.usageLimit < 1) {
-        errors.usageLimit = "Usage limit must be at least 1.";
+        errors.usageLimit = "Tổng giới hạn phải lớn hơn hoặc bằng 1.";
     }
 
     if (values.perUserLimit !== undefined && values.perUserLimit < 1) {
-        errors.perUserLimit = "Per user limit must be at least 1.";
+        errors.perUserLimit = "Giới hạn mỗi user phải lớn hơn hoặc bằng 1.";
     }
 
     if (values.startAt && values.endAt) {
@@ -59,7 +61,7 @@ function validateCouponForm(values: CouponRequest): CouponFormErrors {
         const endDate = new Date(values.endAt);
 
         if (endDate <= startDate) {
-            errors.endAt = "End date must be after start date.";
+            errors.endAt = "Ngày kết thúc phải sau ngày bắt đầu.";
         }
     }
 
@@ -131,74 +133,91 @@ export function CouponModal({
     }
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
             <form
                 onSubmit={handleSubmit}
-                className="w-full max-w-xl rounded-lg bg-surface p-6 shadow-xl"
+                className="w-full max-w-2xl overflow-hidden rounded-xl bg-surface shadow-xl animate-fade-in-up"
             >
-                <h3 className="text-lg font-bold text-text">
-                    {editingCoupon ? "Edit Coupon" : "Add Coupon"}
-                </h3>
-
-                <div className="mt-5 grid gap-4">
-                    <div>
-                        <input
-                            value={formValues.code}
-                            onChange={(event) => updateField("code", event.target.value)}
-                            placeholder="Code"
-                            aria-label="Coupon code"
-                            className="w-full rounded-lg border border-border-strong px-4 py-2 text-sm"
-                        />
-                        {formErrors.code && (
-                            <p className="mt-1 text-xs font-medium text-danger">{formErrors.code}</p>
-                        )}
-                    </div>
-
-                    <div>
-                        <input
-                            value={formValues.name}
-                            onChange={(event) => updateField("name", event.target.value)}
-                            placeholder="Name"
-                            aria-label="Coupon name"
-                            className="w-full rounded-lg border border-border-strong px-4 py-2 text-sm"
-                        />
-                        {formErrors.name && (
-                            <p className="mt-1 text-xs font-medium text-danger">{formErrors.name}</p>
-                        )}
-                    </div>
-
-                    <select
-                        value={formValues.discountType}
-                        onChange={(event) =>
-                            updateField("discountType", event.target.value as DiscountType)
-                        }
-                        aria-label="Discount type"
-                        className="rounded-lg border border-border-strong px-4 py-2 text-sm"
+                <div className="flex items-center justify-between border-b border-border bg-surface-alt px-6 py-4">
+                    <h3 className="text-base font-bold text-text">
+                        {editingCoupon ? "Cập nhật mã giảm giá" : "Thêm mã giảm giá"}
+                    </h3>
+                    <button
+                        type="button"
+                        onClick={onClose}
+                        disabled={saving}
+                        className="rounded-full p-1.5 text-muted transition-colors hover:bg-surface hover:text-text disabled:cursor-not-allowed disabled:opacity-60"
                     >
-                        <option value="PERCENT">Percent</option>
-                        <option value="FIXED_AMOUNT">Fixed amount</option>
-                    </select>
+                        <X className="h-5 w-5" />
+                    </button>
+                </div>
 
-                    <div>
-                        <input
-                            type="number"
-                            value={formValues.discountValue}
-                            onChange={(event) =>
-                                updateField("discountValue", Number(event.target.value))
-                            }
-                            placeholder="Discount value"
-                            aria-label="Discount value"
-                            className="w-full rounded-lg border border-border-strong px-4 py-2 text-sm"
-                        />
-                        {formErrors.discountValue && (
-                            <p className="mt-1 text-xs font-medium text-danger">
-                                {formErrors.discountValue}
-                            </p>
-                        )}
+                <div className="space-y-5 px-6 py-5 max-h-[75vh] overflow-y-auto">
+                    <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+                        <div>
+                            <label className="mb-2 block text-sm font-bold text-text">Mã giảm giá <span className="text-danger">*</span></label>
+                            <input
+                                value={formValues.code}
+                                onChange={(event) => updateField("code", event.target.value)}
+                                placeholder="VD: SUMMER2023"
+                                className="w-full rounded-lg border border-border-strong bg-surface px-4 py-2.5 text-sm font-semibold outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
+                            />
+                            {formErrors.code && (
+                                <p className="mt-1 text-xs font-medium text-danger">{formErrors.code}</p>
+                            )}
+                        </div>
+
+                        <div>
+                            <label className="mb-2 block text-sm font-bold text-text">Tên chương trình <span className="text-danger">*</span></label>
+                            <input
+                                value={formValues.name}
+                                onChange={(event) => updateField("name", event.target.value)}
+                                placeholder="VD: Khuyến mãi Mùa hè"
+                                className="w-full rounded-lg border border-border-strong bg-surface px-4 py-2.5 text-sm font-semibold outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
+                            />
+                            {formErrors.name && (
+                                <p className="mt-1 text-xs font-medium text-danger">{formErrors.name}</p>
+                            )}
+                        </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
                         <div>
+                            <label className="mb-2 block text-sm font-bold text-text">Loại giảm giá</label>
+                            <select
+                                value={formValues.discountType}
+                                onChange={(event) =>
+                                    updateField("discountType", event.target.value as DiscountType)
+                                }
+                                className="w-full rounded-lg border border-border-strong bg-surface px-4 py-2.5 text-sm font-semibold outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
+                            >
+                                <option value="PERCENT">Phần trăm (%)</option>
+                                <option value="FIXED_AMOUNT">Số tiền cố định</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label className="mb-2 block text-sm font-bold text-text">Giá trị giảm <span className="text-danger">*</span></label>
+                            <input
+                                type="number"
+                                value={formValues.discountValue}
+                                onChange={(event) =>
+                                    updateField("discountValue", Number(event.target.value))
+                                }
+                                placeholder="VD: 10"
+                                className="w-full rounded-lg border border-border-strong bg-surface px-4 py-2.5 text-sm font-semibold outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
+                            />
+                            {formErrors.discountValue && (
+                                <p className="mt-1 text-xs font-medium text-danger">
+                                    {formErrors.discountValue}
+                                </p>
+                            )}
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+                        <div>
+                            <label className="mb-2 block text-sm font-bold text-text">Đơn hàng tối thiểu (₫)</label>
                             <input
                                 type="number"
                                 value={formValues.minOrderAmount ?? ""}
@@ -208,9 +227,8 @@ export function CouponModal({
                                         event.target.value ? Number(event.target.value) : undefined
                                     )
                                 }
-                                placeholder="Min order amount"
-                                aria-label="Minimum order amount"
-                                className="w-full rounded-lg border border-border-strong px-4 py-2 text-sm"
+                                placeholder="Không yêu cầu"
+                                className="w-full rounded-lg border border-border-strong bg-surface px-4 py-2.5 text-sm font-semibold outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
                             />
                             {formErrors.minOrderAmount && (
                                 <p className="mt-1 text-xs font-medium text-danger">
@@ -220,6 +238,7 @@ export function CouponModal({
                         </div>
 
                         <div>
+                            <label className="mb-2 block text-sm font-bold text-text">Giảm tối đa (₫)</label>
                             <input
                                 type="number"
                                 value={formValues.maxDiscountAmount ?? ""}
@@ -229,9 +248,8 @@ export function CouponModal({
                                         event.target.value ? Number(event.target.value) : undefined
                                     )
                                 }
-                                placeholder="Max discount amount"
-                                aria-label="Maximum discount amount"
-                                className="w-full rounded-lg border border-border-strong px-4 py-2 text-sm"
+                                placeholder="Không giới hạn"
+                                className="w-full rounded-lg border border-border-strong bg-surface px-4 py-2.5 text-sm font-semibold outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
                             />
                             {formErrors.maxDiscountAmount && (
                                 <p className="mt-1 text-xs font-medium text-danger">
@@ -241,8 +259,9 @@ export function CouponModal({
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
                         <div>
+                            <label className="mb-2 block text-sm font-bold text-text">Giới hạn tổng số lượt sử dụng</label>
                             <input
                                 type="number"
                                 value={formValues.usageLimit ?? ""}
@@ -252,9 +271,8 @@ export function CouponModal({
                                         event.target.value ? Number(event.target.value) : undefined
                                     )
                                 }
-                                placeholder="Usage limit"
-                                aria-label="Usage limit"
-                                className="w-full rounded-lg border border-border-strong px-4 py-2 text-sm"
+                                placeholder="Không giới hạn"
+                                className="w-full rounded-lg border border-border-strong bg-surface px-4 py-2.5 text-sm font-semibold outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
                             />
                             {formErrors.usageLimit && (
                                 <p className="mt-1 text-xs font-medium text-danger">
@@ -264,6 +282,7 @@ export function CouponModal({
                         </div>
 
                         <div>
+                            <label className="mb-2 block text-sm font-bold text-text">Giới hạn mỗi khách hàng</label>
                             <input
                                 type="number"
                                 value={formValues.perUserLimit ?? ""}
@@ -273,9 +292,8 @@ export function CouponModal({
                                         event.target.value ? Number(event.target.value) : undefined
                                     )
                                 }
-                                placeholder="Per user limit"
-                                aria-label="Per user limit"
-                                className="w-full rounded-lg border border-border-strong px-4 py-2 text-sm"
+                                placeholder="Không giới hạn"
+                                className="w-full rounded-lg border border-border-strong bg-surface px-4 py-2.5 text-sm font-semibold outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
                             />
                             {formErrors.perUserLimit && (
                                 <p className="mt-1 text-xs font-medium text-danger">
@@ -285,26 +303,28 @@ export function CouponModal({
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
-                        <input
-                            type="datetime-local"
-                            value={formValues.startAt ?? ""}
-                            onChange={(event) =>
-                                updateField("startAt", event.target.value || undefined)
-                            }
-                            aria-label="Start date"
-                            className="rounded-lg border border-border-strong px-4 py-2 text-sm"
-                        />
+                    <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+                        <div>
+                            <label className="mb-2 block text-sm font-bold text-text">Ngày bắt đầu</label>
+                            <input
+                                type="datetime-local"
+                                value={formValues.startAt ?? ""}
+                                onChange={(event) =>
+                                    updateField("startAt", event.target.value || undefined)
+                                }
+                                className="w-full rounded-lg border border-border-strong bg-surface px-4 py-2.5 text-sm font-semibold outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
+                            />
+                        </div>
 
                         <div>
+                            <label className="mb-2 block text-sm font-bold text-text">Ngày kết thúc</label>
                             <input
                                 type="datetime-local"
                                 value={formValues.endAt ?? ""}
                                 onChange={(event) =>
                                     updateField("endAt", event.target.value || undefined)
                                 }
-                                aria-label="End date"
-                                className="w-full rounded-lg border border-border-strong px-4 py-2 text-sm"
+                                className="w-full rounded-lg border border-border-strong bg-surface px-4 py-2.5 text-sm font-semibold outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
                             />
                             {formErrors.endAt && (
                                 <p className="mt-1 text-xs font-medium text-danger">
@@ -314,27 +334,33 @@ export function CouponModal({
                         </div>
                     </div>
 
-                    <textarea
-                        value={formValues.description ?? ""}
-                        onChange={(event) => updateField("description", event.target.value)}
-                        placeholder="Description"
-                        aria-label="Description"
-                        className="rounded-lg border border-border-strong px-4 py-2 text-sm"
-                    />
+                    <div>
+                        <label className="mb-2 block text-sm font-bold text-text">Mô tả chi tiết</label>
+                        <textarea
+                            value={formValues.description ?? ""}
+                            onChange={(event) => updateField("description", event.target.value)}
+                            placeholder="Nhập ghi chú hoặc mô tả về mã giảm giá"
+                            className="w-full resize-none rounded-lg border border-border-strong bg-surface px-4 py-2.5 text-sm font-semibold outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20 min-h-[80px]"
+                        />
+                    </div>
                 </div>
 
-                <div className="mt-6 flex justify-end gap-3">
-                    <button type="button" onClick={onClose} className="rounded-lg border px-4 py-2">
-                        Cancel
-                    </button>
-
-                    <button
+                <div className="flex justify-end gap-3 border-t border-border bg-surface px-6 py-4">
+                    <Button
+                        variant="ghost"
+                        onClick={onClose}
+                        disabled={saving}
+                    >
+                        Hủy
+                    </Button>
+                    <Button
+                        variant="primary"
                         type="submit"
                         disabled={saving}
-                        className="rounded-lg bg-success px-4 py-2 font-semibold text-white disabled:opacity-60"
+                        loading={saving}
                     >
-                        {saving ? "Saving..." : "Save"}
-                    </button>
+                        Lưu mã giảm giá
+                    </Button>
                 </div>
             </form>
         </div>

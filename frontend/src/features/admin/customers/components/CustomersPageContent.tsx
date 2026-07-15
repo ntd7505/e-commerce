@@ -1,8 +1,7 @@
-﻿import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useToast } from "../../../../features/ui/ToastProvider";
 import { Search, RefreshCw, Users, Ban, CheckCircle } from "lucide-react";
-import { AdminBadge } from "../../../../components/admin/AdminBadge";
-import { Modal, Container, Section } from "../../../../components/common";
+import { Modal, Container, Section, Button, Badge } from "../../../../components/common";
 import { Pagination } from "../../../../components/common/Pagination";
 import { UserDetailsModal } from "./UserDetailsModal";
 import { getAdminUsers, updateAdminUserStatus } from "../adminUserApi";
@@ -101,73 +100,72 @@ export default function CustomersPageContent() {
   }
 
   const statusFilters: Array<{ label: string; value: StatusFilter; color: string }> = [
-    { label: "All", value: "ALL", color: "" },
-    { label: "Active", value: "ACTIVE", color: "text-success" },
-    { label: "Inactive", value: "INACTIVE", color: "text-danger" },
+    { label: "Tất cả", value: "ALL", color: "" },
+    { label: "Hoạt động", value: "ACTIVE", color: "text-success" },
+    { label: "Đã khóa", value: "INACTIVE", color: "text-danger" },
   ];
 
   return (
     <Container size="wide">
       <Section spacing="md" className="space-y-6">
         {/* Header */}
-      <div className="flex flex-wrap items-center justify-between gap-4">
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-text">Customers</h2>
-          <p className="mt-1 text-sm text-muted">
-            Quản lý tài khoản khách hàng – Ban/Unban trực tiếp.
+          <h1 className="text-2xl font-bold text-text">Khách hàng</h1>
+          <p className="mt-1 text-sm font-medium text-muted">
+            Quản lý tài khoản khách hàng – Khóa/Mở khóa trực tiếp.
           </p>
         </div>
-        <button
-          type="button"
+        <Button
+          variant="secondary"
           onClick={loadUsers}
           disabled={loading}
-          className="flex items-center gap-2 rounded-xl border border-border bg-surface px-4 py-2.5 text-sm font-bold text-text shadow-sm transition-colors hover:bg-surface disabled:opacity-50"
+          leftIcon={<RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />}
         >
-          <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
-          Refresh
-        </button>
+          Làm mới
+        </Button>
       </div>
 
       {/* Stat cards */}
       <div className="grid gap-4 md:grid-cols-3">
-        <div className="rounded-xl border border-border bg-surface p-5 shadow-sm transition-shadow hover:shadow-md">
-          <p className="text-xs font-semibold text-muted">Total Users</p>
+        <div className="animate-fade-in-up rounded-xl border border-border bg-surface p-5 shadow-sm transition-all hover:shadow-md" style={{ animationDelay: '50ms' }}>
+          <p className="text-xs font-semibold text-muted">Tổng số tài khoản</p>
           <p className="mt-3 text-3xl font-extrabold text-text">{users.length}</p>
-          <p className="mt-1 text-xs text-muted">Registered accounts</p>
+          <p className="mt-1 text-xs text-muted">Tài khoản đã đăng ký</p>
         </div>
-        <div className="rounded-xl border border-success-soft bg-success-soft p-5 shadow-sm transition-shadow hover:shadow-md">
-          <p className="text-xs font-bold uppercase tracking-wider text-success">Active</p>
+        <div className="animate-fade-in-up rounded-xl border border-success-soft bg-success-soft p-5 shadow-sm transition-all hover:shadow-md" style={{ animationDelay: '100ms' }}>
+          <p className="text-xs font-bold uppercase tracking-wider text-success">Hoạt động</p>
           <p className="mt-3 text-3xl font-extrabold text-success">{activeCount}</p>
-          <p className="mt-1 text-xs text-success">Can login & purchase</p>
+          <p className="mt-1 text-xs text-success">Có thể đăng nhập & mua hàng</p>
         </div>
-        <div className="rounded-xl border border-danger-soft bg-danger-soft p-5 shadow-sm transition-shadow hover:shadow-md">
-          <p className="text-xs font-bold uppercase tracking-wider text-danger">Banned</p>
+        <div className="animate-fade-in-up rounded-xl border border-danger-soft bg-danger-soft p-5 shadow-sm transition-all hover:shadow-md" style={{ animationDelay: '150ms' }}>
+          <p className="text-xs font-bold uppercase tracking-wider text-danger">Đã khóa</p>
           <p className="mt-3 text-3xl font-extrabold text-danger">{users.length - activeCount}</p>
-          <p className="mt-1 text-xs text-danger">Access restricted</p>
+          <p className="mt-1 text-xs text-danger">Bị hạn chế truy cập</p>
         </div>
       </div>
 
       {/* Table card */}
-      <div className="rounded-xl border border-border bg-surface shadow-sm">
+      <div className="overflow-hidden rounded-xl border border-border bg-surface shadow-sm transition-all hover:shadow-md">
         {/* Toolbar */}
-        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border p-5">
+        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border bg-surface-alt p-5">
           <div className="flex items-center gap-2 text-sm font-bold text-text">
             <Users className="h-4 w-4 text-success" />
-            User directory
-            <span className="ml-1 rounded-full bg-surface-alt px-2 py-0.5 text-xs font-bold text-muted">
+            Danh bạ khách hàng
+            <span className="ml-1 rounded-full bg-surface px-2 py-0.5 text-xs font-bold text-primary shadow-inner">
               {filteredUsers.length}
             </span>
           </div>
           <div className="flex flex-wrap items-center gap-3">
             {/* Status filter */}
-            <div className="flex rounded-lg border border-border-strong bg-surface p-1">
+            <div className="flex rounded-lg border border-border-strong bg-surface p-1 shadow-inner">
               {statusFilters.map((opt) => (
                 <button
                   key={opt.value}
                   type="button"
                   onClick={() => handleFilterChange(opt.value)}
-                  className={`rounded-md px-3 py-1.5 text-xs font-bold transition-colors ${statusFilter === opt.value
-                      ? "bg-surface shadow-sm text-success"
+                  className={`rounded-md px-3 py-1.5 text-xs font-bold transition-all ${statusFilter === opt.value
+                      ? "bg-surface-alt shadow-sm text-primary"
                       : `text-muted hover:text-text ${opt.color}`
                     }`}
                 >
@@ -182,8 +180,8 @@ export default function CustomersPageContent() {
               <input
                 value={searchTerm}
                 onChange={(e) => handleSearchChange(e.target.value)}
-                placeholder="Search name, email, phone"
-                className="w-full rounded-lg border border-border-strong bg-surface py-2.5 pl-9 pr-3 text-sm outline-none transition focus:border-success focus:ring-1 focus:ring-success"
+                placeholder="Tìm tên, email, SĐT"
+                className="w-full rounded-lg border border-border-strong bg-surface py-2.5 pl-9 pr-3 text-sm font-semibold outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
               />
             </div>
           </div>
@@ -197,31 +195,31 @@ export default function CustomersPageContent() {
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
-            <thead className="sticky top-0 z-10 bg-surface text-xs font-semibold text-muted">
+            <thead className="sticky top-0 z-10 bg-surface-alt text-xs font-bold uppercase tracking-wider text-muted">
               <tr>
-                <th className="px-5 py-3">Name</th>
+                <th className="px-5 py-3">Họ tên</th>
                 <th className="px-5 py-3">Email</th>
-                <th className="px-5 py-3">Phone</th>
-                <th className="px-5 py-3">Roles</th>
-                <th className="px-5 py-3">Status</th>
-                <th className="px-5 py-3 text-right">Action</th>
+                <th className="px-5 py-3">Số điện thoại</th>
+                <th className="px-5 py-3">Vai trò</th>
+                <th className="px-5 py-3">Trạng thái</th>
+                <th className="px-5 py-3 text-right">Thao tác</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
               {loading ? (
                 <tr>
                   <td colSpan={6} className="px-5 py-10 text-center text-muted">
-                    <RefreshCw className="mx-auto h-5 w-5 animate-spin mb-2" />
-                    Loading users...
+                    <RefreshCw className="mx-auto mb-2 h-5 w-5 animate-spin text-primary" />
+                    Đang tải danh sách...
                   </td>
                 </tr>
               ) : pagedUsers.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="px-5 py-14 text-center">
-                    <Users className="mx-auto mb-3 h-10 w-10 text-subtle" />
-                    <p className="text-sm font-semibold text-muted">No users found</p>
+                    <Users className="mx-auto mb-3 h-10 w-10 text-muted" />
+                    <p className="text-sm font-semibold text-text">Không tìm thấy khách hàng nào</p>
                     {searchTerm && (
-                      <p className="mt-1 text-xs text-muted">Try a different search term</p>
+                      <p className="mt-1 text-xs font-medium text-muted">Hãy thử một từ khóa tìm kiếm khác</p>
                     )}
                   </td>
                 </tr>
@@ -276,33 +274,26 @@ export default function CustomersPageContent() {
                         </div>
                       </td>
                       <td className="px-5 py-4">
-                        <AdminBadge
+                        <Badge
                           variant={isActive ? "success" : "danger"}
-                          dot
                         >
-                          {user.status}
-                        </AdminBadge>
+                          {user.status === "ACTIVE" ? "Hoạt động" : "Bị khóa"}
+                        </Badge>
                       </td>
-                      <td className="px-5 py-4 text-right">
-                        <button
-                          type="button"
-                          onClick={() => toggleUserStatus(user)}
-                          disabled={isBusy || !hasUserId}
-                          title={!hasUserId ? "Thiếu ID người dùng" : isActive ? "Ban user" : "Unban user"}
-                          className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-bold transition-all disabled:opacity-50 ${isActive
-                              ? "border-danger-soft bg-danger-soft text-danger hover:bg-danger-soft"
-                              : "border-success-soft bg-success-soft text-success hover:bg-success-soft"
-                            }`}
-                        >
-                          {isBusy ? (
-                            <RefreshCw className="h-3.5 w-3.5 animate-spin" />
-                          ) : isActive ? (
-                            <Ban className="h-3.5 w-3.5" />
-                          ) : (
-                            <CheckCircle className="h-3.5 w-3.5" />
-                          )}
-                          {isActive ? "Ban" : "Unban"}
-                        </button>
+                      <td className="px-5 py-4">
+                        <div className="flex justify-end">
+                            <Button
+                            variant={isActive ? "danger" : "success"}
+                            size="sm"
+                            onClick={() => toggleUserStatus(user)}
+                            disabled={isBusy || !hasUserId}
+                            loading={isBusy}
+                            leftIcon={isActive ? <Ban className="h-3.5 w-3.5" /> : <CheckCircle className="h-3.5 w-3.5" />}
+                            title={!hasUserId ? "Thiếu ID người dùng" : isActive ? "Khóa tài khoản" : "Mở khóa"}
+                            >
+                            {isActive ? "Khóa" : "Mở khóa"}
+                            </Button>
+                        </div>
                       </td>
                     </tr>
                   );
@@ -314,9 +305,9 @@ export default function CustomersPageContent() {
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="flex flex-col items-center justify-between border-t border-border px-5 py-4 sm:flex-row">
-            <p className="text-sm text-muted mb-4 sm:mb-0">
-              Showing <span className="font-semibold text-text">{(currentPage - 1) * PAGE_SIZE + 1}</span> to <span className="font-semibold text-text">{Math.min(currentPage * PAGE_SIZE, filteredUsers.length)}</span> of <span className="font-semibold text-text">{filteredUsers.length}</span> entries
+          <div className="flex flex-col items-center justify-between border-t border-border bg-surface-alt px-5 py-4 sm:flex-row">
+            <p className="mb-4 text-sm font-medium text-muted sm:mb-0">
+              Hiển thị <span className="font-bold text-text">{(currentPage - 1) * PAGE_SIZE + 1}</span> đến <span className="font-bold text-text">{Math.min(currentPage * PAGE_SIZE, filteredUsers.length)}</span> trong số <span className="font-bold text-text">{filteredUsers.length}</span> kết quả
             </p>
             <Pagination 
               currentPage={currentPage - 1} 
@@ -338,29 +329,23 @@ export default function CustomersPageContent() {
         onClose={() => setConfirmAction(null)}
         title="Xác nhận thao tác"
       >
-        <div className="p-5">
-          <p className="text-sm text-text">
-            Bạn có chắc muốn {confirmAction?.newStatus === "INACTIVE" ? "khóa (ban)" : "mở khóa (unban)"} tài khoản <span className="font-bold">{confirmAction?.user.email}</span> không?
+        <div className="p-6">
+          <p className="text-sm font-medium text-text">
+            Bạn có chắc muốn {confirmAction?.newStatus === "INACTIVE" ? "khóa" : "mở khóa"} tài khoản <span className="font-bold">{confirmAction?.user.email}</span> không?
           </p>
           <div className="mt-6 flex justify-end gap-3">
-            <button
-              type="button"
+            <Button
+              variant="ghost"
               onClick={() => setConfirmAction(null)}
-              className="rounded-xl border border-border bg-surface px-4 py-2 text-sm font-bold text-text transition-colors hover:bg-surface-alt"
             >
               Hủy
-            </button>
-            <button
-              type="button"
+            </Button>
+            <Button
+              variant={confirmAction?.newStatus === "INACTIVE" ? "danger" : "success"}
               onClick={handleConfirmToggle}
-              className={`rounded-xl px-4 py-2 text-sm font-bold text-white transition-colors ${
-                confirmAction?.newStatus === "INACTIVE"
-                  ? "bg-danger hover:bg-danger-hover"
-                  : "bg-success hover:bg-success/90"
-              }`}
             >
               Xác nhận
-            </button>
+            </Button>
           </div>
         </div>
       </Modal>

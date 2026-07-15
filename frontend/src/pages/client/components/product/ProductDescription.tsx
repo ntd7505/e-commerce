@@ -6,7 +6,7 @@ interface ProductDescriptionProps {
 }
 
 export default function ProductDescription({ product }: ProductDescriptionProps) {
-  const { description, descriptionBlocks, name, brand, category } = product;
+  const { description, descriptionBlocks, name } = product;
 
   // Use active description blocks if available
   const activeBlocks = (descriptionBlocks || [])

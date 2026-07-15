@@ -1,4 +1,5 @@
-﻿import { X, Upload } from "lucide-react";
+import { X, Upload } from "lucide-react";
+import { Button } from "../../../../components/common";
 import { AdminImage } from "../../../../components/admin/AdminImage";
 import { uploadImage } from "../../../../utils/imageUpload";
 import { useState } from "react";
@@ -48,16 +49,16 @@ export function BrandModal({
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-            <div className="w-full max-w-md overflow-hidden rounded-xl bg-surface shadow-xl">
-                <div className="flex items-center justify-between border-b border-border bg-surface/50 px-6 py-4">
+            <div className="w-full max-w-md overflow-hidden rounded-xl bg-surface shadow-xl animate-fade-in-up">
+                <div className="flex items-center justify-between border-b border-border bg-surface-alt px-6 py-4">
                     <h3 className="text-base font-bold text-text">
-                        {editingBrand ? "Edit Brand" : "Add Brand"}
+                        {editingBrand ? "Cập nhật thương hiệu" : "Thêm thương hiệu"}
                     </h3>
                     <button
                         type="button"
                         onClick={onClose}
                         disabled={saving}
-                        className="rounded-full p-1.5 text-muted transition-colors hover:bg-surface-alt hover:text-muted disabled:cursor-not-allowed disabled:opacity-60"
+                        className="rounded-full p-1.5 text-muted transition-colors hover:bg-surface hover:text-text disabled:cursor-not-allowed disabled:opacity-60"
                     >
                         <X className="h-5 w-5" />
                     </button>
@@ -66,21 +67,21 @@ export function BrandModal({
                 <div className="space-y-5 p-6">
                     <div>
                         <label className="mb-2 block text-sm font-bold text-text">
-                            Brand Name <span className="text-danger">*</span>
+                            Tên thương hiệu <span className="text-danger">*</span>
                         </label>
                         <input
                             type="text"
-                            placeholder="e.g. Apple"
+                            placeholder="Ví dụ: Apple"
                             value={brandName}
                             onChange={(event) => onNameChange(event.target.value)}
-                            className="w-full rounded-lg border border-border-strong bg-surface-alt px-4 py-3 text-sm font-medium text-text focus:border-success focus:outline-none"
+                            className="w-full rounded-lg border border-border-strong bg-surface px-4 py-2.5 text-sm font-semibold outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
                         />
                     </div>
 
                     <div>
-                        <label className="mb-2 block text-sm font-bold text-text">Logo URL</label>
+                        <label className="mb-2 block text-sm font-bold text-text">URL Hình ảnh</label>
                         <div className="flex items-center gap-4">
-                            <div className="flex h-16 w-16 flex-shrink-0 items-center justify-center overflow-hidden rounded-full border border-border-strong bg-surface-alt relative group">
+                            <div className="relative group flex h-16 w-16 flex-shrink-0 items-center justify-center overflow-hidden rounded-full border border-border-strong bg-surface-alt">
                                 <AdminImage
                                     src={logoUrl}
                                     alt="Brand logo preview"
@@ -88,9 +89,9 @@ export function BrandModal({
                                     className="max-h-full max-w-full object-contain"
                                     fallbackClassName="h-full w-full rounded-full"
                                 />
-                                <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <label className="cursor-pointer text-white flex flex-col items-center justify-center p-2 h-full w-full">
-                                        <Upload className="h-5 w-5 mb-1" />
+                                <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
+                                    <label className="flex h-full w-full cursor-pointer flex-col items-center justify-center p-2 text-white">
+                                        <Upload className="mb-1 h-5 w-5" />
                                         <input 
                                             type="file" 
                                             accept="image/*" 
@@ -98,7 +99,7 @@ export function BrandModal({
                                             disabled={uploading}
                                             onChange={(e) => {
                                                 const file = e.target.files?.[0];
-                                                if (file) handleUpload(file);
+                                                if (file) void handleUpload(file);
                                                 e.target.value = "";
                                             }}
                                         />
@@ -109,15 +110,15 @@ export function BrandModal({
                                 <div className="flex gap-2">
                                     <input
                                         type="text"
-                                        placeholder="Enter logo URL or upload image"
+                                        placeholder="Nhập URL hoặc tải ảnh lên"
                                         value={logoUrl}
                                         onChange={(event) => onLogoChange(event.target.value)}
-                                        className="min-w-0 flex-1 rounded-lg border border-border-strong bg-surface-alt px-4 py-3 text-sm font-medium text-text focus:border-success focus:outline-none"
+                                        className="min-w-0 flex-1 rounded-lg border border-border-strong bg-surface px-4 py-2.5 text-sm font-semibold outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
                                         disabled={uploading}
                                     />
-                                    <label className={`cursor-pointer flex items-center justify-center gap-2 rounded-lg border border-border bg-surface px-4 py-2 text-sm font-bold transition-colors hover:bg-surface-alt ${uploading ? 'opacity-60 pointer-events-none' : 'text-text'}`}>
+                                    <label className={`inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-border bg-surface px-4 py-2.5 text-sm font-bold transition-colors hover:bg-surface-alt focus:outline-none focus:ring-2 focus:ring-primary/20 ${uploading ? 'opacity-60 pointer-events-none' : 'text-text'}`}>
                                         <Upload className="h-4 w-4" />
-                                        {uploading ? "Uploading..." : "Upload"}
+                                        {uploading ? "Đang tải..." : "Tải lên"}
                                         <input 
                                             type="file" 
                                             accept="image/*" 
@@ -125,7 +126,7 @@ export function BrandModal({
                                             disabled={uploading}
                                             onChange={(e) => {
                                                 const file = e.target.files?.[0];
-                                                if (file) handleUpload(file);
+                                                if (file) void handleUpload(file);
                                                 e.target.value = "";
                                             }}
                                         />
@@ -137,22 +138,21 @@ export function BrandModal({
                 </div>
 
                 <div className="flex justify-end gap-3 border-t border-border bg-surface px-6 py-4">
-                    <button
-                        type="button"
+                    <Button
+                        variant="ghost"
                         onClick={onClose}
                         disabled={saving}
-                        className="rounded-xl border border-border bg-surface px-5 py-2.5 text-sm font-bold text-muted transition-colors hover:bg-surface disabled:cursor-not-allowed disabled:opacity-60"
                     >
-                        Cancel
-                    </button>
-                    <button
-                        type="button"
+                        Hủy
+                    </Button>
+                    <Button
+                        variant="primary"
                         onClick={onSave}
                         disabled={saving}
-                        className="rounded-lg bg-success px-5 py-2.5 text-sm font-bold text-white shadow-sm transition-colors hover:bg-success disabled:cursor-not-allowed disabled:bg-success/60"
+                        loading={saving}
                     >
-                        {saving ? "Saving..." : "Save Brand"}
-                    </button>
+                        Lưu thương hiệu
+                    </Button>
                 </div>
             </div>
         </div>

@@ -1,6 +1,7 @@
-﻿import { Link } from "react-router-dom";
-import { ChevronLeft, ChevronRight, Edit, Filter, MoreHorizontal, Package, Search } from "lucide-react";
-import { AdminBadge } from "../../../../components/admin/AdminBadge";
+import { Link } from "react-router-dom";
+import { Edit, Filter, MoreHorizontal, Package, Search } from "lucide-react";
+import { Badge, Pagination } from "../../../../components/common";
+import { buttonVariants } from "../../../../components/common/buttonVariants";
 import { AdminEmptyState } from "../../../../components/admin/AdminEmptyState";
 import { AdminImage } from "../../../../components/admin/AdminImage";
 import { AdminSkeletonTable } from "../../../../components/admin/AdminSkeletonTable";
@@ -22,7 +23,6 @@ type ProductTableProps = {
     statusFilter: "all" | "active" | "inactive";
     updatingId: number | null;
     page: number;
-    pageSize: number;
     totalPages: number;
     onSearchChange: (value: string) => void;
     onStatusFilterChange: (value: "all" | "active" | "inactive") => void;
@@ -40,7 +40,6 @@ export function ProductTable({
     statusFilter,
     updatingId,
     page,
-    pageSize,
     totalPages,
     onSearchChange,
     onStatusFilterChange,
@@ -49,39 +48,37 @@ export function ProductTable({
 }: ProductTableProps) {
     const activeCount = products.filter((p) => p.active).length;
     const inactiveCount = products.filter((p) => !p.active).length;
-    const startItem = (page - 1) * pageSize + 1;
-    const endItem = Math.min(page * pageSize, filteredProducts.length);
 
     const tabClass = (tab: "all" | "active" | "inactive") =>
         statusFilter === tab
-            ? "rounded-md border border-border-strong/60 bg-surface px-5 py-2 text-sm font-bold text-success shadow-sm"
+            ? "rounded-md border border-border-strong/60 bg-surface px-5 py-2 text-sm font-bold text-primary shadow-sm transition-all"
             : "rounded-md px-5 py-2 text-sm font-bold text-muted transition-colors hover:text-text";
 
     return (
-        <div className="overflow-hidden rounded-xl border border-border bg-surface shadow-sm">
-            <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border p-4">
-                <div className="flex items-center gap-1 rounded-lg border border-border bg-surface p-1.5 shadow-inner">
-                    <button className={tabClass("all")} onClick={() => onStatusFilterChange("all")}>
-                        All Products ({products.length})
-                    </button>
-                    <button className={tabClass("active")} onClick={() => onStatusFilterChange("active")}>
-                        Active ({activeCount})
-                    </button>
-                    <button className={tabClass("inactive")} onClick={() => onStatusFilterChange("inactive")}>
-                        Inactive ({inactiveCount})
-                    </button>
-                </div>
+        <div className="overflow-hidden rounded-xl border border-border bg-surface shadow-sm transition-all hover:shadow-md">
+            <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border bg-surface-alt p-4">
+                <div className="flex items-center gap-1 rounded-lg border border-border bg-surface p-1 shadow-inner">
+                        <button className={tabClass("all")} onClick={() => onStatusFilterChange("all")}>
+                            Tất cả ({products.length})
+                        </button>
+                        <button className={tabClass("active")} onClick={() => onStatusFilterChange("active")}>
+                            Đang bán ({activeCount})
+                        </button>
+                        <button className={tabClass("inactive")} onClick={() => onStatusFilterChange("inactive")}>
+                            Ngừng bán ({inactiveCount})
+                        </button>
+                    </div>
 
-                <div className="flex items-center gap-3">
-                    <div className="relative">
-                        <input
-                            type="text"
-                            value={searchTerm}
-                            onChange={(event) => onSearchChange(event.target.value)}
-                            placeholder="Search products"
-                            className="w-72 rounded-lg border border-border-strong bg-surface/50 py-2.5 pl-4 pr-10 text-sm font-medium outline-none placeholder:font-normal placeholder:text-muted focus:border-success focus:ring-1 focus:ring-success"
-                        />
-                        <Search className="absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
+                    <div className="flex items-center gap-3">
+                        <div className="relative">
+                            <input
+                                type="text"
+                                value={searchTerm}
+                                onChange={(event) => onSearchChange(event.target.value)}
+                                placeholder="Tìm kiếm sản phẩm..."
+                                className="w-72 rounded-lg border border-border-strong bg-surface py-2.5 pl-10 pr-4 text-sm font-medium outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
+                            />
+                        <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
                     </div>
                     <button className="rounded-xl border border-border bg-surface p-2.5 text-muted shadow-sm transition-colors hover:bg-surface hover:text-text">
                         <Filter className="h-4 w-4" />
@@ -115,18 +112,18 @@ export function ProductTable({
 
             {!loading && !error && filteredProducts.length > 0 && (
                 <>
-                <div className="overflow-x-auto px-5 py-4">
+                <div className="overflow-x-auto">
                     <table className="w-full text-left text-sm">
-                        <thead>
-                            <tr className="border-none bg-success-soft/60 font-bold text-success">
-                                <th className="rounded-l-lg px-4 py-4 text-sm font-bold">Product</th>
-                                <th className="px-4 py-4 text-sm font-bold">Brand</th>
-                                <th className="px-4 py-4 text-sm font-bold">Category</th>
-                                <th className="px-4 py-4 text-sm font-bold">Price</th>
-                                <th className="px-4 py-4 text-sm font-bold">Stock</th>
-                                <th className="px-4 py-4 text-sm font-bold">Created</th>
-                                <th className="px-4 py-4 text-sm font-bold">Status</th>
-                                <th className="rounded-r-lg px-4 py-4 text-right text-sm font-bold">Action</th>
+                        <thead className="bg-surface-alt text-xs text-muted uppercase tracking-wider border-b border-border">
+                            <tr>
+                                <th className="px-5 py-3 font-bold">Sản phẩm</th>
+                                <th className="px-5 py-3 font-bold">Thương hiệu</th>
+                                <th className="px-5 py-3 font-bold">Danh mục</th>
+                                <th className="px-5 py-3 text-right font-bold">Giá bán</th>
+                                <th className="px-5 py-3 text-center font-bold">Tồn kho</th>
+                                <th className="px-5 py-3 font-bold">Ngày tạo</th>
+                                <th className="px-5 py-3 font-bold">Trạng thái</th>
+                                <th className="px-5 py-3 text-right font-bold">Thao tác</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-border">
@@ -139,9 +136,9 @@ export function ProductTable({
 
                                 return (
                                     <tr key={product.id} className="group transition-colors hover:bg-surface/50">
-                                        <td className="px-4 py-4">
+                                        <td className="px-5 py-4">
                                             <div className="flex items-center gap-4">
-                                                <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg border border-border bg-surface p-1.5">
+                                                <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg border border-border bg-surface p-1.5 transition-transform group-hover:scale-105">
                                                     <AdminImage
                                                         src={thumbnail}
                                                         alt={product.name}
@@ -151,20 +148,20 @@ export function ProductTable({
                                                     />
                                                 </div>
                                                 <div>
-                                                    <p className="font-bold leading-snug text-text transition-colors group-hover:text-success">
+                                                    <p className="font-bold leading-snug text-text transition-colors group-hover:text-primary">
                                                         {product.name}
                                                     </p>
                                                     <p className="mt-1 text-xs font-medium text-muted">{product.slug}</p>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td className="px-4 py-4 text-sm font-bold text-text">
+                                        <td className="px-5 py-4 text-sm font-medium text-text">
                                             {product.brand?.name ?? "-"}
                                         </td>
-                                        <td className="px-4 py-4 text-sm font-bold text-text">
+                                        <td className="px-5 py-4 text-sm font-medium text-text">
                                             {product.category?.name ?? "-"}
                                         </td>
-                                        <td className="px-4 py-4">
+                                        <td className="px-5 py-4 text-right">
                                             <div className="text-sm font-extrabold text-text">
                                                 {currencyFormatter.format(displayPrice)}
                                             </div>
@@ -174,28 +171,31 @@ export function ProductTable({
                                                 </div>
                                             )}
                                         </td>
-                                        <td className="px-4 py-4 text-sm font-bold text-text">
+                                        <td className="px-5 py-4 text-center text-sm font-medium text-text">
                                             {variant?.stockQuantity ?? 0}
                                         </td>
-                                        <td className="px-4 py-4 text-sm font-semibold text-muted">
+                                        <td className="px-5 py-4 text-sm text-muted">
                                             {formatProductDate(product.createdAt)}
                                         </td>
-                                        <td className="px-4 py-4">
-                                            <AdminBadge
-                                                variant={product.active ? "success" : "neutral"}
+                                        <td className="px-5 py-4">
+                                            <div 
+                                                className={`inline-block cursor-pointer ${updatingId === product.id ? 'opacity-50 pointer-events-none' : ''}`}
                                                 onClick={() => onToggleStatus(product)}
-                                                disabled={updatingId === product.id}
                                             >
-                                                {product.active ? "Active" : "Inactive"}
-                                            </AdminBadge>
+                                                <Badge
+                                                    variant={product.active ? "success" : "neutral"}
+                                                >
+                                                    {product.active ? "Đang bán" : "Ngừng bán"}
+                                                </Badge>
+                                            </div>
                                         </td>
-                                        <td className="px-4 py-4">
+                                        <td className="px-5 py-4">
                                             <div className="flex items-center justify-end gap-3">
                                                 <Link
                                                     to={`/admin/products/${product.id}/edit`}
-                                                    className="text-muted transition-colors hover:text-success"
+                                                    className={buttonVariants({ variant: "secondary", size: "sm" })}
                                                 >
-                                                    <Edit className="h-4 w-4" />
+                                                    <Edit className="h-3.5 w-3.5" />
                                                 </Link>
                                             </div>
                                         </td>
@@ -206,35 +206,12 @@ export function ProductTable({
                     </table>
                 </div>
 
-                <div className="flex items-center justify-between border-t border-border px-5 py-3">
-                    <p className="text-xs font-medium text-muted">
-                        {filteredProducts.length > 0
-                            ? `Showing ${startItem}-${endItem} of ${filteredProducts.length}`
-                            : "No results"}
-                    </p>
-                    <div className="flex items-center gap-2">
-                        <button
-                            type="button"
-                            onClick={() => onPageChange(page - 1)}
-                            disabled={page <= 1}
-                            className="flex items-center gap-1 rounded-xl border border-border bg-surface px-3 py-1.5 text-xs font-bold text-muted shadow-sm hover:bg-surface disabled:cursor-not-allowed disabled:opacity-40"
-                        >
-                            <ChevronLeft className="h-3.5 w-3.5" />
-                            Previous
-                        </button>
-                        <span className="text-xs font-bold text-text">
-                            Page {page} of {totalPages}
-                        </span>
-                        <button
-                            type="button"
-                            onClick={() => onPageChange(page + 1)}
-                            disabled={page >= totalPages}
-                            className="flex items-center gap-1 rounded-xl border border-border bg-surface px-3 py-1.5 text-xs font-bold text-muted shadow-sm hover:bg-surface disabled:cursor-not-allowed disabled:opacity-40"
-                        >
-                            Next
-                            <ChevronRight className="h-3.5 w-3.5" />
-                        </button>
-                    </div>
+                <div className="border-t border-border p-5">
+                    <Pagination 
+                        currentPage={page}
+                        totalPages={totalPages}
+                        onPageChange={onPageChange}
+                    />
                 </div>
                 </>
             )}

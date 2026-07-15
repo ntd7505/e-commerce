@@ -1,4 +1,5 @@
 import { PlusCircle, Trash2 } from "lucide-react";
+import { Button } from "../../../../components/common";
 import type { VariantDraft } from "../adminProductFormTypes";
 
 type ProductVariantsEditorProps = {
@@ -19,76 +20,78 @@ export function ProductVariantsEditor({
     onChange,
 }: ProductVariantsEditorProps) {
     return (
-        <section className="rounded-xl border border-border bg-surface p-6 shadow-sm">
-            <div className="mb-6 flex items-center justify-between">
-                <h3 className="text-lg font-bold text-text">Variants</h3>
-                <button
-                    type="button"
+        <section className="rounded-xl border border-border bg-surface shadow-sm transition-all hover:shadow-md">
+            <div className="flex items-center justify-between border-b border-border bg-surface-alt px-6 py-4 rounded-t-xl">
+                <h3 className="text-sm font-bold text-text">Các phiên bản (Variants)</h3>
+                <Button
+                    variant="secondary"
+                    size="sm"
                     onClick={onAdd}
-                    className="flex items-center gap-2 rounded-xl border border-border bg-surface px-3 py-2 text-xs font-bold text-muted shadow-sm hover:bg-surface"
+                    leftIcon={<PlusCircle className="h-4 w-4" />}
                 >
-                    <PlusCircle className="h-4 w-4" /> Add variant
-                </button>
+                    Thêm phiên bản
+                </Button>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-4 p-6">
                 {variants.map((variant, index) => (
-                    <div key={variant.id ?? `new-${index}`} className="rounded-lg border border-border-strong p-4">
+                    <div key={variant.id ?? `new-${index}`} className="rounded-xl border border-border-strong bg-surface p-5 transition-all hover:border-primary/30 hover:shadow-sm">
                         <div className="grid grid-cols-1 gap-4 md:grid-cols-5">
                             <input
                                 value={variant.variantName}
                                 onChange={(event) => onChange(index, { variantName: event.target.value })}
-                                placeholder="Variant name"
-                                className="rounded-lg border border-border-strong bg-surface-alt px-3 py-2.5 text-sm font-semibold focus:border-success focus:outline-none md:col-span-2"
+                                placeholder="Tên phiên bản"
+                                className="rounded-lg border border-border-strong bg-surface px-4 py-2.5 text-sm font-semibold outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20 md:col-span-2"
                             />
                             <input
                                 type="number"
                                 value={variant.stockQuantity}
                                 onChange={(event) => onChange(index, { stockQuantity: event.target.value })}
-                                placeholder="Stock"
-                                className="rounded-lg border border-border-strong bg-surface-alt px-3 py-2.5 text-sm font-semibold focus:border-success focus:outline-none"
+                                placeholder="Tồn kho"
+                                className="rounded-lg border border-border-strong bg-surface px-4 py-2.5 text-sm font-semibold outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
                             />
                             <input
                                 type="number"
                                 value={variant.price}
                                 onChange={(event) => onChange(index, { price: event.target.value })}
-                                placeholder="Price"
-                                className="rounded-lg border border-border-strong bg-surface-alt px-3 py-2.5 text-sm font-semibold focus:border-success focus:outline-none"
+                                placeholder="Giá gốc"
+                                className="rounded-lg border border-border-strong bg-surface px-4 py-2.5 text-sm font-semibold outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
                             />
                             <input
                                 type="number"
                                 value={variant.salePrice}
                                 onChange={(event) => onChange(index, { salePrice: event.target.value })}
-                                placeholder="Sale"
-                                className="rounded-lg border border-border-strong bg-surface-alt px-3 py-2.5 text-sm font-semibold focus:border-success focus:outline-none"
+                                placeholder="Khuyến mãi"
+                                className="rounded-lg border border-border-strong bg-surface px-4 py-2.5 text-sm font-semibold outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
                             />
                         </div>
-                        <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-                            <label className="flex items-center gap-2 text-sm font-bold text-text">
+                        <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
+                            <label className="flex cursor-pointer items-center gap-2 text-sm font-bold text-text transition-colors hover:text-primary">
                                 <input
                                     type="checkbox"
                                     checked={variant.active}
                                     onChange={(event) => onChange(index, { active: event.target.checked })}
-                                    className="h-4 w-4 accent-emerald-500"
+                                    className="h-4 w-4 rounded border-border-strong text-primary focus:ring-primary/20"
                                 />
-                                Active
+                                Đang bán
                             </label>
                             <div className="flex items-center gap-2">
-                                <button
-                                    type="button"
+                                <Button
+                                    variant="primary"
+                                    size="sm"
                                     onClick={() => onSave(index)}
                                     disabled={savingVariantIndex === index}
-                                    className="rounded-lg bg-success px-4 py-2 text-xs font-bold text-white hover:bg-success disabled:opacity-50"
+                                    loading={savingVariantIndex === index}
                                 >
-                                    {savingVariantIndex === index ? "Saving..." : "Save"}
-                                </button>
-                                <button
-                                    type="button"
+                                    Lưu
+                                </Button>
+                                <Button
+                                    variant="danger"
+                                    size="sm"
                                     onClick={() => onDelete(index)}
-                                    className="rounded-xl border border-border bg-surface p-2 text-muted hover:bg-danger-soft hover:text-danger"
                                 >
                                     <Trash2 className="h-4 w-4" />
-                                </button>
+                                </Button>
                             </div>
                         </div>
                     </div>

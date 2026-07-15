@@ -11,8 +11,9 @@ import {
   Star,
   Users,
   XCircle,
+  RefreshCw,
 } from "lucide-react";
-import { Container, Section } from "../../../../components/common";
+import { Container, Section, Button } from "../../../../components/common";
 import { AdminSpinner } from "../../../../components/admin/AdminSpinner";
 import { AdminStatCard } from "../../../../components/admin/AdminStatCard";
 import { AdminImage } from "../../../../components/admin/AdminImage";
@@ -137,14 +138,15 @@ export default function AdminDashboardSummary() {
               <p className="mt-1 text-sm text-muted">Tổng quan nhanh tình hình kinh doanh của NexaMart.</p>
             </div>
           </div>
-          <button
-            type="button"
+          <Button
+            variant="secondary"
+            size="sm"
+            leftIcon={<RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />}
             onClick={loadDashboard}
             disabled={loading}
-            className="rounded-xl border border-border bg-surface px-4 py-2 text-sm font-semibold text-text transition-colors hover:bg-surface-alt disabled:opacity-60"
           >
             {loading ? "Đang tải..." : "Tải lại"}
-          </button>
+          </Button>
         </div>
 
         {error && (
@@ -184,7 +186,7 @@ export default function AdminDashboardSummary() {
 
             <div className="overflow-x-auto">
               <table className="w-full min-w-[760px] text-left text-sm">
-                <thead className="bg-surface-alt text-xs font-semibold text-muted">
+                <thead className="bg-surface-alt text-xs font-semibold text-muted uppercase tracking-wider">
                   <tr>
                     <th className="px-5 py-3">Mã đơn</th>
                     <th className="px-5 py-3">Người nhận</th>

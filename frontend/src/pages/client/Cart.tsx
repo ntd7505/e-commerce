@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { MapPin, Phone, ChevronRight, Plus, Star, AlertCircle, Loader2, Tag, Trash2, ShieldCheck, RotateCcw, Headset } from 'lucide-react';
+import { MapPin, Phone, ChevronRight, Plus, Star, AlertCircle, Loader2, Trash2, ShieldCheck, RotateCcw, Headset } from 'lucide-react';
 import { useCart } from '../../features/client/cart/CartProvider';
 import CartItemCard from './components/cart/CartItemCard';
 import { cartApi } from '../../features/client/cart/cartApi';

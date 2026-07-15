@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Mail, Phone, ShieldCheck, User } from "lucide-react";
-import { Modal } from "../../../../components/common";
-import { AdminBadge } from "../../../../components/admin/AdminBadge";
+import { Modal, Badge, Button } from "../../../../components/common";
 import { AdminImage } from "../../../../components/admin/AdminImage";
 import { getAdminUserById } from "../adminUserApi";
 import type { AdminUserResponse } from "../adminUserTypes";
@@ -39,7 +38,6 @@ export function UserDetailsModal({ isOpen, onClose, userId }: UserDetailsModalPr
       setUser(null);
       setError("");
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, userId]);
 
   return (
@@ -73,9 +71,9 @@ export function UserDetailsModal({ isOpen, onClose, userId }: UserDetailsModalPr
               <div className="flex-1 text-center sm:text-left">
                 <h3 className="text-xl font-extrabold text-text">{user.fullName || "Chưa cập nhật tên"}</h3>
                 <div className="mt-2 flex flex-wrap items-center justify-center gap-2 sm:justify-start">
-                  <AdminBadge variant={user.status === "ACTIVE" ? "success" : "danger"} dot>
-                    {user.status}
-                  </AdminBadge>
+                  <Badge variant={user.status === "ACTIVE" ? "success" : "danger"}>
+                    {user.status === "ACTIVE" ? "Hoạt động" : "Bị khóa"}
+                  </Badge>
                   {user.roles?.map((role) => (
                     <span key={role.name} className="flex items-center gap-1 rounded-md bg-indigo-50 px-2 py-0.5 text-xs font-bold text-indigo-700">
                       <ShieldCheck className="h-3 w-3" />
@@ -111,12 +109,12 @@ export function UserDetailsModal({ isOpen, onClose, userId }: UserDetailsModalPr
             </div>
             
             <div className="flex justify-end pt-2">
-              <button
+              <Button
+                variant="ghost"
                 onClick={onClose}
-                className="rounded-xl bg-surface-alt px-4 py-2 text-sm font-bold text-text transition-colors hover:bg-border"
               >
                 Đóng
-              </button>
+              </Button>
             </div>
           </div>
         )}

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { AdminStatCard } from "../../components/admin/AdminStatCard";
 import { getPayments, updatePaymentStatus, type PaymentResponse } from "../../features/admin/transactions/adminPaymentApi";
 import { OrderStatusBadge } from "../../features/admin/orders/components/OrderStatusBadge";
+import type { PaymentStatus } from "../../features/admin/orders/adminOrderTypes";
 import { Modal, Button, Badge } from "../../components/common";
 import { useToast } from "../../features/ui/ToastProvider";
 
@@ -241,7 +242,7 @@ export default function Transactions() {
                       {formatMoney(tx.amount)} đ
                     </td>
                     <td className="px-5 py-4">
-                      <OrderStatusBadge value={tx.status as any} />
+                      <OrderStatusBadge value={tx.status as PaymentStatus} />
                     </td>
                     <td className="px-5 py-4 font-mono text-xs text-muted truncate max-w-[120px]">{tx.transactionCode || "-"}</td>
                     <td className="px-5 py-4 text-muted text-xs">{formatDate(tx.paidAt)}</td>
@@ -308,7 +309,7 @@ export default function Transactions() {
               <div>
                 <p className="text-xs font-semibold text-muted mb-1 uppercase tracking-wider">Trạng thái</p>
                 <div className="mt-1">
-                  <OrderStatusBadge value={selectedPayment.status as any} />
+                  <OrderStatusBadge value={selectedPayment.status as PaymentStatus} />
                 </div>
               </div>
             </div>

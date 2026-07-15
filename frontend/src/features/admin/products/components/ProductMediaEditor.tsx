@@ -1,4 +1,5 @@
-﻿import { AlertTriangle, Image as ImageIcon, PlusCircle, Trash2, Upload } from "lucide-react";
+import { AlertTriangle, Image as ImageIcon, PlusCircle, Trash2, Upload } from "lucide-react";
+import { Button } from "../../../../components/common";
 import { AdminImage } from "../../../../components/admin/AdminImage";
 import type { MediaDraft } from "../adminProductFormTypes";
 
@@ -34,13 +35,13 @@ export function ProductMediaEditor({
     const isUploading = uploadingKey !== null;
 
     return (
-        <section className="rounded-xl border border-border bg-surface p-6 shadow-sm">
-            <div className="mb-6 flex items-center justify-between gap-4">
-                <h3 className="text-lg font-bold text-text">Product Media</h3>
+        <section className="rounded-xl border border-border bg-surface shadow-sm transition-all hover:shadow-md">
+            <div className="flex items-center justify-between gap-4 border-b border-border bg-surface-alt px-6 py-4 rounded-t-xl">
+                <h3 className="text-sm font-bold text-text">Hình ảnh sản phẩm</h3>
                 <div className="flex items-center gap-2">
-                    <label className="flex cursor-pointer items-center gap-1.5 rounded-xl border border-border bg-surface px-3 py-2 text-xs font-bold text-muted shadow-sm hover:bg-surface">
-                        <Upload className="h-3.5 w-3.5" />
-                        {uploadingKey === "edit-bulk" ? "Uploading..." : "Upload images"}
+                    <label className={`inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-border bg-surface px-4 py-2 text-sm font-bold text-text transition-all hover:bg-surface-alt focus:outline-none focus:ring-2 focus:ring-primary/20 ${isUploading ? 'opacity-50 pointer-events-none' : ''}`}>
+                        <Upload className="h-4 w-4" />
+                        {uploadingKey === "edit-bulk" ? "Đang tải..." : "Tải nhiều ảnh lên"}
                         <input
                             type="file"
                             accept="image/*"
@@ -53,20 +54,20 @@ export function ProductMediaEditor({
                             }}
                         />
                     </label>
-                    <button
-                        type="button"
+                    <Button
+                        variant="secondary"
                         onClick={onAdd}
                         disabled={isUploading}
-                        className="flex items-center gap-1.5 rounded-xl border border-border bg-surface px-3 py-2 text-xs font-bold text-muted shadow-sm hover:bg-surface disabled:opacity-50"
+                        leftIcon={<PlusCircle className="h-4 w-4" />}
                     >
-                        <PlusCircle className="h-3.5 w-3.5" /> Add URL
-                    </button>
+                        Thêm URL
+                    </Button>
                 </div>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-4 p-6">
                 {mediaItems.map((media, index) => (
-                    <div key={media.id ?? `new-${index}`} className="rounded-lg border border-border-strong p-4">
+                    <div key={media.id ?? `new-${index}`} className="rounded-xl border border-border-strong bg-surface p-5 transition-all hover:border-primary/30 hover:shadow-sm">
                         <div className="mb-3 flex aspect-video items-center justify-center rounded-lg border border-border-strong bg-surface-alt p-4">
                             {media.url ? (
                                 <AdminImage
@@ -82,8 +83,8 @@ export function ProductMediaEditor({
                         <input
                             value={media.url}
                             onChange={(event) => onChange(index, { url: event.target.value })}
-                            placeholder="Image URL"
-                            className="mb-1 w-full rounded-lg border border-border-strong bg-surface-alt px-3 py-2.5 text-xs focus:border-success focus:outline-none"
+                            placeholder="URL hình ảnh"
+                            className="mb-1 w-full rounded-lg border border-border-strong bg-surface px-4 py-2.5 text-sm font-semibold outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
                         />
                         {hasDummyUrl(media.url) && (
                             <p className="mb-3 flex items-center gap-1 text-xs font-bold text-warning">
@@ -96,42 +97,42 @@ export function ProductMediaEditor({
                             <input
                                 value={media.altText}
                                 onChange={(event) => onChange(index, { altText: event.target.value })}
-                                placeholder="Alt text"
-                                className="rounded-lg border border-border-strong bg-surface-alt px-3 py-2.5 text-xs focus:border-success focus:outline-none"
+                                placeholder="Văn bản thay thế"
+                                className="rounded-lg border border-border-strong bg-surface px-4 py-2.5 text-sm font-semibold outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
                             />
                             <input
                                 type="number"
                                 value={media.sortOrder}
                                 onChange={(event) => onChange(index, { sortOrder: event.target.value })}
-                                placeholder="Sort"
-                                className="rounded-lg border border-border-strong bg-surface-alt px-3 py-2.5 text-xs focus:border-success focus:outline-none"
+                                placeholder="Thứ tự"
+                                className="rounded-lg border border-border-strong bg-surface px-4 py-2.5 text-sm font-semibold outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
                             />
                         </div>
-                        <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+                        <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
                             <div className="flex items-center gap-4">
-                                <label className="flex items-center gap-2 text-xs font-bold text-text">
+                                <label className="flex cursor-pointer items-center gap-2 text-sm font-bold text-text transition-colors hover:text-primary">
                                     <input
                                         type="checkbox"
                                         checked={media.thumbnail}
                                         onChange={(event) => onChange(index, { thumbnail: event.target.checked })}
-                                        className="h-4 w-4 accent-emerald-500"
+                                        className="h-4 w-4 rounded border-border-strong text-primary focus:ring-primary/20"
                                     />
-                                    Thumbnail
+                                    Ảnh đại diện
                                 </label>
-                                <label className="flex items-center gap-2 text-xs font-bold text-text">
+                                <label className="flex cursor-pointer items-center gap-2 text-sm font-bold text-text transition-colors hover:text-primary">
                                     <input
                                         type="checkbox"
                                         checked={media.active}
                                         onChange={(event) => onChange(index, { active: event.target.checked })}
-                                        className="h-4 w-4 accent-emerald-500"
+                                        className="h-4 w-4 rounded border-border-strong text-primary focus:ring-primary/20"
                                     />
-                                    Active
+                                    Đang hiển thị
                                 </label>
                             </div>
                             <div className="flex items-center gap-2">
-                                <label className="flex cursor-pointer items-center gap-1.5 rounded-xl border border-border bg-surface px-3 py-2 text-xs font-bold text-muted hover:bg-surface">
+                                <label className={`inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-border bg-surface px-3 py-2 text-sm font-bold text-text transition-all hover:bg-surface-alt focus:outline-none focus:ring-2 focus:ring-primary/20 ${isUploading ? 'opacity-50 pointer-events-none' : ''}`}>
                                     <Upload className="h-4 w-4" />
-                                    {uploadingKey === `edit-${index}` ? "Uploading..." : "Upload"}
+                                    {uploadingKey === `edit-${index}` ? "Đang tải..." : "Tải lên"}
                                     <input
                                         type="file"
                                         accept="image/*"
@@ -143,21 +144,22 @@ export function ProductMediaEditor({
                                         }}
                                     />
                                 </label>
-                                <button
-                                    type="button"
+                                <Button
+                                    variant="primary"
+                                    size="sm"
                                     onClick={() => onSave(index)}
                                     disabled={savingMediaIndex === index}
-                                    className="rounded-lg bg-success px-3 py-2 text-xs font-bold text-white hover:bg-success disabled:opacity-50"
+                                    loading={savingMediaIndex === index}
                                 >
-                                    {savingMediaIndex === index ? "Saving..." : "Save"}
-                                </button>
-                                <button
-                                    type="button"
+                                    Lưu
+                                </Button>
+                                <Button
+                                    variant="danger"
+                                    size="sm"
                                     onClick={() => onDelete(index)}
-                                    className="rounded-xl border border-border bg-surface p-2 text-muted hover:bg-danger-soft hover:text-danger"
                                 >
                                     <Trash2 className="h-4 w-4" />
-                                </button>
+                                </Button>
                             </div>
                         </div>
                     </div>

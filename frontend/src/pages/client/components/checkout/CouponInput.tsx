@@ -22,6 +22,7 @@ export default function CouponInput({ currentCoupon, subtotalAmount, onApply, on
   const [couponsError, setCouponsError] = useState<string | null>(null);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- đồng bộ prop currentCoupon với state local code
     setCode(currentCoupon || '');
   }, [currentCoupon]);
 

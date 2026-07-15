@@ -1,9 +1,7 @@
-﻿import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { AlertCircle, RefreshCw, Search, ShieldCheck, Users } from "lucide-react";
-import { AdminAlert } from "../../components/admin/AdminAlert";
-import { AdminBadge } from "../../components/admin/AdminBadge";
+import { Button, Badge, Container, Section } from "../../components/common";
 import { AdminImage } from "../../components/admin/AdminImage";
-import { Container, Section } from "../../components/common";
 import { UserDetailsModal } from "../../features/admin/customers/components/UserDetailsModal";
 import { getAdminUsers } from "../../features/admin/customers/adminUserApi";
 import { getRoles } from "../../features/admin/roles/adminRoleApi";
@@ -35,7 +33,7 @@ export default function Authority() {
       setRoles(roleData);
     } catch (err) {
       console.warn("Failed to load roles:", err);
-      setRolesError("Không thể tải danh sách vai trò. Vui lòng kiểm tra quyền ADMIN hoặc backend roles API.");
+      setRolesError("Không thể tải danh sách vai trò. Vui lòng kiểm tra quyền ADMIN hoặc API roles.");
     } finally {
       setLoading(false);
     }
@@ -62,41 +60,38 @@ export default function Authority() {
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h2 className="text-2xl font-bold text-text">Control Authority</h2>
+            <h2 className="text-2xl font-bold text-text">Quản lý Phân Quyền</h2>
             <p className="mt-1 text-sm text-muted">
-              Xem vai trò của từng tài khoản. Để thay đổi role, dùng API backend trực tiếp.
+              Xem chi tiết vai trò và quyền hạn được gán cho từng tài khoản. Để thay đổi vai trò, vui lòng sử dụng API backend trực tiếp.
             </p>
           </div>
-          <button
-            type="button"
+          <Button
             onClick={loadData}
             disabled={loading}
-            className="flex items-center gap-2 rounded-2xl border border-border bg-surface px-4 py-2.5 text-sm font-bold text-text shadow-sm transition-colors hover:bg-surface disabled:opacity-50"
+            variant="outline"
+            leftIcon={<RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />}
           >
-            <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
-            Refresh
-          </button>
+            Làm mới
+          </Button>
         </div>
 
         {/* Roles error */}
         {rolesError && !loading && (
-          <AdminAlert tone="warning">
-            <span className="flex items-center gap-2">
-              <AlertCircle className="h-4 w-4" />
-              {rolesError}
-            </span>
-          </AdminAlert>
+          <div className="flex items-center gap-2 rounded-xl border border-warning/20 bg-warning-soft px-4 py-3 text-sm font-semibold text-warning">
+            <AlertCircle className="h-4 w-4 shrink-0" />
+            {rolesError}
+          </div>
         )}
 
         {/* Role overview */}
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {loading ? (
-            <div className="col-span-4 rounded-2xl border border-border bg-surface p-6 text-center text-sm text-muted">
-              Loading roles...
+            <div className="col-span-4 rounded-xl border border-border bg-surface p-8 text-center text-sm text-muted">
+              Đang tải danh sách vai trò...
             </div>
           ) : rolesError ? (
-            <div className="col-span-4 rounded-2xl border border-border bg-surface p-6 text-center text-sm text-muted">
-              Role data unavailable.
+            <div className="col-span-4 rounded-xl border border-border bg-surface p-8 text-center text-sm text-muted">
+              Dữ liệu vai trò không khả dụng.
             </div>
           ) : (
             roles.map((role) => {
@@ -106,15 +101,15 @@ export default function Authority() {
               return (
                 <div
                   key={role.name}
-                  className="rounded-2xl border border-border bg-surface p-4 shadow-sm transition-shadow hover:shadow-md"
+                  className="rounded-xl border border-border bg-surface p-5 shadow-sm transition-all hover:border-primary/20 hover:shadow-md"
                 >
-                  <div className="flex items-center gap-2 mb-2">
+                  <div className="flex items-center gap-2 mb-3">
                     <ShieldCheck className="h-4 w-4 text-success" />
-                    <p className="text-sm font-semibold text-muted">{role.name}</p>
+                    <p className="text-sm font-bold text-text-muted">{role.name}</p>
                   </div>
-                  <p className="text-2xl font-extrabold text-text">{count}</p>
-                  <p className="mt-0.5 text-xs text-muted">
-                    {role.permissions?.length ?? 0} permissions
+                  <p className="text-3xl font-black text-text">{count}</p>
+                  <p className="mt-1 text-xs font-semibold text-muted">
+                    {role.permissions?.length ?? 0} quyền hạn được gán
                   </p>
                 </div>
               );
@@ -122,46 +117,46 @@ export default function Authority() {
           )}
         </div>
 
-        {/* User ? Role table */}
-        <div className="rounded-2xl border border-border bg-surface shadow-sm">
+        {/* User - Role table */}
+        <div className="rounded-xl border border-border bg-surface shadow-sm overflow-hidden">
           <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border p-5">
             <div className="flex items-center gap-2 text-sm font-bold text-text">
-              <Users className="h-4 w-4 text-success" />
-              User Role Assignments
+              <Users className="h-4 w-4 text-primary" />
+              Phân bổ vai trò người dùng
             </div>
             <div className="relative w-72">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
               <input
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Search name or email"
-                className="w-full rounded-lg border border-border-strong bg-surface py-2 pl-9 pr-3 text-sm outline-none transition focus:border-success focus:ring-1 focus:ring-success"
+                placeholder="Tìm theo tên hoặc email..."
+                className="w-full rounded-lg border border-border-strong bg-surface py-2 pl-9 pr-3 text-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
               />
             </div>
           </div>
 
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="sticky top-0 bg-surface text-xs font-semibold text-muted">
+              <thead className="bg-surface-alt text-xs font-bold text-muted border-b border-border">
                 <tr>
-                  <th className="px-5 py-3 font-bold">User</th>
-                  <th className="px-5 py-3 font-bold">Email</th>
-                  <th className="px-5 py-3 font-bold">Status</th>
-                  <th className="px-5 py-3 font-bold">Assigned Roles</th>
+                  <th className="px-5 py-3.5 font-bold uppercase tracking-wider">Người dùng</th>
+                  <th className="px-5 py-3.5 font-bold uppercase tracking-wider">Email</th>
+                  <th className="px-5 py-3.5 font-bold uppercase tracking-wider">Trạng thái</th>
+                  <th className="px-5 py-3.5 font-bold uppercase tracking-wider">Vai trò đã cấp</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
                 {loading ? (
                   <tr>
-                    <td colSpan={4} className="px-5 py-10 text-center text-muted">Loading users...</td>
+                    <td colSpan={4} className="px-5 py-10 text-center text-muted font-medium">Đang tải người dùng...</td>
                   </tr>
                 ) : filteredUsers.length === 0 ? (
                   <tr>
-                    <td colSpan={4} className="px-5 py-10 text-center text-muted">No users found.</td>
+                    <td colSpan={4} className="px-5 py-10 text-center text-muted font-medium">Không tìm thấy người dùng nào.</td>
                   </tr>
                 ) : (
                   filteredUsers.map((user) => (
-                    <tr key={user.id} className="transition-colors hover:bg-surface">
+                    <tr key={user.id} className="transition-colors hover:bg-surface-alt/25">
                       <td className="px-5 py-4">
                         <div 
                           className="flex items-center gap-3 group cursor-pointer" 
@@ -180,30 +175,31 @@ export default function Authority() {
                           <span className="font-semibold text-text transition-colors duration-200 group-hover:text-primary">{user.fullName}</span>
                         </div>
                       </td>
-                      <td className="px-5 py-4 text-muted">{user.email}</td>
+                      <td className="px-5 py-4 text-muted font-medium">{user.email}</td>
                       <td className="px-5 py-4">
-                        <AdminBadge
+                        <Badge
                           variant={user.status === "ACTIVE" ? "success" : "danger"}
                           dot
                         >
-                          {user.status}
-                        </AdminBadge>
+                          {user.status === "ACTIVE" ? "Hoạt động" : "Khoá"}
+                        </Badge>
                       </td>
                       <td className="px-5 py-4">
-                        <div className="flex flex-wrap gap-1">
+                        <div className="flex flex-wrap gap-1.5">
                           {user.roles?.length ? (
                             user.roles.map((role) => (
-                              <span
+                              <Badge
                                 key={role.name}
-                                className="rounded-md bg-indigo-50 px-2 py-0.5 text-xs font-bold text-indigo-700"
+                                variant="primary"
+                                size="sm"
                               >
                                 {role.name}
-                              </span>
+                              </Badge>
                             ))
                           ) : (
-                            <span className="rounded-md bg-surface-alt px-2 py-0.5 text-xs font-bold text-muted">
+                            <Badge variant="neutral" size="sm">
                               USER
-                            </span>
+                            </Badge>
                           )}
                         </div>
                       </td>

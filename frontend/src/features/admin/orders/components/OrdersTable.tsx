@@ -2,6 +2,7 @@ import { Eye, Search, ShoppingBag } from "lucide-react";
 import { useState } from "react";
 import { AdminEmptyState } from "../../../../components/admin/AdminEmptyState";
 import { AdminSkeletonTable } from "../../../../components/admin/AdminSkeletonTable";
+import { Button } from "../../../../components/common";
 import type { OrderResponse, OrderStatus } from "../adminOrderTypes";
 import { OrderStatusBadge } from "./OrderStatusBadge";
 
@@ -94,25 +95,25 @@ export function OrdersTable({
     }
 
     return (
-        <div className="overflow-hidden rounded-xl border border-border bg-surface">
-            <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border p-5">
+        <div className="overflow-hidden rounded-xl border border-border bg-surface shadow-sm transition-all hover:shadow-md">
+            <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border bg-surface-alt p-5">
                 <div>
                     <h3 className="font-bold text-text">Danh sách đơn hàng</h3>
-                    <p className="mt-1 text-xs font-medium text-muted">
+                    <p className="mt-1 text-xs font-semibold text-muted">
                         Hiển thị {filteredOrders.length}/{orders.length} đơn hàng
                     </p>
                 </div>
 
                 <div className="flex flex-wrap items-center gap-3">
-                    <div className="flex rounded-lg border border-border-strong bg-surface p-1">
+                    <div className="flex rounded-lg border border-border-strong bg-surface p-1 shadow-inner">
                         {orderStatusFilters.map((option) => (
                             <button
                                 key={option.value}
                                 type="button"
                                 onClick={() => setStatusFilter(option.value)}
-                                className={`rounded-md px-3 py-1.5 text-xs font-bold transition-colors ${
+                                className={`rounded-md px-3 py-1.5 text-xs font-bold transition-all ${
                                     statusFilter === option.value
-                                        ? "bg-surface text-success shadow-sm"
+                                        ? "bg-surface-alt text-primary shadow-sm"
                                         : "text-muted hover:text-text"
                                 }`}
                             >
@@ -127,18 +128,18 @@ export function OrdersTable({
                             value={searchTerm}
                             onChange={(event) => setSearchTerm(event.target.value)}
                             placeholder="Tìm kiếm mã, tên, SĐT"
-                            className="w-full rounded-lg border border-border-strong bg-surface py-2 pl-9 pr-3 text-sm outline-none focus:border-success"
+                            className="w-full rounded-lg border border-border-strong bg-surface py-2.5 pl-9 pr-3 text-sm font-semibold outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
                         />
                     </div>
 
                     {hasActiveFilters && (
-                        <button
-                            type="button"
+                        <Button
+                            variant="secondary"
+                            size="sm"
                             onClick={clearFilters}
-                            className="rounded-xl border border-border bg-surface px-3 py-2 text-xs font-bold text-muted transition-colors hover:bg-surface"
                         >
                             Xóa lọc
-                        </button>
+                        </Button>
                     )}
                 </div>
             </div>
@@ -157,7 +158,7 @@ export function OrdersTable({
             {!loading && !error && filteredOrders.length > 0 && (
                 <div className="overflow-x-auto">
                     <table className="w-full min-w-[1040px] text-left text-sm">
-                        <thead className="bg-surface text-xs uppercase text-muted">
+                        <thead className="bg-surface-alt text-xs font-bold uppercase tracking-wider text-muted border-b border-border">
                             <tr>
                                 <th className="px-5 py-3">Mã đơn</th>
                                 <th className="px-5 py-3">Khách hàng</th>
@@ -205,24 +206,24 @@ export function OrdersTable({
                                         <td className="px-5 py-4 text-muted">{formatDate(order.createdAt)}</td>
                                         <td className="px-5 py-4">
                                             <div className="flex justify-end gap-2">
-                                                <button
-                                                    type="button"
+                                                <Button
+                                                    variant="secondary"
+                                                    size="sm"
                                                     onClick={() => onView(order.id)}
-                                                    className="rounded-md p-2 text-muted transition-colors hover:bg-surface-alt"
+                                                    leftIcon={<Eye className="h-4 w-4" />}
                                                     title="Xem chi tiết"
-                                                >
-                                                    <Eye className="h-4 w-4" />
-                                                </button>
+                                                />
 
                                                 {nextAction && (
-                                                    <button
-                                                        type="button"
+                                                    <Button
+                                                        variant="success"
+                                                        size="sm"
                                                         onClick={() => onAction(order.id, nextAction.action)}
                                                         disabled={busy}
-                                                        className="rounded-lg bg-success px-3 py-2 text-xs font-bold text-white transition-colors hover:bg-success disabled:cursor-not-allowed disabled:opacity-60"
+                                                        loading={busy}
                                                     >
-                                                        {busy ? "Đang xử lý..." : nextAction.label}
-                                                    </button>
+                                                        {nextAction.label}
+                                                    </Button>
                                                 )}
                                             </div>
                                         </td>

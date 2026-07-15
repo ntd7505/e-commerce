@@ -16,12 +16,19 @@ export function CouponStats({ coupons }: CouponStatsProps) {
     }).length;
 
     return (
-        <div className="grid grid-cols-4 gap-4">
-            <AdminStatCard label="Total Coupons" value={total} />
-            <AdminStatCard label="Active" value={active} />
-            <AdminStatCard label="Inactive" value={inactive} />
-            <AdminStatCard label="Expired" value={expired} />
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+            <div className="animate-fade-in-up" style={{ animationDelay: '50ms' }}>
+                <AdminStatCard label="Tổng cộng" value={total} />
+            </div>
+            <div className="animate-fade-in-up" style={{ animationDelay: '100ms' }}>
+                <AdminStatCard label="Đang hoạt động" value={active} />
+            </div>
+            <div className="animate-fade-in-up" style={{ animationDelay: '150ms' }}>
+                <AdminStatCard label="Đã ẩn" value={inactive} />
+            </div>
+            <div className="animate-fade-in-up" style={{ animationDelay: '200ms' }}>
+                <AdminStatCard label="Đã hết hạn" value={expired} />
+            </div>
         </div>
-
     );
 }

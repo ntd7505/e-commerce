@@ -27,7 +27,6 @@ export default function Products() {
           statusFilter={productsList.statusFilter}
           updatingId={productsList.updatingId}
           page={productsList.page}
-          pageSize={productsList.pageSize}
           totalPages={productsList.totalPages}
           onSearchChange={productsList.setSearchTerm}
           onStatusFilterChange={productsList.setStatusFilter}

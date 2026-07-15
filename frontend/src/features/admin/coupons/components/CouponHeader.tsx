@@ -1,4 +1,5 @@
 import { Plus, RefreshCw } from "lucide-react";
+import { Button } from "../../../../components/common";
 
 type CouponHeaderProps = {
     loading: boolean;
@@ -8,33 +9,30 @@ type CouponHeaderProps = {
 
 export function CouponHeader({ loading, onRefresh, onAdd }: CouponHeaderProps) {
     return (
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div>
-                <h2 className="text-xl font-bold text-text">Coupons</h2>
-                <p className="text-sm text-muted">
-                    Manage discount codes and campaign rules
+                <h1 className="text-2xl font-bold text-text">Mã giảm giá</h1>
+                <p className="mt-1 text-sm font-medium text-muted">
+                    Quản lý mã giảm giá và chiến dịch khuyến mãi.
                 </p>
             </div>
 
-            <div className="flex gap-3">
-                <button
-                    type="button"
+            <div className="flex items-center gap-3">
+                <Button
+                    variant="secondary"
                     onClick={onRefresh}
                     disabled={loading}
-                    className="flex items-center gap-2 rounded-xl border border-border bg-surface px-4 py-2 text-sm font-semibold text-text hover:bg-surface disabled:opacity-60"
+                    leftIcon={<RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />}
                 >
-                    <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
-                    Refresh
-                </button>
-
-                <button
-                    type="button"
+                    Tải lại
+                </Button>
+                <Button
+                    variant="primary"
                     onClick={onAdd}
-                    className="flex items-center gap-2 rounded-lg bg-success px-4 py-2 text-sm font-semibold text-white hover:bg-success"
+                    leftIcon={<Plus className="h-4 w-4" />}
                 >
-                    <Plus className="h-4 w-4" />
-                    Add Coupon
-                </button>
+                    Thêm mã giảm giá
+                </Button>
             </div>
         </div>
     )

@@ -1,7 +1,7 @@
 import { Edit, RefreshCw, Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { AdminBadge } from "../../components/admin/AdminBadge";
+import { Button, Badge, Container, Section } from "../../components/common";
 import { AdminImage } from "../../components/admin/AdminImage";
 import { AdminStatCard } from "../../components/admin/AdminStatCard";
 import { getProducts } from "../../features/admin/products/adminProductApi";
@@ -28,7 +28,7 @@ export default function ProductMedia() {
       setProducts(await getProducts());
     } catch (error) {
       console.error("Failed to load product media:", error);
-      setError("Could not load product media.");
+      setError("Không thể tải danh sách hình ảnh sản phẩm.");
     } finally {
       setLoading(false);
     }
@@ -62,106 +62,131 @@ export default function ProductMedia() {
   });
 
   const filterOptions: Array<{ label: string; value: MediaFilter }> = [
-    { label: "All", value: "ALL" },
-    { label: "Thumbnails", value: "THUMBNAIL" },
-    { label: "Active", value: "ACTIVE" },
-    { label: "Inactive", value: "INACTIVE" },
+    { label: "Tất cả", value: "ALL" },
+    { label: "Ảnh đại diện", value: "THUMBNAIL" },
+    { label: "Đang hoạt động", value: "ACTIVE" },
+    { label: "Đang ẩn", value: "INACTIVE" },
   ];
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-xl font-bold text-text">Product Media</h2>
-          <p className="text-sm text-muted">Browse product images and jump into product edit to manage them.</p>
-        </div>
-        <button
-          type="button"
-          onClick={loadProducts}
-          disabled={loading}
-          className="flex items-center gap-2 rounded-2xl border border-border bg-surface px-4 py-2 text-sm font-semibold text-text transition-colors hover:bg-surface disabled:opacity-60"
-        >
-          <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
-          Refresh
-        </button>
-      </div>
-
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
-        <AdminStatCard label="Media" value={mediaItems.length} />
-        <AdminStatCard label="Products" value={products.length} />
-        <AdminStatCard label="Thumbnails" value={mediaItems.filter((item) => item.thumbnail).length} />
-        <AdminStatCard label="Inactive" value={mediaItems.filter((item) => !item.active).length} />
-      </div>
-
-      <div className="overflow-hidden rounded-2xl border border-border bg-surface">
-        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border p-5">
+    <Container size="wide">
+      <Section spacing="md" className="space-y-6">
+        {/* Header */}
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h3 className="font-bold text-text">Media Library</h3>
-            <p className="mt-1 text-xs font-medium text-muted">Showing {filteredMedia.length} of {mediaItems.length} media</p>
+            <h2 className="text-2xl font-bold text-text">Quản lý Hình ảnh (Media)</h2>
+            <p className="mt-1 text-sm text-muted">Duyệt hình ảnh sản phẩm toàn hệ thống và truy cập chỉnh sửa để quản lý.</p>
           </div>
-          <div className="flex flex-wrap items-center gap-3">
-            <div className="flex rounded-lg border border-border-strong bg-surface p-1">
-              {filterOptions.map((option) => (
-                <button
-                  key={option.value}
-                  type="button"
-                  onClick={() => setFilter(option.value)}
-                  className={`rounded-md px-3 py-1.5 text-xs font-bold transition-colors ${
-                    filter === option.value ? "bg-surface text-success shadow-sm" : "text-muted hover:text-text"
-                  }`}
-                >
-                  {option.label}
-                </button>
+          <Button
+            onClick={loadProducts}
+            disabled={loading}
+            variant="outline"
+            leftIcon={<RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />}
+          >
+            Làm mới
+          </Button>
+        </div>
+
+        {/* Stats */}
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <AdminStatCard label="Tổng số hình ảnh" value={mediaItems.length} />
+          <AdminStatCard label="Số sản phẩm" value={products.length} />
+          <AdminStatCard label="Ảnh đại diện (Thumbnail)" value={mediaItems.filter((item) => item.thumbnail).length} />
+          <AdminStatCard label="Hình ảnh ẩn" value={mediaItems.filter((item) => !item.active).length} />
+        </div>
+
+        {/* Media Library Panel */}
+        <div className="overflow-hidden rounded-xl border border-border bg-surface shadow-sm">
+          <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border p-5">
+            <div>
+              <h3 className="font-bold text-text">Thư viện Hình ảnh</h3>
+              <p className="mt-1 text-xs font-semibold text-muted">Đang hiển thị {filteredMedia.length} trên tổng số {mediaItems.length} ảnh</p>
+            </div>
+            <div className="flex flex-wrap items-center gap-3">
+              {/* Filter tabs */}
+              <div className="flex rounded-lg border border-border bg-surface-alt p-1">
+                {filterOptions.map((option) => (
+                  <button
+                    key={option.value}
+                    type="button"
+                    onClick={() => setFilter(option.value)}
+                    className={`rounded-md px-3.5 py-1.5 text-xs font-bold transition-all ${
+                      filter === option.value
+                        ? "bg-surface text-primary shadow-sm"
+                        : "text-muted hover:text-text"
+                    }`}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+              {/* Search input */}
+              <div className="relative w-72">
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
+                <input
+                  value={searchTerm}
+                  onChange={(event) => setSearchTerm(event.target.value)}
+                  placeholder="Tìm theo sản phẩm, URL, thẻ alt..."
+                  className="w-full rounded-lg border border-border-strong bg-surface py-2 pl-9 pr-3 text-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+                />
+              </div>
+            </div>
+          </div>
+
+          {loading && (
+            <div className="p-10 text-center text-sm font-semibold text-muted">Đang tải thư viện ảnh...</div>
+          )}
+          {!loading && error && (
+            <div className="p-10 text-center text-sm font-semibold text-danger">{error}</div>
+          )}
+          {!loading && !error && filteredMedia.length === 0 && (
+            <div className="p-10 text-center text-sm font-semibold text-muted">Không tìm thấy hình ảnh nào.</div>
+          )}
+          {!loading && !error && filteredMedia.length > 0 && (
+            <div className="grid grid-cols-1 gap-6 p-6 sm:grid-cols-2 lg:grid-cols-3">
+              {filteredMedia.map((item) => (
+                <div key={item.id} className="overflow-hidden rounded-xl border border-border bg-surface shadow-sm transition-all hover:shadow-md hover:border-primary/20 flex flex-col">
+                  <div className="aspect-video bg-surface-alt relative overflow-hidden flex items-center justify-center p-2 border-b border-border">
+                    <AdminImage
+                      src={item.url}
+                      alt={item.altText ?? item.productName}
+                      className="max-h-full max-w-full object-contain mix-blend-multiply transition-transform duration-300 hover:scale-105"
+                      fallbackClassName="h-full w-full"
+                    />
+                  </div>
+                  <div className="space-y-4 p-5 flex-1 flex flex-col justify-between">
+                    <div className="space-y-2">
+                      <p className="font-bold text-text line-clamp-1" title={item.productName}>{item.productName}</p>
+                      <p className="truncate text-xs text-muted" title={item.url}>{item.url}</p>
+                    </div>
+                    <div className="flex flex-wrap gap-1.5">
+                      <Badge variant={item.thumbnail ? "success" : "neutral"} size="sm">
+                        {item.thumbnail ? "Ảnh đại diện" : "Ảnh phụ"}
+                      </Badge>
+                      <Badge variant={item.active ? "primary" : "neutral"} size="sm">
+                        {item.active ? "Đang hoạt động" : "Đã ẩn"}
+                      </Badge>
+                      <Badge variant="outline" size="sm">
+                        {item.mediaType}
+                      </Badge>
+                    </div>
+                    <div className="flex items-center justify-between pt-3 border-t border-border mt-2">
+                      <p className="text-xs font-semibold text-muted">Thứ tự: {item.sortOrder}</p>
+                      <Link
+                        to={`/admin/products/${item.productId}/edit`}
+                        className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-surface px-3 py-1.5 text-xs font-bold text-text transition-colors hover:bg-surface-alt"
+                      >
+                        <Edit className="h-3.5 w-3.5 text-muted" />
+                        Sửa sản phẩm
+                      </Link>
+                    </div>
+                  </div>
+                </div>
               ))}
             </div>
-            <div className="relative w-72">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
-              <input
-                value={searchTerm}
-                onChange={(event) => setSearchTerm(event.target.value)}
-                placeholder="Search product, url, alt"
-                className="w-full rounded-lg border border-border-strong bg-surface py-2 pl-9 pr-3 text-sm outline-none focus:border-success"
-              />
-            </div>
-          </div>
+          )}
         </div>
-
-        {loading && <div className="p-6 text-sm text-muted">Loading media...</div>}
-        {!loading && error && <div className="p-6 text-sm font-semibold text-danger">{error}</div>}
-        {!loading && !error && filteredMedia.length === 0 && <div className="p-6 text-sm text-muted">No media found.</div>}
-        {!loading && !error && filteredMedia.length > 0 && (
-          <div className="grid grid-cols-1 gap-4 p-5 md:grid-cols-2 xl:grid-cols-3">
-            {filteredMedia.map((item) => (
-              <div key={item.id} className="overflow-hidden rounded-lg border border-border-strong">
-                <div className="aspect-video bg-surface-alt">
-                  <AdminImage src={item.url} alt={item.altText ?? item.productName} />
-                </div>
-                <div className="space-y-3 p-4">
-                  <div>
-                    <p className="font-bold text-text">{item.productName}</p>
-                    <p className="mt-1 truncate text-xs text-muted">{item.url}</p>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    <AdminBadge variant={item.thumbnail ? "success" : "neutral"}>Thumbnail</AdminBadge>
-                    <AdminBadge variant={item.active ? "success" : "neutral"}>{item.active ? "Active" : "Inactive"}</AdminBadge>
-                    <AdminBadge variant="info">{item.mediaType}</AdminBadge>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <p className="text-xs font-medium text-muted">Sort order {item.sortOrder}</p>
-                    <Link
-                      to={`/admin/products/${item.productId}/edit`}
-                      className="flex items-center gap-2 rounded-lg border border-border-strong px-3 py-2 text-xs font-bold text-text transition-colors hover:bg-surface"
-                    >
-                      <Edit className="h-4 w-4" />
-                      Edit Product
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-    </div>
+      </Section>
+    </Container>
   );
 }

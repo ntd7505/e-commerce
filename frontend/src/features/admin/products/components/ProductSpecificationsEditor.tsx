@@ -89,16 +89,17 @@ export function ProductSpecificationsEditor({ productId, initialSpecs, onReload 
   const groupsCount = new Set(specs.map((spec) => spec.groupName?.trim() || "Thông tin chung")).size;
 
   return (
-    <div className="mb-6 overflow-hidden rounded-lg border border-border bg-surface">
-      <div className="flex items-center justify-between border-b border-border bg-canvas px-6 py-4">
+    <section className="mb-6 rounded-xl border border-border bg-surface shadow-sm transition-all hover:shadow-md">
+      <div className="flex items-center justify-between border-b border-border bg-surface-alt px-6 py-4 rounded-t-xl">
         <div className="flex items-center gap-3">
-          <h2 className="text-lg font-bold text-text">Thông số kỹ thuật</h2>
+          <h3 className="text-sm font-bold text-text">Thông số kỹ thuật</h3>
           <Badge variant="neutral">
             {specs.length} thông số · {groupsCount} nhóm
           </Badge>
         </div>
         <Button
           variant={savedMoment ? "success" : "primary"}
+          size="sm"
           onClick={handleSave}
           loading={saving}
           leftIcon={savedMoment ? <Check className="h-4 w-4" /> : undefined}
@@ -135,17 +136,17 @@ export function ProductSpecificationsEditor({ productId, initialSpecs, onReload 
                   </div>
 
                   <div className="col-span-3">
-                    <input value={spec.groupName || ""} onChange={(e) => handleChange(index, "groupName", e.target.value)} placeholder="Thông tin chung" className="h-10 w-full rounded-md border border-border bg-surface px-3 text-sm focus:border-primary focus:ring-1 focus:ring-primary" />
+                    <input value={spec.groupName || ""} onChange={(e) => handleChange(index, "groupName", e.target.value)} placeholder="Thông tin chung" className="h-10 w-full rounded-lg border border-border-strong bg-surface px-3 text-sm outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20" />
                   </div>
                   <div className="col-span-3">
-                    <input value={spec.specKey || ""} onChange={(e) => handleChange(index, "specKey", e.target.value)} placeholder="Kích thước" className="h-10 w-full rounded-md border border-border bg-surface px-3 text-sm focus:border-primary focus:ring-1 focus:ring-primary" />
+                    <input value={spec.specKey || ""} onChange={(e) => handleChange(index, "specKey", e.target.value)} placeholder="Kích thước" className="h-10 w-full rounded-lg border border-border-strong bg-surface px-3 text-sm outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20" />
                   </div>
                   <div className="col-span-3">
-                    <input value={spec.specValue || ""} onChange={(e) => handleChange(index, "specValue", e.target.value)} placeholder="6.1 inch" className="h-10 w-full rounded-md border border-border bg-surface px-3 text-sm focus:border-primary focus:ring-1 focus:ring-primary" />
+                    <input value={spec.specValue || ""} onChange={(e) => handleChange(index, "specValue", e.target.value)} placeholder="6.1 inch" className="h-10 w-full rounded-lg border border-border-strong bg-surface px-3 text-sm outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20" />
                   </div>
 
                   <div className="col-span-1 flex justify-center">
-                    <select value={spec.active ? "true" : "false"} onChange={(e) => handleChange(index, "active", e.target.value === "true")} className="h-10 rounded-md border border-border bg-surface px-2 text-sm font-medium focus:border-primary focus:ring-1 focus:ring-primary">
+                    <select value={spec.active ? "true" : "false"} onChange={(e) => handleChange(index, "active", e.target.value === "true")} className="h-10 rounded-lg border border-border-strong bg-surface px-2 text-sm font-medium outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20">
                       <option value="true">Hiện</option>
                       <option value="false">Ẩn</option>
                     </select>
@@ -181,6 +182,6 @@ export function ProductSpecificationsEditor({ productId, initialSpecs, onReload 
           </Button>
         )}
       </div>
-    </div>
+    </section>
   );
 }

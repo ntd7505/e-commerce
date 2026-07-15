@@ -189,16 +189,17 @@ export function ProductDescriptionBlocksEditor({ productId, initialBlocks, onRel
   const visibleCount = blocks.filter((block) => block.active).length;
 
   return (
-    <div className="mb-6 overflow-hidden rounded-lg border border-border bg-surface">
-      <div className="flex items-center justify-between border-b border-border bg-canvas px-6 py-4">
+    <section className="mb-6 rounded-xl border border-border bg-surface shadow-sm transition-all hover:shadow-md">
+      <div className="flex items-center justify-between border-b border-border bg-surface-alt px-6 py-4 rounded-t-xl">
         <div className="flex items-center gap-3">
-          <h2 className="text-lg font-bold text-text">Mô tả chi tiết</h2>
+          <h3 className="text-sm font-bold text-text">Mô tả chi tiết</h3>
           <Badge variant="neutral">
-            {blocks.length} blocks · {visibleCount} hiện
+            {blocks.length} khối · {visibleCount} hiện
           </Badge>
         </div>
         <Button
           variant={savedMoment ? "success" : "primary"}
+          size="sm"
           onClick={handleSave}
           loading={saving || uploadingIndex !== null}
           leftIcon={savedMoment ? <Check className="h-4 w-4" /> : undefined}
@@ -256,7 +257,7 @@ export function ProductDescriptionBlocksEditor({ productId, initialBlocks, onRel
                     <div className="flex gap-4">
                       <div className="flex-1">
                         <label htmlFor={`block-type-${index}`} className="mb-1 block text-sm font-medium text-text">Loại nội dung</label>
-                        <select id={`block-type-${index}`} value={block.type || "TEXT"} onChange={(e) => handleChange(index, "type", e.target.value)} className="h-10 w-full rounded-md border border-border bg-surface px-3 text-sm focus:border-primary focus:ring-1 focus:ring-primary">
+                        <select id={`block-type-${index}`} value={block.type || "TEXT"} onChange={(e) => handleChange(index, "type", e.target.value)} className="h-10 w-full rounded-lg border border-border bg-surface px-3 text-sm outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20">
                           <option value="TEXT">Văn bản</option>
                           <option value="IMAGE">Hình ảnh</option>
                           <option value="TEXT_IMAGE">Văn bản & hình ảnh</option>
@@ -264,7 +265,7 @@ export function ProductDescriptionBlocksEditor({ productId, initialBlocks, onRel
                       </div>
                       <div className="w-28">
                         <label htmlFor={`block-active-${index}`} className="mb-1 block text-sm font-medium text-text">Trạng thái</label>
-                        <select id={`block-active-${index}`} value={block.active ? "true" : "false"} onChange={(e) => handleChange(index, "active", e.target.value === "true")} className="h-10 w-full rounded-md border border-border bg-surface px-3 text-sm focus:border-primary focus:ring-1 focus:ring-primary">
+                        <select id={`block-active-${index}`} value={block.active ? "true" : "false"} onChange={(e) => handleChange(index, "active", e.target.value === "true")} className="h-10 w-full rounded-lg border border-border bg-surface px-3 text-sm outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20">
                           <option value="true">Hiện</option>
                           <option value="false">Ẩn</option>
                         </select>
@@ -275,11 +276,11 @@ export function ProductDescriptionBlocksEditor({ productId, initialBlocks, onRel
                       <>
                         <div>
                           <label className="mb-1 block text-sm font-medium text-text">Tiêu đề</label>
-                          <input value={block.title || ""} onChange={(e) => handleChange(index, "title", e.target.value)} placeholder="Ví dụ: Trải nghiệm âm thanh vượt trội" className="h-10 w-full rounded-md border border-border bg-surface px-3 text-sm focus:border-primary focus:ring-1 focus:ring-primary" />
+                          <input value={block.title || ""} onChange={(e) => handleChange(index, "title", e.target.value)} placeholder="Ví dụ: Trải nghiệm âm thanh vượt trội" className="h-10 w-full rounded-lg border border-border bg-surface px-3 text-sm outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20" />
                         </div>
                         <div>
                           <label className="mb-1 block text-sm font-medium text-text">Nội dung</label>
-                          <textarea value={block.content || ""} onChange={(e) => handleChange(index, "content", e.target.value)} rows={5} placeholder="Nhập nội dung mô tả chi tiết..." className="w-full rounded-md border border-border bg-surface px-3 py-2 text-sm focus:border-primary focus:ring-1 focus:ring-primary" />
+                          <textarea value={block.content || ""} onChange={(e) => handleChange(index, "content", e.target.value)} rows={5} placeholder="Nhập nội dung mô tả chi tiết..." className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20" />
                         </div>
                       </>
                     )}
@@ -289,16 +290,16 @@ export function ProductDescriptionBlocksEditor({ productId, initialBlocks, onRel
                         <div>
                           <label className="mb-1 block text-sm font-medium text-text">URL hình ảnh</label>
                           <div className="flex gap-2">
-                            <input value={block.imageUrl || ""} onChange={(e) => handleChange(index, "imageUrl", e.target.value)} placeholder="https://..." className="h-10 flex-1 rounded-md border border-border bg-surface px-3 text-sm focus:border-primary focus:ring-1 focus:ring-primary" />
-                            <label className="inline-flex h-10 cursor-pointer items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-text hover:bg-surface-alt">
-                              Upload
+                            <input value={block.imageUrl || ""} onChange={(e) => handleChange(index, "imageUrl", e.target.value)} placeholder="https://..." className="h-10 flex-1 rounded-lg border border-border bg-surface px-3 text-sm outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20" />
+                            <label className="inline-flex h-10 cursor-pointer items-center justify-center rounded-lg border border-border bg-surface px-4 text-sm font-semibold text-text transition-all hover:bg-surface-alt focus:outline-none focus:ring-2 focus:ring-primary/20">
+                              Tải lên
                               <input type="file" accept="image/*" className="hidden" onChange={(e) => void handleImageUpload(index, e.target.files?.[0])} />
                             </label>
                           </div>
                         </div>
                         <div>
                           <label className="mb-1 block text-sm font-medium text-text">Alt text</label>
-                          <input value={block.altText || ""} onChange={(e) => handleChange(index, "altText", e.target.value)} placeholder="Mô tả ngắn cho ảnh" className="h-10 w-full rounded-md border border-border bg-surface px-3 text-sm focus:border-primary focus:ring-1 focus:ring-primary" />
+                          <input value={block.altText || ""} onChange={(e) => handleChange(index, "altText", e.target.value)} placeholder="Mô tả ngắn cho ảnh" className="h-10 w-full rounded-lg border border-border bg-surface px-3 text-sm outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20" />
                         </div>
                       </>
                     )}
@@ -339,6 +340,6 @@ export function ProductDescriptionBlocksEditor({ productId, initialBlocks, onRel
           Thêm khối nội dung
         </Button>
       </div>
-    </div>
+    </section>
   );
 }
