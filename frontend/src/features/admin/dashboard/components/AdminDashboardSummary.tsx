@@ -73,6 +73,7 @@ export default function AdminDashboardSummary() {
   }
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- initial load
     void loadDashboard();
   }, []);
 

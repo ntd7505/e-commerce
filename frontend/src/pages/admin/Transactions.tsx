@@ -1,11 +1,12 @@
 import { Download, RefreshCw, Search, ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import { AdminStatCard } from "../../components/admin/AdminStatCard";
-import { getOrders } from "../../features/admin/orders/adminOrderApi";
-import type { OrderResponse, PaymentStatus } from "../../features/admin/orders/adminOrderTypes";
+import { getPayments, updatePaymentStatus, type PaymentResponse } from "../../features/admin/transactions/adminPaymentApi";
 import { OrderStatusBadge } from "../../features/admin/orders/components/OrderStatusBadge";
+import { Modal } from "../../components/common";
+import { Button } from "../../components/common";
 
-type PaymentStatusFilter = "ALL" | PaymentStatus;
+type PaymentStatusFilter = "ALL" | PaymentResponse["status"];
 
 const PAGE_SIZE = 15;
 
@@ -24,18 +25,18 @@ function formatDate(value: string | null) {
   });
 }
 
-function exportToCsv(rows: ReturnType<typeof mapTransactions>, filename: string) {
-  const headers = ["Order ID", "Customer", "Method", "Amount (VND)", "Status", "Reference", "Paid At"];
+function exportToCsv(rows: PaymentResponse[], filename: string) {
+  const headers = ["ID", "Order ID", "Method", "Amount (VND)", "Status", "Reference", "Paid At"];
   const lines = [
     headers.join(","),
     ...rows.map((r) =>
       [
+        r.id,
         `#${r.orderId}`,
-        `"${r.recipientName}"`,
         r.method,
         r.amount,
-        r.paymentStatus,
-        r.transactionCode,
+        r.status,
+        r.transactionCode || "-",
         r.paidAt ? formatDate(r.paidAt) : "",
       ].join(",")
     ),
@@ -49,34 +50,22 @@ function exportToCsv(rows: ReturnType<typeof mapTransactions>, filename: string)
   URL.revokeObjectURL(url);
 }
 
-function mapTransactions(orders: OrderResponse[]) {
-  return orders.map((order) => ({
-    orderId: order.id,
-    recipientName: order.recipientName,
-    paymentStatus: order.paymentStatus,
-    method: order.payment?.method ?? "COD",
-    amount: order.payment?.amount ?? order.totalAmount,
-    transactionCode: order.payment?.transactionCode ?? "-",
-    paidAt: order.payment?.paidAt ?? null,
-    userAvatarUrl: order.userAvatarUrl,
-    createdAt: order.createdAt,
-  }));
-}
-
 export default function Transactions() {
-  const [orders, setOrders] = useState<OrderResponse[]>([]);
+  const [payments, setPayments] = useState<PaymentResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<PaymentStatusFilter>("ALL");
   const [page, setPage] = useState(1);
+  const [selectedPayment, setSelectedPayment] = useState<PaymentResponse | null>(null);
+  const [updating, setUpdating] = useState(false);
 
   async function loadTransactions() {
     try {
       setLoading(true);
       setError("");
-      const data = await getOrders();
-      setOrders(data);
+      const data = await getPayments({ size: 1000 }); // Getting all for client side filtering for now
+      setPayments(data.content);
     } catch (error) {
       console.error("Failed to load transactions:", error);
       setError("Could not load transactions.");
@@ -86,22 +75,18 @@ export default function Transactions() {
   }
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      void loadTransactions();
-    }, 0);
-    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Initial load
+    void loadTransactions();
   }, []);
 
-  const transactions = mapTransactions(orders);
-
-  const filteredTransactions = transactions.filter((transaction) => {
+  const filteredTransactions = payments.filter((payment) => {
     const keyword = searchTerm.toLowerCase();
     const matchesKeyword =
-      String(transaction.orderId).includes(keyword) ||
-      (transaction.recipientName || "").toLowerCase().includes(keyword) ||
-      (transaction.transactionCode || "").toLowerCase().includes(keyword);
+      String(payment.orderId).includes(keyword) ||
+      String(payment.id).includes(keyword) ||
+      (payment.transactionCode || "").toLowerCase().includes(keyword);
     if (!matchesKeyword) return false;
-    if (statusFilter !== "ALL") return transaction.paymentStatus === statusFilter;
+    if (statusFilter !== "ALL") return payment.status === statusFilter;
     return true;
   });
 
@@ -121,6 +106,21 @@ export default function Transactions() {
     setPage(1);
   }
 
+  const handleUpdateStatus = async (status: string) => {
+    if (!selectedPayment) return;
+    try {
+      setUpdating(true);
+      await updatePaymentStatus(selectedPayment.id, status);
+      await loadTransactions();
+      setSelectedPayment(null);
+    } catch (error) {
+      console.error("Failed to update payment status:", error);
+      alert("Failed to update status");
+    } finally {
+      setUpdating(false);
+    }
+  };
+
   const statusOptions: Array<{ label: string; value: PaymentStatusFilter }> = [
     { label: "All", value: "ALL" },
     { label: "Paid", value: "PAID" },
@@ -130,11 +130,11 @@ export default function Transactions() {
     { label: "Cancelled", value: "CANCELLED" },
   ];
 
-  const paidCount = transactions.filter((t) => t.paymentStatus === "PAID").length;
-  const unpaidCount = transactions.filter((t) => t.paymentStatus === "UNPAID").length;
-  const refundedCount = transactions.filter((t) => t.paymentStatus === "REFUNDED").length;
-  const totalRevenue = transactions
-    .filter((t) => t.paymentStatus === "PAID")
+  const paidCount = payments.filter((t) => t.status === "PAID").length;
+  const unpaidCount = payments.filter((t) => t.status === "UNPAID").length;
+  const refundedCount = payments.filter((t) => t.status === "REFUNDED").length;
+  const totalRevenue = payments
+    .filter((t) => t.status === "PAID")
     .reduce((acc, t) => acc + t.amount, 0);
 
   return (
@@ -143,7 +143,7 @@ export default function Transactions() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-xl font-bold text-text">Transactions</h2>
-          <p className="text-sm text-muted">Payment status and transaction references derived from orders.</p>
+          <p className="text-sm text-muted">Manage payments and transactions.</p>
         </div>
         <div className="flex items-center gap-2">
           <button
@@ -170,7 +170,7 @@ export default function Transactions() {
 
       {/* Stats */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
-        <AdminStatCard label="Total" value={transactions.length} />
+        <AdminStatCard label="Total" value={payments.length} />
         <AdminStatCard label="Paid" value={paidCount} />
         <AdminStatCard label="Unpaid" value={unpaidCount} />
         <AdminStatCard label="Revenue" value={`${formatMoney(totalRevenue)} đ`} />
@@ -185,7 +185,7 @@ export default function Transactions() {
           <div>
             <h3 className="font-bold text-text">Payment History</h3>
             <p className="mt-1 text-xs font-medium text-muted">
-              Showing {filteredTransactions.length} of {transactions.length} records
+              Showing {filteredTransactions.length} of {payments.length} records
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
@@ -207,7 +207,7 @@ export default function Transactions() {
               <input
                 value={searchTerm}
                 onChange={(e) => handleSearch(e.target.value)}
-                placeholder="Search order, customer, code"
+                placeholder="Search order ID, code"
                 className="w-full rounded-lg border border-border-strong bg-surface py-2 pl-9 pr-3 text-sm outline-none transition focus:border-success focus:ring-1 focus:ring-success"
               />
             </div>
@@ -229,8 +229,8 @@ export default function Transactions() {
               <table className="w-full min-w-[900px] text-left text-sm">
                 <thead className="sticky top-0 bg-surface text-xs font-semibold text-muted">
                   <tr>
-                    <th className="px-5 py-3 font-bold">Order</th>
-                    <th className="px-5 py-3 font-bold">Customer</th>
+                    <th className="px-5 py-3 font-bold">ID</th>
+                    <th className="px-5 py-3 font-bold">Order ID</th>
                     <th className="px-5 py-3 font-bold">Method</th>
                     <th className="px-5 py-3 font-bold text-right">Amount</th>
                     <th className="px-5 py-3 font-bold">Status</th>
@@ -240,24 +240,13 @@ export default function Transactions() {
                 </thead>
                 <tbody className="divide-y divide-border">
                   {pagedTransactions.map((transaction) => (
-                    <tr key={transaction.orderId} className="transition-colors hover:bg-surface">
+                    <tr 
+                      key={transaction.id} 
+                      className="cursor-pointer transition-colors hover:bg-surface-alt"
+                      onClick={() => setSelectedPayment(transaction)}
+                    >
+                      <td className="px-5 py-4 font-bold text-text">#{transaction.id}</td>
                       <td className="px-5 py-4 font-bold text-text">#{transaction.orderId}</td>
-                      <td className="px-5 py-4">
-                        <div className="flex items-center gap-3">
-                          {transaction.userAvatarUrl ? (
-                            <img
-                              src={transaction.userAvatarUrl}
-                              alt={transaction.recipientName || ""}
-                              className="h-8 w-8 rounded-full object-cover shrink-0"
-                            />
-                          ) : (
-                            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-success-soft text-xs font-bold text-success shrink-0">
-                              {((transaction.recipientName || "?")[0] || "?").toUpperCase()}
-                            </div>
-                          )}
-                          <span className="font-medium text-text">{transaction.recipientName}</span>
-                        </div>
-                      </td>
                       <td className="px-5 py-4">
                         <span className="rounded-md bg-surface-alt px-2 py-0.5 text-xs font-bold text-muted">
                           {transaction.method}
@@ -267,9 +256,10 @@ export default function Transactions() {
                         {formatMoney(transaction.amount)} đ
                       </td>
                       <td className="px-5 py-4">
-                        <OrderStatusBadge value={transaction.paymentStatus} />
+                        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                        <OrderStatusBadge value={transaction.status as any} />
                       </td>
-                      <td className="px-5 py-4 font-mono text-xs text-muted">{transaction.transactionCode}</td>
+                      <td className="px-5 py-4 font-mono text-xs text-muted">{transaction.transactionCode || "-"}</td>
                       <td className="px-5 py-4 text-muted">{formatDate(transaction.paidAt)}</td>
                     </tr>
                   ))}
@@ -281,7 +271,7 @@ export default function Transactions() {
             {totalPages > 1 && (
               <div className="flex items-center justify-between border-t border-border px-5 py-3">
                 <p className="text-xs text-muted">
-                  Showing {(currentPage - 1) * PAGE_SIZE + 1}-�
+                  Showing {(currentPage - 1) * PAGE_SIZE + 1}-
                   {Math.min(currentPage * PAGE_SIZE, filteredTransactions.length)} of {filteredTransactions.length}
                 </p>
                 <div className="flex items-center gap-1">
@@ -298,7 +288,7 @@ export default function Transactions() {
                     .map((p, idx, arr) => (
                       <span key={p}>
                         {idx > 0 && arr[idx - 1] !== p - 1 && (
-                          <span className="px-1 text-muted">�</span>
+                          <span className="px-1 text-muted">...</span>
                         )}
                         <button
                           type="button"
@@ -326,6 +316,82 @@ export default function Transactions() {
           </>
         )}
       </div>
+
+      <Modal
+        isOpen={!!selectedPayment}
+        onClose={() => setSelectedPayment(null)}
+        title="Payment Details"
+      >
+        {selectedPayment && (
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <p className="text-sm font-medium text-muted">Order ID</p>
+                <p className="font-semibold text-text">#{selectedPayment.orderId}</p>
+              </div>
+              <div>
+                <p className="text-sm font-medium text-muted">Amount</p>
+                <p className="font-semibold text-text">{formatMoney(selectedPayment.amount)} đ</p>
+              </div>
+              <div>
+                <p className="text-sm font-medium text-muted">Method</p>
+                <p className="font-semibold text-text">{selectedPayment.method}</p>
+              </div>
+              <div>
+                <p className="text-sm font-medium text-muted">Status</p>
+                <div className="mt-1">
+                  {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                  <OrderStatusBadge value={selectedPayment.status as any} />
+                </div>
+              </div>
+            </div>
+
+            {selectedPayment.method === "BANK_TRANSFER" && (
+              <div className="rounded-xl border border-border p-4 bg-surface-alt">
+                <h4 className="font-bold text-text mb-2">Bank Transfer Details</h4>
+                <div className="grid grid-cols-2 gap-2 text-sm">
+                  <p className="text-muted">Transaction Code:</p>
+                  <p className="font-medium text-text">{selectedPayment.transactionCode}</p>
+                  <p className="text-muted">Bank Code:</p>
+                  <p className="font-medium text-text">{selectedPayment.bankCode || "-"}</p>
+                  <p className="text-muted">Account:</p>
+                  <p className="font-medium text-text">{selectedPayment.bankAccount || "-"}</p>
+                  <p className="text-muted">Name:</p>
+                  <p className="font-medium text-text">{selectedPayment.bankAccountName || "-"}</p>
+                  <p className="text-muted">Content:</p>
+                  <p className="font-medium text-text">{selectedPayment.transferContent || "-"}</p>
+                </div>
+                {selectedPayment.qrCodeUrl && (
+                  <div className="mt-4 flex justify-center">
+                    <img src={selectedPayment.qrCodeUrl} alt="QR Code" className="w-48 h-48 rounded-lg border border-border" />
+                  </div>
+                )}
+              </div>
+            )}
+
+            <div className="pt-4 border-t border-border flex justify-end gap-2">
+              {selectedPayment.status === "UNPAID" && (
+                <Button 
+                  variant="success" 
+                  onClick={() => handleUpdateStatus("PAID")}
+                  loading={updating}
+                >
+                  Mark as Paid
+                </Button>
+              )}
+              {selectedPayment.status === "PAID" && (
+                <Button 
+                  variant="danger" 
+                  onClick={() => handleUpdateStatus("REFUNDED")}
+                  loading={updating}
+                >
+                  Mark as Refunded
+                </Button>
+              )}
+            </div>
+          </div>
+        )}
+      </Modal>
     </div>
   );
 }

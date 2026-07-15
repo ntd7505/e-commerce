@@ -140,6 +140,7 @@ export default function AdminLayout() {
   const displayName = user ? (user.fullName || user.email) : 'Dealport';
   const displayEmail = user?.email ?? 'admin';
   const pageTitle = getPageTitle(location.pathname);
+  const initial = displayName?.[0]?.toUpperCase() ?? 'A';
   const isProductsRoute = location.pathname.startsWith('/admin/products');
 
   const [collapsed, setCollapsed] = useState(false);
@@ -182,8 +183,6 @@ export default function AdminLayout() {
 
   const markAllRead = () =>
     setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
-
-  const initial = displayName[0]?.toUpperCase() ?? 'A';
 
   return (
     <div className="h-screen w-full bg-surface flex overflow-hidden font-sans">

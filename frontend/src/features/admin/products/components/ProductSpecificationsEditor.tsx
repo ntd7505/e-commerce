@@ -74,6 +74,7 @@ export function ProductSpecificationsEditor({ productId, initialSpecs, onReload 
       setSavedMoment(true);
       setTimeout(() => setSavedMoment(false), 1800);
       await onReload();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       if (error?.response?.status === 403) {
         showToast("Bạn không có quyền cập nhật sản phẩm hoặc phiên đăng nhập admin đã hết hạn.", "error");

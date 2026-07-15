@@ -1,4 +1,4 @@
-﻿import { Bar, BarChart, Cell, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { Bar, BarChart, Cell, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import type { AdminDashboardResponse } from "../adminDashboardApi";
 
 interface AdminDashboardChartsProps {
@@ -18,6 +18,7 @@ export function AdminDashboardCharts({ dashboard }: AdminDashboardChartsProps) {
     quantity: product.quantitySold,
   }));
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const renderCustomPieTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;

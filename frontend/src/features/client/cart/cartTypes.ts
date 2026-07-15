@@ -1,7 +1,7 @@
 export interface CartItemResponse {
   id: number;
   productId: number;
-  productSlug?: string;
+  productSlug: string;
   productName: string;
   productVariantId: number;
   variantName: string;
@@ -9,7 +9,7 @@ export interface CartItemResponse {
   quantity: number;
   unitPrice: number;
   lineTotal: number;
-  thumbnailUrl?: string; // Tạm thời backend chưa có, ta add optional
+  thumbnailUrl: string;
 }
 
 export interface CartResponse {

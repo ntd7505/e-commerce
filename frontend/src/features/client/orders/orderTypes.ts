@@ -28,13 +28,18 @@ export type PaymentResponse = {
   amount: number;
   transactionCode: string | null;
   paidAt: string | null;
+  qrCodeUrl?: string | null;
+  bankCode?: string | null;
+  bankAccount?: string | null;
+  bankAccountName?: string | null;
+  transferContent?: string | null;
 };
 
-// OrderItem hiện chưa có ảnh đại diện.
-// TODO: Backend OrderItemResponse chưa trả imageUrl - tạm dùng placeholder ở UI.
+
 export type OrderItem = {
   id: number;
   productId: number;
+  productSlug?: string;
   productVariantId: number;
   productName: string;
   variantName: string;
@@ -42,6 +47,7 @@ export type OrderItem = {
   quantity: number;
   unitPrice: number;
   lineTotal: number;
+  thumbnailUrl?: string;
 };
 
 export type Order = {

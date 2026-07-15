@@ -57,6 +57,7 @@ export function useAdminProductEditor() {
     const [savingVariantIndex, setSavingVariantIndex] = useState<number | null>(null);
     const [savingMediaIndex, setSavingMediaIndex] = useState<number | null>(null);
     const [uploadingKey, setUploadingKey] = useState<string | null>(null);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [product, setProduct] = useState<any>(null);
 
     useEffect(() => {

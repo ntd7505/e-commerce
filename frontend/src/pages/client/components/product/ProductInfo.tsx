@@ -30,7 +30,6 @@ export default function ProductInfo({
     ? selectedVariant.price 
     : null;
 
-  const mockSoldCount = Math.max(120, product.name.length * 43);
   const inStock = selectedVariant && selectedVariant.stockQuantity > 0;
 
   return (
@@ -73,7 +72,7 @@ export default function ProductInfo({
         </div>
         
         <div className="text-muted text-sm border-r border-border-strong pr-3 mr-3">
-          Đã bán {mockSoldCount >= 1000 ? (mockSoldCount/1000).toFixed(1) + 'k+' : mockSoldCount}
+          Đã bán {(product.soldCount || 0) >= 1000 ? ((product.soldCount || 0)/1000).toFixed(1) + 'k+' : (product.soldCount || 0)}
         </div>
 
         {selectedVariant && (

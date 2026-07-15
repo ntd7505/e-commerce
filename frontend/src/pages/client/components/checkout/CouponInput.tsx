@@ -21,6 +21,7 @@ export default function CouponInput({ currentCoupon, subtotalAmount, onApply, on
   const [couponsError, setCouponsError] = useState<string | null>(null);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- sync state
     setCode(currentCoupon || '');
   }, [currentCoupon]);
 
@@ -31,6 +32,7 @@ export default function CouponInput({ currentCoupon, subtotalAmount, onApply, on
         const data = await cartApi.getAvailableCoupons();
         setCoupons(data);
       } catch (err) {
+        console.error(err);
         setCouponsError('Không thể tải danh sách khuyến mãi.');
       } finally {
         setLoadingCoupons(false);

@@ -1,73 +1,11 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Ticket, Gift, Tag, Calendar, CheckCircle2, Copy, ShoppingCart, Info } from 'lucide-react';
 import AccountPageLayout from './components/account/AccountPageLayout';
 import type { ClientCoupon, CouponCategory } from '../../features/client/coupons/couponTypes';
+import { cartApi } from '../../features/client/cart/cartApi';
 import { useToast } from '../../features/ui/ToastProvider';
 import { formatDate, formatVnd } from '../../utils/formatters';
-
-// TODO: Replace local coupon samples with client coupon API when available.
-// There is currently no client coupon list endpoint. These are local samples only.
-const SAMPLE_COUPONS: ClientCoupon[] = [
-  {
-    id: 's1',
-    code: 'NEXA5',
-    title: 'Giảm 5% đơn từ 5 triệu',
-    description: 'Áp dụng cho mọi đơn hàng từ 5.000.000₫ trở lên.',
-    category: 'NEXAMART',
-    expiresAt: '2025-12-31',
-    status: 'ACTIVE',
-    minOrderAmount: 5_000_000,
-    discountValue: 5,
-    discountType: 'PERCENT',
-  },
-  {
-    id: 's2',
-    code: 'FREESHIP50',
-    title: 'Miễn phí vận chuyển',
-    description: 'Miễn ship cho đơn từ 300.000₫.',
-    category: 'SHIPPING',
-    expiresAt: '2025-12-31',
-    status: 'ACTIVE',
-    minOrderAmount: 300_000,
-  },
-  {
-    id: 's3',
-    code: 'BANK100',
-    title: 'Giảm 100k khi thanh toán chuyển khoản',
-    description: 'Giảm trực tiếp 100.000₫ khi thanh toán qua chuyển khoản.',
-    category: 'PAYMENT',
-    expiresAt: '2025-09-30',
-    status: 'ACTIVE',
-    minOrderAmount: 1_000_000,
-    discountValue: 100_000,
-    discountType: 'FIXED_AMOUNT',
-  },
-  {
-    id: 's4',
-    code: 'WELCOME10',
-    title: 'Giảm 10% khách hàng mới',
-    description: 'Ưu đãi chào mừng, tối đa 200.000₫.',
-    category: 'NEXAMART',
-    expiresAt: '2025-08-31',
-    status: 'EXPIRED',
-    minOrderAmount: 200_000,
-    discountValue: 10,
-    discountType: 'PERCENT',
-  },
-  {
-    id: 's5',
-    code: 'MOMO50',
-    title: 'Hoàn 50k khi thanh toán MoMo',
-    description: 'Hoàn tiền vào ví MoMo cho đơn từ 500.000₫.',
-    category: 'PAYMENT',
-    expiresAt: '2025-10-15',
-    status: 'ACTIVE',
-    minOrderAmount: 500_000,
-    discountValue: 50_000,
-    discountType: 'FIXED_AMOUNT',
-  },
-];
 
 const CATEGORY_TABS: { key: 'ALL' | CouponCategory; label: string }[] = [
   { key: 'ALL', label: 'Tất cả' },
@@ -168,11 +106,45 @@ export default function AccountCoupons() {
   const navigate = useNavigate();
   const [activeCategory, setActiveCategory] = useState<'ALL' | CouponCategory>('ALL');
   const [inputCode, setInputCode] = useState('');
+  
+  const [coupons, setCoupons] = useState<ClientCoupon[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let mounted = true;
+    const fetchCoupons = async () => {
+      try {
+        setLoading(true);
+        const data = await cartApi.getAvailableCoupons();
+        if (mounted) {
+          const mapped: ClientCoupon[] = data.map(c => ({
+            id: c.code, // use code as id
+            code: c.code,
+            title: c.description || c.code,
+            description: c.description || '',
+            category: c.code.toUpperCase().includes('SHIP') ? 'SHIPPING' : (c.code.toUpperCase().includes('BANK') || c.code.toUpperCase().includes('MOMO') || c.code.toUpperCase().includes('VNPAY') ? 'PAYMENT' : 'NEXAMART'),
+            expiresAt: c.endDate,
+            status: 'ACTIVE',
+            minOrderAmount: c.minOrderAmount,
+            discountValue: c.discountValue,
+            discountType: c.discountType === 'PERCENTAGE' ? 'PERCENT' : 'FIXED_AMOUNT',
+          }));
+          setCoupons(mapped);
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    };
+    void fetchCoupons();
+    return () => { mounted = false; };
+  }, []);
 
   const filteredCoupons = useMemo(() => {
-    if (activeCategory === 'ALL') return SAMPLE_COUPONS;
-    return SAMPLE_COUPONS.filter((c) => c.category === activeCategory);
-  }, [activeCategory]);
+    if (activeCategory === 'ALL') return coupons;
+    return coupons.filter((c) => c.category === activeCategory);
+  }, [activeCategory, coupons]);
 
   function handleApplyCode() {
     const code = inputCode.trim().toUpperCase();
@@ -270,7 +242,11 @@ export default function AccountCoupons() {
       </div>
 
       {/* Coupon list */}
-      {filteredCoupons.length === 0 ? (
+      {loading ? (
+        <div className="flex justify-center items-center py-16">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        </div>
+      ) : filteredCoupons.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16 text-center bg-surface/50 rounded-2xl border border-border border-dashed">
           <div className="w-16 h-16 bg-surface rounded-full flex items-center justify-center shadow-sm mb-4">
             <Ticket className="w-8 h-8 text-muted" />

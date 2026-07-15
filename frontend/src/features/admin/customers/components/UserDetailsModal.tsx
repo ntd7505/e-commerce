@@ -17,15 +17,6 @@ export function UserDetailsModal({ isOpen, onClose, userId }: UserDetailsModalPr
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    if (isOpen && userId != null) {
-      void loadUser(userId);
-    } else {
-      setUser(null);
-      setError("");
-    }
-  }, [isOpen, userId]);
-
   async function loadUser(id: number) {
     try {
       setLoading(true);
@@ -39,6 +30,17 @@ export function UserDetailsModal({ isOpen, onClose, userId }: UserDetailsModalPr
       setLoading(false);
     }
   }
+
+  useEffect(() => {
+    if (isOpen && userId != null) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- sync state
+      void loadUser(userId);
+    } else {
+      setUser(null);
+      setError("");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen, userId]);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Chi tiết người dùng">

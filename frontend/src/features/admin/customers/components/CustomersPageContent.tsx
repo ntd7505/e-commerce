@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { RefreshCw, Search, Users, Ban, CheckCircle, ChevronLeft, ChevronRight } from "lucide-react";
+import { Search, RefreshCw, Users, Ban, CheckCircle } from "lucide-react";
 import { AdminBadge } from "../../../../components/admin/AdminBadge";
 import { Modal, Container, Section } from "../../../../components/common";
 import { Pagination } from "../../../../components/common/Pagination";
@@ -241,7 +241,7 @@ export default function CustomersPageContent() {
                         >
                           {user.avatarUrl ? (
                             <img 
-                                src={user.avatarUrl} 
+                                src={user.avatarUrl || `https://api.dicebear.com/7.x/initials/svg?seed=${user?.fullName?.[0] || 'A'}`}
                                 alt={user.fullName || user.email} 
                                 className="h-8 w-8 rounded-full object-cover shrink-0 border border-transparent transition-all duration-200 group-hover:scale-110 group-hover:border-primary/50 group-hover:shadow-sm" 
                             />

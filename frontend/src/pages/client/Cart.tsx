@@ -5,6 +5,7 @@ import { useCart } from '../../features/client/cart/CartProvider';
 import CartItemCard from './components/cart/CartItemCard';
 import { cartApi } from '../../features/client/cart/cartApi';
 import type { AddressRequest, AddressResponse, CheckoutPreviewResponse } from '../../features/client/cart/cartTypes';
+import CouponInput from './components/checkout/CouponInput';
 import { AddressFormModal } from '../../features/client/addresses/components/AddressFormModal';
 import { AddressPickerModal } from '../../features/client/addresses/components/AddressPickerModal';
 import {
@@ -35,6 +36,9 @@ export default function Cart() {
   const [checkoutPreview, setCheckoutPreview] = useState<CheckoutPreviewResponse | null>(null);
   const [previewLoading, setPreviewLoading] = useState(false);
   const [previewError, setPreviewError] = useState<string | null>(null);
+
+  const [couponCode, setCouponCode] = useState<string | null>(null);
+  const [couponError, setCouponError] = useState<string | null>(null);
 
   // Lọc bỏ những item không còn tồn tại trong cart khỏi selectedIds
   useEffect(() => {
@@ -155,15 +159,17 @@ export default function Cart() {
         const data = await cartApi.previewCheckout({
           cartItemIds: Array.from(selectedIds),
           addressId,
-          couponCode: undefined,
+          couponCode: couponCode || undefined,
         });
         if (cancelled) return;
         setCheckoutPreview(data);
+        setCouponError(null);
       } catch (err) {
         if (cancelled) return;
         console.error('Checkout preview failed', err);
         setPreviewError(parseApiError(err).message || 'Không thể tính phí vận chuyển.');
         setCheckoutPreview(null);
+        setCouponError(null);
       } finally {
         if (!cancelled) setPreviewLoading(false);
       }
@@ -173,7 +179,31 @@ export default function Cart() {
       cancelled = true;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedIdsKey, addressId]);
+  }, [selectedIdsKey, addressId, couponCode]);
+
+  const handleApplyCoupon = async (code: string) => {
+    if (selectedIds.size === 0 || !addressId) {
+      setCouponError('Vui lòng chọn sản phẩm và địa chỉ giao hàng trước khi áp dụng mã.');
+      return;
+    }
+    setCouponError(null);
+    try {
+      await cartApi.previewCheckout({
+        cartItemIds: Array.from(selectedIds),
+        addressId,
+        couponCode: code
+      });
+      setCouponCode(code);
+    } catch (err) {
+      setCouponError(parseApiError(err).message || 'Mã giảm giá không hợp lệ');
+      throw err;
+    }
+  };
+
+  const handleRemoveCoupon = async () => {
+    setCouponError(null);
+    setCouponCode(null);
+  };
 
   async function handleCreateAddress(payload: AddressRequest) {
     try {
@@ -192,12 +222,13 @@ export default function Cart() {
 
   const handleCheckout = () => {
     if (selectedIds.size === 0) {
-      alert('Vui lòng chọn ít nhất một sản phẩm để thanh toán.');
+      showToast('Vui lòng chọn ít nhất một sản phẩm để thanh toán.', 'error');
       return;
     }
     const payload = {
       cartItemIds: Array.from(selectedIds),
       addressId: selectedAddress?.id ?? null,
+      couponCode: couponCode || undefined,
     };
     sessionStorage.setItem('checkoutDraft', JSON.stringify(payload));
     navigate('/checkout');
@@ -360,16 +391,13 @@ export default function Cart() {
                   )}
                 </div>
 
-                {/* Khuyến mãi placeholder */}
-                <div className="bg-surface rounded-2xl p-6 border border-border shadow-sm">
-                  <h2 className="text-lg font-bold text-text flex items-center gap-2 mb-3">
-                    <Tag className="w-5 h-5 text-primary" />
-                    Khuyến mãi
-                  </h2>
-                  <p className="text-sm text-muted">
-                    Áp dụng mã giảm giá ở bước thanh toán.
-                  </p>
-                </div>
+                <CouponInput
+                  currentCoupon={couponCode}
+                  subtotalAmount={selectedSubtotal}
+                  onApply={handleApplyCoupon}
+                  onRemove={handleRemoveCoupon}
+                  error={couponError}
+                />
 
                 {/* Summary card */}
                 <div className="bg-gradient-to-br from-surface to-primary-soft/10 rounded-2xl p-6 lg:p-7 border border-primary/20 shadow-sm shadow-primary/5">

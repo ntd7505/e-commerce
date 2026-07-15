@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Truck, ShieldCheck, ShoppingCart, CreditCard } from 'lucide-react';
 import { Button } from '../../../../components/common/Button';
 import type { ProductVariantResponse } from '../../../../features/client/home/clientProductApi';

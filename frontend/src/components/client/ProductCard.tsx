@@ -46,9 +46,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
   const [imgError, setImgError] = useState(false);
   const [addingToCart, setAddingToCart] = useState(false);
 
-  // Mocks if missing
-  const mockRating = rating ?? (4 + (name.length % 10) / 10).toFixed(1);
-  const mockSoldCount = soldCount ?? (name.length * 43);
+  // Fallback for tags and progress
   const defaultTags = tags || (isFlashSale ? ['Rẻ vô địch', 'Freeship'] : ['Trả góp 0%', 'Freeship']);
   const defaultProgress = flashSaleProgress ?? Math.min(95, Math.max(15, name.length * 5));
 
@@ -138,7 +136,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
         <div className="flex items-center gap-1.5 mb-2.5">
           <Star className="w-3.5 h-3.5 fill-warning text-warning shrink-0" />
           <span className="text-xs font-medium text-text">
-            {mockRating} <span className="text-subtle mx-0.5">|</span> <span className="font-normal text-muted">Đã bán {mockSoldCount >= 1000 ? (mockSoldCount/1000).toFixed(1) + 'k' : mockSoldCount}</span>
+            {rating?.toFixed(1) || "0.0"} <span className="text-subtle mx-0.5">|</span> <span className="font-normal text-muted">Đã bán {(soldCount || 0) >= 1000 ? ((soldCount || 0)/1000).toFixed(1) + 'k' : (soldCount || 0)}</span>
           </span>
         </div>
 

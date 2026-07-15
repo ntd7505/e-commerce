@@ -89,6 +89,8 @@ export interface ProductResponse {
   media: ProductMediaResponse[];
   descriptionBlocks?: ProductDescriptionBlockResponse[];
   specifications?: ProductSpecificationResponse[];
+  rating?: number;
+  soldCount?: number;
   createdAt: string; 
 }
 

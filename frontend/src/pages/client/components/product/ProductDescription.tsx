@@ -39,8 +39,7 @@ export default function ProductDescription({ product }: ProductDescriptionProps)
         ))}
       </div>
     );
-  } else if (description && description.length > 50) {
-    // Fallback to legacy description
+  } else if (description && description.length > 0) {
     content = (
       <div className="prose max-w-none text-muted leading-relaxed whitespace-pre-line">
         {description}
@@ -49,45 +48,8 @@ export default function ProductDescription({ product }: ProductDescriptionProps)
   } else {
     // Fallback content when description is too short or missing
     content = (
-      <div className="flex flex-col gap-8 text-sm text-muted leading-relaxed">
-        <section>
-          <h3 className="text-lg font-bold text-text mb-4">Đặc điểm nổi bật</h3>
-          <ul className="list-disc pl-5 space-y-3 mb-4">
-            <li>Thiết kế hiện đại, tinh tế phù hợp với xu hướng mới nhất.</li>
-            <li>Chất liệu cao cấp, đảm bảo độ bền và an toàn khi sử dụng.</li>
-            <li>Hiệu năng vượt trội trong tầm giá, đáp ứng tốt nhu cầu của bạn.</li>
-            <li>Sản phẩm chính hãng {brand?.name ? `từ thương hiệu ${brand.name}` : '100%'}, nguồn gốc xuất xứ rõ ràng.</li>
-          </ul>
-        </section>
-
-        <section>
-          <h3 className="text-lg font-bold text-text mb-4">Thông tin sản phẩm</h3>
-          <p className="mb-4">
-            <strong>{name}</strong> là một trong những sản phẩm nổi bật {category?.name ? `thuộc danh mục ${category.name}` : 'của chúng tôi'}. 
-            Với sự chăm chút tỉ mỉ từ khâu thiết kế đến sản xuất, sản phẩm cam kết mang lại trải nghiệm tuyệt vời nhất cho người dùng.
-          </p>
-          <p className="mb-4">
-            Bạn hoàn toàn có thể yên tâm về chất lượng cũng như dịch vụ hậu mãi đi kèm khi mua sắm tại NexaMart.
-          </p>
-        </section>
-
-        <section>
-          <h3 className="text-lg font-bold text-text mb-4">Bộ sản phẩm gồm</h3>
-          <ul className="list-disc pl-5 space-y-3 mb-4">
-            <li>01 x {name} nguyên seal.</li>
-            <li>01 x Sách hướng dẫn sử dụng.</li>
-            <li>01 x Phiếu bảo hành chính hãng.</li>
-            <li>Phụ kiện đi kèm (nếu có).</li>
-          </ul>
-        </section>
-
-        <section>
-          <h3 className="text-lg font-bold text-text mb-4">Chính sách bảo hành</h3>
-          <p className="mb-4">
-            Bảo hành chính hãng uy tín. Đổi trả miễn phí trong vòng 30 ngày đầu tiên nếu có lỗi từ nhà sản xuất. 
-            Vui lòng giữ lại bao bì và hóa đơn mua hàng để được hỗ trợ tốt nhất.
-          </p>
-        </section>
+      <div className="flex flex-col items-center justify-center py-10 text-center border border-border border-dashed rounded-2xl bg-surface/50">
+        <p className="text-muted text-sm">Đang cập nhật nội dung.</p>
       </div>
     );
   }

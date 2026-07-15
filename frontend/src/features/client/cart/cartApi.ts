@@ -41,23 +41,23 @@ export const cartApi = {
 
   // Addresses
   getAddresses: async (): Promise<AddressResponse[]> => {
-    const res = await apiClient.get<ApiResponse<any>>('/api/v1/client/addresses');
-    return res.data.data.map((addr: any) => ({
+    const res = await apiClient.get<ApiResponse<unknown[]>>('/api/v1/client/addresses');
+    return (res.data.data as Array<Record<string, unknown>>).map((addr) => ({
       ...addr,
       isDefault: addr.isDefault ?? addr.default
-    }));
+    })) as AddressResponse[];
   },
 
   createAddress: async (data: AddressRequest): Promise<AddressResponse> => {
-    const res = await apiClient.post<ApiResponse<any>>('/api/v1/client/addresses', data);
+    const res = await apiClient.post<ApiResponse<Record<string, unknown>>>('/api/v1/client/addresses', data);
     const addr = res.data.data;
-    return { ...addr, isDefault: addr.isDefault ?? addr.default };
+    return { ...addr, isDefault: addr.isDefault ?? addr.default } as AddressResponse;
   },
 
   updateAddress: async (id: number, data: AddressRequest): Promise<AddressResponse> => {
-    const res = await apiClient.patch<ApiResponse<any>>(`/api/v1/client/addresses/${id}`, data);
+    const res = await apiClient.patch<ApiResponse<Record<string, unknown>>>(`/api/v1/client/addresses/${id}`, data);
     const addr = res.data.data;
-    return { ...addr, isDefault: addr.isDefault ?? addr.default };
+    return { ...addr, isDefault: addr.isDefault ?? addr.default } as AddressResponse;
   },
 
   deleteAddress: async (id: number): Promise<void> => {

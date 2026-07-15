@@ -131,6 +131,8 @@ const FlashSaleSection: React.FC<Props> = ({ products, loading, error }) => {
                   isFlashSale={true}
                   saleEnded={saleEnded}
                   onAddToCart={validVariant ? () => handleAddToCart(validVariant.id, 1, product.name) : undefined}
+                  rating={product.rating}
+                  soldCount={product.soldCount}
                 />
               );
             })}

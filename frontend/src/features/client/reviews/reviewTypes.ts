@@ -38,6 +38,8 @@ export type ProductReviewResponse = {
   anonymous: boolean;
   user: ReviewUserResponse | null;
   productName: string;
+  productSlug?: string;
+  thumbnailUrl?: string;
   variantName: string | null;
   sku: string | null;
   media: ProductReviewMediaResponse[];

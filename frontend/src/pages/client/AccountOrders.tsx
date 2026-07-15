@@ -56,10 +56,16 @@ function OrderCardSkeleton() {
   );
 }
 
-// TODO: Backend OrderItemResponse chưa trả imageUrl - tạm dùng placeholder icon Package.
-function ProductThumb() {
+function ProductThumb({ thumbnailUrl, productName }: { thumbnailUrl?: string; productName: string }) {
+  if (thumbnailUrl) {
+    return (
+      <div className="w-12 h-12 rounded-lg border border-border bg-surface-alt flex flex-shrink-0 items-center justify-center overflow-hidden">
+        <img src={thumbnailUrl} alt={productName} className="w-full h-full object-contain mix-blend-multiply" />
+      </div>
+    );
+  }
   return (
-    <div className="w-12 h-12 rounded-lg bg-surface-alt flex items-center justify-center shrink-0">
+    <div className="w-12 h-12 rounded-lg bg-surface-alt flex items-center justify-center shrink-0 border border-border">
       <Package className="w-5 h-5 text-muted" />
     </div>
   );
@@ -106,10 +112,10 @@ function OrderCard({
         {previewItems.map((item) => (
           <Link
             key={item.id}
-            to={`/products/${item.productId}`}
+            to={`/products/${item.productSlug || item.productId}`}
             className="flex items-center gap-3 rounded-xl p-2 -mx-2 hover:bg-primary-soft/40 transition-colors"
           >
-            <ProductThumb />
+            <ProductThumb thumbnailUrl={item.thumbnailUrl} productName={item.productName} />
             <div className="min-w-0 flex-1">
               <p className="text-sm font-medium text-text truncate">{item.productName}</p>
               <p className="text-xs text-muted truncate">

@@ -428,6 +428,8 @@ export default function ProductList() {
                       discountBadge={originalPrice ? calculateDiscountPercent(originalPrice, currentPrice) : ""}
                       isFlashSale={false}
                       onAddToCart={validVariant ? () => handleAddToCart(validVariant.id, 1, product.name) : undefined}
+                      rating={product.rating}
+                      soldCount={product.soldCount}
                     />
                   );
                 })}

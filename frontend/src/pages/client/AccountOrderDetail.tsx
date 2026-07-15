@@ -151,10 +151,16 @@ function DetailSkeleton() {
   );
 }
 
-// TODO: Backend OrderItemResponse chưa trả imageUrl - tạm dùng placeholder icon Package.
-function ProductThumb() {
+function ProductThumb({ thumbnailUrl, productName }: { thumbnailUrl?: string; productName: string }) {
+  if (thumbnailUrl) {
+    return (
+      <div className="w-12 h-12 rounded-lg border border-border bg-surface-alt flex flex-shrink-0 items-center justify-center overflow-hidden">
+        <img src={thumbnailUrl} alt={productName} className="w-full h-full object-contain mix-blend-multiply" />
+      </div>
+    );
+  }
   return (
-    <div className="w-12 h-12 rounded-lg bg-surface-alt flex items-center justify-center shrink-0">
+    <div className="w-12 h-12 rounded-lg bg-surface-alt flex items-center justify-center shrink-0 border border-border">
       <Package className="w-5 h-5 text-muted" />
     </div>
   );
@@ -339,10 +345,10 @@ export default function AccountOrderDetail() {
                     className="grid grid-cols-12 gap-3 md:gap-4 px-6 lg:px-7 py-4 items-center"
                   >
                     <div className="col-span-12 md:col-span-6 flex items-center gap-3">
-                      <ProductThumb />
+                      <ProductThumb thumbnailUrl={item.thumbnailUrl} productName={item.productName} />
                       <div className="min-w-0">
                         <Link
-                          to={`/products/${item.productId}`}
+                          to={`/products/${item.productSlug || item.productId}`}
                           className="text-sm font-semibold text-text hover:text-primary transition-colors block truncate"
                         >
                           {item.productName}

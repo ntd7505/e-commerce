@@ -32,8 +32,8 @@ export default function AvatarPreview({ avatarUrl, onChange }: AvatarPreviewProp
       
       onChange(imageUrl);
       setImgError(false);
-    } catch (error: any) {
-      setUploadError(error.message || 'Lỗi tải ảnh');
+    } catch (error) {
+      setUploadError(error instanceof Error ? error.message : 'Lỗi tải ảnh');
     } finally {
       setIsUploading(false);
       if (fileInputRef.current) {

@@ -49,6 +49,8 @@ export default function RelatedProducts({ products }: RelatedProductsProps) {
               discountBadge={itemOriginalPrice ? calculateDiscountPercent(itemOriginalPrice, itemPrice) : ''}
               isFlashSale={false}
               onAddToCart={validVariant ? () => handleAddToCart(validVariant.id, 1, item.name) : undefined}
+              rating={item.rating}
+              soldCount={item.soldCount}
             />
           );
         })}

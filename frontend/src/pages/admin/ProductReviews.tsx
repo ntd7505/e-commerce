@@ -1,4 +1,4 @@
-﻿import { Eye, EyeOff, RefreshCw, Search, Star, Trash2 } from "lucide-react";
+import { Eye, EyeOff, RefreshCw, Search, Star, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { AdminImage } from "../../components/admin/AdminImage";
 import { AdminStatCard } from "../../components/admin/AdminStatCard";
@@ -65,6 +65,7 @@ export default function ProductReviews() {
   }
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Initial load
     void loadReviews();
   }, []);
 

@@ -7,11 +7,13 @@ import CouponInput from './components/checkout/CouponInput';
 import { formatCurrency } from '../../utils/formatters';
 import { LoadingState } from '../../components/common/States';
 import { useCart } from '../../features/client/cart/CartProvider';
+import { useToast } from '../../features/ui/ToastProvider';
 import { Box, CreditCard, Loader2 } from 'lucide-react';
 
 export default function Checkout() {
   const navigate = useNavigate();
   const { refreshCart, activeDeliveryAddress, setActiveDeliveryAddress } = useCart();
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [preview, setPreview] = useState<CheckoutPreviewResponse | null>(null);
@@ -29,8 +31,8 @@ export default function Checkout() {
   }, []);
 
   // Draft state
-  const [cartItemIds, setCartItemIds] = useState<number[]>(draftData?.cartItemIds || []);
-  const [preferredAddressId, setPreferredAddressId] = useState<number | undefined>(
+  const [cartItemIds] = useState<number[]>(draftData?.cartItemIds || []);
+  const [preferredAddressId] = useState<number | undefined>(
     draftData?.addressId || activeDeliveryAddress?.id || undefined
   );
   const [selectedAddress, setSelectedAddress] = useState<AddressResponse | null>(null);
@@ -105,11 +107,11 @@ export default function Checkout() {
 
   const handleSubmitOrder = async () => {
     if (!selectedAddress) {
-      alert('Vui lòng chọn địa chỉ giao hàng.');
+      showToast('Vui lòng chọn địa chỉ giao hàng.', 'error');
       return;
     }
     if (!paymentMethod) {
-      alert('Vui lòng chọn phương thức thanh toán.');
+      showToast('Vui lòng chọn phương thức thanh toán.', 'error');
       return;
     }
 
@@ -128,7 +130,7 @@ export default function Checkout() {
       navigate(`/checkout/success/${order.id}`);
     } catch (err) {
       const error = err as { response?: { data?: { message?: string } } };
-      alert(error.response?.data?.message || 'Có lỗi xảy ra khi tạo đơn hàng. Vui lòng thử lại.');
+      showToast(error.response?.data?.message || 'Có lỗi xảy ra khi tạo đơn hàng. Vui lòng thử lại.', 'error');
       setSubmitting(false);
     }
   };

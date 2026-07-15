@@ -4,7 +4,7 @@ import { Star, Package, Pencil, CheckCircle2, AlertCircle, RefreshCw } from 'luc
 import AccountPageLayout from './components/account/AccountPageLayout';
 import { ReviewFormModal } from '../../features/client/reviews/components/ReviewFormModal';
 import { getOrders } from '../../features/client/orders/orderApi';
-import { createReview } from '../../features/client/reviews/reviewApi';
+import { createReview, getMyReviews } from '../../features/client/reviews/reviewApi';
 import type { Order, OrderItem } from '../../features/client/orders/orderTypes';
 import type { CreateReviewRequest, ProductReviewResponse } from '../../features/client/reviews/reviewTypes';
 import { useToast } from '../../features/ui/ToastProvider';
@@ -16,6 +16,8 @@ type ReviewableItem = {
   orderId: number;
   productId: number;
   productName: string;
+  productSlug?: string;
+  thumbnailUrl?: string;
   variantName: string;
   sku: string;
   quantity: number;
@@ -30,6 +32,8 @@ function orderToReviewableItems(order: Order): ReviewableItem[] {
     orderId: order.id,
     productId: item.productId,
     productName: item.productName,
+    productSlug: item.productSlug,
+    thumbnailUrl: item.thumbnailUrl,
     variantName: item.variantName,
     sku: item.sku,
     quantity: item.quantity,
@@ -47,16 +51,19 @@ function ReviewableCard({
   return (
     <div className="bg-surface rounded-2xl border border-border shadow-sm hover:shadow-md transition-shadow p-5">
       <div className="flex gap-4">
-        {/* TODO: Backend OrderItemResponse does not return thumbnailUrl yet. */}
         <Link
-          to={`/products/${item.productId}`}
+          to={`/products/${item.productSlug || item.productId}`}
           className="w-16 h-16 md:w-20 md:h-20 bg-surface rounded-xl flex-shrink-0 flex items-center justify-center border border-border overflow-hidden"
         >
-          <Package className="w-7 h-7 text-subtle" />
+          {item.thumbnailUrl ? (
+            <img src={item.thumbnailUrl} alt={item.productName} className="w-full h-full object-contain" />
+          ) : (
+            <Package className="w-7 h-7 text-subtle" />
+          )}
         </Link>
         <div className="flex-1 min-w-0">
           <Link
-            to={`/products/${item.productId}`}
+            to={`/products/${item.productSlug || item.productId}`}
             className="font-bold text-text line-clamp-1 hover:text-primary transition-colors block"
           >
             {item.productName}
@@ -84,19 +91,28 @@ function ReviewedCard({ review }: { review: ProductReviewResponse }) {
   return (
     <div className="bg-surface rounded-2xl border border-border shadow-sm p-5">
       <div className="flex flex-wrap items-start justify-between gap-3 mb-3">
-        <div className="min-w-0">
-          <Link
-            to={`/products/${review.productId}`}
-            className="font-bold text-text hover:text-primary transition-colors line-clamp-1 block"
-          >
-            {review.productName}
-          </Link>
-          <p className="mt-0.5 text-xs text-muted">
-            {review.variantName ?? "—"} · SKU: {review.sku ?? "—"}
-          </p>
+        <div className="flex items-center gap-3 min-w-0 flex-1">
+          {review.thumbnailUrl ? (
+            <img src={review.thumbnailUrl} alt={review.productName} className="w-12 h-12 object-cover rounded bg-canvas border border-border shrink-0" />
+          ) : (
+            <div className="w-12 h-12 flex items-center justify-center bg-canvas border border-border rounded shrink-0">
+              <Package className="w-6 h-6 text-muted" />
+            </div>
+          )}
+          <div className="min-w-0">
+            <Link
+              to={`/products/${review.productSlug || review.productId}`}
+              className="font-bold text-text hover:text-primary transition-colors line-clamp-1 block"
+            >
+              {review.productName}
+            </Link>
+            <p className="mt-0.5 text-xs text-muted">
+              {review.variantName ?? "—"} • SKU: {review.sku ?? "—"}
+            </p>
+          </div>
         </div>
         {review.verifiedPurchase && (
-          <span className="inline-flex items-center gap-1 rounded-full border border-success-soft bg-success-soft px-2.5 py-1 text-xs font-bold text-success">
+          <span className="inline-flex items-center gap-1 rounded-full border border-success-soft bg-success-soft px-2.5 py-1 text-xs font-bold text-success shrink-0">
             <CheckCircle2 className="w-3 h-3" />
             Đã mua hàng
           </span>
@@ -177,10 +193,14 @@ export default function AccountReviews() {
         if (cancelled) return;
         const completed = orderPage.content.filter((o) => o.status === 'COMPLETED');
         setReviewableItems(completed.flatMap(orderToReviewableItems));
+
+        const reviewPage = await getMyReviews({ page: 0, size: 50 });
+        if (cancelled) return;
+        setReviewed(reviewPage.content);
       } catch (err) {
         if (cancelled) return;
-        console.error('Failed to load orders:', err);
-        setError('Không thể tải danh sách sản phẩm cần đánh giá.');
+        console.error('Failed to load:', err);
+        setError('Không thể tải dữ liệu.');
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -309,18 +329,20 @@ export default function AccountReviews() {
         {activeTab === 'reviewed' && !error && (
           <div className="space-y-4">
             {reviewedEmpty && (
-              <div className="flex flex-col items-center justify-center py-12 text-center">
-                <div className="rounded-2xl border border-amber-100 bg-warning-soft/60 px-6 py-5 max-w-md">
-                  <div className="flex items-center justify-center mb-3">
-                    <AlertCircle className="w-7 h-7 text-warning" />
-                  </div>
-                  <p className="text-sm font-semibold text-warning">
-                    Chưa có API để tải danh sách đánh giá của bạn.
-                  </p>
-                  <p className="mt-1.5 text-xs text-warning/80">
-                    Các đánh giá vừa gửi trong phiên hiện tại có thể được hiển thị tạm thời tại đây.
-                  </p>
+              <div className="flex flex-col items-center justify-center py-12 text-center bg-surface/50 rounded-2xl border border-border border-dashed">
+                <div className="w-16 h-16 bg-surface rounded-full flex items-center justify-center shadow-sm mb-4">
+                  <Star className="w-8 h-8 text-muted" />
                 </div>
+                <h3 className="text-lg font-semibold text-text mb-1">Bạn chưa có đánh giá nào.</h3>
+                <p className="text-muted max-w-sm mx-auto mb-6">
+                  Những đánh giá của bạn sẽ xuất hiện tại đây.
+                </p>
+                <button
+                  onClick={() => setActiveTab('pending')}
+                  className="px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-primary hover:bg-primary-hover transition-colors"
+                >
+                  Đánh giá sản phẩm ngay
+                </button>
               </div>
             )}
             {reviewed.length > 0 && (
