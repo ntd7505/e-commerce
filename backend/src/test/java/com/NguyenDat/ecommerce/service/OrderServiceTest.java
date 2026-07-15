@@ -156,7 +156,7 @@ class OrderServiceTest {
         assertEquals(List.of(itemResponse), result.getItems());
         assertEquals(addressResponse, result.getShippingAddress());
         assertEquals("SALE10", result.getSelectedCouponCode());
-        assertEquals(List.of(PaymentMethod.COD), result.getPaymentMethods());
+        assertEquals(List.of(PaymentMethod.COD, PaymentMethod.BANK_TRANSFER), result.getPaymentMethods());
     }
 
     @Test

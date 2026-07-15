@@ -73,7 +73,7 @@ public class OrderServiceImpl implements OrderService {
                 .discountAmount(checkoutCalculation.getDiscountAmount())
                 .totalAmount(checkoutCalculation.getTotalAmount())
                 .totalItems(checkoutCalculation.getTotalItems())
-                .paymentMethods(List.of(PaymentMethod.COD))
+                .paymentMethods(List.of(PaymentMethod.COD, PaymentMethod.BANK_TRANSFER))
                 .selectedCouponCode(
                         checkoutCalculation.getCoupon() == null
                                 ? null

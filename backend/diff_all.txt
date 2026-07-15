@@ -1,0 +1,1031 @@
+﻿diff --git a/backend/.env.example b/backend/.env.example
+index dfd51ee..5d045d2 100644
+--- a/backend/.env.example
++++ b/backend/.env.example
+@@ -19,3 +19,9 @@ JPA_SHOW_SQL=false
+ # IMPORTANT: Generate a random 64-character string for production use.
+ # You can generate one using: openssl rand -base64 48
+ JWT_SIGNER_KEY=replace-with-a-random-secret-containing-at-least-64-characters
++
++# --- Payment Configuration ---
++PAYMENT_BANK_CODE=VPB
++PAYMENT_BANK_ACCOUNT=0987654321
++PAYMENT_BANK_ACCOUNT_NAME=NGUYEN VAN A
++PAYMENT_QR_TEMPLATE=compact
+diff --git a/backend/diff_all.txt b/backend/diff_all.txt
+new file mode 100644
+index 0000000..e69de29
+diff --git a/backend/mvnw.cmd b/backend/mvnw.cmd
+index 92450f9..fc28f58 100644
+--- a/backend/mvnw.cmd
++++ b/backend/mvnw.cmd
+@@ -89,10 +89,11 @@ if (-not (Test-Path -Path $MAVEN_M2_PATH)) {
+ }
+ 
+ $MAVEN_WRAPPER_DISTS = $null
+-if ((Get-Item $MAVEN_M2_PATH).Target[0] -eq $null) {
++$MAVEN_M2_ITEM = Get-Item $MAVEN_M2_PATH
++if (-not $MAVEN_M2_ITEM.Target -or $MAVEN_M2_ITEM.Target.Length -eq 0) {
+   $MAVEN_WRAPPER_DISTS = "$MAVEN_M2_PATH/wrapper/dists"
+ } else {
+-  $MAVEN_WRAPPER_DISTS = (Get-Item $MAVEN_M2_PATH).Target[0] + "/wrapper/dists"
++  $MAVEN_WRAPPER_DISTS = $MAVEN_M2_ITEM.Target[0] + "/wrapper/dists"
+ }
+ 
+ $MAVEN_HOME_PARENT = "$MAVEN_WRAPPER_DISTS/$distributionUrlNameMain"
+diff --git a/backend/pom.xml b/backend/pom.xml
+index 4f5baf8..7a5a766 100644
+--- a/backend/pom.xml
++++ b/backend/pom.xml
+@@ -29,6 +29,7 @@
+     <properties>
+         <java.version>21</java.version>
+         <spotless.version>2.43.0</spotless.version>
++        <lombok.version>1.18.34</lombok.version>
+     </properties>
+     <dependencies>
+         <dependency>
+@@ -135,23 +136,25 @@
+             <plugin>
+                 <groupId>org.apache.maven.plugins</groupId>
+                 <artifactId>maven-compiler-plugin</artifactId>
++                <version>3.11.0</version>
+                 <configuration>
++                    <fork>true</fork>
+                     <annotationProcessorPaths>
+-                        <path>
+-                            <groupId>org.mapstruct</groupId>
+-                            <artifactId>mapstruct-processor</artifactId>
+-                            <version>1.5.5.Final</version>
+-                        </path>
+-                        <!-- Nß║┐u d├╣ng Lombok phß║úi th├¬m cß║ú c├íi n├áy -->
+                         <path>
+                             <groupId>org.projectlombok</groupId>
+                             <artifactId>lombok</artifactId>
++                            <version>1.18.34</version>
+                         </path>
+                         <path>
+                             <groupId>org.projectlombok</groupId>
+                             <artifactId>lombok-mapstruct-binding</artifactId>
+                             <version>0.2.0</version>
+                         </path>
++                        <path>
++                            <groupId>org.mapstruct</groupId>
++                            <artifactId>mapstruct-processor</artifactId>
++                            <version>1.5.5.Final</version>
++                        </path>
+                     </annotationProcessorPaths>
+                 </configuration>
+             </plugin>
+diff --git a/backend/src/main/java/com/NguyenDat/ecommerce/common/config/CustomAccessDeniedHandler.java b/backend/src/main/java/com/NguyenDat/ecommerce/common/config/CustomAccessDeniedHandler.java
+new file mode 100644
+index 0000000..d987864
+--- /dev/null
++++ b/backend/src/main/java/com/NguyenDat/ecommerce/common/config/CustomAccessDeniedHandler.java
+@@ -0,0 +1,37 @@
++package com.NguyenDat.ecommerce.common.config;
++
++import java.io.IOException;
++
++import jakarta.servlet.ServletException;
++import jakarta.servlet.http.HttpServletRequest;
++import jakarta.servlet.http.HttpServletResponse;
++
++import org.jspecify.annotations.NonNull;
++import org.springframework.http.MediaType;
++import org.springframework.security.access.AccessDeniedException;
++import org.springframework.security.web.access.AccessDeniedHandler;
++
++import com.NguyenDat.ecommerce.common.dto.response.ApiResponse;
++import com.NguyenDat.ecommerce.common.exception.ErrorCode;
++
++import com.fasterxml.jackson.databind.ObjectMapper;
++
++public class CustomAccessDeniedHandler implements AccessDeniedHandler {
++    @Override
++    public void handle(
++            @NonNull HttpServletRequest request,
++            HttpServletResponse response,
++            @NonNull AccessDeniedException accessDeniedException)
++            throws IOException, ServletException {
++        ErrorCode errorCode = ErrorCode.UNAUTHORIZED;
++        response.setStatus(errorCode.getStatusCode().value());
++        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
++        ApiResponse<?> apiResponse = ApiResponse.builder()
++                .code(errorCode.getCode())
++                .message(errorCode.getMessage())
++                .build();
++        ObjectMapper objectMapper = new ObjectMapper();
++        response.getWriter().write(objectMapper.writeValueAsString(apiResponse));
++        response.flushBuffer();
++    }
++}
+diff --git a/backend/src/main/java/com/NguyenDat/ecommerce/common/config/SecurityConfig.java b/backend/src/main/java/com/NguyenDat/ecommerce/common/config/SecurityConfig.java
+index b033f0e..25a8e84 100644
+--- a/backend/src/main/java/com/NguyenDat/ecommerce/common/config/SecurityConfig.java
++++ b/backend/src/main/java/com/NguyenDat/ecommerce/common/config/SecurityConfig.java
+@@ -65,6 +65,9 @@ public class SecurityConfig {
+                         jwtConfigurer.decoder(jwtDecoder()).jwtAuthenticationConverter(jwtAuthenticationConverter()))
+                 .authenticationEntryPoint(new JwtAuthenticationEntryPoint()));
+ 
++        httpSecurity.exceptionHandling(exception -> exception
++                .accessDeniedHandler(new CustomAccessDeniedHandler()));
++
+         httpSecurity.csrf(AbstractHttpConfigurer::disable);
+         return httpSecurity.build();
+     }
+diff --git a/backend/src/main/java/com/NguyenDat/ecommerce/common/constant/ResponseCode.java b/backend/src/main/java/com/NguyenDat/ecommerce/common/constant/ResponseCode.java
+index 15c3813..80be121 100644
+--- a/backend/src/main/java/com/NguyenDat/ecommerce/common/constant/ResponseCode.java
++++ b/backend/src/main/java/com/NguyenDat/ecommerce/common/constant/ResponseCode.java
+@@ -107,6 +107,9 @@ public enum ResponseCode {
+ 
+     // 11000 - Payment
+     PAYMENT_METHODS_FETCHED(11000, "Payment methods fetched successfully"),
++    PAYMENTS_FETCHED(11001, "Payments fetched successfully"),
++    PAYMENT_FETCHED(11002, "Payment fetched successfully"),
++    PAYMENT_STATUS_UPDATED(11003, "Payment status updated successfully"),
+ 
+     // 12000 - Order & Checkout
+     CHECKOUT_PREVIEW_CREATED(12000, "Checkout preview created successfully"),
+diff --git a/backend/src/main/java/com/NguyenDat/ecommerce/controller/admin/AdminPaymentController.java b/backend/src/main/java/com/NguyenDat/ecommerce/controller/admin/AdminPaymentController.java
+new file mode 100644
+index 0000000..74f040d
+--- /dev/null
++++ b/backend/src/main/java/com/NguyenDat/ecommerce/controller/admin/AdminPaymentController.java
+@@ -0,0 +1,45 @@
++package com.NguyenDat.ecommerce.controller.admin;
++
++import jakarta.validation.Valid;
++
++import org.springframework.data.domain.Pageable;
++import org.springframework.security.access.prepost.PreAuthorize;
++import org.springframework.web.bind.annotation.*;
++
++import com.NguyenDat.ecommerce.common.dto.response.ApiResponse;
++import com.NguyenDat.ecommerce.common.dto.response.PageResponse;
++import com.NguyenDat.ecommerce.common.constant.ResponseCode;
++import com.NguyenDat.ecommerce.dto.request.PaymentUpdateRequest;
++import com.NguyenDat.ecommerce.dto.response.PaymentResponse;
++import com.NguyenDat.ecommerce.service.AdminPaymentService;
++
++import lombok.AccessLevel;
++import lombok.RequiredArgsConstructor;
++import lombok.experimental.FieldDefaults;
++
++@RestController
++@RequestMapping("/api/v1/admin/payments")
++@RequiredArgsConstructor
++@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
++@PreAuthorize("hasRole('ADMIN')")
++public class AdminPaymentController {
++
++    AdminPaymentService adminPaymentService;
++
++    @GetMapping
++    public ApiResponse<PageResponse<PaymentResponse>> getAllPayments(Pageable pageable) {
++        return ApiResponse.of(ResponseCode.PAYMENTS_FETCHED, adminPaymentService.getAllPayments(pageable));
++    }
++
++    @GetMapping("/{id}")
++    public ApiResponse<PaymentResponse> getPaymentById(@PathVariable Long id) {
++        return ApiResponse.of(ResponseCode.PAYMENT_FETCHED, adminPaymentService.getPaymentById(id));
++    }
++
++    @PatchMapping("/{id}/status")
++    public ApiResponse<PaymentResponse> updatePaymentStatus(
++            @PathVariable Long id,
++            @Valid @RequestBody PaymentUpdateRequest request) {
++        return ApiResponse.of(ResponseCode.PAYMENT_STATUS_UPDATED, adminPaymentService.updatePaymentStatus(id, request));
++    }
++}
+diff --git a/backend/src/main/java/com/NguyenDat/ecommerce/dto/request/PaymentUpdateRequest.java b/backend/src/main/java/com/NguyenDat/ecommerce/dto/request/PaymentUpdateRequest.java
+new file mode 100644
+index 0000000..629c10a
+--- /dev/null
++++ b/backend/src/main/java/com/NguyenDat/ecommerce/dto/request/PaymentUpdateRequest.java
+@@ -0,0 +1,17 @@
++package com.NguyenDat.ecommerce.dto.request;
++
++import jakarta.validation.constraints.NotNull;
++import com.NguyenDat.ecommerce.enums.PaymentStatus;
++import lombok.*;
++import lombok.experimental.FieldDefaults;
++
++@Setter
++@Getter
++@NoArgsConstructor
++@AllArgsConstructor
++@Builder
++@FieldDefaults(level = AccessLevel.PRIVATE)
++public class PaymentUpdateRequest {
++    @NotNull(message = "PAYMENT_STATUS_REQUIRED")
++    PaymentStatus status;
++}
+diff --git a/backend/src/main/java/com/NguyenDat/ecommerce/dto/request/product/ProductCreateRequest.java b/backend/src/main/java/com/NguyenDat/ecommerce/dto/request/product/ProductCreateRequest.java
+index 98145d5..99f5683 100644
+--- a/backend/src/main/java/com/NguyenDat/ecommerce/dto/request/product/ProductCreateRequest.java
++++ b/backend/src/main/java/com/NguyenDat/ecommerce/dto/request/product/ProductCreateRequest.java
+@@ -1,16 +1,15 @@
+ package com.NguyenDat.ecommerce.dto.request.product;
+ 
+-import java.util.List;
+-
+ import jakarta.validation.Valid;
+ import jakarta.validation.constraints.NotBlank;
+ import jakarta.validation.constraints.NotEmpty;
+ import jakarta.validation.constraints.NotNull;
+ import jakarta.validation.constraints.Size;
+-
+ import lombok.*;
+ import lombok.experimental.FieldDefaults;
+ 
++import java.util.List;
++
+ @Setter
+ @Getter
+ @NoArgsConstructor
+@@ -41,4 +40,10 @@ public class ProductCreateRequest {
+ 
+     @Valid
+     List<ProductMediaRequest> media;
++
++    @Valid
++    List<ProductDescriptionBlockRequest> descriptionBlocks;
++
++    @Valid
++    List<ProductSpecificationRequest> specifications;
+ }
+diff --git a/backend/src/main/java/com/NguyenDat/ecommerce/dto/request/product/ProductDescriptionBlockRequest.java b/backend/src/main/java/com/NguyenDat/ecommerce/dto/request/product/ProductDescriptionBlockRequest.java
+index 854761a..b1b56cc 100644
+--- a/backend/src/main/java/com/NguyenDat/ecommerce/dto/request/product/ProductDescriptionBlockRequest.java
++++ b/backend/src/main/java/com/NguyenDat/ecommerce/dto/request/product/ProductDescriptionBlockRequest.java
+@@ -34,4 +34,12 @@ public class ProductDescriptionBlockRequest {
+     int sortOrder;
+ 
+     Boolean active;
++
++    @jakarta.validation.constraints.AssertTrue(message = "IMAGE_URL_REQUIRED")
++    private boolean isImageUrlValid() {
++        if (type == ProductDescriptionBlockType.IMAGE) {
++            return imageUrl != null && !imageUrl.isBlank();
++        }
++        return true;
++    }
+ }
+diff --git a/backend/src/main/java/com/NguyenDat/ecommerce/dto/response/OrderItemResponse.java b/backend/src/main/java/com/NguyenDat/ecommerce/dto/response/OrderItemResponse.java
+index fdbc401..caae3b1 100644
+--- a/backend/src/main/java/com/NguyenDat/ecommerce/dto/response/OrderItemResponse.java
++++ b/backend/src/main/java/com/NguyenDat/ecommerce/dto/response/OrderItemResponse.java
+@@ -16,6 +16,7 @@ public class OrderItemResponse {
+ 
+     Long productId;
+     Long productVariantId;
++    String productSlug;
+ 
+     String productName;
+     String thumbnailUrl;
+diff --git a/backend/src/main/java/com/NguyenDat/ecommerce/dto/response/PaymentResponse.java b/backend/src/main/java/com/NguyenDat/ecommerce/dto/response/PaymentResponse.java
+index 2acc25f..d9a9304 100644
+--- a/backend/src/main/java/com/NguyenDat/ecommerce/dto/response/PaymentResponse.java
++++ b/backend/src/main/java/com/NguyenDat/ecommerce/dto/response/PaymentResponse.java
+@@ -25,4 +25,11 @@ public class PaymentResponse {
+ 
+     String transactionCode;
+     LocalDateTime paidAt;
++
++    Long orderId;
++    String qrCodeUrl;
++    String bankCode;
++    String bankAccount;
++    String bankAccountName;
++    String transferContent;
+ }
+diff --git a/backend/src/main/java/com/NguyenDat/ecommerce/dto/response/ProductResponse.java b/backend/src/main/java/com/NguyenDat/ecommerce/dto/response/ProductResponse.java
+index 12d13e6..452e87c 100644
+--- a/backend/src/main/java/com/NguyenDat/ecommerce/dto/response/ProductResponse.java
++++ b/backend/src/main/java/com/NguyenDat/ecommerce/dto/response/ProductResponse.java
+@@ -22,6 +22,9 @@ public class ProductResponse {
+     String description;
+     BrandSummaryResponse brand;
+     CategorySummaryResponse category;
++    String thumbnailUrl;
++    Double rating;
++    Integer soldCount;
+     boolean active;
+     List<ProductVariantResponse> variants;
+     List<ProductMediaResponse> media;
+diff --git a/backend/src/main/java/com/NguyenDat/ecommerce/dto/response/product_review/ProductReviewResponse.java b/backend/src/main/java/com/NguyenDat/ecommerce/dto/response/product_review/ProductReviewResponse.java
+index 7910bc9..40a34a1 100644
+--- a/backend/src/main/java/com/NguyenDat/ecommerce/dto/response/product_review/ProductReviewResponse.java
++++ b/backend/src/main/java/com/NguyenDat/ecommerce/dto/response/product_review/ProductReviewResponse.java
+@@ -26,6 +26,8 @@ public class ProductReviewResponse {
+     ReviewUserResponse user;
+ 
+     String productName;
++    String productSlug;
++    String thumbnailUrl;
+     String variantName;
+     String sku;
+ 
+diff --git a/backend/src/main/java/com/NguyenDat/ecommerce/mapper/OrderMapper.java b/backend/src/main/java/com/NguyenDat/ecommerce/mapper/OrderMapper.java
+index 09ea51b..1614a3e 100644
+--- a/backend/src/main/java/com/NguyenDat/ecommerce/mapper/OrderMapper.java
++++ b/backend/src/main/java/com/NguyenDat/ecommerce/mapper/OrderMapper.java
+@@ -21,6 +21,7 @@ public interface OrderMapper {
+ 
+     @Mapping(target = "productVariantId", source = "productVariant.id")
+     @Mapping(target = "productId", source = "productVariant.product.id")
++    @Mapping(target = "productSlug", source = "productVariant.product.slug")
+     @Mapping(target = "thumbnailUrl", expression = "java(resolveThumbnailUrl(orderItem))")
+     OrderItemResponse toOrderItemResponse(OrderItem orderItem);
+ 
+diff --git a/backend/src/main/java/com/NguyenDat/ecommerce/mapper/PaymentMapper.java b/backend/src/main/java/com/NguyenDat/ecommerce/mapper/PaymentMapper.java
+new file mode 100644
+index 0000000..de917be
+--- /dev/null
++++ b/backend/src/main/java/com/NguyenDat/ecommerce/mapper/PaymentMapper.java
+@@ -0,0 +1,14 @@
++package com.NguyenDat.ecommerce.mapper;
++
++import org.mapstruct.Mapper;
++import org.mapstruct.Mapping;
++
++import com.NguyenDat.ecommerce.dto.response.PaymentResponse;
++import com.NguyenDat.ecommerce.entity.Payment;
++
++@Mapper(componentModel = "spring")
++public interface PaymentMapper {
++
++    @Mapping(target = "orderId", source = "order.id")
++    PaymentResponse toPaymentResponse(Payment payment);
++}
+diff --git a/backend/src/main/java/com/NguyenDat/ecommerce/mapper/ProductMapper.java b/backend/src/main/java/com/NguyenDat/ecommerce/mapper/ProductMapper.java
+index a334dba..9e695aa 100644
+--- a/backend/src/main/java/com/NguyenDat/ecommerce/mapper/ProductMapper.java
++++ b/backend/src/main/java/com/NguyenDat/ecommerce/mapper/ProductMapper.java
+@@ -25,8 +25,27 @@ public interface ProductMapper {
+     @Mapping(target = "updatedAt", ignore = true)
+     Product toProduct(ProductCreateRequest productCreateRequest);
+ 
++    @Mapping(target = "thumbnailUrl", expression = "java(resolveThumbnailUrl(product))")
+     ProductResponse toProductResponse(Product product);
+ 
++    default String resolveThumbnailUrl(Product product) {
++        if (product == null || product.getMedia() == null) {
++            return null;
++        }
++
++        return product.getMedia().stream()
++                .filter(media -> media != null && media.isActive() && !media.isDeleted())
++                .sorted((left, right) -> {
++                    if (left.isThumbnail() != right.isThumbnail()) {
++                        return left.isThumbnail() ? -1 : 1;
++                    }
++                    return Integer.compare(left.getSortOrder(), right.getSortOrder());
++                })
++                .map(com.NguyenDat.ecommerce.entity.ProductMedia::getUrl)
++                .findFirst()
++                .orElse(null);
++    }
++
+     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+     @Mapping(target = "id", ignore = true)
+     @Mapping(target = "slug", ignore = true)
+diff --git a/backend/src/main/java/com/NguyenDat/ecommerce/mapper/ProductReviewMapper.java b/backend/src/main/java/com/NguyenDat/ecommerce/mapper/ProductReviewMapper.java
+index 9d1124a..bb5be74 100644
+--- a/backend/src/main/java/com/NguyenDat/ecommerce/mapper/ProductReviewMapper.java
++++ b/backend/src/main/java/com/NguyenDat/ecommerce/mapper/ProductReviewMapper.java
+@@ -28,6 +28,8 @@ public interface ProductReviewMapper {
+     @Mapping(target = "productId", source = "product.id")
+     @Mapping(target = "orderItemId", source = "orderItem.id")
+     @Mapping(target = "productName", source = "product.name")
++    @Mapping(target = "productSlug", source = "product.slug")
++    @Mapping(target = "thumbnailUrl", expression = "java(resolveThumbnailUrl(productReview))")
+     @Mapping(target = "variantName", source = "orderItem.productVariant.variantName")
+     @Mapping(target = "sku", source = "orderItem.productVariant.sku")
+     @Mapping(target = "verifiedPurchase", constant = "true")
+@@ -40,4 +42,24 @@ public interface ProductReviewMapper {
+     ProductReviewMedia toProductReviewMedia(ProductReviewMediaRequest productReviewMediaRequest);
+ 
+     ProductReviewMediaResponse toProductReviewMediaResponse(ProductReviewMedia productReviewMedia);
++
++    default String resolveThumbnailUrl(ProductReview productReview) {
++        if (productReview == null
++                || productReview.getProduct() == null
++                || productReview.getProduct().getMedia() == null) {
++            return null;
++        }
++
++        return productReview.getProduct().getMedia().stream()
++                .filter(media -> media != null && media.isActive() && !media.isDeleted())
++                .sorted((left, right) -> {
++                    if (left.isThumbnail() != right.isThumbnail()) {
++                        return left.isThumbnail() ? -1 : 1;
++                    }
++                    return Integer.compare(left.getSortOrder(), right.getSortOrder());
++                })
++                .map(com.NguyenDat.ecommerce.entity.ProductMedia::getUrl)
++                .findFirst()
++                .orElse(null);
++    }
+ }
+diff --git a/backend/src/main/java/com/NguyenDat/ecommerce/repository/OrderItemRepository.java b/backend/src/main/java/com/NguyenDat/ecommerce/repository/OrderItemRepository.java
+index 5a4c424..c818d0d 100644
+--- a/backend/src/main/java/com/NguyenDat/ecommerce/repository/OrderItemRepository.java
++++ b/backend/src/main/java/com/NguyenDat/ecommerce/repository/OrderItemRepository.java
+@@ -33,4 +33,7 @@ public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
+             ORDER BY SUM(oi.quantity) DESC
+             """)
+     List<AdminTopProductResponse> findTopProductsByQuantitySold(Pageable pageable);
++
++    @Query("SELECT oi.productVariant.product.id, SUM(oi.quantity) FROM OrderItem oi WHERE oi.order.status IN ('DELIVERED', 'COMPLETED') AND oi.productVariant.product.id IN :productIds GROUP BY oi.productVariant.product.id")
++    List<Object[]> getSoldCountByProductIds(@org.springframework.data.repository.query.Param("productIds") List<Long> productIds);
+ }
+diff --git a/backend/src/main/java/com/NguyenDat/ecommerce/repository/ProductReviewRepository.java b/backend/src/main/java/com/NguyenDat/ecommerce/repository/ProductReviewRepository.java
+index 6ba27fe..7f34e83 100644
+--- a/backend/src/main/java/com/NguyenDat/ecommerce/repository/ProductReviewRepository.java
++++ b/backend/src/main/java/com/NguyenDat/ecommerce/repository/ProductReviewRepository.java
+@@ -30,4 +30,7 @@ public interface ProductReviewRepository extends JpaRepository<ProductReview, Lo
+ 
+     @Query("SELECT COALESCE(AVG(r.rating), 0) FROM ProductReview r WHERE r.deleted = false AND r.active = true")
+     Double averageRatingForActiveReviews();
++
++    @Query("SELECT r.product.id, AVG(r.rating) FROM ProductReview r WHERE r.product.id IN :productIds AND r.deleted = false AND r.active = true GROUP BY r.product.id")
++    List<Object[]> getAverageRatingByProductIds(@org.springframework.data.repository.query.Param("productIds") List<Long> productIds);
+ }
+diff --git a/backend/src/main/java/com/NguyenDat/ecommerce/service/AdminPaymentService.java b/backend/src/main/java/com/NguyenDat/ecommerce/service/AdminPaymentService.java
+new file mode 100644
+index 0000000..ba56591
+--- /dev/null
++++ b/backend/src/main/java/com/NguyenDat/ecommerce/service/AdminPaymentService.java
+@@ -0,0 +1,12 @@
++package com.NguyenDat.ecommerce.service;
++
++import org.springframework.data.domain.Pageable;
++import com.NguyenDat.ecommerce.common.dto.response.PageResponse;
++import com.NguyenDat.ecommerce.dto.request.PaymentUpdateRequest;
++import com.NguyenDat.ecommerce.dto.response.PaymentResponse;
++
++public interface AdminPaymentService {
++    PageResponse<PaymentResponse> getAllPayments(Pageable pageable);
++    PaymentResponse getPaymentById(Long id);
++    PaymentResponse updatePaymentStatus(Long id, PaymentUpdateRequest request);
++}
+diff --git a/backend/src/main/java/com/NguyenDat/ecommerce/service/OrderPaymentService.java b/backend/src/main/java/com/NguyenDat/ecommerce/service/OrderPaymentService.java
+index 886fe8c..8b6c990 100644
+--- a/backend/src/main/java/com/NguyenDat/ecommerce/service/OrderPaymentService.java
++++ b/backend/src/main/java/com/NguyenDat/ecommerce/service/OrderPaymentService.java
+@@ -7,6 +7,10 @@ public interface OrderPaymentService {
+ 
+     Payment createCodPayment(Order order);
+ 
++    Payment createBankTransferPayment(Order order);
++
++    void enrichPaymentResponse(com.NguyenDat.ecommerce.dto.response.PaymentResponse response);
++
+     void markPaid(Order order);
+ 
+     void markCancelled(Order order);
+diff --git a/backend/src/main/java/com/NguyenDat/ecommerce/service/impl/AdminPaymentServiceImpl.java b/backend/src/main/java/com/NguyenDat/ecommerce/service/impl/AdminPaymentServiceImpl.java
+new file mode 100644
+index 0000000..6782c34
+--- /dev/null
++++ b/backend/src/main/java/com/NguyenDat/ecommerce/service/impl/AdminPaymentServiceImpl.java
+@@ -0,0 +1,84 @@
++package com.NguyenDat.ecommerce.service.impl;
++
++import java.time.LocalDateTime;
++
++import org.springframework.data.domain.Page;
++import org.springframework.data.domain.Pageable;
++import org.springframework.stereotype.Service;
++import org.springframework.transaction.annotation.Transactional;
++
++import com.NguyenDat.ecommerce.common.dto.response.PageResponse;
++import com.NguyenDat.ecommerce.common.exception.AppException;
++import com.NguyenDat.ecommerce.common.exception.ErrorCode;
++import com.NguyenDat.ecommerce.dto.request.PaymentUpdateRequest;
++import com.NguyenDat.ecommerce.dto.response.PaymentResponse;
++import com.NguyenDat.ecommerce.entity.Order;
++import com.NguyenDat.ecommerce.entity.Payment;
++import com.NguyenDat.ecommerce.enums.PaymentStatus;
++import com.NguyenDat.ecommerce.mapper.PaymentMapper;
++import com.NguyenDat.ecommerce.repository.OrderRepository;
++import com.NguyenDat.ecommerce.repository.PaymentRepository;
++import com.NguyenDat.ecommerce.service.AdminPaymentService;
++import com.NguyenDat.ecommerce.service.OrderPaymentService;
++
++import lombok.AccessLevel;
++import lombok.RequiredArgsConstructor;
++import lombok.experimental.FieldDefaults;
++
++@Service
++@RequiredArgsConstructor
++@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
++@Transactional(readOnly = true)
++public class AdminPaymentServiceImpl implements AdminPaymentService {
++
++    PaymentRepository paymentRepository;
++    OrderRepository orderRepository;
++    OrderPaymentService orderPaymentService;
++    PaymentMapper paymentMapper;
++
++    @Override
++    public PageResponse<PaymentResponse> getAllPayments(Pageable pageable) {
++        Page<Payment> page = paymentRepository.findAll(pageable);
++        return PageResponse.from(page.map(this::toEnrichedResponse));
++    }
++
++    @Override
++    public PaymentResponse getPaymentById(Long id) {
++        Payment payment = paymentRepository.findById(id)
++                .orElseThrow(() -> new AppException(ErrorCode.PAYMENT_NOT_FOUND));
++        return toEnrichedResponse(payment);
++    }
++
++    @Override
++    @Transactional
++    public PaymentResponse updatePaymentStatus(Long id, PaymentUpdateRequest request) {
++        Payment payment = paymentRepository.findById(id)
++                .orElseThrow(() -> new AppException(ErrorCode.PAYMENT_NOT_FOUND));
++
++        if (payment.getStatus() == request.getStatus()) {
++            return toEnrichedResponse(payment);
++        }
++
++        payment.setStatus(request.getStatus());
++        if (request.getStatus() == PaymentStatus.PAID && payment.getPaidAt() == null) {
++            payment.setPaidAt(LocalDateTime.now());
++        }
++
++        Payment savedPayment = paymentRepository.save(payment);
++        
++        // Sync Order payment status
++        if (savedPayment.getOrder() != null) {
++            Order order = savedPayment.getOrder();
++            order.setPaymentStatus(request.getStatus());
++            orderRepository.save(order);
++        }
++
++        return toEnrichedResponse(savedPayment);
++    }
++
++    private PaymentResponse toEnrichedResponse(Payment payment) {
++        PaymentResponse response = paymentMapper.toPaymentResponse(payment);
++        orderPaymentService.enrichPaymentResponse(response);
++        return response;
++    }
++}
+diff --git a/backend/src/main/java/com/NguyenDat/ecommerce/service/impl/OrderCreationServiceImpl.java b/backend/src/main/java/com/NguyenDat/ecommerce/service/impl/OrderCreationServiceImpl.java
+index 6180ac9..7902381 100644
+--- a/backend/src/main/java/com/NguyenDat/ecommerce/service/impl/OrderCreationServiceImpl.java
++++ b/backend/src/main/java/com/NguyenDat/ecommerce/service/impl/OrderCreationServiceImpl.java
+@@ -15,6 +15,7 @@ import com.NguyenDat.ecommerce.entity.Payment;
+ import com.NguyenDat.ecommerce.entity.ProductVariant;
+ import com.NguyenDat.ecommerce.entity.User;
+ import com.NguyenDat.ecommerce.enums.OrderStatus;
++import com.NguyenDat.ecommerce.enums.PaymentMethod;
+ import com.NguyenDat.ecommerce.enums.PaymentStatus;
+ import com.NguyenDat.ecommerce.enums.ShippingStatus;
+ import com.NguyenDat.ecommerce.repository.OrderRepository;
+@@ -37,13 +38,19 @@ public class OrderCreationServiceImpl implements OrderCreationService {
+     CouponApplicationService couponApplicationService;
+     OrderStatusHistoryService orderStatusHistoryService;
+ 
++
+     @Override
+     @Transactional
+     public Order create(User user, CheckoutRequest request, CheckoutCalculation checkout) {
+         Order order = buildOrder(user, request, checkout);
+         Order savedOrder = orderRepository.save(order);
+ 
+-        Payment payment = orderPaymentService.createCodPayment(savedOrder);
++        Payment payment;
++        if (request.getPaymentMethod() == PaymentMethod.BANK_TRANSFER) {
++            payment = orderPaymentService.createBankTransferPayment(savedOrder);
++        } else {
++            payment = orderPaymentService.createCodPayment(savedOrder);
++        }
+         savedOrder.setPayment(payment);
+ 
+         for (CartItem selectedCartItem : checkout.getSelectedCartItems()) {
+diff --git a/backend/src/main/java/com/NguyenDat/ecommerce/service/impl/OrderPaymentServiceImpl.java b/backend/src/main/java/com/NguyenDat/ecommerce/service/impl/OrderPaymentServiceImpl.java
+index bd16ead..676e28a 100644
+--- a/backend/src/main/java/com/NguyenDat/ecommerce/service/impl/OrderPaymentServiceImpl.java
++++ b/backend/src/main/java/com/NguyenDat/ecommerce/service/impl/OrderPaymentServiceImpl.java
+@@ -12,9 +12,23 @@ import com.NguyenDat.ecommerce.enums.PaymentMethod;
+ import com.NguyenDat.ecommerce.enums.PaymentStatus;
+ import com.NguyenDat.ecommerce.service.OrderPaymentService;
+ 
++import org.springframework.beans.factory.annotation.Value;
++
+ @Service
+ public class OrderPaymentServiceImpl implements OrderPaymentService {
+ 
++    @Value("${payment.vietqr.bank-code}")
++    private String bankCode;
++
++    @Value("${payment.vietqr.bank-account}")
++    private String bankAccount;
++
++    @Value("${payment.vietqr.bank-account-name}")
++    private String bankAccountName;
++
++    @Value("${payment.vietqr.qr-template}")
++    private String qrTemplate;
++
+     @Override
+     public Payment createCodPayment(Order order) {
+         Payment payment = new Payment();
+@@ -25,6 +39,20 @@ public class OrderPaymentServiceImpl implements OrderPaymentService {
+         return payment;
+     }
+ 
++    @Override
++    public Payment createBankTransferPayment(Order order) {
++        Payment payment = new Payment();
++        payment.setOrder(order);
++        payment.setMethod(PaymentMethod.BANK_TRANSFER);
++        payment.setStatus(PaymentStatus.UNPAID);
++        payment.setAmount(order.getTotalAmount());
++
++        String transactionCode = "NXM" + order.getId() + System.currentTimeMillis() % 1000;
++        payment.setTransactionCode(transactionCode);
++
++        return payment;
++    }
++
+     @Override
+     public void markPaid(Order order) {
+         Payment payment = requirePayment(order);
+@@ -43,4 +71,24 @@ public class OrderPaymentServiceImpl implements OrderPaymentService {
+         }
+         return order.getPayment();
+     }
++
++    @Override
++    public void enrichPaymentResponse(com.NguyenDat.ecommerce.dto.response.PaymentResponse response) {
++        if (response.getMethod() == PaymentMethod.BANK_TRANSFER) {
++            response.setBankCode(bankCode);
++            response.setBankAccount(bankAccount);
++            response.setBankAccountName(bankAccountName);
++            response.setTransferContent(response.getTransactionCode());
++            String qrUrl = String.format(
++                    "https://img.vietqr.io/image/%s-%s-%s.png?amount=%s&addInfo=%s&accountName=%s",
++                    bankCode,
++                    bankAccount,
++                    qrTemplate,
++                    response.getAmount().toPlainString(),
++                    response.getTransactionCode(),
++                    bankAccountName.replace(" ", "%20")
++            );
++            response.setQrCodeUrl(qrUrl);
++        }
++    }
+ }
+diff --git a/backend/src/main/java/com/NguyenDat/ecommerce/service/impl/OrderServiceImpl.java b/backend/src/main/java/com/NguyenDat/ecommerce/service/impl/OrderServiceImpl.java
+index 709e05d..5adca4a 100644
+--- a/backend/src/main/java/com/NguyenDat/ecommerce/service/impl/OrderServiceImpl.java
++++ b/backend/src/main/java/com/NguyenDat/ecommerce/service/impl/OrderServiceImpl.java
+@@ -83,14 +83,14 @@ public class OrderServiceImpl implements OrderService {
+ 
+     @Transactional
+     public OrderResponse createOrder(CheckoutRequest checkoutRequest) {
+-        if (checkoutRequest.getPaymentMethod() != PaymentMethod.COD) {
++        if (checkoutRequest.getPaymentMethod() != PaymentMethod.COD && checkoutRequest.getPaymentMethod() != PaymentMethod.BANK_TRANSFER) {
+             throw new AppException(ErrorCode.PAYMENT_METHOD_UNSUPPORTED);
+         }
+         User user = currentUserService.getCurrentUser();
+         CheckoutCalculation checkoutCalculation = checkoutService.calculateForOrder(user, checkoutRequest);
+         Order order = orderCreationService.create(user, checkoutRequest, checkoutCalculation);
+         inventoryService.decreaseForOrder(order, user);
+-        return orderMapper.toOrderResponse(order);
++        return enrichPayment(orderMapper.toOrderResponse(order));
+     }
+ 
+     @Override
+@@ -101,7 +101,7 @@ public class OrderServiceImpl implements OrderService {
+                 .findByIdAndUserId(orderId, user.getId())
+                 .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
+ 
+-        return orderMapper.toOrderResponse(order);
++        return enrichPayment(orderMapper.toOrderResponse(order));
+     }
+ 
+     @Override
+@@ -109,6 +109,7 @@ public class OrderServiceImpl implements OrderService {
+         User user = currentUserService.getCurrentUser();
+         return orderRepository.findAllByUserId(user.getId()).stream()
+                 .map(orderMapper::toOrderResponse)
++                .map(this::enrichPayment)
+                 .toList();
+     }
+ 
+@@ -116,7 +117,7 @@ public class OrderServiceImpl implements OrderService {
+     public PageResponse<OrderResponse> getMyOrdersInPage(Pageable pageable) {
+         User user = currentUserService.getCurrentUser();
+         Page<Order> page = orderRepository.findAllByUserId(user.getId(), pageable);
+-        return PageResponse.from(page.map(orderMapper::toOrderResponse));
++        return PageResponse.from(page.map(orderMapper::toOrderResponse).map(this::enrichPayment));
+     }
+ 
+     @Override
+@@ -165,7 +166,7 @@ public class OrderServiceImpl implements OrderService {
+ 
+         orderCancelRequestRepository.save(orderCancelRequest);
+ 
+-        return orderMapper.toOrderResponse(savedOrder);
++        return enrichPayment(orderMapper.toOrderResponse(savedOrder));
+     }
+ 
+     @Transactional
+@@ -184,26 +185,27 @@ public class OrderServiceImpl implements OrderService {
+         orderStatusHistoryService.record(
+                 order, user, oldStatus, OrderStatus.COMPLETED, "User confirmed received order");
+ 
+-        return orderMapper.toOrderResponse(orderRepository.save(order));
++        return enrichPayment(orderMapper.toOrderResponse(orderRepository.save(order)));
+     }
+ 
+     @Override
+     public List<OrderResponse> getAllOrders() {
+         return orderRepository.findAll().stream()
+                 .map(orderMapper::toOrderResponse)
++                .map(this::enrichPayment)
+                 .toList();
+     }
+ 
+     @Override
+     public PageResponse<OrderResponse> getOrdersInPage(Pageable pageable) {
+         Page<Order> page = orderRepository.findAll(pageable);
+-        return PageResponse.from(page.map(orderMapper::toOrderResponse));
++        return PageResponse.from(page.map(orderMapper::toOrderResponse).map(this::enrichPayment));
+     }
+ 
+     @Override
+     public OrderResponse getOrderById(Long orderId) {
+         Order order = orderRepository.findById(orderId).orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
+-        return orderMapper.toOrderResponse(order);
++        return enrichPayment(orderMapper.toOrderResponse(order));
+     }
+ 
+     @Transactional
+@@ -224,7 +226,7 @@ public class OrderServiceImpl implements OrderService {
+ 
+         orderStatusHistoryService.record(order, admin, oldStatus, CONFIRMED, "Admin confirmed order");
+ 
+-        return orderMapper.toOrderResponse(orderRepository.save(order));
++        return enrichPayment(orderMapper.toOrderResponse(orderRepository.save(order)));
+     }
+ 
+     @Transactional
+@@ -245,7 +247,7 @@ public class OrderServiceImpl implements OrderService {
+ 
+         orderStatusHistoryService.record(order, admin, oldStatus, PROCESSING, "Admin processed order");
+ 
+-        return orderMapper.toOrderResponse(orderRepository.save(order));
++        return enrichPayment(orderMapper.toOrderResponse(orderRepository.save(order)));
+     }
+ 
+     @Transactional
+@@ -266,7 +268,7 @@ public class OrderServiceImpl implements OrderService {
+ 
+         orderStatusHistoryService.record(order, admin, oldStatus, SHIPPING, "Admin shipped order");
+ 
+-        return orderMapper.toOrderResponse(orderRepository.save(order));
++        return enrichPayment(orderMapper.toOrderResponse(orderRepository.save(order)));
+     }
+ 
+     @Transactional
+@@ -287,7 +289,7 @@ public class OrderServiceImpl implements OrderService {
+ 
+         orderStatusHistoryService.record(order, admin, oldStatus, OrderStatus.DELIVERED, "Admin delivered order");
+ 
+-        return orderMapper.toOrderResponse(orderRepository.save(order));
++        return enrichPayment(orderMapper.toOrderResponse(orderRepository.save(order)));
+     }
+ 
+     @Override
+@@ -384,4 +386,12 @@ public class OrderServiceImpl implements OrderService {
+         orderCancelRequest.setReviewedBy(user);
+         return orderMapper.toOrderCancelRequestResponse(orderCancelRequestRepository.save(orderCancelRequest));
+     }
++
++    private OrderResponse enrichPayment(OrderResponse response) {
++        if (response != null && response.getPayment() != null) {
++            orderPaymentService.enrichPaymentResponse(response.getPayment());
++            response.getPayment().setOrderId(response.getId());
++        }
++        return response;
++    }
+ }
+diff --git a/backend/src/main/java/com/NguyenDat/ecommerce/service/impl/ProductServiceImpl.java b/backend/src/main/java/com/NguyenDat/ecommerce/service/impl/ProductServiceImpl.java
+index ddf978f..3c7e9f4 100644
+--- a/backend/src/main/java/com/NguyenDat/ecommerce/service/impl/ProductServiceImpl.java
++++ b/backend/src/main/java/com/NguyenDat/ecommerce/service/impl/ProductServiceImpl.java
+@@ -55,6 +55,8 @@ public class ProductServiceImpl implements ProductService {
+     ProductSpecificationMapper productSpecificationMapper;
+     ProductDescriptionBlockRepository productDescriptionBlockRepository;
+     ProductSpecificationRepository productSpecificationRepository;
++    ProductReviewRepository productReviewRepository;
++    OrderItemRepository orderItemRepository;
+ 
+     @Transactional
+     public ProductResponse createProduct(ProductCreateRequest productCreateRequest) {
+@@ -96,10 +98,35 @@ public class ProductServiceImpl implements ProductService {
+                 productMediaList.add(productMedia);
+             }
+         }
++        // description blocks
++        List<ProductDescriptionBlock> descriptionBlockList = new ArrayList<>();
++        if (productCreateRequest.getDescriptionBlocks() != null) {
++            for (ProductDescriptionBlockRequest blockReq : productCreateRequest.getDescriptionBlocks()) {
++                ProductDescriptionBlock block = productDescriptionBlockMapper.toProductDescriptionBlock(blockReq);
++                block.setProduct(product);
++                block.setActive(blockReq.getActive() == null || blockReq.getActive());
++                descriptionBlockList.add(block);
++            }
++        }
++        // specifications
++        List<com.NguyenDat.ecommerce.entity.ProductSpecification> specificationList = new ArrayList<>();
++        if (productCreateRequest.getSpecifications() != null) {
++            for (ProductSpecificationRequest specReq : productCreateRequest.getSpecifications()) {
++                com.NguyenDat.ecommerce.entity.ProductSpecification spec = productSpecificationMapper.toProductSpecification(specReq);
++                spec.setProduct(product);
++                spec.setGroupName(normalizeBlank(specReq.getGroupName()));
++                spec.setSpecKey(specReq.getSpecKey().trim());
++                spec.setSpecValue(specReq.getSpecValue().trim());
++                spec.setActive(specReq.getActive() == null || specReq.getActive());
++                specificationList.add(spec);
++            }
++        }
+         product.setVariants(productVariantList);
+         product.setMedia(productMediaList);
++        product.setDescriptionBlocks(descriptionBlockList);
++        product.setSpecifications(specificationList);
+         Product savedProduct = productRepository.save(product);
+-        return toProductResponse(savedProduct);
++        return enrichProductStats(toProductResponse(savedProduct));
+     }
+ 
+     @Transactional
+@@ -125,16 +152,18 @@ public class ProductServiceImpl implements ProductService {
+     }
+ 
+     public List<ProductResponse> getAllProducts() {
+-        return productRepository.findAllByDeletedFalse().stream()
++        List<ProductResponse> responses = productRepository.findAllByDeletedFalse().stream()
+                 .map(this::toProductResponse)
+                 .toList();
++        enrichProductStats(responses);
++        return responses;
+     }
+ 
+     public ProductResponse getProductById(Long id) {
+         Product product = productRepository
+                 .findByIdAndDeletedFalse(id)
+                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+-        return toProductResponse(product);
++        return enrichProductStats(toProductResponse(product));
+     }
+ 
+     public ProductVariantResponse getVariantById(Long id) {
+@@ -176,7 +205,7 @@ public class ProductServiceImpl implements ProductService {
+             product.setCategory(category);
+         }
+         Product savedProduct = productRepository.save(product);
+-        return toProductResponse(savedProduct);
++        return enrichProductStats(toProductResponse(savedProduct));
+     }
+ 
+     @Transactional
+@@ -187,7 +216,7 @@ public class ProductServiceImpl implements ProductService {
+                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+         product.setActive(!product.isActive());
+         Product savedProduct = productRepository.save(product);
+-        return toProductResponse(savedProduct);
++        return enrichProductStats(toProductResponse(savedProduct));
+     }
+ 
+     @Transactional
+@@ -344,8 +373,8 @@ public class ProductServiceImpl implements ProductService {
+         productDescriptionBlockRepository.saveAll(existingBlocks);
+         productDescriptionBlockRepository.saveAll(newBlocks);
+ 
+-        return toProductResponse(productRepository.findByIdAndDeletedFalse(productId)
+-                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND)));
++        return enrichProductStats(toProductResponse(productRepository.findByIdAndDeletedFalse(productId)
++                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND))));
+     }
+ 
+     @Transactional
+@@ -380,15 +409,17 @@ public class ProductServiceImpl implements ProductService {
+         productSpecificationRepository.saveAll(existingSpecifications);
+         productSpecificationRepository.saveAll(newSpecifications);
+ 
+-        return toProductResponse(productRepository.findByIdAndDeletedFalse(productId)
+-                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND)));
++        return enrichProductStats(toProductResponse(productRepository.findByIdAndDeletedFalse(productId)
++                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND))));
+     }
+ 
+     @Override
+     public List<ProductResponse> showAllProducts() {
+-        return productRepository.findAllByDeletedFalseAndActiveTrue().stream()
+-                .map(productMapper::toProductResponse)
++        List<ProductResponse> responses = productRepository.findAllByDeletedFalseAndActiveTrue().stream()
++                .map(this::toClientProductResponse)
+                 .toList();
++        enrichProductStats(responses);
++        return responses;
+     }
+ 
+     @Override
+@@ -397,7 +428,7 @@ public class ProductServiceImpl implements ProductService {
+         Product product = productRepository
+                 .findBySlugAndDeletedFalseAndActiveTrue(slug.trim())
+                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+-        return toClientProductResponse(product);
++        return enrichProductStats(toClientProductResponse(product));
+     }
+ 
+     @Override
+@@ -437,13 +468,17 @@ public class ProductServiceImpl implements ProductService {
+     @Override
+     public PageResponse<ProductResponse> getAllProductsInPage(ProductFilterRequest filterRequest, Pageable pageable) {
+         Page<Product> page = productRepository.findAll(ProductSpecification.withFilter(filterRequest, false), pageable);
+-        return PageResponse.from(page.map(this::toProductResponse));
++        Page<ProductResponse> mappedPage = page.map(this::toProductResponse);
++        enrichProductStats(mappedPage.getContent());
++        return PageResponse.from(mappedPage);
+     }
+ 
+     @Override
+     public PageResponse<ProductResponse> showProductsInPage(ProductFilterRequest filterRequest, Pageable pageable) {
+         Page<Product> page = productRepository.findAll(ProductSpecification.withFilter(filterRequest, true), pageable);
+-        return PageResponse.from(page.map(this::toClientProductResponse));
++        Page<ProductResponse> mappedPage = page.map(this::toClientProductResponse);
++        enrichProductStats(mappedPage.getContent());
++        return PageResponse.from(mappedPage);
+     }
+ 
+     @Override
+@@ -455,7 +490,9 @@ public class ProductServiceImpl implements ProductService {
+         Page<Product> relatedProducts = productRepository.findAllByCategoryIdAndIdNotAndActiveTrueAndDeletedFalse(
+                 currentProduct.getCategory().getId(), currentProduct.getId(), pageable);
+ 
+-        return PageResponse.from(relatedProducts.map(this::toClientProductResponse));
++        Page<ProductResponse> mappedPage = relatedProducts.map(this::toClientProductResponse);
++        enrichProductStats(mappedPage.getContent());
++        return PageResponse.from(mappedPage);
+     }
+ 
+     private ProductResponse toClientProductResponse(Product product) {
+@@ -493,4 +530,31 @@ public class ProductServiceImpl implements ProductService {
+         }
+         return value.trim();
+     }
++
++    private void enrichProductStats(List<ProductResponse> responses) {
++        if (responses.isEmpty()) return;
++        List<Long> productIds = responses.stream().map(ProductResponse::getId).toList();
++
++        List<Object[]> ratings = productReviewRepository.getAverageRatingByProductIds(productIds);
++        java.util.Map<Long, Double> ratingMap = new java.util.HashMap<>();
++        for (Object[] row : ratings) {
++            ratingMap.put((Long) row[0], (Double) row[1]);
++        }
++
++        List<Object[]> soldCounts = orderItemRepository.getSoldCountByProductIds(productIds);
++        java.util.Map<Long, Long> soldMap = new java.util.HashMap<>();
++        for (Object[] row : soldCounts) {
++            soldMap.put((Long) row[0], (Long) row[1]);
++        }
++
++        for (ProductResponse response : responses) {
++            response.setRating(ratingMap.getOrDefault(response.getId(), 0.0));
++            response.setSoldCount(soldMap.getOrDefault(response.getId(), 0L).intValue());
++        }
++    }
++
++    private ProductResponse enrichProductStats(ProductResponse response) {
++        enrichProductStats(List.of(response));
++        return response;
++    }
+ }
+diff --git a/backend/src/main/resources/application.yaml b/backend/src/main/resources/application.yaml
+index 37d9c77..b81a2fc 100644
+--- a/backend/src/main/resources/application.yaml
++++ b/backend/src/main/resources/application.yaml
+@@ -59,3 +59,10 @@ management:
+ 
+ jwt:
+   signerKey: ${JWT_SIGNER_KEY}
++
++payment:
++  vietqr:
++    bank-code: ${PAYMENT_BANK_CODE:VPB}
++    bank-account: ${PAYMENT_BANK_ACCOUNT:0987654321}
++    bank-account-name: ${PAYMENT_BANK_ACCOUNT_NAME:NGUYEN VAN A}
++    qr-template: ${PAYMENT_QR_TEMPLATE:compact}
