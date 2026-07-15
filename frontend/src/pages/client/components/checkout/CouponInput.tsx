@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Ticket, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
+import { Ticket, CheckCircle2, AlertCircle, Loader2, ChevronDown, ChevronUp } from 'lucide-react';
 import { cartApi } from '../../../../features/client/cart/cartApi';
 import type { CouponResponse } from '../../../../features/client/cart/cartTypes';
 import { formatCurrency } from '../../../../utils/formatters';
@@ -15,13 +15,13 @@ interface CouponInputProps {
 export default function CouponInput({ currentCoupon, subtotalAmount, onApply, onRemove, error }: CouponInputProps) {
   const [code, setCode] = useState(currentCoupon || '');
   const [loading, setLoading] = useState(false);
+  const [showCoupons, setShowCoupons] = useState(false);
   
   const [coupons, setCoupons] = useState<CouponResponse[]>([]);
   const [loadingCoupons, setLoadingCoupons] = useState(true);
   const [couponsError, setCouponsError] = useState<string | null>(null);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- sync state
     setCode(currentCoupon || '');
   }, [currentCoupon]);
 
@@ -52,6 +52,7 @@ export default function CouponInput({ currentCoupon, subtotalAmount, onApply, on
       if (!couponCode) {
         setCode(finalCode);
       }
+      setShowCoupons(false);
     } finally {
       setLoading(false);
     }
@@ -69,96 +70,106 @@ export default function CouponInput({ currentCoupon, subtotalAmount, onApply, on
 
   return (
     <div className="bg-surface rounded-xl p-6 border border-border shadow-sm mb-6">
-      <h2 className="text-lg font-bold text-text flex items-center gap-2 mb-4">
-        <Ticket className="w-5 h-5 text-primary" /> Khuyến mãi
+      <h2 className="text-base font-bold text-text flex items-center gap-2 mb-4">
+        <Ticket className="w-4 h-4 text-primary" /> Khuyến mãi
       </h2>
 
       {currentCoupon ? (
-        <div className="flex items-center justify-between bg-primary-soft border border-primary-soft rounded-lg p-4 mb-4">
-          <div className="flex items-center gap-3 text-primary font-medium">
-            <CheckCircle2 className="w-5 h-5 text-success" />
-            Đã áp dụng mã: <span className="font-bold uppercase">{currentCoupon}</span>
+        <div className="flex items-center justify-between bg-success-soft/50 rounded-lg p-3">
+          <div className="flex items-center gap-2">
+            <CheckCircle2 className="w-4 h-4 text-success" />
+            <span className="font-bold text-success text-sm uppercase">{currentCoupon}</span>
           </div>
           <button
             onClick={handleRemove}
             disabled={loading}
-            className="text-muted hover:text-danger font-medium text-sm transition-colors disabled:opacity-50"
+            className="text-xs font-semibold text-muted hover:text-danger transition-colors disabled:opacity-50"
           >
             Bỏ chọn
           </button>
         </div>
       ) : (
-        <form onSubmit={e => handleApply(e)} className="flex gap-2 mb-4">
+        <form onSubmit={e => handleApply(e)} className="flex gap-2">
           <input
             type="text"
             value={code}
             onChange={e => setCode(e.target.value)}
-            placeholder="Nhập mã giảm giá..."
-            className="flex-1 border border-border-strong rounded-lg px-4 py-2 text-sm focus:border-primary focus:ring-1 focus:ring-blue-600 outline-none uppercase placeholder:normal-case"
+            placeholder="Nhập mã giảm giá"
+            className="flex-1 border border-border-strong rounded-lg px-3 py-2 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none uppercase placeholder:normal-case placeholder:text-muted"
             disabled={loading}
           />
           <button
             type="submit"
             disabled={!code.trim() || loading}
-            className="bg-primary text-white px-6 py-2 rounded-lg font-medium hover:bg-primary-hover disabled:opacity-50 transition-colors"
+            className="bg-text text-surface px-4 py-2 rounded-lg text-sm font-medium hover:bg-text/90 disabled:opacity-50 transition-colors"
           >
             Áp dụng
           </button>
         </form>
       )}
 
-      {error && <p className="text-danger text-sm mt-2 mb-4 flex items-center gap-1"><AlertCircle className="w-4 h-4" /> {error}</p>}
+      {error && (
+        <p className="text-danger text-xs mt-2 flex items-center gap-1">
+          <AlertCircle className="w-3 h-3" /> {error}
+        </p>
+      )}
 
-      <div className="mt-6">
-        <h3 className="text-sm font-bold text-text mb-3">Mã giảm giá khả dụng</h3>
-        {loadingCoupons ? (
-          <div className="flex justify-center py-4"><Loader2 className="w-5 h-5 animate-spin text-muted" /></div>
-        ) : couponsError ? (
-          <div className="text-danger text-sm">{couponsError}</div>
-        ) : coupons.length === 0 ? (
-          <div className="text-muted text-sm">Hiện chưa có mã giảm giá khả dụng.</div>
-        ) : (
-          <div className="flex flex-col gap-3">
-            {coupons.map((coupon) => {
-              const isValid = subtotalAmount >= coupon.minOrderAmount;
-              const isCurrent = currentCoupon === coupon.code;
-              
-              return (
-                <div key={coupon.code} className={`border ${isCurrent ? 'border-primary bg-primary-soft' : 'border-border'} rounded-lg p-3 flex flex-col sm:flex-row gap-3 sm:items-center justify-between transition-colors`}>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="font-bold text-text uppercase">{coupon.code}</span>
-                      {isCurrent && (
-                        <span className="text-[10px] bg-primary text-white px-2 py-0.5 rounded-full font-medium uppercase">Đang dùng</span>
-                      )}
-                    </div>
-                    <p className="text-sm text-text font-medium mb-1">{coupon.description}</p>
-                    <div className="text-xs text-muted flex flex-col gap-0.5">
-                      <span>Đơn tối thiểu {formatCurrency(coupon.minOrderAmount)}</span>
-                      {coupon.maxDiscountAmount && coupon.discountType === 'PERCENTAGE' && (
-                        <span>Giảm tối đa {formatCurrency(coupon.maxDiscountAmount)}</span>
-                      )}
-                      <span>HSD: {new Date(coupon.endDate).toLocaleDateString('vi-VN')}</span>
-                      {coupon.usageLimit !== undefined && coupon.usedCount !== undefined && (
-                        <span>Còn lại: {Math.max(0, coupon.usageLimit - coupon.usedCount)} lượt</span>
-                      )}
-                    </div>
-                  </div>
-                  <div className="flex flex-col items-end justify-center shrink-0 mt-2 sm:mt-0">
-                    <button
-                      onClick={() => handleApply(undefined, coupon.code)}
-                      disabled={loading || !isValid || isCurrent}
-                      className={`${!isValid ? 'bg-border text-muted cursor-not-allowed' : isCurrent ? 'bg-success text-white cursor-not-allowed' : 'bg-primary hover:bg-primary-hover text-white'} px-4 py-1.5 rounded-md text-sm font-medium transition-colors`}
-                    >
-                      {isCurrent ? 'Đang dùng' : !isValid ? 'Chưa đủ điều kiện' : 'Áp dụng'}
-                    </button>
-                  </div>
+      {!currentCoupon && (
+        <div className="mt-4">
+          <button
+            type="button"
+            onClick={() => setShowCoupons(!showCoupons)}
+            className="text-primary hover:underline text-sm font-medium flex items-center gap-1"
+          >
+            {showCoupons ? 'Đóng danh sách mã' : 'Chọn mã có sẵn'}
+            {showCoupons ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+          </button>
+          
+          {showCoupons && (
+            <div className="mt-4 pt-2">
+              {loadingCoupons ? (
+                <div className="flex justify-center py-4"><Loader2 className="w-4 h-4 animate-spin text-muted" /></div>
+              ) : couponsError ? (
+                <div className="text-danger text-sm">{couponsError}</div>
+              ) : coupons.length === 0 ? (
+                <div className="text-muted text-sm">Hiện chưa có mã giảm giá khả dụng.</div>
+              ) : (
+                <div className="flex flex-col">
+                  {coupons.map((coupon) => {
+                    const isValid = subtotalAmount >= coupon.minOrderAmount;
+                    const isCurrent = currentCoupon === coupon.code;
+                    
+                    return (
+                      <div key={coupon.code} className="flex items-center justify-between py-3 border-b border-border last:border-0 gap-3">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2">
+                            <span className="font-bold text-text text-sm uppercase truncate">{coupon.code}</span>
+                          </div>
+                          <p className="text-xs text-muted truncate mt-0.5">{coupon.description}</p>
+                          {!isValid && (
+                            <p className="text-[10px] text-danger mt-1">Đơn tối thiểu {formatCurrency(coupon.minOrderAmount)}</p>
+                          )}
+                        </div>
+                        <button
+                          onClick={() => handleApply(undefined, coupon.code)}
+                          disabled={loading || !isValid || isCurrent}
+                          className={`shrink-0 text-xs font-semibold px-3 py-1.5 rounded-md transition-colors ${
+                            !isValid ? 'bg-surface-alt text-muted cursor-not-allowed' : 
+                            isCurrent ? 'bg-success-soft text-success cursor-not-allowed' : 
+                            'bg-primary-soft text-primary hover:bg-primary hover:text-white'
+                          }`}
+                        >
+                          {isCurrent ? 'Đang dùng' : !isValid ? 'Không đủ ĐK' : 'Áp dụng'}
+                        </button>
+                      </div>
+                    );
+                  })}
                 </div>
-              );
-            })}
-          </div>
-        )}
-      </div>
+              )}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
