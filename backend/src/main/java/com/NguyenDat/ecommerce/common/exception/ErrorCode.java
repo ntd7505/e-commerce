@@ -48,6 +48,13 @@ public enum ErrorCode {
     TOKEN_INVALID(3002, "Token is invalid", HttpStatus.UNAUTHORIZED),
     TOKEN_EXPIRED(3003, "Token has expired", HttpStatus.UNAUTHORIZED),
     TOKEN_BLACKLISTED(3004, "Token has been logged out", HttpStatus.UNAUTHORIZED),
+    CURRENT_PASSWORD_INCORRECT(3005, "Current password is incorrect", HttpStatus.BAD_REQUEST),
+    PASSWORD_CONFIRMATION_MISMATCH(3006, "New password confirmation does not match", HttpStatus.BAD_REQUEST),
+    PASSWORD_SAME_AS_CURRENT(3007, "New password must be different from current password", HttpStatus.BAD_REQUEST),
+    PASSWORD_RESET_CODE_INVALID(3008, "Password reset code is invalid", HttpStatus.BAD_REQUEST),
+    PASSWORD_RESET_CODE_EXPIRED(3009, "Password reset code has expired", HttpStatus.BAD_REQUEST),
+    PASSWORD_RESET_CODE_ATTEMPTS_EXCEEDED(3010, "Too many invalid password reset code attempts", HttpStatus.TOO_MANY_REQUESTS),
+    EMAIL_DELIVERY_FAILED(3011, "Unable to send email at this time", HttpStatus.SERVICE_UNAVAILABLE),
 
     // product
     PRODUCT_EXISTED(3500, "Product already existed", HttpStatus.BAD_REQUEST),

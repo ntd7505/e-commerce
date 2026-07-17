@@ -23,6 +23,9 @@ public enum ResponseCode {
     LOGOUT_SUCCESS(2001, "Logout successfully"),
     REFRESH_TOKEN_SUCCESS(2002, "Refresh token successfully"),
     INTROSPECT_SUCCESS(2003, "Introspect successfully"),
+    PASSWORD_CHANGED(2004, "Password changed successfully"),
+    PASSWORD_RESET_CODE_SENT(2005, "If the email exists, a password reset code has been sent"),
+    PASSWORD_RESET_SUCCESS(2006, "Password reset successfully"),
 
     // 3000 - Product
     PRODUCT_CREATED(3000, "Product created successfully"),

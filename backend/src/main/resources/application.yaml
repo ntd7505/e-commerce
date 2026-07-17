@@ -2,6 +2,10 @@ spring:
   application:
     name: e-commerce
 
+  # Loads local development secrets from the ignored .env file when present.
+  config:
+    import: optional:file:.env[.properties]
+
   datasource:
     url: ${DB_URL:jdbc:mysql://localhost:3306/ecommerce_db?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC}
     username: ${DB_USERNAME:root}
@@ -27,7 +31,21 @@ spring:
       timeout: 2s
       repositories:
         enabled: false
-
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_APP_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
   cache:
     type: redis
     cache-names:
@@ -40,6 +58,13 @@ spring:
 app:
   cache:
     key-prefix: "ecommerce:${APP_ENV:dev}:v2:cache:"
+  mail:
+    from: ${MAIL_FROM:${MAIL_USERNAME}}
+    password-reset-code-expiry-minutes: 10
+    password-reset-max-attempts: 5
+    password-reset-resend-cooldown-seconds: 60
+    password-reset-max-requests: 3
+    password-reset-request-window-minutes: 15
 
 springdoc:
   api-docs:

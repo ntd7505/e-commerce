@@ -19,8 +19,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.NguyenDat.ecommerce.controller.client.ClientUserController;
 import com.NguyenDat.ecommerce.dto.request.UserUpdateRequest;
 import com.NguyenDat.ecommerce.dto.request.auth.UserRegisterRequest;
+import com.NguyenDat.ecommerce.dto.request.auth.ChangePasswordRequest;
 import com.NguyenDat.ecommerce.dto.response.UserResponse;
 import com.NguyenDat.ecommerce.service.UserService;
+import com.NguyenDat.ecommerce.service.PasswordManagementService;
 
 import tools.jackson.databind.ObjectMapper;
 
@@ -36,6 +38,9 @@ class ClientUserControllerTest {
 
     @MockitoBean
     UserService userService;
+
+    @MockitoBean
+    PasswordManagementService passwordManagementService;
 
     @Test
     void register_shouldReturnCreatedUser() throws Exception {
@@ -79,5 +84,20 @@ class ClientUserControllerTest {
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.fullName").value("Updated Name"));
+    }
+
+    @Test
+    void changePassword_shouldReturnSuccessResponse() throws Exception {
+        ChangePasswordRequest request = ChangePasswordRequest.builder()
+                .currentPassword("OldPassword@1")
+                .newPassword("NewPassword@1")
+                .confirmPassword("NewPassword@1")
+                .build();
+
+        mockMvc.perform(patch("/api/v1/client/users/me/password")
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(2004));
     }
 }

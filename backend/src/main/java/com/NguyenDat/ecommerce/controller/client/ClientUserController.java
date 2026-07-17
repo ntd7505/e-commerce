@@ -10,9 +10,11 @@ import com.NguyenDat.ecommerce.common.constant.ApiConstant;
 import com.NguyenDat.ecommerce.common.constant.ResponseCode;
 import com.NguyenDat.ecommerce.common.dto.response.ApiResponse;
 import com.NguyenDat.ecommerce.dto.request.UserUpdateRequest;
+import com.NguyenDat.ecommerce.dto.request.auth.ChangePasswordRequest;
 import com.NguyenDat.ecommerce.dto.request.auth.UserRegisterRequest;
 import com.NguyenDat.ecommerce.dto.response.UserResponse;
 import com.NguyenDat.ecommerce.service.UserService;
+import com.NguyenDat.ecommerce.service.PasswordManagementService;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +27,7 @@ import lombok.experimental.FieldDefaults;
 public class ClientUserController {
 
     UserService userService;
+    PasswordManagementService passwordManagementService;
 
     @PostMapping("/users")
     public ResponseEntity<ApiResponse<UserResponse>> register(@RequestBody @Valid UserRegisterRequest request) {
@@ -42,5 +45,11 @@ public class ClientUserController {
             @RequestBody @Valid UserUpdateRequest userUpdateRequest) {
         return ResponseEntity.ok(
                 ApiResponse.of(ResponseCode.USER_UPDATED, userService.updateMyInfo(userUpdateRequest)));
+    }
+
+    @PatchMapping("/users/me/password")
+    public ResponseEntity<ApiResponse<Void>> changePassword(@RequestBody @Valid ChangePasswordRequest request) {
+        passwordManagementService.changePassword(request);
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.PASSWORD_CHANGED, null));
     }
 }

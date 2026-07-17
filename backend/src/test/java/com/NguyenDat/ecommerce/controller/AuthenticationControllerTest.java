@@ -18,11 +18,14 @@ import com.NguyenDat.ecommerce.common.constant.ResponseCode;
 import com.NguyenDat.ecommerce.common.exception.AppException;
 import com.NguyenDat.ecommerce.common.exception.ErrorCode;
 import com.NguyenDat.ecommerce.dto.request.auth.AuthenticationRequest;
+import com.NguyenDat.ecommerce.dto.request.auth.ForgotPasswordRequest;
 import com.NguyenDat.ecommerce.dto.request.auth.IntrospectRequest;
 import com.NguyenDat.ecommerce.dto.request.auth.RefreshTokenRequest;
+import com.NguyenDat.ecommerce.dto.request.auth.ResetPasswordRequest;
 import com.NguyenDat.ecommerce.dto.response.AuthenticationResponse;
 import com.NguyenDat.ecommerce.dto.response.IntrospectResponse;
 import com.NguyenDat.ecommerce.service.AuthenticationService;
+import com.NguyenDat.ecommerce.service.PasswordManagementService;
 
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
@@ -37,6 +40,9 @@ public class AuthenticationControllerTest {
 
     @MockitoBean
     AuthenticationService authenticationService;
+
+    @MockitoBean
+    PasswordManagementService passwordManagementService;
 
     @Autowired
     ObjectMapper objectMapper;
@@ -255,5 +261,36 @@ public class AuthenticationControllerTest {
                 .andExpect(jsonPath("$.message").value(ErrorCode.USER_DELETED.getMessage()));
 
         verify(authenticationService).authenticate(any(AuthenticationRequest.class));
+    }
+
+    @Test
+    void forgotPassword_shouldReturnGenericSuccessResponse() throws Exception {
+        ForgotPasswordRequest request = ForgotPasswordRequest.builder().email("customer@example.com").build();
+
+        mockMvc.perform(post("/api/v1/auth/forgot-password")
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(ResponseCode.PASSWORD_RESET_CODE_SENT.getCode()));
+
+        verify(passwordManagementService).requestPasswordReset(any(ForgotPasswordRequest.class));
+    }
+
+    @Test
+    void resetPassword_shouldReturnSuccessResponse_whenCodeIsValid() throws Exception {
+        ResetPasswordRequest request = ResetPasswordRequest.builder()
+                .email("customer@example.com")
+                .code("123456")
+                .newPassword("NewPassword@1")
+                .confirmPassword("NewPassword@1")
+                .build();
+
+        mockMvc.perform(post("/api/v1/auth/reset-password")
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(ResponseCode.PASSWORD_RESET_SUCCESS.getCode()));
+
+        verify(passwordManagementService).resetPassword(any(ResetPasswordRequest.class));
     }
 }

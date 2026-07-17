@@ -59,6 +59,10 @@ public class User {
     @Builder.Default
     boolean deleted = false;
 
+    @Column(name = "token_version", nullable = false)
+    @Builder.Default
+    Long tokenVersion = 0L;
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     LocalDateTime createdAt;

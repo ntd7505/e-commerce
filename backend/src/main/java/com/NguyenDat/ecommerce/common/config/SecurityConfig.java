@@ -3,6 +3,7 @@ package com.NguyenDat.ecommerce.common.config;
 import java.util.List;
 import javax.crypto.spec.SecretKeySpec;
 
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,6 +16,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.JwtValidators;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
@@ -24,13 +26,15 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.NguyenDat.ecommerce.common.constant.ApiConstant;
+import com.NguyenDat.ecommerce.repository.UserRepository;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
     private final String[] PUBLIC_ENDPOINT = {
-        AUTH_PREFIX + "/login", AUTH_PREFIX + "/introspect", ApiConstant.CLIENT_PREFIX + "/users"
+        AUTH_PREFIX + "/login", AUTH_PREFIX + "/introspect", AUTH_PREFIX + "/forgot-password",
+        AUTH_PREFIX + "/reset-password", ApiConstant.CLIENT_PREFIX + "/users"
     };
     private final String[] SWAGGER_ENDPOINTS = {"/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html"};
 
@@ -47,7 +51,7 @@ public class SecurityConfig {
     private String signerKey;
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity httpSecurity, JwtDecoder jwtDecoder) throws Exception {
         httpSecurity.cors(cors -> cors.configurationSource(corsConfigurationSource()));
 
         httpSecurity.authorizeHttpRequests(request -> request.requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINT)
@@ -62,7 +66,7 @@ public class SecurityConfig {
                 .authenticated());
 
         httpSecurity.oauth2ResourceServer(oauth2 -> oauth2.jwt(jwtConfigurer ->
-                        jwtConfigurer.decoder(jwtDecoder()).jwtAuthenticationConverter(jwtAuthenticationConverter()))
+                        jwtConfigurer.decoder(jwtDecoder).jwtAuthenticationConverter(jwtAuthenticationConverter()))
                 .authenticationEntryPoint(new JwtAuthenticationEntryPoint()));
 
         httpSecurity.exceptionHandling(exception -> exception
@@ -95,11 +99,19 @@ public class SecurityConfig {
     }
 
     @Bean
-    JwtDecoder jwtDecoder() {
+    JwtDecoder jwtDecoder(ObjectProvider<UserRepository> userRepositoryProvider) {
         SecretKeySpec secretKeySpec = new SecretKeySpec(signerKey.getBytes(), "HS512");
-        return NimbusJwtDecoder.withSecretKey(secretKeySpec)
+        NimbusJwtDecoder jwtDecoder = NimbusJwtDecoder.withSecretKey(secretKeySpec)
                 .macAlgorithm(MacAlgorithm.HS512)
                 .build();
+        UserRepository userRepository = userRepositoryProvider.getIfAvailable();
+        if (userRepository == null) {
+            jwtDecoder.setJwtValidator(JwtValidators.createDefault());
+        } else {
+            jwtDecoder.setJwtValidator(new org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator<>(
+                    JwtValidators.createDefault(), new TokenVersionJwtValidator(userRepository)));
+        }
+        return jwtDecoder;
     }
 
     @Bean

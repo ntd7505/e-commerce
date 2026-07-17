@@ -5,6 +5,7 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.Objects;
 import java.util.StringJoiner;
 import java.util.UUID;
 
@@ -77,6 +78,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 throw new AppException(ErrorCode.TOKEN_BLACKLISTED);
             }
 
+            String email = signedJWT.getJWTClaimsSet().getSubject();
+            User user = userRepository
+                    .findByEmailAndDeletedFalse(email)
+                    .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+            Long tokenVersion = signedJWT.getJWTClaimsSet().getLongClaim("tokenVersion");
+            if (user.getStatus() != Active.ACTIVE || !Objects.equals(user.getTokenVersion(), tokenVersion)) {
+                throw new AppException(ErrorCode.TOKEN_BLACKLISTED);
+            }
+
             return IntrospectResponse.builder().valid(true).build();
         } catch (JOSEException | ParseException e) {
             throw new AppException(ErrorCode.TOKEN_INVALID);
@@ -115,6 +125,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .jwtID(UUID.randomUUID().toString())
                 .claim("scope", buildScope(user))
                 .claim("type", tokenType)
+                .claim("tokenVersion", user.getTokenVersion())
                 .build();
         // payload
         Payload payload = new Payload(jwtClaimsSet.toJSONObject());
@@ -199,8 +210,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
             String email = signedJWT.getJWTClaimsSet().getSubject();
             User user = userRepository
-                    .findByEmailAndDeletedFalse(email)
-                    .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+                .findByEmailAndDeletedFalse(email)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+            Long tokenVersion = signedJWT.getJWTClaimsSet().getLongClaim("tokenVersion");
+            if (!Objects.equals(user.getTokenVersion(), tokenVersion)) {
+                throw new AppException(ErrorCode.TOKEN_BLACKLISTED);
+            }
 
             if (user.getStatus() == Active.INACTIVE) {
                 throw new AppException(ErrorCode.USER_INACTIVE);

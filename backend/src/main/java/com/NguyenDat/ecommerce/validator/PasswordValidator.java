@@ -14,6 +14,7 @@ public class PasswordValidator implements ConstraintValidator<PasswordConstraint
     @Override
     public boolean isValid(String password, ConstraintValidatorContext context) {
         if (password == null) return false;
+        if (!password.matches(".*[a-z].*")) return false;
         return password.length() >= min
                 && password.matches(".*[A-Z].*") // có chữ hoa
                 && password.matches(".*[0-9].*") // có số
