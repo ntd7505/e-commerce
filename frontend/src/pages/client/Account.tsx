@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import ProfileForm from './components/account/ProfileForm';
 import { Lock } from 'lucide-react';
 import AccountPageLayout from './components/account/AccountPageLayout';
+import ChangePasswordModal from './components/account/ChangePasswordModal';
 
 export default function Account() {
+  const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
+
   return (
     <AccountPageLayout
       breadcrumbCurrent="Thông tin tài khoản"
@@ -32,11 +35,20 @@ export default function Account() {
               <div className="text-sm text-muted">Bảo vệ tài khoản của bạn bằng mật khẩu mạnh</div>
             </div>
           </div>
-          <div className="px-5 py-2.5 rounded-xl text-sm font-medium text-muted bg-surface-alt cursor-not-allowed border border-border-strong">
-            Tính năng đổi mật khẩu chưa được hỗ trợ
-          </div>
+          <button
+            type="button"
+            onClick={() => setIsPasswordModalOpen(true)}
+            className="px-5 py-2.5 rounded-xl text-sm font-medium text-white bg-primary hover:bg-primary-hover border border-primary-hover shadow-sm transition-all"
+          >
+            Đổi mật khẩu
+          </button>
         </div>
       </div>
+      
+      <ChangePasswordModal 
+        isOpen={isPasswordModalOpen} 
+        onClose={() => setIsPasswordModalOpen(false)} 
+      />
     </AccountPageLayout>
   );
 }

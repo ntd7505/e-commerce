@@ -170,7 +170,7 @@ const Header = () => {
             ) : (
               <User className="w-5 h-5 text-[var(--text-primary)]" />
             )}
-            <span className="hidden sm:inline">{user ? user.fullName.split(' ').pop() || user.fullName : 'admin'}</span>
+            <span className="hidden sm:inline">{user ? user.fullName.split(' ').pop() || user.fullName : 'Khách'}</span>
           </Link>
 
           {/* Cart */}

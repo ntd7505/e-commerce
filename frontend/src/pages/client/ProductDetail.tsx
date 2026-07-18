@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
 import { useCart } from '../../features/client/cart/CartProvider';
 import { useToast } from '../../features/ui/ToastProvider';
@@ -27,7 +27,6 @@ import RelatedProducts from './components/product/RelatedProducts';
 export default function ProductDetail() {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
-  const location = useLocation();
   const { addItem } = useCart();
   const { showToast } = useToast();
   const { isAuthenticated } = useAuth();
@@ -87,15 +86,14 @@ export default function ProductDetail() {
 
   const handleBuyNow = async () => {
     if (!selectedVariant) return;
-    if (!isAuthenticated) {
-      const redirect = `${location.pathname}${location.search}`;
-      navigate(`/login?redirect=${encodeURIComponent(redirect)}`);
-      return;
-    }
     
     setBuyingNow(true);
     try {
       await addItem({ productVariantId: selectedVariant.id, quantity });
+      if (!isAuthenticated) {
+        navigate('/login?redirect=/cart');
+        return;
+      }
       navigate('/cart');
     } catch (err) {
       const error = parseApiError(err);
@@ -107,11 +105,6 @@ export default function ProductDetail() {
 
   const handleAddToCart = async () => {
     if (!selectedVariant || !product) return;
-    if (!isAuthenticated) {
-      const redirect = `${location.pathname}${location.search}`;
-      navigate(`/login?redirect=${encodeURIComponent(redirect)}`);
-      return;
-    }
 
     setAddingToCart(true);
     try {

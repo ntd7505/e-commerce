@@ -9,6 +9,8 @@ import { ToastProvider } from './features/ui/ToastProvider';
 import Home from './pages/client/Home';
 import ClientLogin from './pages/client/Login';
 import ClientRegister from './pages/client/Register';
+import ForgotPassword from './pages/client/ForgotPassword';
+import ResetPassword from './pages/client/ResetPassword';
 import ProductList from './pages/client/ProductList';
 import ProductDetail from './pages/client/ProductDetail';
 import Account from './pages/client/Account';
@@ -50,6 +52,8 @@ export default function App() {
             <Route index element={<Home />} />
             <Route path="login" element={<ClientLogin />} />
             <Route path="register" element={<ClientRegister />} />
+            <Route path="forgot-password" element={<ForgotPassword />} />
+            <Route path="reset-password" element={<ResetPassword />} />
             <Route path="products" element={<ProductList />} />
             <Route path="products/:slug" element={<ProductDetail />} />
             <Route element={<RequireAuth />}>
@@ -59,10 +63,10 @@ export default function App() {
               <Route path="account/addresses" element={<AccountAddresses />} />
               <Route path="account/reviews" element={<AccountReviews />} />
               <Route path="account/coupons" element={<AccountCoupons />} />
-              <Route path="cart" element={<Cart />} />
               <Route path="checkout" element={<Checkout />} />
               <Route path="checkout/success/:orderId" element={<CheckoutSuccess />} />
             </Route>
+            <Route path="cart" element={<Cart />} />
           </Route>
           
           <Route path="/admin/login" element={<AdminLogin />} />

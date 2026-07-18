@@ -3,6 +3,7 @@ import { Ticket, CheckCircle2, AlertCircle, Loader2, ChevronDown, ChevronUp } fr
 import { cartApi } from '../../../../features/client/cart/cartApi';
 import type { CouponResponse } from '../../../../features/client/cart/cartTypes';
 import { formatCurrency } from '../../../../utils/formatters';
+import { useAuth } from '../../../../features/auth/AuthProvider';
 
 interface CouponInputProps {
   currentCoupon: string | null;
@@ -20,6 +21,8 @@ export default function CouponInput({ currentCoupon, subtotalAmount, onApply, on
   const [coupons, setCoupons] = useState<CouponResponse[]>([]);
   const [loadingCoupons, setLoadingCoupons] = useState(true);
   const [couponsError, setCouponsError] = useState<string | null>(null);
+  
+  const { isAuthenticated } = useAuth();
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- đồng bộ prop currentCoupon với state local code
@@ -28,6 +31,11 @@ export default function CouponInput({ currentCoupon, subtotalAmount, onApply, on
 
   useEffect(() => {
     const fetchCoupons = async () => {
+      if (!isAuthenticated) {
+        setCoupons([]);
+        setLoadingCoupons(false);
+        return;
+      }
       try {
         setLoadingCoupons(true);
         const data = await cartApi.getAvailableCoupons();
@@ -40,7 +48,7 @@ export default function CouponInput({ currentCoupon, subtotalAmount, onApply, on
       }
     };
     void fetchCoupons();
-  }, []);
+  }, [isAuthenticated]);
 
   const handleApply = async (e?: React.FormEvent, couponCode?: string) => {
     if (e) e.preventDefault();

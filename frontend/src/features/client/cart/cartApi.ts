@@ -11,7 +11,8 @@ import type {
   CreateOrderRequest,
   OrderBasicResponse,
   CouponResponse,
-  CouponValidationResponse
+  CouponValidationResponse,
+  GuestCartRequest
 } from './cartTypes';
 
 export const cartApi = {
@@ -37,6 +38,16 @@ export const cartApi = {
 
   clearCart: async (): Promise<void> => {
     await apiClient.delete<ApiResponse<void>>('/api/v1/client/cart/items');
+  },
+
+  previewGuestCart: async (data: GuestCartRequest): Promise<CartResponse> => {
+    const res = await apiClient.post<ApiResponse<CartResponse>>('/api/v1/client/cart/guest/preview', data);
+    return res.data.data;
+  },
+
+  mergeGuestCart: async (data: GuestCartRequest): Promise<CartResponse> => {
+    const res = await apiClient.post<ApiResponse<CartResponse>>('/api/v1/client/cart/merge', data);
+    return res.data.data;
   },
 
   // Addresses

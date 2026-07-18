@@ -24,6 +24,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import com.NguyenDat.ecommerce.common.exception.AppException;
 import com.NguyenDat.ecommerce.common.exception.ErrorCode;
 import com.NguyenDat.ecommerce.dto.request.CartItemRequest;
+import com.NguyenDat.ecommerce.dto.request.GuestCartItemRequest;
+import com.NguyenDat.ecommerce.dto.request.GuestCartRequest;
 import com.NguyenDat.ecommerce.dto.response.CartResponse;
 import com.NguyenDat.ecommerce.entity.Cart;
 import com.NguyenDat.ecommerce.entity.CartItem;
@@ -224,5 +226,77 @@ class CartServiceTest {
         AppException exception = assertThrows(AppException.class, () -> cartService.deleteCartItem(1L));
 
         assertEquals(ErrorCode.CART_ITEM_NOT_FOUND, exception.getErrorCode());
+    }
+
+    @Test
+    void previewGuestCart_shouldClampQuantity_whenQuantityExceedsStock() {
+        GuestCartItemRequest itemReq = new GuestCartItemRequest(1L, 20); // stock is 10
+        GuestCartRequest request = new GuestCartRequest(java.util.List.of(itemReq));
+
+        when(productVariantRepository.findSellableVariantById(1L)).thenReturn(Optional.of(productVariant));
+        when(cartMapper.toCartResponse(any(Cart.class))).thenAnswer(invocation -> {
+            Cart savedCart = invocation.getArgument(0);
+            assertEquals(1, savedCart.getItems().size());
+            assertEquals(10, savedCart.getItems().getFirst().getQuantity());
+            return cartResponse;
+        });
+
+        cartService.previewGuestCart(request);
+        verify(productVariantRepository).findSellableVariantById(1L);
+    }
+
+    @Test
+    void previewGuestCart_shouldThrowException_whenVariantInactive() {
+        GuestCartItemRequest itemReq = new GuestCartItemRequest(1L, 2);
+        GuestCartRequest request = new GuestCartRequest(java.util.List.of(itemReq));
+
+        when(productVariantRepository.findSellableVariantById(1L)).thenReturn(Optional.empty());
+
+        AppException exception = assertThrows(AppException.class, () -> cartService.previewGuestCart(request));
+        assertEquals(ErrorCode.PRODUCT_VARIANT_NOT_FOUND, exception.getErrorCode());
+    }
+
+    @Test
+    void mergeGuestCart_shouldMergeAndClamp_whenQuantityExceedsStock() {
+        CartItem existingItem = new CartItem();
+        existingItem.setId(1L);
+        existingItem.setCart(cart);
+        existingItem.setProductVariant(productVariant);
+        existingItem.setQuantity(6);
+        cart.getItems().add(existingItem);
+
+        GuestCartItemRequest itemReq = new GuestCartItemRequest(1L, 8); // 6 + 8 = 14 > 10 stock
+        GuestCartRequest request = new GuestCartRequest(java.util.List.of(itemReq));
+
+        when(userRepository.findByEmailAndDeletedFalse("dat@gmail.com")).thenReturn(Optional.of(user));
+        when(cartRepository.findByUserId(1L)).thenReturn(Optional.of(cart));
+        when(productVariantRepository.findSellableVariantById(1L)).thenReturn(Optional.of(productVariant));
+        when(cartItemRepository.findByCartIdAndProductVariantId(1L, 1L)).thenReturn(Optional.of(existingItem));
+        when(cartItemRepository.save(existingItem)).thenReturn(existingItem);
+        when(cartMapper.toCartResponse(cart)).thenReturn(cartResponse);
+
+        cartService.mergeGuestCart(request);
+
+        assertEquals(10, existingItem.getQuantity());
+        verify(cartItemRepository).save(existingItem);
+    }
+
+    @Test
+    void mergeGuestCart_shouldAddNewItem_whenItemNotInCart() {
+        GuestCartItemRequest itemReq = new GuestCartItemRequest(1L, 5);
+        GuestCartRequest request = new GuestCartRequest(java.util.List.of(itemReq));
+
+        when(userRepository.findByEmailAndDeletedFalse("dat@gmail.com")).thenReturn(Optional.of(user));
+        when(cartRepository.findByUserId(1L)).thenReturn(Optional.of(cart));
+        when(productVariantRepository.findSellableVariantById(1L)).thenReturn(Optional.of(productVariant));
+        when(cartItemRepository.findByCartIdAndProductVariantId(1L, 1L)).thenReturn(Optional.empty());
+        when(cartItemRepository.save(any(CartItem.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(cartMapper.toCartResponse(cart)).thenReturn(cartResponse);
+
+        cartService.mergeGuestCart(request);
+
+        assertEquals(1, cart.getItems().size());
+        assertEquals(5, cart.getItems().getFirst().getQuantity());
+        verify(cartItemRepository).save(any(CartItem.class));
     }
 }

@@ -1,5 +1,5 @@
 export interface CartItemResponse {
-  id: number;
+  id: number | null;
   productId: number;
   productSlug: string;
   productName: string;
@@ -13,7 +13,7 @@ export interface CartItemResponse {
 }
 
 export interface CartResponse {
-  id: number;
+  id: number | null;
   status: string;
   items: CartItemResponse[];
   totalItems: number;
@@ -23,6 +23,15 @@ export interface CartResponse {
 export interface AddCartItemRequest {
   productVariantId: number;
   quantity: number;
+}
+
+export interface GuestCartItemRequest {
+  productVariantId: number;
+  quantity: number;
+}
+
+export interface GuestCartRequest {
+  items: GuestCartItemRequest[];
 }
 
 export interface UpdateCartItemRequest {

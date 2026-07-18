@@ -56,4 +56,16 @@ public class ClientCartController {
         cartService.deleteCartItem(itemId);
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.CART_ITEM_REMOVED, null));
     }
+
+    @PostMapping("/cart/guest/preview")
+    public ResponseEntity<ApiResponse<CartResponse>> previewGuestCart(
+            @RequestBody @Valid com.NguyenDat.ecommerce.dto.request.GuestCartRequest request) {
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.CART_FETCHED, cartService.previewGuestCart(request)));
+    }
+
+    @PostMapping("/cart/merge")
+    public ResponseEntity<ApiResponse<CartResponse>> mergeGuestCart(
+            @RequestBody @Valid com.NguyenDat.ecommerce.dto.request.GuestCartRequest request) {
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.CART_FETCHED, cartService.mergeGuestCart(request)));
+    }
 }

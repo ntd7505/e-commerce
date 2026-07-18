@@ -15,7 +15,8 @@ const vndFormatter = new Intl.NumberFormat('vi-VN', {
 
 export const formatVnd = (amount: number): string => vndFormatter.format(amount);
 
-export const formatDate = (value: string | Date): string => {
+export const formatDate = (value?: string | Date | null): string => {
+  if (!value) return '';
   const date = typeof value === 'string' ? new Date(value) : value;
   return date.toLocaleDateString('vi-VN', {
     day: '2-digit',
@@ -24,7 +25,8 @@ export const formatDate = (value: string | Date): string => {
   });
 };
 
-export const formatDateTime = (value: string | Date): string => {
+export const formatDateTime = (value?: string | Date | null): string => {
+  if (!value) return '';
   const date = typeof value === 'string' ? new Date(value) : value;
   return date.toLocaleString('vi-VN', {
     day: '2-digit',

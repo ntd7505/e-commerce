@@ -86,13 +86,7 @@ apiClient.interceptors.response.use(
                 clearAuthSession();
             }
 
-            const currentPath = `${window.location.pathname}${window.location.search}`;
-            const isApi = window.location.pathname.startsWith('/admin');
-            const loginPath = isApi ? '/admin/login' : '/login';
-
-            if (window.location.pathname !== loginPath) {
-                window.location.replace(`${loginPath}?redirect=${encodeURIComponent(currentPath)}`);
-            }
+            window.dispatchEvent(new Event("auth:unauthorized"));
         }
         return Promise.reject(error);
     }

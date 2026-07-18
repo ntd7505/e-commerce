@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { MapPin, Phone, ChevronRight, Plus, Star, AlertCircle, Loader2, Trash2, ShieldCheck, RotateCcw, Headset } from 'lucide-react';
 import { useCart } from '../../features/client/cart/CartProvider';
+import { useAuth } from '../../features/auth/AuthProvider';
 import CartItemCard from './components/cart/CartItemCard';
 import { cartApi } from '../../features/client/cart/cartApi';
 import type { AddressRequest, AddressResponse, CheckoutPreviewResponse } from '../../features/client/cart/cartTypes';
@@ -20,6 +21,7 @@ import { LoadingState, ErrorState } from '../../components/common/States';
 
 export default function Cart() {
   const { cart, activeDeliveryAddress, setActiveDeliveryAddress, loading, error, updateItem, removeItem, clearCart, refreshCart } = useCart();
+  const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const { showToast } = useToast();
 
@@ -43,7 +45,7 @@ export default function Cart() {
   // Lọc bỏ những item không còn tồn tại trong cart khỏi selectedIds
   useEffect(() => {
     if (cart) {
-      const validIds = new Set(cart.items.map(item => item.id));
+      const validIds = new Set(cart.items.map(item => item.id ?? item.productVariantId));
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setSelectedIds(prev => {
         const next = new Set(prev);
@@ -61,6 +63,12 @@ export default function Cart() {
   useEffect(() => {
     let cancelled = false;
     async function loadAddresses() {
+      if (!isAuthenticated) {
+        setAddresses([]);
+        setSelectedAddress(null);
+        setAddressLoading(false);
+        return;
+      }
       try {
         setAddressLoading(true);
         const data = await cartApi.getAddresses();
@@ -84,8 +92,7 @@ export default function Cart() {
     return () => {
       cancelled = true;
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [isAuthenticated, activeDeliveryAddress]);
 
   // Thay đổi selectedAddress nếu user chọn địa chỉ khác trên Header
   useEffect(() => {
@@ -100,7 +107,7 @@ export default function Cart() {
 
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
-      setSelectedIds(new Set(items.map(i => i.id)));
+      setSelectedIds(new Set(items.map(i => i.id ?? i.productVariantId)));
     } else {
       setSelectedIds(new Set());
     }
@@ -135,7 +142,7 @@ export default function Cart() {
 
   const selectedSubtotal = useMemo(() => {
     return items
-      .filter(item => selectedIds.has(item.id))
+      .filter(item => selectedIds.has(item.id ?? item.productVariantId))
       .reduce((sum, item) => sum + item.lineTotal, 0);
   }, [items, selectedIds]);
 
@@ -310,9 +317,9 @@ export default function Cart() {
               <div className="flex flex-col gap-4 lg:gap-6">
                 {items.map(item => (
                   <CartItemCard
-                    key={item.id}
+                    key={item.id ?? item.productVariantId}
                     item={item}
-                    isSelected={selectedIds.has(item.id)}
+                    isSelected={selectedIds.has(item.id ?? item.productVariantId)}
                     onSelect={handleSelectItem}
                     onUpdateQuantity={(id, quantity) => updateItem(id, { quantity })}
                     onRemove={removeItem}

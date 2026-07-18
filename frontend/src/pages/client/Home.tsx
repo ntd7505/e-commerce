@@ -3,19 +3,11 @@ import { useLocation } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import HeroSection from '../../features/client/home/components/HeroSection';
 import QuickServices from '../../features/client/home/components/QuickServices';
-import FlashSaleSection from '../../features/client/home/components/FlashSaleSection';
 import RecommendedSection from '../../features/client/home/components/RecommendedSection';
 import CategorySidebar from '../../features/client/home/components/CategorySidebar';
-import { useFlashSaleProducts } from '../../features/client/home/hooks/useFlashSaleProducts';
 import { useRecommendedProducts } from '../../features/client/home/hooks/useRecommendedProducts';
 
 const Home = () => {
-  const {
-    products: flashSaleProducts,
-    loading: flashSaleLoading,
-    error: flashSaleError,
-  } = useFlashSaleProducts(10);
-
   const {
     products: recommendedProducts,
     loading: recommendedLoading,
@@ -67,11 +59,6 @@ const Home = () => {
           <div className="flex-1 flex flex-col gap-6 lg:gap-8 w-full min-w-0">
             <HeroSection />
             <QuickServices />
-            <FlashSaleSection
-              products={flashSaleProducts}
-              loading={flashSaleLoading}
-              error={flashSaleError}
-            />
             <RecommendedSection
               products={recommendedProducts}
               loading={recommendedLoading}

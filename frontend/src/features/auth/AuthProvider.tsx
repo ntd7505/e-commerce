@@ -40,6 +40,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
 
         void loadUser();
+
+        const handleUnauthorized = () => {
+            clearAuthSession();
+            setUserState(null);
+        };
+        window.addEventListener("auth:unauthorized", handleUnauthorized);
+        return () => window.removeEventListener("auth:unauthorized", handleUnauthorized);
     }, [isAuthenticated]);
 
     const setUser = (newUser: User | null) => {

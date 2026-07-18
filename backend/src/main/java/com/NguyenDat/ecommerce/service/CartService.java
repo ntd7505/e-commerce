@@ -15,4 +15,8 @@ public interface CartService {
     void clearCart();
 
     void deleteCartItem(Long itemId);
+
+    CartResponse previewGuestCart(com.NguyenDat.ecommerce.dto.request.GuestCartRequest request);
+
+    CartResponse mergeGuestCart(com.NguyenDat.ecommerce.dto.request.GuestCartRequest request);
 }

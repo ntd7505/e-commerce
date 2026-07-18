@@ -5,7 +5,10 @@ import type {
     LoginCredentials,
     LoginResponse,
     RegisterCredentials,
-    User
+    User,
+    ChangePasswordRequest,
+    ForgotPasswordRequest,
+    ResetPasswordRequest
 } from "./authTypes";
 
 export async function signIn(payload: LoginCredentials): Promise<LoginResponse> {
@@ -45,4 +48,25 @@ export async function updateMe(payload: { fullName: string; phoneNumber: string;
 
 export async function logout(token: string): Promise<void> {
     await apiClient.post<ApiResponse<void>>("/api/v1/auth/logout", { token });
+}
+
+export async function changePassword(payload: ChangePasswordRequest): Promise<void> {
+    await apiClient.patch<ApiResponse<void>>(
+        "/api/v1/client/users/me/password",
+        payload
+    );
+}
+
+export async function forgotPassword(payload: ForgotPasswordRequest): Promise<void> {
+    await publicClient.post<ApiResponse<void>>(
+        "/api/v1/auth/forgot-password",
+        payload
+    );
+}
+
+export async function resetPassword(payload: ResetPasswordRequest): Promise<void> {
+    await publicClient.post<ApiResponse<void>>(
+        "/api/v1/auth/reset-password",
+        payload
+    );
 }

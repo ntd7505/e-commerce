@@ -4,6 +4,7 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { signIn, getMe } from '../../features/auth/authApi';
 import { setAuthSession } from '../../features/auth/authStorage';
 import { useAuth } from '../../features/auth/AuthProvider';
+import { useToast } from '../../features/ui/ToastProvider';
 
 export default function ClientLogin() {
   const [email, setEmail] = useState('');
@@ -13,6 +14,17 @@ export default function ClientLogin() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { setUser } = useAuth();
+  const { showToast } = useToast();
+
+  React.useEffect(() => {
+    if (searchParams.get('passwordChanged') === '1') {
+      showToast('Mật khẩu đã được cập nhật. Vui lòng đăng nhập lại.', 'success');
+      // Clean up URL
+      searchParams.delete('passwordChanged');
+      navigate({ search: searchParams.toString() }, { replace: true });
+    }
+  }, [searchParams, navigate, showToast]);
+
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -63,7 +75,7 @@ export default function ClientLogin() {
           <div>
             <div className="flex justify-between items-center mb-1">
               <label className="block text-sm font-medium text-text">Mật khẩu</label>
-              <a href="#" className="text-sm text-primary hover:text-primary">Quên mật khẩu?</a>
+              <Link to="/forgot-password" className="text-sm text-primary font-medium hover:text-primary-hover transition-colors">Quên mật khẩu?</Link>
             </div>
             <div className="relative">
               <input

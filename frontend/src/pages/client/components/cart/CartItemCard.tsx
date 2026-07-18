@@ -19,6 +19,7 @@ export default function CartItemCard({
   onUpdateQuantity,
   onRemove,
 }: CartItemCardProps) {
+  const itemId = item.id ?? item.productVariantId;
   const [loading, setLoading] = useState(false);
   const [localQuantity, setLocalQuantity] = useState(item.quantity);
 
@@ -32,7 +33,7 @@ export default function CartItemCard({
     if (newQuantity < 1) return;
     setLoading(true);
     try {
-      await onUpdateQuantity(item.id, newQuantity);
+      await onUpdateQuantity(itemId, newQuantity);
     } catch {
       setLocalQuantity(item.quantity); // rollback
     } finally {
@@ -44,7 +45,7 @@ export default function CartItemCard({
     if (confirm('Bạn có chắc muốn xoá sản phẩm này khỏi giỏ hàng?')) {
       setLoading(true);
       try {
-        await onRemove(item.id);
+        await onRemove(itemId);
       } catch {
         setLoading(false);
       }
@@ -58,7 +59,7 @@ export default function CartItemCard({
       <input
         type="checkbox"
         checked={isSelected}
-        onChange={(e) => onSelect(item.id, e.target.checked)}
+        onChange={(e) => onSelect(itemId, e.target.checked)}
         className="h-5 w-5 rounded border-border-strong border-2 text-primary focus:ring-0 cursor-pointer"
       />
       <Link to={productHref} className="w-24 h-24 rounded-lg bg-surface flex-shrink-0 flex items-center justify-center overflow-hidden border border-border group">

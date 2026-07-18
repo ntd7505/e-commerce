@@ -34,7 +34,8 @@ import com.NguyenDat.ecommerce.repository.UserRepository;
 public class SecurityConfig {
     private final String[] PUBLIC_ENDPOINT = {
         AUTH_PREFIX + "/login", AUTH_PREFIX + "/introspect", AUTH_PREFIX + "/forgot-password",
-        AUTH_PREFIX + "/reset-password", ApiConstant.CLIENT_PREFIX + "/users"
+        AUTH_PREFIX + "/reset-password", ApiConstant.CLIENT_PREFIX + "/users",
+        ApiConstant.CLIENT_PREFIX + "/cart/guest/preview"
     };
     private final String[] SWAGGER_ENDPOINTS = {"/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html"};
 

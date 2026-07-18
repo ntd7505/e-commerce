@@ -131,6 +131,75 @@ public class CartServiceImpl implements CartService {
         cartItemRepository.delete(cartItem);
     }
 
+    @Override
+    public CartResponse previewGuestCart(com.NguyenDat.ecommerce.dto.request.GuestCartRequest request) {
+        Cart cart = new Cart();
+        cart.setStatus(CartStatus.ACTIVE);
+        cart.setItems(new java.util.ArrayList<>());
+
+        for (com.NguyenDat.ecommerce.dto.request.GuestCartItemRequest itemReq : request.getItems()) {
+            ProductVariant productVariant = productVariantRepository
+                    .findSellableVariantById(itemReq.getProductVariantId())
+                    .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_VARIANT_NOT_FOUND));
+
+            int clampedQuantity = Math.min(itemReq.getQuantity(), productVariant.getStockQuantity());
+            if (clampedQuantity > 0) {
+                CartItem cartItem = new CartItem();
+                cartItem.setCart(cart);
+                cartItem.setProductVariant(productVariant);
+                cartItem.setQuantity(clampedQuantity);
+                cartItem.setUnitPrice(BigDecimal.valueOf(getCurrentPrice(productVariant)));
+                cart.getItems().add(cartItem);
+            }
+        }
+
+        return cartMapper.toCartResponse(cart);
+    }
+
+    @Override
+    @Transactional
+    public CartResponse mergeGuestCart(com.NguyenDat.ecommerce.dto.request.GuestCartRequest request) {
+        User user = getCurrentUser();
+        Cart cart = getOrCreateCart(user);
+
+        for (com.NguyenDat.ecommerce.dto.request.GuestCartItemRequest itemReq : request.getItems()) {
+            try {
+                ProductVariant productVariant = productVariantRepository
+                        .findSellableVariantById(itemReq.getProductVariantId())
+                        .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_VARIANT_NOT_FOUND));
+
+                CartItem cartItem = cartItemRepository
+                        .findByCartIdAndProductVariantId(cart.getId(), productVariant.getId())
+                        .orElseGet(() -> {
+                            CartItem item = new CartItem();
+                            item.setCart(cart);
+                            cart.getItems().add(item);
+                            item.setProductVariant(productVariant);
+                            item.setQuantity(0);
+                            return item;
+                        });
+
+                int newQuantity = cartItem.getQuantity() + itemReq.getQuantity();
+                int clampedQuantity = Math.min(newQuantity, productVariant.getStockQuantity());
+                
+                if (clampedQuantity > 0) {
+                    cartItem.setQuantity(clampedQuantity);
+                    cartItem.setUnitPrice(BigDecimal.valueOf(getCurrentPrice(productVariant)));
+                    cartItemRepository.save(cartItem);
+                } else if (cartItem.getId() != null) {
+                    // if clamped to 0 (e.g. stock is 0), maybe remove from cart?
+                    cartItemRepository.delete(cartItem);
+                    cart.getItems().remove(cartItem);
+                }
+            } catch (AppException e) {
+                // Ignore items that are not found or inactive during merge
+                continue;
+            }
+        }
+
+        return cartMapper.toCartResponse(cart);
+    }
+
     private double getCurrentPrice(ProductVariant productVariant) {
         if (productVariant.getSalePrice() > 0) {
             return productVariant.getSalePrice();
