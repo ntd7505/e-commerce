@@ -59,6 +59,11 @@
             <artifactId>flyway-mysql</artifactId>
             <scope>runtime</scope>
         </dependency>
+        <!-- Spring Boot 4 keeps Flyway auto-configuration in a dedicated module. -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-flyway</artifactId>
+        </dependency>
         <!--        validator-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -92,6 +97,12 @@
             <artifactId>h2</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
