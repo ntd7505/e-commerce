@@ -140,7 +140,16 @@ public enum ResponseCode {
     PRODUCT_REVIEW_SUMMARY_FETCHED(13006, "Product review summary fetched successfully"),
     PRODUCT_REVIEW_MEDIA_FETCHED(13007, "Product review media fetched successfully"),
     PRODUCT_REVIEW_ELIGIBILITY_FETCHED(13008, "Product review eligibility fetched successfully"),
-    PRODUCT_REVIEW_MODERATED(13009, "Product review moderated successfully");
+    PRODUCT_REVIEW_MODERATED(13009, "Product review moderated successfully"),
+
+    // 14000 - Home Banner
+    HOME_BANNER_CREATED(14000, "Home banner created successfully"),
+    HOME_BANNER_FETCHED(14001, "Home banner fetched successfully"),
+    HOME_BANNERS_FETCHED(14002, "Home banners fetched successfully"),
+    HOME_BANNER_UPDATED(14003, "Home banner updated successfully"),
+    HOME_BANNER_DELETED(14004, "Home banner deleted successfully"),
+    HOME_BANNER_STATUS_UPDATED(14005, "Home banner status updated successfully"),
+    HOME_HERO_BANNERS_REORDERED(14006, "Home hero banners reordered successfully");
 
     private final int code;
     private final String message;

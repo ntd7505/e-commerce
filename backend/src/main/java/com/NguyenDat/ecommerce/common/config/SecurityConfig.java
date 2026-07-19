@@ -32,21 +32,23 @@ import com.NguyenDat.ecommerce.repository.UserRepository;
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
+    private static final String ADMIN_PREFIX = ApiConstant.ADMIN_PREFIX;
+    private static final String AUTH_PREFIX = ApiConstant.AUTH_PREFIX;
+
     private final String[] PUBLIC_ENDPOINT = {
         AUTH_PREFIX + "/login", AUTH_PREFIX + "/introspect", AUTH_PREFIX + "/forgot-password",
         AUTH_PREFIX + "/reset-password", ApiConstant.CLIENT_PREFIX + "/users",
         ApiConstant.CLIENT_PREFIX + "/cart/guest/preview"
     };
+    
     private final String[] SWAGGER_ENDPOINTS = {"/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html"};
 
     private final String[] PUBLIC_GET_ENDPOINTS = {
         ApiConstant.CLIENT_PREFIX + "/products/**",
         ApiConstant.CLIENT_PREFIX + "/categories/**",
         ApiConstant.CLIENT_PREFIX + "/brands/**",
+        ApiConstant.CLIENT_PREFIX + "/home-banners"
     };
-
-    private static final String ADMIN_PREFIX = ApiConstant.ADMIN_PREFIX;
-    private static final String AUTH_PREFIX = ApiConstant.AUTH_PREFIX;
 
     @Value("${jwt.signerKey}")
     private String signerKey;

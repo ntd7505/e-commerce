@@ -204,7 +204,10 @@ public enum ErrorCode {
     REVIEW_MEDIA_TYPE_INVALID(13011, "Review media type must be one of: IMAGE, VIDEO", HttpStatus.BAD_REQUEST),
     REVIEW_ORDER_NOT_COMPLETED(13012, "Order must be completed before reviewing", HttpStatus.BAD_REQUEST),
     REVIEW_DELETED(13013, "Review has been deleted", HttpStatus.NOT_FOUND),
-    REVIEW_INACTIVE(13014, "Review is inactive", HttpStatus.FORBIDDEN);
+    REVIEW_INACTIVE(13014, "Review is inactive", HttpStatus.FORBIDDEN),
+
+    // home banner
+    HOME_BANNER_NOT_FOUND(14000, "Home banner not found", HttpStatus.NOT_FOUND);
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {
         this.code = code;
