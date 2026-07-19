@@ -39,6 +39,7 @@ import ProductMedia from './pages/admin/ProductMedia';
 import ProductReviews from './pages/admin/ProductReviews';
 import Authority from './pages/admin/Authority';
 import Profile from './pages/admin/Profile';
+import HomeBanners from './pages/admin/HomeBanners/HomeBanners';
 
 export default function App() {
   return (
@@ -87,6 +88,7 @@ export default function App() {
               <Route path="products/reviews" element={<ProductReviews />} />
               <Route path="categories" element={<Categories />} />
               <Route path="brands" element={<Brands />} />
+              <Route path="home-banners" element={<HomeBanners />} />
               <Route path="roles" element={<AdminRole />} />
               <Route path="authority" element={<Authority />} />
               <Route path="profile" element={<Profile />} />

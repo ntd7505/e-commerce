@@ -287,6 +287,7 @@ export default function AdminLayout() {
             </SidebarGroup>
             <SidebarItem collapsed={collapsed} to="/admin/categories" icon={LayoutGrid} label="Categories" />
             <SidebarItem collapsed={collapsed} to="/admin/brands" icon={Award} label="Brands" />
+            <SidebarItem collapsed={collapsed} to="/admin/home-banners" icon={ImageIcon} label="Banner trang chủ" />
           </nav>
 
           {/* ─── Customers ─── */}
