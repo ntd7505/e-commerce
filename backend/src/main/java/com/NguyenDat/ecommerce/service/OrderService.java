@@ -20,6 +20,10 @@ public interface OrderService {
 
     OrderResponse createOrder(@Valid CheckoutRequest checkoutRequest);
 
+    CheckoutPreviewResponse createBuyNowCheckoutPreview(@Valid com.NguyenDat.ecommerce.dto.request.BuyNowPreviewRequest buyNowPreviewRequest);
+
+    OrderResponse createBuyNowOrder(@Valid com.NguyenDat.ecommerce.dto.request.BuyNowCheckoutRequest buyNowCheckoutRequest);
+
     OrderResponse getMyOrderById(Long orderId);
 
     List<OrderResponse> getMyOrder();

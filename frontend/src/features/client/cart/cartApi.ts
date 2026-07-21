@@ -86,6 +86,16 @@ export const cartApi = {
     return res.data.data;
   },
 
+  previewBuyNowOrder: async (data: import('./cartTypes').BuyNowPreviewRequest): Promise<CheckoutPreviewResponse> => {
+    const res = await apiClient.post<ApiResponse<CheckoutPreviewResponse>>('/api/v1/client/checkout/buy-now/preview', data);
+    return res.data.data;
+  },
+
+  createBuyNowOrder: async (data: import('./cartTypes').BuyNowCheckoutRequest): Promise<OrderBasicResponse> => {
+    const res = await apiClient.post<ApiResponse<OrderBasicResponse>>('/api/v1/client/orders/buy-now', data);
+    return res.data.data;
+  },
+
   getOrderBasic: async (orderId: number | string): Promise<OrderBasicResponse> => {
     const res = await apiClient.get<ApiResponse<OrderBasicResponse>>(`/api/v1/client/orders/${orderId}`);
     return res.data.data;

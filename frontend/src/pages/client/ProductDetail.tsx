@@ -87,17 +87,33 @@ export default function ProductDetail() {
   const handleBuyNow = async () => {
     if (!selectedVariant) return;
     
+    // Validate simple constraints before redirecting
+    if (quantity <= 0 || quantity > selectedVariant.stockQuantity) {
+      showToast('Số lượng không hợp lệ hoặc vượt quá tồn kho.', 'error');
+      return;
+    }
+    if (!product?.active || !selectedVariant.active) {
+      showToast('Sản phẩm đã ngừng kinh doanh.', 'error');
+      return;
+    }
+
     setBuyingNow(true);
     try {
-      await addItem({ productVariantId: selectedVariant.id, quantity });
+      const { saveCheckoutDraft } = await import('../../features/client/cart/checkoutDraft');
+      saveCheckoutDraft({
+        type: 'buy-now',
+        productVariantId: selectedVariant.id,
+        quantity: quantity,
+      });
+
       if (!isAuthenticated) {
-        navigate('/login?redirect=/cart');
-        return;
+        navigate('/login?redirect=/checkout');
+      } else {
+        navigate('/checkout');
       }
-      navigate('/cart');
     } catch (err) {
-      const error = parseApiError(err);
-      showToast(error.message || 'Không thể mua ngay lúc này.', 'error');
+      console.error(err);
+      showToast('Có lỗi xảy ra, vui lòng thử lại.', 'error');
     } finally {
       setBuyingNow(false);
     }

@@ -227,17 +227,19 @@ export default function Cart() {
     }
   }
 
-  const handleCheckout = () => {
+  const handleCheckout = async () => {
     if (selectedIds.size === 0) {
       showToast('Vui lòng chọn ít nhất một sản phẩm để thanh toán.', 'error');
       return;
     }
-    const payload = {
+    const { saveCheckoutDraft } = await import('../../features/client/cart/checkoutDraft');
+    const payload: import('../../features/client/cart/cartTypes').CheckoutDraft = {
+      type: 'cart',
       cartItemIds: Array.from(selectedIds),
-      addressId: selectedAddress?.id ?? null,
+      addressId: selectedAddress?.id ?? undefined,
       couponCode: couponCode || undefined,
     };
-    sessionStorage.setItem('checkoutDraft', JSON.stringify(payload));
+    saveCheckoutDraft(payload);
     navigate('/checkout');
   };
 

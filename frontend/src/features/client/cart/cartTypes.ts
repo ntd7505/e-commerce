@@ -95,6 +95,26 @@ export interface CreateOrderRequest {
   note?: string;
 }
 
+export interface BuyNowPreviewRequest {
+  productVariantId: number;
+  quantity: number;
+  addressId?: number;
+  couponCode?: string;
+}
+
+export interface BuyNowCheckoutRequest {
+  productVariantId: number;
+  quantity: number;
+  addressId?: number;
+  couponCode?: string;
+  paymentMethod: string;
+  note?: string;
+}
+
+export type CheckoutDraft = 
+  | { type: "cart"; cartItemIds: number[]; addressId?: number; couponCode?: string }
+  | { type: "buy-now"; productVariantId: number; quantity: number; addressId?: number; couponCode?: string };
+
 export interface OrderBasicResponse {
   id: number;
   orderNumber: string;

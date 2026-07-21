@@ -9,7 +9,10 @@ import org.springframework.stereotype.Service;
 import com.NguyenDat.ecommerce.common.exception.AppException;
 import com.NguyenDat.ecommerce.common.exception.ErrorCode;
 import com.NguyenDat.ecommerce.dto.internal.CheckoutCalculation;
+import com.NguyenDat.ecommerce.dto.internal.CheckoutItem;
 import com.NguyenDat.ecommerce.dto.internal.CouponCalculation;
+import com.NguyenDat.ecommerce.dto.request.BuyNowCheckoutRequest;
+import com.NguyenDat.ecommerce.dto.request.BuyNowPreviewRequest;
 import com.NguyenDat.ecommerce.dto.request.CheckoutPreviewRequest;
 import com.NguyenDat.ecommerce.dto.request.CheckoutRequest;
 import com.NguyenDat.ecommerce.entity.Address;
@@ -21,6 +24,7 @@ import com.NguyenDat.ecommerce.entity.User;
 import com.NguyenDat.ecommerce.repository.AddressRepository;
 import com.NguyenDat.ecommerce.repository.CartItemRepository;
 import com.NguyenDat.ecommerce.repository.CartRepository;
+import com.NguyenDat.ecommerce.repository.ProductVariantRepository;
 import com.NguyenDat.ecommerce.service.CheckoutService;
 import com.NguyenDat.ecommerce.service.CouponApplicationService;
 
@@ -35,37 +39,48 @@ public class CheckoutServiceImpl implements CheckoutService {
 
     CartRepository cartRepository;
     CartItemRepository cartItemRepository;
+    ProductVariantRepository productVariantRepository;
     AddressRepository addressRepository;
     CouponApplicationService couponApplicationService;
 
     @Override
     public CheckoutCalculation calculateForPreview(User user, CheckoutPreviewRequest request) {
-        return calculate(user, request.getCartItemIds(), request.getAddressId(), request.getCouponCode(), false);
+        List<CheckoutItem> checkoutItems = getCheckoutItemsFromCart(user, request.getCartItemIds());
+        return calculate(user, checkoutItems, request.getAddressId(), request.getCouponCode(), false);
     }
 
     @Override
     public CheckoutCalculation calculateForOrder(User user, CheckoutRequest request) {
-        return calculate(user, request.getCartItemIds(), request.getAddressId(), request.getCouponCode(), true);
+        List<CheckoutItem> checkoutItems = getCheckoutItemsFromCart(user, request.getCartItemIds());
+        return calculate(user, checkoutItems, request.getAddressId(), request.getCouponCode(), true);
+    }
+
+    @Override
+    public CheckoutCalculation calculateBuyNowForPreview(User user, BuyNowPreviewRequest request) {
+        List<CheckoutItem> checkoutItems = List.of(getCheckoutItemForBuyNow(request.getProductVariantId(), request.getQuantity()));
+        return calculate(user, checkoutItems, request.getAddressId(), request.getCouponCode(), false);
+    }
+
+    @Override
+    public CheckoutCalculation calculateBuyNowForOrder(User user, BuyNowCheckoutRequest request) {
+        List<CheckoutItem> checkoutItems = List.of(getCheckoutItemForBuyNow(request.getProductVariantId(), request.getQuantity()));
+        return calculate(user, checkoutItems, request.getAddressId(), request.getCouponCode(), true);
     }
 
     private CheckoutCalculation calculate(
-            User user, List<Long> cartItemIds, Long addressId, String couponCode, boolean lockCoupon) {
-        Cart cart =
-                cartRepository.findByUserId(user.getId()).orElseThrow(() -> new AppException(ErrorCode.CART_NOT_FOUND));
+            User user, List<CheckoutItem> checkoutItems, Long addressId, String couponCode, boolean lockCoupon) {
 
-        List<CartItem> selectedCartItems = getSelectedCartItems(cart, cartItemIds);
-        validateSelectedCartItems(selectedCartItems);
+        validateCheckoutItems(checkoutItems);
 
         Address address = getCheckoutAddress(user, addressId);
-        BigDecimal subtotalAmount = calculateSubtotalAmount(selectedCartItems);
+        BigDecimal subtotalAmount = calculateSubtotalAmount(checkoutItems);
         CouponCalculation couponCalculation = calculateCoupon(couponCode, user, subtotalAmount, lockCoupon);
         BigDecimal shippingFee = calculateShippingFee(subtotalAmount);
         BigDecimal totalAmount = subtotalAmount.add(shippingFee).subtract(couponCalculation.discountAmount());
-        int totalItems = selectedCartItems.stream().map(CartItem::getQuantity).reduce(0, Integer::sum);
+        int totalItems = checkoutItems.stream().map(CheckoutItem::getQuantity).reduce(0, Integer::sum);
 
         return CheckoutCalculation.builder()
-                .selectedCartItems(selectedCartItems)
-                .cart(cart)
+                .items(checkoutItems)
                 .address(address)
                 .subtotalAmount(subtotalAmount)
                 .shippingFee(shippingFee)
@@ -76,18 +91,39 @@ public class CheckoutServiceImpl implements CheckoutService {
                 .build();
     }
 
-    private List<CartItem> getSelectedCartItems(Cart cart, List<Long> cartItemIds) {
+    private List<CheckoutItem> getCheckoutItemsFromCart(User user, List<Long> cartItemIds) {
         if (cartItemIds == null || cartItemIds.isEmpty()) {
             throw new AppException(ErrorCode.CART_ITEMS_REQUIRED);
         }
 
-        List<CartItem> selectedCartItems = new ArrayList<>();
+        Cart cart = cartRepository.findByUserId(user.getId()).orElseThrow(() -> new AppException(ErrorCode.CART_NOT_FOUND));
+
+        List<CheckoutItem> checkoutItems = new ArrayList<>();
         for (Long cartItemId : cartItemIds) {
-            selectedCartItems.add(cartItemRepository
+            CartItem cartItem = cartItemRepository
                     .findByIdAndCartId(cartItemId, cart.getId())
-                    .orElseThrow(() -> new AppException(ErrorCode.CART_ITEM_NOT_FOUND)));
+                    .orElseThrow(() -> new AppException(ErrorCode.CART_ITEM_NOT_FOUND));
+            
+            checkoutItems.add(CheckoutItem.builder()
+                    .variant(cartItem.getProductVariant())
+                    .quantity(cartItem.getQuantity())
+                    .unitPrice(getCurrentPrice(cartItem.getProductVariant()))
+                    .cartItemId(cartItem.getId())
+                    .build());
         }
-        return selectedCartItems;
+        return checkoutItems;
+    }
+
+    private CheckoutItem getCheckoutItemForBuyNow(Long productVariantId, Integer quantity) {
+        ProductVariant variant = productVariantRepository.findById(productVariantId)
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_VARIANT_NOT_FOUND));
+        
+        return CheckoutItem.builder()
+                .variant(variant)
+                .quantity(quantity)
+                .unitPrice(getCurrentPrice(variant))
+                .cartItemId(null)
+                .build();
     }
 
     private Address getCheckoutAddress(User user, Long addressId) {
@@ -113,12 +149,12 @@ public class CheckoutServiceImpl implements CheckoutService {
                 : couponApplicationService.calculateForPreview(couponCode, user, subtotalAmount);
     }
 
-    private void validateSelectedCartItems(List<CartItem> cartItems) {
-        for (CartItem cartItem : cartItems) {
-            ProductVariant variant = cartItem.getProductVariant();
+    private void validateCheckoutItems(List<CheckoutItem> items) {
+        for (CheckoutItem item : items) {
+            ProductVariant variant = item.getVariant();
             Product product = variant.getProduct();
 
-            if (cartItem.getQuantity() <= 0) {
+            if (item.getQuantity() <= 0) {
                 throw new AppException(ErrorCode.CART_ITEM_QUANTITY_INVALID);
             }
 
@@ -126,7 +162,7 @@ public class CheckoutServiceImpl implements CheckoutService {
                 throw new AppException(ErrorCode.CHECKOUT_CART_ITEM_INVALID);
             }
 
-            if (cartItem.getQuantity() > variant.getStockQuantity()) {
+            if (item.getQuantity() > variant.getStockQuantity()) {
                 throw new AppException(ErrorCode.CHECKOUT_CART_ITEM_OUT_OF_STOCK);
             }
         }
@@ -139,10 +175,9 @@ public class CheckoutServiceImpl implements CheckoutService {
         return subtotalAmount.compareTo(freeShippingThreshold) >= 0 ? BigDecimal.ZERO : standardShippingFee;
     }
 
-    private BigDecimal calculateSubtotalAmount(List<CartItem> cartItems) {
-        return cartItems.stream()
-                .map(cartItem -> getCurrentPrice(cartItem.getProductVariant())
-                        .multiply(BigDecimal.valueOf(cartItem.getQuantity())))
+    private BigDecimal calculateSubtotalAmount(List<CheckoutItem> items) {
+        return items.stream()
+                .map(item -> item.getUnitPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 

@@ -4,6 +4,7 @@ import { Ticket, Gift, Tag, Calendar, CheckCircle2, Copy, ShoppingCart, Info } f
 import AccountPageLayout from './components/account/AccountPageLayout';
 import type { ClientCoupon, CouponCategory } from '../../features/client/coupons/couponTypes';
 import { cartApi } from '../../features/client/cart/cartApi';
+import { getCheckoutDraft, saveCheckoutDraft } from '../../features/client/cart/checkoutDraft';
 import { useToast } from '../../features/ui/ToastProvider';
 import { formatDate, formatVnd } from '../../utils/formatters';
 
@@ -152,17 +153,11 @@ export default function AccountCoupons() {
       showToast('Vui lòng nhập mã giảm giá.', 'error');
       return;
     }
-    // Save to sessionStorage checkoutDraft so checkout can pick it up
-    const draftStr = sessionStorage.getItem('checkoutDraft');
-    if (draftStr) {
-      try {
-        const draft = JSON.parse(draftStr);
-        sessionStorage.setItem('checkoutDraft', JSON.stringify({ ...draft, couponCode: code }));
-      } catch {
-        sessionStorage.setItem('checkoutDraft', JSON.stringify({ cartItemIds: [], couponCode: code }));
-      }
+    const draft = getCheckoutDraft();
+    if (draft) {
+      saveCheckoutDraft({ ...draft, couponCode: code });
     } else {
-      sessionStorage.setItem('checkoutDraft', JSON.stringify({ cartItemIds: [], couponCode: code }));
+      saveCheckoutDraft({ type: 'cart', cartItemIds: [], couponCode: code });
     }
     showToast(`Đã áp dụng mã "${code}". Mã sẽ dùng ở bước thanh toán.`, 'success', {
       label: 'Đi tới giỏ hàng',
@@ -173,16 +168,11 @@ export default function AccountCoupons() {
 
   function handleUseCoupon(code: string) {
     const upper = code.toUpperCase();
-    const draftStr = sessionStorage.getItem('checkoutDraft');
-    if (draftStr) {
-      try {
-        const draft = JSON.parse(draftStr);
-        sessionStorage.setItem('checkoutDraft', JSON.stringify({ ...draft, couponCode: upper }));
-      } catch {
-        sessionStorage.setItem('checkoutDraft', JSON.stringify({ cartItemIds: [], couponCode: upper }));
-      }
+    const draft = getCheckoutDraft();
+    if (draft) {
+      saveCheckoutDraft({ ...draft, couponCode: upper });
     } else {
-      sessionStorage.setItem('checkoutDraft', JSON.stringify({ cartItemIds: [], couponCode: upper }));
+      saveCheckoutDraft({ type: 'cart', cartItemIds: [], couponCode: upper });
     }
     showToast(`Đã sao chép và áp dụng mã "${upper}".`, 'success', {
       label: 'Đi tới giỏ hàng',

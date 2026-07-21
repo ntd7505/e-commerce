@@ -5,42 +5,42 @@ import java.math.BigDecimal;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import com.NguyenDat.ecommerce.dto.internal.CheckoutItem;
 import com.NguyenDat.ecommerce.dto.response.CheckoutItemResponse;
-import com.NguyenDat.ecommerce.entity.CartItem;
 import com.NguyenDat.ecommerce.entity.ProductMedia;
 
 @Mapper(componentModel = "spring")
 public interface CheckoutItemMapper {
 
-    @Mapping(target = "cartItemId", source = "id")
-    @Mapping(target = "productId", source = "productVariant.product.id")
-    @Mapping(target = "productName", source = "productVariant.product.name")
-    @Mapping(target = "thumbnailUrl", expression = "java(resolveThumbnailUrl(cartItem))")
-    @Mapping(target = "productVariantId", source = "productVariant.id")
-    @Mapping(target = "variantName", source = "productVariant.variantName")
-    @Mapping(target = "sku", source = "productVariant.sku")
-    @Mapping(target = "quantity", source = "cartItem.quantity")
-    @Mapping(target = "unitPrice", source = "cartItem.unitPrice")
-    @Mapping(target = "originalPrice", source = "productVariant.price")
-    @Mapping(target = "lineTotal", expression = "java(calculateLineTotal(cartItem))")
-    CheckoutItemResponse toCheckoutItemResponse(CartItem cartItem);
+    @Mapping(target = "cartItemId", source = "cartItemId")
+    @Mapping(target = "productId", source = "variant.product.id")
+    @Mapping(target = "productName", source = "variant.product.name")
+    @Mapping(target = "thumbnailUrl", expression = "java(resolveThumbnailUrl(checkoutItem))")
+    @Mapping(target = "productVariantId", source = "variant.id")
+    @Mapping(target = "variantName", source = "variant.variantName")
+    @Mapping(target = "sku", source = "variant.sku")
+    @Mapping(target = "quantity", source = "quantity")
+    @Mapping(target = "unitPrice", source = "unitPrice")
+    @Mapping(target = "originalPrice", source = "variant.price")
+    @Mapping(target = "lineTotal", expression = "java(calculateLineTotal(checkoutItem))")
+    CheckoutItemResponse toCheckoutItemResponse(CheckoutItem checkoutItem);
 
-    default BigDecimal calculateLineTotal(CartItem cartItem) {
-        if (cartItem.getUnitPrice() == null || cartItem.getQuantity() == null) {
+    default BigDecimal calculateLineTotal(CheckoutItem checkoutItem) {
+        if (checkoutItem.getUnitPrice() == null || checkoutItem.getQuantity() == null) {
             return BigDecimal.ZERO;
         }
-        return cartItem.getUnitPrice().multiply(BigDecimal.valueOf(cartItem.getQuantity()));
+        return checkoutItem.getUnitPrice().multiply(BigDecimal.valueOf(checkoutItem.getQuantity()));
     }
 
-    default String resolveThumbnailUrl(CartItem cartItem) {
-        if (cartItem == null
-                || cartItem.getProductVariant() == null
-                || cartItem.getProductVariant().getProduct() == null
-                || cartItem.getProductVariant().getProduct().getMedia() == null) {
+    default String resolveThumbnailUrl(CheckoutItem checkoutItem) {
+        if (checkoutItem == null
+                || checkoutItem.getVariant() == null
+                || checkoutItem.getVariant().getProduct() == null
+                || checkoutItem.getVariant().getProduct().getMedia() == null) {
             return null;
         }
 
-        return cartItem.getProductVariant().getProduct().getMedia().stream()
+        return checkoutItem.getVariant().getProduct().getMedia().stream()
                 .filter(media -> media != null && media.isActive() && !media.isDeleted())
                 .sorted((left, right) -> {
                     if (left.isThumbnail() != right.isThumbnail()) {

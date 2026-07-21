@@ -44,7 +44,7 @@ class OrderCreationServiceTest {
 
     User user;
     Address address;
-    CartItem cartItem;
+    com.NguyenDat.ecommerce.dto.internal.CheckoutItem checkoutItem;
     Coupon coupon;
     CheckoutCalculation checkout;
     CheckoutRequest request;
@@ -67,13 +67,14 @@ class OrderCreationServiceTest {
         variant.setSku("KB-BLACK");
         variant.setPrice(100_000);
 
-        cartItem = new CartItem();
-        cartItem.setProductVariant(variant);
-        cartItem.setQuantity(2);
+        checkoutItem = new com.NguyenDat.ecommerce.dto.internal.CheckoutItem();
+        checkoutItem.setVariant(variant);
+        checkoutItem.setQuantity(2);
+        checkoutItem.setUnitPrice(BigDecimal.valueOf(100_000));
 
         coupon = new Coupon();
         checkout = CheckoutCalculation.builder()
-                .selectedCartItems(List.of(cartItem))
+                .items(List.of(checkoutItem))
                 .address(address)
                 .coupon(coupon)
                 .subtotalAmount(BigDecimal.valueOf(200_000))
@@ -107,7 +108,7 @@ class OrderCreationServiceTest {
         assertEquals("Call before delivery", result.getNote());
         assertNotNull(result.getPayment());
         assertEquals(1, result.getItems().size());
-        assertEquals(BigDecimal.valueOf(200_000.0), result.getItems().getFirst().getLineTotal());
+        assertEquals(BigDecimal.valueOf(200_000), result.getItems().getFirst().getLineTotal());
         verify(orderRepository, times(2)).save(result);
         verify(couponApplicationService).recordUsage(eq(result), eq(user), any(CouponCalculation.class));
         verify(orderStatusHistoryService).record(result, user, null, OrderStatus.PENDING, "Customer placed order");

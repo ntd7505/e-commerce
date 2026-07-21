@@ -40,10 +40,23 @@ public class OrderController {
                 ResponseCode.CHECKOUT_PREVIEW_CREATED, orderService.createCheckoutPreview(checkoutPreviewRequest)));
     }
 
+    @PostMapping("/checkout/buy-now/preview")
+    public ResponseEntity<ApiResponse<CheckoutPreviewResponse>> previewBuyNowOrder(
+            @RequestBody @Valid com.NguyenDat.ecommerce.dto.request.BuyNowPreviewRequest request) {
+        return ResponseEntity.ok(ApiResponse.of(
+                ResponseCode.CHECKOUT_PREVIEW_CREATED, orderService.createBuyNowCheckoutPreview(request)));
+    }
+
     @PostMapping("/orders")
     public ResponseEntity<ApiResponse<OrderResponse>> createOrder(@RequestBody @Valid CheckoutRequest checkoutRequest) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.of(ResponseCode.ORDER_CREATED, orderService.createOrder(checkoutRequest)));
+    }
+
+    @PostMapping("/orders/buy-now")
+    public ResponseEntity<ApiResponse<OrderResponse>> createBuyNowOrder(@RequestBody @Valid com.NguyenDat.ecommerce.dto.request.BuyNowCheckoutRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.of(ResponseCode.ORDER_CREATED, orderService.createBuyNowOrder(request)));
     }
 
     @GetMapping("/orders/{orderId}")

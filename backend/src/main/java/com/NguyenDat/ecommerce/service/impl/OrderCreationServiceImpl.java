@@ -52,8 +52,8 @@ public class OrderCreationServiceImpl implements OrderCreationService {
         }
         savedOrder.setPayment(payment);
 
-        for (CartItem selectedCartItem : checkout.getSelectedCartItems()) {
-            savedOrder.getItems().add(buildOrderItem(savedOrder, selectedCartItem));
+        for (com.NguyenDat.ecommerce.dto.internal.CheckoutItem item : checkout.getItems()) {
+            savedOrder.getItems().add(buildOrderItem(savedOrder, item));
         }
 
         couponApplicationService.recordUsage(
@@ -84,10 +84,10 @@ public class OrderCreationServiceImpl implements OrderCreationService {
         return order;
     }
 
-    private OrderItem buildOrderItem(Order order, CartItem cartItem) {
-        ProductVariant variant = cartItem.getProductVariant();
-        BigDecimal unitPrice = getCurrentPrice(variant);
-        Integer quantity = cartItem.getQuantity();
+    private OrderItem buildOrderItem(Order order, com.NguyenDat.ecommerce.dto.internal.CheckoutItem checkoutItem) {
+        ProductVariant variant = checkoutItem.getVariant();
+        BigDecimal unitPrice = checkoutItem.getUnitPrice();
+        Integer quantity = checkoutItem.getQuantity();
 
         OrderItem orderItem = new OrderItem();
         orderItem.setProductVariant(variant);

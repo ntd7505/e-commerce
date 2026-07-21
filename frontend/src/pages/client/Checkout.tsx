@@ -1,7 +1,8 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { cartApi } from '../../features/client/cart/cartApi';
-import type { CheckoutPreviewResponse, AddressResponse } from '../../features/client/cart/cartTypes';
+import type { CheckoutPreviewResponse, AddressResponse, CheckoutDraft } from '../../features/client/cart/cartTypes';
+import { getCheckoutDraft, saveCheckoutDraft, clearCheckoutDraft } from '../../features/client/cart/checkoutDraft';
 import AddressSelector from './components/checkout/AddressSelector';
 import CouponInput from './components/checkout/CouponInput';
 import { formatCurrency } from '../../utils/formatters';
@@ -20,18 +21,10 @@ export default function Checkout() {
   const [error, setError] = useState<string | null>(null);
 
   // Initialize synchronously from sessionStorage
-  const draftData = useMemo(() => {
-    const draftStr = sessionStorage.getItem('checkoutDraft');
-    if (!draftStr) return null;
-    try {
-      return JSON.parse(draftStr);
-    } catch {
-      return null;
-    }
-  }, []);
+  const draftData = useMemo(() => getCheckoutDraft(), []);
 
   // Draft state
-  const [cartItemIds] = useState<number[]>(draftData?.cartItemIds || []);
+  const [draft, setDraft] = useState<CheckoutDraft | null>(draftData);
   const [preferredAddressId] = useState<number | undefined>(
     draftData?.addressId || activeDeliveryAddress?.id || undefined
   );
@@ -42,23 +35,35 @@ export default function Checkout() {
   const [note, setNote] = useState<string>('');
 
   useEffect(() => {
-    if (!draftData || !draftData.cartItemIds || draftData.cartItemIds.length === 0) {
+    if (!draft) {
+      navigate('/cart', { replace: true });
+    } else if (draft.type === 'cart' && (!draft.cartItemIds || draft.cartItemIds.length === 0)) {
       navigate('/cart', { replace: true });
     }
-  }, [navigate, draftData]);
+  }, [navigate, draft]);
 
   useEffect(() => {
-    if (cartItemIds.length === 0) return;
+    if (!draft) return;
     
     const fetchPreview = async () => {
       setLoading(true);
       setError(null);
       try {
-        const data = await cartApi.previewCheckout({
-          cartItemIds: cartItemIds,
-          addressId: selectedAddress?.id,
-          couponCode: couponCode || undefined
-        });
+        let data: CheckoutPreviewResponse;
+        if (draft.type === 'buy-now') {
+          data = await cartApi.previewBuyNowOrder({
+            productVariantId: draft.productVariantId,
+            quantity: draft.quantity,
+            addressId: selectedAddress?.id,
+            couponCode: couponCode || undefined
+          });
+        } else {
+          data = await cartApi.previewCheckout({
+            cartItemIds: draft.cartItemIds,
+            addressId: selectedAddress?.id,
+            couponCode: couponCode || undefined
+          });
+        }
         setPreview(data);
         if (!paymentMethod && data.paymentMethods && data.paymentMethods.length > 0) {
           setPaymentMethod(data.paymentMethods[0]);
@@ -71,23 +76,30 @@ export default function Checkout() {
     };
     
     void fetchPreview();
-  }, [cartItemIds, selectedAddress, couponCode, paymentMethod]);
+  }, [draft, selectedAddress, couponCode, paymentMethod]);
 
   const handleApplyCoupon = async (code: string) => {
+    if (!draft) return;
     setCouponError(null);
     try {
-      await cartApi.previewCheckout({
-        cartItemIds,
-        addressId: selectedAddress?.id,
-        couponCode: code
-      });
-      setCouponCode(code);
-      // save to session
-      const draftStr = sessionStorage.getItem('checkoutDraft');
-      if (draftStr) {
-        const draft = JSON.parse(draftStr);
-        sessionStorage.setItem('checkoutDraft', JSON.stringify({ ...draft, couponCode: code }));
+      if (draft.type === 'buy-now') {
+        await cartApi.previewBuyNowOrder({
+          productVariantId: draft.productVariantId,
+          quantity: draft.quantity,
+          addressId: selectedAddress?.id,
+          couponCode: code
+        });
+      } else {
+        await cartApi.previewCheckout({
+          cartItemIds: draft.cartItemIds,
+          addressId: selectedAddress?.id,
+          couponCode: code
+        });
       }
+      setCouponCode(code);
+      const newDraft = { ...draft, couponCode: code };
+      setDraft(newDraft);
+      saveCheckoutDraft(newDraft);
     } catch (err) {
       const error = err as { response?: { data?: { message?: string } } };
       setCouponError(error.response?.data?.message || 'Mã giảm giá không hợp lệ');
@@ -95,17 +107,17 @@ export default function Checkout() {
   };
 
   const handleRemoveCoupon = async () => {
+    if (!draft) return;
     setCouponError(null);
     setCouponCode(null);
-    const draftStr = sessionStorage.getItem('checkoutDraft');
-    if (draftStr) {
-      const draft = JSON.parse(draftStr);
-      delete draft.couponCode;
-      sessionStorage.setItem('checkoutDraft', JSON.stringify(draft));
-    }
+    const newDraft = { ...draft };
+    delete newDraft.couponCode;
+    setDraft(newDraft);
+    saveCheckoutDraft(newDraft);
   };
 
   const handleSubmitOrder = async () => {
+    if (!draft) return;
     if (!selectedAddress) {
       showToast('Vui lòng chọn địa chỉ giao hàng.', 'error');
       return;
@@ -117,15 +129,27 @@ export default function Checkout() {
 
     setSubmitting(true);
     try {
-      const order = await cartApi.createOrder({
-        cartItemIds,
-        addressId: selectedAddress.id,
-        couponCode: couponCode || undefined,
-        paymentMethod,
-        note
-      });
+      let order;
+      if (draft.type === 'buy-now') {
+        order = await cartApi.createBuyNowOrder({
+          productVariantId: draft.productVariantId,
+          quantity: draft.quantity,
+          addressId: selectedAddress.id,
+          couponCode: couponCode || undefined,
+          paymentMethod,
+          note
+        });
+      } else {
+        order = await cartApi.createOrder({
+          cartItemIds: draft.cartItemIds,
+          addressId: selectedAddress.id,
+          couponCode: couponCode || undefined,
+          paymentMethod,
+          note
+        });
+      }
       
-      sessionStorage.removeItem('checkoutDraft');
+      clearCheckoutDraft();
       await refreshCart();
       navigate(`/checkout/success/${order.id}`);
     } catch (err) {
@@ -135,7 +159,7 @@ export default function Checkout() {
     }
   };
 
-  if (cartItemIds.length === 0) return null; // Wait for redirect
+  if (!draft) return null; // Wait for redirect
 
   return (
     <div className="bg-gradient-to-b from-primary-soft/40 to-surface min-h-screen pb-20">

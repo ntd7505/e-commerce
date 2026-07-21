@@ -54,7 +54,10 @@ class CartItemMapperTest {
 
     @Test
     void toCheckoutItemResponse_shouldIncludeThumbnailUrl() {
-        CartItem item = cartItemWithMedia(List.of(media("checkout-thumbnail.jpg", true, 0)));
+        com.NguyenDat.ecommerce.dto.internal.CheckoutItem item = new com.NguyenDat.ecommerce.dto.internal.CheckoutItem();
+        item.setVariant(cartItemWithMedia(List.of(media("checkout-thumbnail.jpg", true, 0))).getProductVariant());
+        item.setQuantity(2);
+        item.setUnitPrice(BigDecimal.valueOf(100));
 
         CheckoutItemResponse result = checkoutItemMapper.toCheckoutItemResponse(item);
 

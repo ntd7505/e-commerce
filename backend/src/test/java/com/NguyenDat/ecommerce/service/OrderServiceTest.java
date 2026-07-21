@@ -140,15 +140,20 @@ class OrderServiceTest {
         AddressResponse addressResponse = new AddressResponse();
         Coupon coupon = new Coupon();
         coupon.setCode("SALE10");
+        
+        com.NguyenDat.ecommerce.dto.internal.CheckoutItem checkoutItem = new com.NguyenDat.ecommerce.dto.internal.CheckoutItem();
+        checkoutItem.setVariant(new ProductVariant());
+        checkoutItem.setQuantity(2);
+        
         CheckoutCalculation checkout = CheckoutCalculation.builder()
-                .selectedCartItems(List.of(cartItem))
+                .items(List.of(checkoutItem))
                 .address(address)
                 .coupon(coupon)
                 .totalItems(2)
                 .build();
         when(currentUserService.getCurrentUser()).thenReturn(user);
         when(checkoutService.calculateForPreview(user, request)).thenReturn(checkout);
-        when(checkoutItemMapper.toCheckoutItemResponse(cartItem)).thenReturn(itemResponse);
+        when(checkoutItemMapper.toCheckoutItemResponse(checkoutItem)).thenReturn(itemResponse);
         when(addressMapper.toAddressResponse(address)).thenReturn(addressResponse);
 
         CheckoutPreviewResponse result = orderService.createCheckoutPreview(request);

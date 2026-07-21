@@ -62,7 +62,17 @@ public class OrderServiceImpl implements OrderService {
     public CheckoutPreviewResponse createCheckoutPreview(CheckoutPreviewRequest checkoutPreviewRequest) {
         User user = currentUserService.getCurrentUser();
         CheckoutCalculation checkoutCalculation = checkoutService.calculateForPreview(user, checkoutPreviewRequest);
-        List<CheckoutItemResponse> checkoutItemResponses = checkoutCalculation.getSelectedCartItems().stream()
+        return buildCheckoutPreviewResponse(checkoutCalculation);
+    }
+
+    public CheckoutPreviewResponse createBuyNowCheckoutPreview(com.NguyenDat.ecommerce.dto.request.BuyNowPreviewRequest request) {
+        User user = currentUserService.getCurrentUser();
+        CheckoutCalculation checkoutCalculation = checkoutService.calculateBuyNowForPreview(user, request);
+        return buildCheckoutPreviewResponse(checkoutCalculation);
+    }
+
+    private CheckoutPreviewResponse buildCheckoutPreviewResponse(CheckoutCalculation checkoutCalculation) {
+        List<CheckoutItemResponse> checkoutItemResponses = checkoutCalculation.getItems().stream()
                 .map(checkoutItemMapper::toCheckoutItemResponse)
                 .toList();
         return CheckoutPreviewResponse.builder()
@@ -89,6 +99,30 @@ public class OrderServiceImpl implements OrderService {
         }
         User user = currentUserService.getCurrentUser();
         CheckoutCalculation checkoutCalculation = checkoutService.calculateForOrder(user, checkoutRequest);
+        Order order = orderCreationService.create(user, checkoutRequest, checkoutCalculation);
+        inventoryService.decreaseForOrder(order, user);
+        return enrichPayment(orderMapper.toOrderResponse(order));
+    }
+
+    @Transactional
+    public OrderResponse createBuyNowOrder(com.NguyenDat.ecommerce.dto.request.BuyNowCheckoutRequest request) {
+        if (request.getPaymentMethod() != PaymentMethod.COD
+                && request.getPaymentMethod() != PaymentMethod.BANK_TRANSFER) {
+            throw new AppException(ErrorCode.PAYMENT_METHOD_UNSUPPORTED);
+        }
+        User user = currentUserService.getCurrentUser();
+        CheckoutCalculation checkoutCalculation = checkoutService.calculateBuyNowForOrder(user, request);
+        
+        // We need to map BuyNowCheckoutRequest to CheckoutRequest internally to re-use OrderCreationService.create signature,
+        // or just update OrderCreationService.create to take note and payment method directly.
+        // Actually, OrderCreationService only uses getPaymentMethod() and getNote() from CheckoutRequest.
+        // So we can map it here.
+        CheckoutRequest checkoutRequest = new CheckoutRequest();
+        checkoutRequest.setNote(request.getNote());
+        checkoutRequest.setPaymentMethod(request.getPaymentMethod());
+        checkoutRequest.setAddressId(request.getAddressId());
+        checkoutRequest.setCouponCode(request.getCouponCode());
+
         Order order = orderCreationService.create(user, checkoutRequest, checkoutCalculation);
         inventoryService.decreaseForOrder(order, user);
         return enrichPayment(orderMapper.toOrderResponse(order));
