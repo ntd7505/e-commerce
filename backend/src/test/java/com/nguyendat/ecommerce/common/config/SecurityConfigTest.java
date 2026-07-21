@@ -37,7 +37,7 @@ class SecurityConfigTest {
                 "  \"password\": \"admin\"\n" +
                 "}";
 
-        MvcResult result = mockMvc.perform(post("/auth/login")
+        MvcResult result = mockMvc.perform(post("/api/v1/auth/login")
                 .contentType("application/json")
                 .content(loginPayload))
                 .andExpect(cookie().doesNotExist("JSESSIONID"))

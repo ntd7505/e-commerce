@@ -3,6 +3,8 @@ package com.nguyendat.ecommerce.controller;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.List;
@@ -61,6 +63,21 @@ class AdminAuthorizationTest {
         mockMvc.perform(get("/api/v1/admin/orders/all")
                         .with(jwt().authorities(new SimpleGrantedAuthority("ROLE_ADMIN"))))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    void apiPost_shouldUseBearerAuthenticationWithoutCsrfTokenOrSessionCookie() throws Exception {
+        mockMvc.perform(post("/api/v1/admin/orders/1/confirmations")
+                        .with(jwt().authorities(
+                                new SimpleGrantedAuthority("ROLE_STAFF"),
+                                new SimpleGrantedAuthority("ORDER_MANAGE"))))
+                .andExpect(status().isOk())
+                .andExpect(header().doesNotExist("Set-Cookie"));
+    }
+
+    @Test
+    void apiPost_shouldRejectUnauthenticatedRequestWithoutCsrfToken() throws Exception {
+        mockMvc.perform(post("/api/v1/admin/orders/1/confirmations")).andExpect(status().isUnauthorized());
     }
 }
 
