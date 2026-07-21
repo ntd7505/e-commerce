@@ -90,7 +90,7 @@ public class SecurityConfig {
         configuration.setAllowedOrigins(List.of("http://localhost:5173", "http://localhost:3000")); // Allowed origins
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")); // HTTP methods
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type")); // Allowed headers
-        configuration.setAllowCredentials(true); // Allow credentials (cookies, Authorization headers, etc.)
+        configuration.setAllowCredentials(false); // Do not allow credentials (cookies, session) for stateless API
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration); // Apply this CORS policy to all endpoints
         return source;

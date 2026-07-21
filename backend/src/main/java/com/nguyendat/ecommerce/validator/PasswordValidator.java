@@ -22,13 +22,16 @@ public class PasswordValidator implements ConstraintValidator<PasswordConstraint
 
         for (int i = 0; i < password.length(); i++) {
             char ch = password.charAt(i);
-            if (Character.isLowerCase(ch)) hasLower = true;
-            else if (Character.isUpperCase(ch)) hasUpper = true;
-            else if (Character.isDigit(ch)) hasDigit = true;
+            if (ch >= 'a' && ch <= 'z') hasLower = true;
+            else if (ch >= 'A' && ch <= 'Z') hasUpper = true;
+            else if (ch >= '0' && ch <= '9') hasDigit = true;
             else if (specialChars.indexOf(ch) >= 0) hasSpecial = true;
+            else return false; // Any other character is invalid per ASCII original policy
+
+            if (hasLower && hasUpper && hasDigit && hasSpecial) return true;
         }
 
-        return hasLower && hasUpper && hasDigit && hasSpecial;
+        return false;
     }
 }
 

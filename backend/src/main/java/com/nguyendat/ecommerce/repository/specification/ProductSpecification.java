@@ -14,23 +14,26 @@ import com.nguyendat.ecommerce.entity.ProductVariant;
 
 public final class ProductSpecification {
 
+    private static final String ACTIVE_FIELD = "active";
+    private static final String DELETED_FIELD = "deleted";
+
     private ProductSpecification() {}
 
     public static Specification<Product> withFilter(ProductFilterRequest filter, boolean clientVisibleOnly) {
         return (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
 
-            predicates.add(criteriaBuilder.isFalse(root.get("deleted")));
+            predicates.add(criteriaBuilder.isFalse(root.get(DELETED_FIELD)));
 
             Join<Product, ProductVariant> variants = root.join("variants");
 
             if (clientVisibleOnly) {
-                predicates.add(criteriaBuilder.isTrue(root.get("active")));
-                predicates.add(criteriaBuilder.isTrue(variants.get("active")));
+                predicates.add(criteriaBuilder.isTrue(root.get(ACTIVE_FIELD)));
+                predicates.add(criteriaBuilder.isTrue(variants.get(ACTIVE_FIELD)));
             } else if (filter.getActive() != null) {
-                predicates.add(criteriaBuilder.equal(root.get("active"), filter.getActive()));
-                predicates.add(criteriaBuilder.isTrue(variants.get("active")));
-                predicates.add(criteriaBuilder.isFalse(variants.get("deleted")));
+                predicates.add(criteriaBuilder.equal(root.get(ACTIVE_FIELD), filter.getActive()));
+                predicates.add(criteriaBuilder.isTrue(variants.get(ACTIVE_FIELD)));
+                predicates.add(criteriaBuilder.isFalse(variants.get(DELETED_FIELD)));
             }
 
             if (filter.getKeyword() != null && !filter.getKeyword().isBlank()) {
