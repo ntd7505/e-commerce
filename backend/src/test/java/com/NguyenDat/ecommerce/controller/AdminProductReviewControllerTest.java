@@ -46,7 +46,8 @@ class AdminProductReviewControllerTest {
     void getReviewsPage_shouldReturnPagedReviews() throws Exception {
         when(productReviewService.getReviewsForAdmin(any()))
                 .thenReturn(PageResponse.<ProductReviewResponse>builder()
-                        .content(List.of(ProductReviewResponse.builder().id(1L).rating(5).build()))
+                        .content(List.of(
+                                ProductReviewResponse.builder().id(1L).rating(5).build()))
                         .page(0)
                         .size(10)
                         .totalElements(1)

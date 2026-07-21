@@ -6,7 +6,6 @@ import { BannerPosition } from '../../../features/admin/home-banners/types';
 import { Button, Pagination, Badge } from '../../../components/common';
 import { useToast } from '../../../features/ui/ToastProvider';
 import { AdminEmptyState } from '../../../components/admin/AdminEmptyState';
-import { AdminBadge } from '../../../components/admin/AdminBadge';
 import HomeBannerFormModal from './components/HomeBannerFormModal';
 
 export default function HomeBanners() {
@@ -30,6 +29,7 @@ export default function HomeBanners() {
       });
       setBanners(res.data.data.content);
       setTotalPages(res.data.data.totalPages);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       showToast(error?.response?.data?.message || 'Có lỗi xảy ra', 'error');
     } finally {
@@ -38,6 +38,7 @@ export default function HomeBanners() {
   }, [page, positionFilter, showToast]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchBanners();
   }, [fetchBanners]);
 
@@ -46,6 +47,7 @@ export default function HomeBanners() {
       await adminHomeBannerApi.updateBannerStatus(id, { active: !currentStatus });
       showToast('Cập nhật trạng thái thành công', 'success');
       fetchBanners();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       showToast(error?.response?.data?.message || 'Lỗi khi cập nhật trạng thái', 'error');
     }
@@ -57,6 +59,7 @@ export default function HomeBanners() {
       await adminHomeBannerApi.deleteBanner(id);
       showToast('Xóa banner thành công', 'success');
       fetchBanners();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       showToast(error?.response?.data?.message || 'Lỗi khi xóa banner', 'error');
     }
@@ -81,6 +84,7 @@ export default function HomeBanners() {
       await adminHomeBannerApi.reorderHeroBanners({ bannerIds: newBanners.map((b) => b.id) });
       fetchBanners();
       showToast('Cập nhật thứ tự thành công', 'success');
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       showToast(error?.response?.data?.message || 'Có lỗi xảy ra khi đổi thứ tự', 'error');
     }

@@ -112,7 +112,8 @@ public class ProductServiceImpl implements ProductService {
         List<com.NguyenDat.ecommerce.entity.ProductSpecification> specificationList = new ArrayList<>();
         if (productCreateRequest.getSpecifications() != null) {
             for (ProductSpecificationRequest specReq : productCreateRequest.getSpecifications()) {
-                com.NguyenDat.ecommerce.entity.ProductSpecification spec = productSpecificationMapper.toProductSpecification(specReq);
+                com.NguyenDat.ecommerce.entity.ProductSpecification spec =
+                        productSpecificationMapper.toProductSpecification(specReq);
                 spec.setProduct(product);
                 spec.setGroupName(normalizeBlank(specReq.getGroupName()));
                 spec.setSpecKey(specReq.getSpecKey().trim());
@@ -362,8 +363,7 @@ public class ProductServiceImpl implements ProductService {
 
         List<ProductDescriptionBlock> newBlocks = productDescriptionBlockBulkRequest.getBlocks().stream()
                 .map(request -> {
-                    ProductDescriptionBlock block =
-                            productDescriptionBlockMapper.toProductDescriptionBlock(request);
+                    ProductDescriptionBlock block = productDescriptionBlockMapper.toProductDescriptionBlock(request);
                     block.setProduct(product);
                     block.setActive(request.getActive() == null || request.getActive());
                     return block;
@@ -373,7 +373,8 @@ public class ProductServiceImpl implements ProductService {
         productDescriptionBlockRepository.saveAll(existingBlocks);
         productDescriptionBlockRepository.saveAll(newBlocks);
 
-        return enrichProductStats(toProductResponse(productRepository.findByIdAndDeletedFalse(productId)
+        return enrichProductStats(toProductResponse(productRepository
+                .findByIdAndDeletedFalse(productId)
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND))));
     }
 
@@ -394,22 +395,23 @@ public class ProductServiceImpl implements ProductService {
 
         List<com.NguyenDat.ecommerce.entity.ProductSpecification> newSpecifications =
                 productSpecificationBulkRequest.getSpecifications().stream()
-                .map(request -> {
-                    com.NguyenDat.ecommerce.entity.ProductSpecification specification =
-                            productSpecificationMapper.toProductSpecification(request);
-                    specification.setProduct(product);
-                    specification.setGroupName(normalizeBlank(request.getGroupName()));
-                    specification.setSpecKey(request.getSpecKey().trim());
-                    specification.setSpecValue(request.getSpecValue().trim());
-                    specification.setActive(request.getActive() == null || request.getActive());
-                    return specification;
-                })
-                .toList();
+                        .map(request -> {
+                            com.NguyenDat.ecommerce.entity.ProductSpecification specification =
+                                    productSpecificationMapper.toProductSpecification(request);
+                            specification.setProduct(product);
+                            specification.setGroupName(normalizeBlank(request.getGroupName()));
+                            specification.setSpecKey(request.getSpecKey().trim());
+                            specification.setSpecValue(request.getSpecValue().trim());
+                            specification.setActive(request.getActive() == null || request.getActive());
+                            return specification;
+                        })
+                        .toList();
 
         productSpecificationRepository.saveAll(existingSpecifications);
         productSpecificationRepository.saveAll(newSpecifications);
 
-        return enrichProductStats(toProductResponse(productRepository.findByIdAndDeletedFalse(productId)
+        return enrichProductStats(toProductResponse(productRepository
+                .findByIdAndDeletedFalse(productId)
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND))));
     }
 
@@ -535,16 +537,22 @@ public class ProductServiceImpl implements ProductService {
         if (responses.isEmpty()) return;
         List<Long> productIds = responses.stream().map(ProductResponse::getId).toList();
 
-        List<com.NguyenDat.ecommerce.repository.projection.ProductStatProjection> ratings = productReviewRepository.getAverageRatingByProductIds(productIds);
+        List<com.NguyenDat.ecommerce.repository.projection.ProductStatProjection> ratings =
+                productReviewRepository.getAverageRatingByProductIds(productIds);
         java.util.Map<Long, Double> ratingMap = new java.util.HashMap<>();
         for (com.NguyenDat.ecommerce.repository.projection.ProductStatProjection row : ratings) {
-            ratingMap.put(row.getProductId(), row.getStatValue() != null ? row.getStatValue().doubleValue() : 0.0);
+            ratingMap.put(
+                    row.getProductId(),
+                    row.getStatValue() != null ? row.getStatValue().doubleValue() : 0.0);
         }
 
-        List<com.NguyenDat.ecommerce.repository.projection.ProductStatProjection> soldCounts = orderItemRepository.getSoldCountByProductIds(productIds);
+        List<com.NguyenDat.ecommerce.repository.projection.ProductStatProjection> soldCounts =
+                orderItemRepository.getSoldCountByProductIds(productIds);
         java.util.Map<Long, Long> soldMap = new java.util.HashMap<>();
         for (com.NguyenDat.ecommerce.repository.projection.ProductStatProjection row : soldCounts) {
-            soldMap.put(row.getProductId(), row.getStatValue() != null ? row.getStatValue().longValue() : 0L);
+            soldMap.put(
+                    row.getProductId(),
+                    row.getStatValue() != null ? row.getStatValue().longValue() : 0L);
         }
 
         for (ProductResponse response : responses) {

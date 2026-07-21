@@ -3,9 +3,11 @@ package com.NguyenDat.ecommerce.dto.request;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Pattern;
-import lombok.*;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+
+import lombok.*;
 
 @Getter
 @Setter
@@ -40,5 +42,4 @@ public class ProductReviewFilterRequest {
 
         return org.springframework.data.domain.PageRequest.of(page, size, sort);
     }
-
 }

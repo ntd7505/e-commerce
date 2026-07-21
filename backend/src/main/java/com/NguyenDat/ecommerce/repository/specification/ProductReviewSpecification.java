@@ -1,19 +1,16 @@
 package com.NguyenDat.ecommerce.repository.specification;
 
-import com.NguyenDat.ecommerce.entity.ProductReview;
-import jakarta.persistence.criteria.Predicate;
-import org.springframework.data.jpa.domain.Specification;
-
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.persistence.criteria.Predicate;
+
+import org.springframework.data.jpa.domain.Specification;
+
+import com.NguyenDat.ecommerce.entity.ProductReview;
 
 public final class ProductReviewSpecification {
-    public static Specification<ProductReview> filter(
-            Long productId,
-            Integer rating,
-            Boolean hasMedia
-    ) {
+    public static Specification<ProductReview> filter(Long productId, Integer rating, Boolean hasMedia) {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
 
@@ -35,6 +32,5 @@ public final class ProductReviewSpecification {
         };
     }
 
-    private ProductReviewSpecification() {
-    }
+    private ProductReviewSpecification() {}
 }

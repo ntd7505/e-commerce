@@ -28,8 +28,6 @@ public class AdminDashboardController {
 
     @GetMapping("/dashboard")
     public ResponseEntity<ApiResponse<AdminDashboardResponse>> getDashboard() {
-        return ResponseEntity.ok(ApiResponse.of(
-                ResponseCode.DASHBOARD_FETCHED,
-                adminDashboardService.getDashboard()));
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.DASHBOARD_FETCHED, adminDashboardService.getDashboard()));
     }
 }

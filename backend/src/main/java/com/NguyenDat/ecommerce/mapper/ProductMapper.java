@@ -25,7 +25,9 @@ public interface ProductMapper {
     @Mapping(target = "updatedAt", ignore = true)
     Product toProduct(ProductCreateRequest productCreateRequest);
 
-    @Mapping(target = "thumbnailUrl", expression = "java(com.NguyenDat.ecommerce.common.util.MediaUtils.resolveThumbnailUrl(product.getMedia()))")
+    @Mapping(
+            target = "thumbnailUrl",
+            expression = "java(com.NguyenDat.ecommerce.common.util.MediaUtils.resolveThumbnailUrl(product.getMedia()))")
     ProductResponse toProductResponse(Product product);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)

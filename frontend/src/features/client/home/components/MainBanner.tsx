@@ -2,46 +2,93 @@ import React, { useEffect, useState } from 'react';
 import { ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { clientHomeBannerApi } from '../clientHomeBannerApi';
+import { buttonVariants } from '../../../../components/common/buttonVariants';
 import type { HomeBanner } from '../types';
 import { BannerPosition } from '../types';
 
+const isDarkBackground = (bgColor?: string | null) => {
+  if (!bgColor) return false;
+  let hex = bgColor.replace('#', '');
+  if (hex.length === 3) {
+    hex = hex.split('').map(c => c + c).join('');
+  }
+  if (hex.length !== 6) return false;
+  const r = parseInt(hex.substring(0, 2), 16);
+  const g = parseInt(hex.substring(2, 4), 16);
+  const b = parseInt(hex.substring(4, 6), 16);
+  const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+  return yiq < 128;
+};
+
 const MainBanner = () => {
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [topIndex, setTopIndex] = useState(0);
+  const [bottomIndex, setBottomIndex] = useState(0);
   const [banners, setBanners] = useState<HomeBanner[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isPaused, setIsPaused] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
 
-  useEffect(() => {
-    const fetchBanners = async () => {
-      try {
-        const res = await clientHomeBannerApi.getActiveBanners();
-        setBanners(res.data.data);
-      } catch (error) {
-        console.error('Error fetching home banners:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchBanners();
+  const fetchBanners = React.useCallback(async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      const res = await clientHomeBannerApi.getActiveBanners();
+      setBanners(res.data.data);
+    } catch (err) {
+      console.error('Error fetching home banners:', err);
+      setError(err instanceof Error ? err : new Error('Unknown error'));
+    } finally {
+      setIsLoading(false);
+    }
   }, []);
 
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    fetchBanners();
+  }, [fetchBanners]);
+
   const heroBanners = banners.filter(b => b.position === BannerPosition.HOME_HERO).sort((a, b) => a.sortOrder - b.sortOrder);
+  const activeHeroBanner = heroBanners.length > 0 ? heroBanners[0] : null;
+
   const sideTopBanner = banners.find(b => b.position === BannerPosition.HOME_SIDE_TOP);
   const sideBottomBanner = banners.find(b => b.position === BannerPosition.HOME_SIDE_BOTTOM);
 
+  const getBannerImages = (banner: HomeBanner | null | undefined) => {
+    if (!banner) return [];
+    const urls = banner.product.imageUrls?.filter((url): url is string => Boolean(url?.trim())) ?? [];
+    if (urls.length > 0) return urls;
+    const fallback = banner.imageUrl || banner.product.thumbnailUrl;
+    return fallback ? [fallback] : [];
+  };
+
+  const heroImageUrls = React.useMemo(() => getBannerImages(activeHeroBanner), [activeHeroBanner]);
+  const topSideImageUrls = React.useMemo(() => getBannerImages(sideTopBanner), [sideTopBanner]);
+  const bottomSideImageUrls = React.useMemo(() => getBannerImages(sideBottomBanner), [sideBottomBanner]);
+
   useEffect(() => {
-    if (heroBanners.length <= 1) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (heroImageUrls.length > 0 && currentImageIndex >= heroImageUrls.length) setCurrentImageIndex(0);
+    if (topSideImageUrls.length > 0 && topIndex >= topSideImageUrls.length) setTopIndex(0);
+    if (bottomSideImageUrls.length > 0 && bottomIndex >= bottomSideImageUrls.length) setBottomIndex(0);
+  }, [heroImageUrls.length, topSideImageUrls.length, bottomSideImageUrls.length, currentImageIndex, topIndex, bottomIndex]);
+
+  useEffect(() => {
+    if (isPaused) return;
     const timer = setInterval(() => {
-      setCurrentIndex((prev) => (prev === heroBanners.length - 1 ? 0 : prev + 1));
-    }, 5000);
+      setCurrentImageIndex((prev) => heroImageUrls.length <= 1 ? prev : (prev === heroImageUrls.length - 1 ? 0 : prev + 1));
+      setTopIndex((prev) => topSideImageUrls.length <= 1 ? prev : (prev === topSideImageUrls.length - 1 ? 0 : prev + 1));
+      setBottomIndex((prev) => bottomSideImageUrls.length <= 1 ? prev : (prev === bottomSideImageUrls.length - 1 ? 0 : prev + 1));
+    }, 3000);
     return () => clearInterval(timer);
-  }, [heroBanners.length]);
+  }, [heroImageUrls.length, topSideImageUrls.length, bottomSideImageUrls.length, isPaused]);
 
   const handlePrev = () => {
-    setCurrentIndex((prev) => (prev === 0 ? heroBanners.length - 1 : prev - 1));
+    setCurrentImageIndex((prev) => (prev === 0 ? heroImageUrls.length - 1 : prev - 1));
   };
 
   const handleNext = () => {
-    setCurrentIndex((prev) => (prev === heroBanners.length - 1 ? 0 : prev + 1));
+    setCurrentImageIndex((prev) => (prev === heroImageUrls.length - 1 ? 0 : prev + 1));
   };
 
   if (isLoading) {
@@ -58,68 +105,99 @@ const MainBanner = () => {
     );
   }
 
+  if (error) {
+    return (
+      <div className="h-auto md:h-[380px] flex flex-col md:grid md:grid-cols-[1fr_220px] lg:grid-cols-[1fr_260px] gap-4 lg:gap-6">
+        <div className="flex-1 rounded-2xl bg-surface border border-border h-[200px] md:h-full flex flex-col items-center justify-center text-text-muted gap-3">
+          <p>Không thể tải banner lúc này.</p>
+          <button
+            type="button"
+            onClick={fetchBanners}
+            className="px-4 py-2 bg-primary text-white text-sm font-bold rounded-xl hover:bg-primary-hover transition-colors border-0 cursor-pointer"
+          >
+            Thử lại
+          </button>
+        </div>
+        <div className="flex flex-col gap-4 lg:gap-6 h-full hidden md:flex">
+          <div className="flex-1 bg-surface-alt rounded-2xl border border-border border-dashed"></div>
+          <div className="flex-1 bg-surface-alt rounded-2xl border border-border border-dashed"></div>
+        </div>
+      </div>
+    );
+  }
+
   // Fallback if no hero banners configured
-  const displayHeroBanners = heroBanners.length > 0 ? heroBanners : [];
 
   return (
     <div className="h-auto md:h-[380px] flex flex-col md:grid md:grid-cols-[1fr_220px] lg:grid-cols-[1fr_260px] gap-4 lg:gap-6">
       {/* Main carousel — Left Block */}
-      {displayHeroBanners.length > 0 ? (
-        <div className="relative overflow-hidden group min-h-[200px] md:min-h-0 flex-1 rounded-2xl border border-border bg-surface shadow-sm hover:shadow-primary/10 hover:border-primary/20 transition-all">
-          <div
-            className="flex h-full w-full transition-transform duration-500 ease-out"
-            style={{ transform: `translateX(-${currentIndex * 100}%)` }}
-          >
-            {displayHeroBanners.map((banner, index) => {
-              const bgStyle = banner.backgroundColor ? { backgroundColor: banner.backgroundColor } : {};
-              const title = banner.title || banner.product.name;
-              const subtitle = banner.subtitle || '';
-              const imageUrl = banner.imageUrl || banner.product.thumbnailUrl;
-              
-              // Simple heuristic to decide text color based on background color could be done, 
-              // but we'll stick to a default assumption or use standard text colors.
-              
-              return (
-                <div key={banner.id} className="w-full min-w-full h-full shrink-0 flex items-center p-6 md:p-10 relative bg-surface-alt" style={bgStyle}>
-                  <div className="z-10 w-2/3 md:w-1/2">
-                    <h2 className="text-2xl md:text-4xl font-bold mb-3 text-text line-clamp-2">{title}</h2>
-                    {subtitle && <p className="text-base md:text-xl mb-6 text-text line-clamp-2">{subtitle}</p>}
-                    <Link
-                      to={`/products/${banner.product.slug}`}
-                      className="bg-primary text-white text-sm font-bold px-8 py-3 rounded-xl inline-block border-0 hover:bg-primary-hover hover:-translate-y-0.5 transition-all shadow-sm shadow-primary/20"
-                    >
-                      Xem ngay
-                    </Link>
-                  </div>
-                  <div className="absolute right-0 top-0 h-full w-1/3 md:w-1/2 flex items-center justify-center p-4">
-                    {imageUrl && (
-                      <img
-                        alt={title}
-                        className="object-contain w-full h-full mix-blend-multiply"
-                        src={imageUrl}
-                        loading={index === 0 ? undefined : 'lazy'}
-                      />
-                    )}
-                  </div>
-                </div>
-              );
-            })}
+      {activeHeroBanner ? (
+        <div 
+          className="relative group min-h-[200px] md:min-h-0 flex-1 rounded-2xl border border-border bg-surface-alt shadow-sm hover:shadow-primary/10 hover:border-primary/20 transition-all flex items-center p-6 md:p-10"
+          style={activeHeroBanner.backgroundColor ? { backgroundColor: activeHeroBanner.backgroundColor } : {}}
+          onMouseEnter={() => setIsPaused(true)}
+          onMouseLeave={() => setIsPaused(false)}
+          onFocus={() => setIsPaused(true)}
+          onBlur={() => setIsPaused(false)}
+        >
+          {/* Static Content (Left Side) */}
+          <div className="z-10 w-2/3 md:w-1/2">
+            <h2 className={`text-2xl md:text-4xl font-bold mb-3 line-clamp-2 ${isDarkBackground(activeHeroBanner.backgroundColor) ? 'text-white' : 'text-text'}`}>
+              {activeHeroBanner.title || activeHeroBanner.product.name}
+            </h2>
+            {activeHeroBanner.subtitle && (
+              <p className={`text-base md:text-xl mb-6 line-clamp-2 ${isDarkBackground(activeHeroBanner.backgroundColor) ? 'text-white/80' : 'text-text'}`}>
+                {activeHeroBanner.subtitle}
+              </p>
+            )}
+            <Link
+              to={`/products/${activeHeroBanner.product.slug}`}
+              className={buttonVariants({ variant: 'primary', size: 'lg' })}
+            >
+              Xem ngay
+            </Link>
           </div>
 
+          <div className="sr-only" aria-live="polite" aria-atomic="true">
+            Đang hiển thị ảnh {currentImageIndex + 1} trên tổng số {heroImageUrls.length}
+          </div>
+
+          {/* Image Sliding Track (Right Side) */}
+          {heroImageUrls.length > 0 && (
+            <div className="absolute right-0 top-0 h-full w-1/3 md:w-1/2 flex items-center justify-center p-4 overflow-hidden">
+              <div
+                className="flex h-full w-full transition-transform duration-500 ease-out"
+                style={{ transform: `translateX(-${currentImageIndex * 100}%)` }}
+              >
+                {heroImageUrls.map((imageUrl, index) => (
+                  <div key={`${activeHeroBanner.id}-${imageUrl}-${index}`} className="w-full min-w-full h-full shrink-0 flex items-center justify-center">
+                    <img
+                      alt={activeHeroBanner.title || activeHeroBanner.product.name}
+                      className="object-contain w-full h-full mix-blend-multiply"
+                      src={imageUrl}
+                      loading={index === 0 ? undefined : 'lazy'}
+                      onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Dots */}
-          {displayHeroBanners.length > 1 && (
+          {heroImageUrls.length > 1 && (
             <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-20">
-              {displayHeroBanners.map((_, index) => (
+              {heroImageUrls.map((_, index) => (
                 <button
                   key={index}
                   type="button"
                   onClick={(event) => {
                     event.stopPropagation();
-                    setCurrentIndex(index);
+                    setCurrentImageIndex(index);
                   }}
-                  aria-label={`Chuyển đến banner ${index + 1}`}
-                  className={`h-2 rounded-full cursor-pointer transition-all duration-300 border-0 p-0 ${
-                    currentIndex === index ? 'w-6 bg-primary' : 'w-2 bg-border-strong hover:bg-surface'
+                  aria-label={`Chuyển đến ảnh ${index + 1}`}
+                  className={`h-2 rounded-full cursor-pointer transition-all duration-300 border-0 p-0 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:ring-offset-1 ${
+                    currentImageIndex === index ? 'w-6 bg-primary' : 'w-2 bg-border-strong hover:bg-surface'
                   }`}
                 />
               ))}
@@ -127,23 +205,23 @@ const MainBanner = () => {
           )}
 
           {/* Navigation buttons */}
-          {displayHeroBanners.length > 1 && (
+          {heroImageUrls.length > 1 && (
             <>
               <button
                 type="button"
                 onClick={(event) => { event.stopPropagation(); handlePrev(); }}
-                aria-label="Banner trước"
-                className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-surface/50 text-text flex items-center justify-center hover:bg-surface hover:shadow-md transition-all opacity-0 group-hover:opacity-100 z-20 border-0 cursor-pointer"
+                aria-label="Ảnh trước"
+                className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-surface/50 text-text flex items-center justify-center hover:bg-surface hover:shadow-md transition-all opacity-100 md:opacity-0 group-hover:opacity-100 z-20 border-0 cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/40"
               >
-                <ChevronLeft className="w-5 h-5" />
+                <ChevronLeft className="w-6 h-6" />
               </button>
               <button
                 type="button"
                 onClick={(event) => { event.stopPropagation(); handleNext(); }}
-                aria-label="Banner tiếp theo"
-                className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-surface/50 text-text flex items-center justify-center hover:bg-surface hover:shadow-md transition-all opacity-0 group-hover:opacity-100 z-20 border-0 cursor-pointer"
+                aria-label="Ảnh tiếp theo"
+                className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-surface/50 text-text flex items-center justify-center hover:bg-surface hover:shadow-md transition-all opacity-100 md:opacity-0 group-hover:opacity-100 z-20 border-0 cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/40"
               >
-                <ChevronRight className="w-5 h-5" />
+                <ChevronRight className="w-6 h-6" />
               </button>
             </>
           )}
@@ -170,12 +248,24 @@ const MainBanner = () => {
                 <p className="text-sm text-text mt-1 line-clamp-2">{sideTopBanner.subtitle}</p>
               )}
             </div>
-            {(sideTopBanner.imageUrl || sideTopBanner.product.thumbnailUrl) && (
-              <img 
-                alt="Top Side Banner" 
-                className="self-end w-28 lg:w-32 object-contain mix-blend-multiply mt-2" 
-                src={sideTopBanner.imageUrl || sideTopBanner.product.thumbnailUrl} 
-              />
+            {(topSideImageUrls.length > 0) && (
+              <div className="self-end w-28 lg:w-32 h-24 lg:h-32 mt-2 relative overflow-hidden">
+                <div 
+                  className="flex h-full w-full transition-transform duration-500 ease-out"
+                  style={{ transform: `translateX(-${topIndex * 100}%)` }}
+                >
+                  {topSideImageUrls.map((url, i) => (
+                    <div key={i} className="w-full h-full min-w-full shrink-0 flex items-center justify-end">
+                      <img 
+                        alt="Top Side Banner" 
+                        className="w-full h-full object-contain mix-blend-multiply" 
+                        src={url} 
+                        onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
             )}
           </Link>
         ) : (
@@ -198,12 +288,24 @@ const MainBanner = () => {
                 </p>
               )}
             </div>
-            {(sideBottomBanner.imageUrl || sideBottomBanner.product.thumbnailUrl) && (
-              <img 
-                alt="Bottom Side Banner" 
-                className={`absolute -bottom-2 -right-2 w-32 lg:w-40 object-contain ${sideBottomBanner.backgroundColor ? 'mix-blend-multiply' : 'mix-blend-screen'} opacity-90`} 
-                src={sideBottomBanner.imageUrl || sideBottomBanner.product.thumbnailUrl} 
-              />
+            {(bottomSideImageUrls.length > 0) && (
+              <div className="absolute -bottom-2 -right-2 w-32 lg:w-40 h-32 lg:h-40 overflow-hidden pointer-events-none">
+                <div 
+                  className="flex h-full w-full transition-transform duration-500 ease-out pointer-events-none"
+                  style={{ transform: `translateX(-${bottomIndex * 100}%)` }}
+                >
+                  {bottomSideImageUrls.map((url, i) => (
+                    <div key={i} className="w-full h-full min-w-full shrink-0 flex items-center justify-end pointer-events-none">
+                      <img 
+                        alt="Bottom Side Banner" 
+                        className={`w-full h-full object-contain ${sideBottomBanner.backgroundColor ? 'mix-blend-multiply' : 'mix-blend-screen'} opacity-90`} 
+                        src={url} 
+                        onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
             )}
           </Link>
         ) : (

@@ -83,7 +83,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Transactional
     public OrderResponse createOrder(CheckoutRequest checkoutRequest) {
-        if (checkoutRequest.getPaymentMethod() != PaymentMethod.COD && checkoutRequest.getPaymentMethod() != PaymentMethod.BANK_TRANSFER) {
+        if (checkoutRequest.getPaymentMethod() != PaymentMethod.COD
+                && checkoutRequest.getPaymentMethod() != PaymentMethod.BANK_TRANSFER) {
             throw new AppException(ErrorCode.PAYMENT_METHOD_UNSUPPORTED);
         }
         User user = currentUserService.getCurrentUser();

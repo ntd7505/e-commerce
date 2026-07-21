@@ -39,7 +39,7 @@ export default function AccountPageLayout({
         </nav>
 
         {/* Layout */}
-        <div className="flex flex-col lg:flex-row gap-8 items-start">
+        <div className="flex flex-col lg:flex-row gap-6 items-start">
           <AccountSidebar />
 
           {useCustomContent ? (

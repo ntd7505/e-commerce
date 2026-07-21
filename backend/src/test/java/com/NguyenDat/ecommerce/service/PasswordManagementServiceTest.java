@@ -5,8 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
@@ -97,7 +97,8 @@ class PasswordManagementServiceTest {
     @Test
     void requestPasswordReset_sendsSixDigitCodeAndStoresOnlyItsHash_whenEmailExists() {
         when(userRepository.findByEmailAndDeletedFalse("customer@example.com")).thenReturn(Optional.of(user));
-        when(passwordResetTokenRepository.findTopByUserIdOrderByCreatedAtDesc(1L)).thenReturn(Optional.empty());
+        when(passwordResetTokenRepository.findTopByUserIdOrderByCreatedAtDesc(1L))
+                .thenReturn(Optional.empty());
         when(passwordEncoder.encode(any(String.class))).thenReturn("encoded-reset-code");
 
         passwordManagementService.requestPasswordReset(
@@ -169,7 +170,8 @@ class PasswordManagementServiceTest {
         when(passwordResetTokenRepository.findTopByUserIdAndUsedAtIsNullOrderByCreatedAtDesc(1L))
                 .thenReturn(Optional.of(resetToken));
 
-        AppException exception = assertThrows(AppException.class, () -> passwordManagementService.resetPassword(request));
+        AppException exception =
+                assertThrows(AppException.class, () -> passwordManagementService.resetPassword(request));
 
         assertEquals(ErrorCode.PASSWORD_RESET_CODE_EXPIRED, exception.getErrorCode());
     }
@@ -193,7 +195,8 @@ class PasswordManagementServiceTest {
                 .thenReturn(Optional.of(resetToken));
         when(passwordEncoder.matches("123456", "encoded-reset-code")).thenReturn(false);
 
-        AppException exception = assertThrows(AppException.class, () -> passwordManagementService.resetPassword(request));
+        AppException exception =
+                assertThrows(AppException.class, () -> passwordManagementService.resetPassword(request));
 
         assertEquals(ErrorCode.PASSWORD_RESET_CODE_INVALID, exception.getErrorCode());
         assertEquals(1, resetToken.getAttemptCount());

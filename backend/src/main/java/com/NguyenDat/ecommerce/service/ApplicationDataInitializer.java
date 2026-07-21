@@ -31,9 +31,8 @@ public class ApplicationDataInitializer {
 
     @Transactional
     public void initialize() {
-        Set<Permission> permissions = AdminPermission.ALL.stream()
-                .map(this::findOrCreatePermission)
-                .collect(Collectors.toSet());
+        Set<Permission> permissions =
+                AdminPermission.ALL.stream().map(this::findOrCreatePermission).collect(Collectors.toSet());
 
         Role adminRole = findOrCreateRole("ADMIN", "System administrator");
         if (adminRole.getPermissions().isEmpty()) {

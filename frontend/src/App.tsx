@@ -33,7 +33,7 @@ import Categories from './pages/admin/Categories';
 import AdminRole from './pages/admin/AdminRole';
 import Brands from './pages/admin/Brands';
 import AdminLogin from './pages/admin/Login';
-import { RequireAdmin, RequireAuth } from './features/auth/RequireAuth';
+import { RequireAdmin, RequireAuth, RequirePermission } from './features/auth/RequireAuth';
 import Coupons from './pages/admin/Coupons';
 import ProductMedia from './pages/admin/ProductMedia';
 import ProductReviews from './pages/admin/ProductReviews';
@@ -76,23 +76,39 @@ export default function App() {
           <Route element={<RequireAdmin />}>
             <Route path="/admin" element={<AdminLayout />}>
               <Route index element={<Navigate to="/admin/dashboard" replace />} />
-              <Route path="dashboard" element={<Dashboard />} />
-              <Route path="orders" element={<Orders />} />
-              <Route path="customers" element={<Customers />} />
-              <Route path="coupons" element={<Coupons />} />
-              <Route path="transactions" element={<Transactions />} />
-              <Route path="products" element={<Products />} />
-              <Route path="products/add" element={<AddProduct />} />
-              <Route path="products/:id/edit" element={<AddProduct />} />
-              <Route path="products/media" element={<ProductMedia />} />
-              <Route path="products/reviews" element={<ProductReviews />} />
-              <Route path="categories" element={<Categories />} />
-              <Route path="brands" element={<Brands />} />
-              <Route path="home-banners" element={<HomeBanners />} />
-              <Route path="roles" element={<AdminRole />} />
-              <Route path="authority" element={<Authority />} />
-              <Route path="profile" element={<Profile />} />
-              <Route path="settings" element={<Settings />} />
+              
+              <Route element={<RequirePermission adminOnly />}>
+                <Route path="dashboard" element={<Dashboard />} />
+                <Route path="customers" element={<Customers />} />
+                <Route path="transactions" element={<Transactions />} />
+                <Route path="categories" element={<Categories />} />
+                <Route path="home-banners" element={<HomeBanners />} />
+                <Route path="roles" element={<AdminRole />} />
+                <Route path="authority" element={<Authority />} />
+                <Route path="profile" element={<Profile />} />
+                <Route path="settings" element={<Settings />} />
+              </Route>
+
+              <Route element={<RequirePermission permission="ORDER_MANAGE" />}>
+                <Route path="orders" element={<Orders />} />
+              </Route>
+
+              <Route element={<RequirePermission permission="COUPON_MANAGE" />}>
+                <Route path="coupons" element={<Coupons />} />
+              </Route>
+
+              <Route element={<RequirePermission permission="PRODUCT_MANAGE" />}>
+                <Route path="products" element={<Products />} />
+                <Route path="products/add" element={<AddProduct />} />
+                <Route path="products/:id/edit" element={<AddProduct />} />
+                <Route path="products/media" element={<ProductMedia />} />
+                <Route path="products/reviews" element={<ProductReviews />} />
+              </Route>
+
+              <Route element={<RequirePermission permission="BRAND_MANAGE" />}>
+                <Route path="brands" element={<Brands />} />
+              </Route>
+
             </Route>
           </Route>
             </Routes>

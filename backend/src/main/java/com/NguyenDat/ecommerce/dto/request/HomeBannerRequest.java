@@ -26,7 +26,7 @@ public class HomeBannerRequest {
     String imageUrl;
     String mobileImageUrl;
     String backgroundColor;
-    
+
     boolean active;
     LocalDateTime startsAt;
     LocalDateTime endsAt;

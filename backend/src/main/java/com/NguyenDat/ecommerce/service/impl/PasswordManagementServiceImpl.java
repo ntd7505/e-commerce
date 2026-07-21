@@ -82,7 +82,8 @@ public class PasswordManagementServiceImpl implements PasswordManagementService 
     @Override
     @Transactional
     public void requestPasswordReset(ForgotPasswordRequest request) {
-        User user = userRepository.findByEmailAndDeletedFalse(request.getEmail()).orElse(null);
+        User user =
+                userRepository.findByEmailAndDeletedFalse(request.getEmail()).orElse(null);
         if (user == null || isResendCooldownActive(user) || hasReachedResetRequestLimit(user)) {
             return;
         }
@@ -155,7 +156,9 @@ public class PasswordManagementServiceImpl implements PasswordManagementService 
                 .findTopByUserIdOrderByCreatedAtDesc(user.getId())
                 .filter(token -> token.getUsedAt() == null)
                 .filter(token -> token.getCreatedAt() != null)
-                .filter(token -> token.getCreatedAt().plusSeconds(resetCodeResendCooldownSeconds).isAfter(LocalDateTime.now()))
+                .filter(token -> token.getCreatedAt()
+                        .plusSeconds(resetCodeResendCooldownSeconds)
+                        .isAfter(LocalDateTime.now()))
                 .isPresent();
     }
 

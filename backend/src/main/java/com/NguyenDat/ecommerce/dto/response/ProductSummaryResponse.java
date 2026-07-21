@@ -1,6 +1,7 @@
 package com.NguyenDat.ecommerce.dto.response;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -15,6 +16,7 @@ public class ProductSummaryResponse {
     String name;
     String slug;
     String thumbnailUrl;
+    List<String> imageUrls;
     BigDecimal price;
     BigDecimal salePrice;
 }

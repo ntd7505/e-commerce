@@ -18,11 +18,11 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.NguyenDat.ecommerce.controller.client.ClientUserController;
 import com.NguyenDat.ecommerce.dto.request.UserUpdateRequest;
-import com.NguyenDat.ecommerce.dto.request.auth.UserRegisterRequest;
 import com.NguyenDat.ecommerce.dto.request.auth.ChangePasswordRequest;
+import com.NguyenDat.ecommerce.dto.request.auth.UserRegisterRequest;
 import com.NguyenDat.ecommerce.dto.response.UserResponse;
-import com.NguyenDat.ecommerce.service.UserService;
 import com.NguyenDat.ecommerce.service.PasswordManagementService;
+import com.NguyenDat.ecommerce.service.UserService;
 
 import tools.jackson.databind.ObjectMapper;
 

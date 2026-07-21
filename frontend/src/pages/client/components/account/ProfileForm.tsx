@@ -184,8 +184,8 @@ export default function ProfileForm() {
   }
 
   return (
-    <div className="flex flex-col-reverse lg:flex-row gap-8 lg:items-start w-full">
-      <div className="flex-1 w-full lg:max-w-2xl">
+    <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 lg:gap-8 lg:items-start w-full">
+      <div className="xl:col-span-2 w-full lg:max-w-2xl order-2 xl:order-1">
         {successMsg && (
           <div role="status" className="mb-8 p-4 bg-success-soft text-green-800 rounded-xl border border-success-soft text-sm flex items-start gap-3 shadow-sm">
             <CheckCircle2 className="w-5 h-5 text-success shrink-0 mt-0.5" /> 
@@ -319,9 +319,11 @@ export default function ProfileForm() {
         </form>
       </div>
 
-      <div className="hidden lg:block w-px bg-surface-alt self-stretch mx-6"></div>
-      
-      <AvatarPreview avatarUrl={formData.avatarUrl} onChange={handleAvatarChange} />
+      <div className="xl:col-span-1 w-full order-1 xl:order-2">
+        <div className="bg-surface lg:rounded-2xl lg:border border-border p-6 h-full flex flex-col items-center justify-center">
+          <AvatarPreview avatarUrl={formData.avatarUrl} onChange={handleAvatarChange} />
+        </div>
+      </div>
     </div>
   );
 }

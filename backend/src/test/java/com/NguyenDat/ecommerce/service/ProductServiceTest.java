@@ -400,7 +400,8 @@ public class ProductServiceTest {
         when(productRepository.findByIdAndDeletedFalse(10L)).thenReturn(Optional.of(product));
         when(productDescriptionBlockRepository.findAllByProductIdAndDeletedFalseOrderBySortOrderAsc(10L))
                 .thenReturn(List.of(existingBlock));
-        when(productDescriptionBlockMapper.toProductDescriptionBlock(blockRequest)).thenReturn(newBlock);
+        when(productDescriptionBlockMapper.toProductDescriptionBlock(blockRequest))
+                .thenReturn(newBlock);
         when(productMapper.toProductResponse(product)).thenReturn(productResponse);
 
         ProductResponse result = productService.updateProductDescriptionBlocks(10L, request);
@@ -437,7 +438,8 @@ public class ProductServiceTest {
         when(productRepository.findByIdAndDeletedFalse(10L)).thenReturn(Optional.of(product));
         when(productSpecificationRepository.findAllByProductIdAndDeletedFalseOrderBySortOrderAsc(10L))
                 .thenReturn(List.of(existingSpecification));
-        when(productSpecificationMapper.toProductSpecification(specificationRequest)).thenReturn(newSpecification);
+        when(productSpecificationMapper.toProductSpecification(specificationRequest))
+                .thenReturn(newSpecification);
         when(productMapper.toProductResponse(product)).thenReturn(productResponse);
 
         ProductResponse result = productService.updateProductSpecifications(10L, request);

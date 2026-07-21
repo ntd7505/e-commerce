@@ -50,7 +50,8 @@ class ClientCouponServiceTest {
     void getAvailableCoupons_shouldMapAvailableCoupons() {
         Coupon coupon = coupon(1L);
         CouponResponse response = CouponResponse.builder().id(1L).code("SALE10").build();
-        when(couponRepository.findAvailableClientCoupons(any(LocalDateTime.class))).thenReturn(List.of(coupon));
+        when(couponRepository.findAvailableClientCoupons(any(LocalDateTime.class)))
+                .thenReturn(List.of(coupon));
         when(couponMapper.toCouponResponse(coupon)).thenReturn(response);
 
         assertEquals(List.of(response), clientCouponService.getAvailableCoupons());
@@ -77,7 +78,8 @@ class ClientCouponServiceTest {
     void validateCoupon_shouldDelegatePreviewCalculationWithoutRecordingUsage() {
         User user = User.builder().id(1L).build();
         Coupon coupon = coupon(1L);
-        CouponResponse couponResponse = CouponResponse.builder().id(1L).code("SALE10").build();
+        CouponResponse couponResponse =
+                CouponResponse.builder().id(1L).code("SALE10").build();
         CouponValidationRequest request = CouponValidationRequest.builder()
                 .code("sale10")
                 .subtotalAmount(BigDecimal.valueOf(500_000))

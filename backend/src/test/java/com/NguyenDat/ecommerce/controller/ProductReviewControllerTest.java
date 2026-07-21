@@ -79,7 +79,8 @@ class ProductReviewControllerTest {
     void getReviewsAndSummary_shouldReturnProductReviewData() throws Exception {
         when(productReviewService.getReviews(eq(1L), any(ProductReviewFilterRequest.class)))
                 .thenReturn(PageResponse.<ProductReviewResponse>builder()
-                        .content(List.of(ProductReviewResponse.builder().id(2L).rating(4).build()))
+                        .content(List.of(
+                                ProductReviewResponse.builder().id(2L).rating(4).build()))
                         .page(0)
                         .size(10)
                         .totalElements(1)
@@ -125,7 +126,8 @@ class ProductReviewControllerTest {
     void getMyReviews_shouldReturnPagedCurrentUserReviews() throws Exception {
         when(productReviewService.getMyReviews(any()))
                 .thenReturn(PageResponse.<ProductReviewResponse>builder()
-                        .content(List.of(ProductReviewResponse.builder().id(5L).rating(5).build()))
+                        .content(List.of(
+                                ProductReviewResponse.builder().id(5L).rating(5).build()))
                         .page(0)
                         .size(10)
                         .totalElements(1)

@@ -1,10 +1,10 @@
-import { apiClient } from '../../../api/apiClient';
+import { publicClient } from '../../../api/publicClient';
 import type { ApiResponse } from '../../../types/api';
 
 import type { HomeBanner } from './types';
 
 export const clientHomeBannerApi = {
   getActiveBanners: () => {
-    return apiClient.get<ApiResponse<HomeBanner[]>>('/api/v1/client/home-banners');
+    return publicClient.get<ApiResponse<HomeBanner[]>>('/api/v1/client/home-banners');
   },
 };

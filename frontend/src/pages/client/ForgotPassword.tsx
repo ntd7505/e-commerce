@@ -25,7 +25,7 @@ export default function ForgotPassword() {
       
       // Navigate to reset password page where they can enter the OTP
       navigate('/reset-password');
-    } catch (error) {
+    } catch {
       showToast('Có lỗi xảy ra, vui lòng thử lại sau', 'error');
     } finally {
       setIsLoading(false);

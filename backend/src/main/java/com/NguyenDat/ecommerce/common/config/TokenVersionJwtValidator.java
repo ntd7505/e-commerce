@@ -25,10 +25,13 @@ public class TokenVersionJwtValidator implements OAuth2TokenValidator<Jwt> {
 
     @Override
     public OAuth2TokenValidatorResult validate(Jwt token) {
-        User user = userRepository.findByEmailAndDeletedFalse(token.getSubject()).orElse(null);
+        User user =
+                userRepository.findByEmailAndDeletedFalse(token.getSubject()).orElse(null);
         Long tokenVersion = token.getClaim("tokenVersion");
 
-        if (user == null || user.getStatus() != Active.ACTIVE || !Objects.equals(user.getTokenVersion(), tokenVersion)) {
+        if (user == null
+                || user.getStatus() != Active.ACTIVE
+                || !Objects.equals(user.getTokenVersion(), tokenVersion)) {
             return OAuth2TokenValidatorResult.failure(INVALID_TOKEN);
         }
         return OAuth2TokenValidatorResult.success();

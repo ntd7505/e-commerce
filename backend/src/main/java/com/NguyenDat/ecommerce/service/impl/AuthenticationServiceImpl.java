@@ -210,8 +210,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
             String email = signedJWT.getJWTClaimsSet().getSubject();
             User user = userRepository
-                .findByEmailAndDeletedFalse(email)
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+                    .findByEmailAndDeletedFalse(email)
+                    .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
             Long tokenVersion = signedJWT.getJWTClaimsSet().getLongClaim("tokenVersion");
             if (!Objects.equals(user.getTokenVersion(), tokenVersion)) {

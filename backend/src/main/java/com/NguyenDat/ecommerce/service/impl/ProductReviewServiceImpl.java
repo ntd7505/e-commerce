@@ -1,5 +1,17 @@
 package com.NguyenDat.ecommerce.service.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.NguyenDat.ecommerce.common.dto.response.PageResponse;
 import com.NguyenDat.ecommerce.common.exception.AppException;
 import com.NguyenDat.ecommerce.common.exception.ErrorCode;
@@ -21,20 +33,10 @@ import com.NguyenDat.ecommerce.repository.UserRepository;
 import com.NguyenDat.ecommerce.repository.specification.ProductReviewSpecification;
 import com.NguyenDat.ecommerce.service.CurrentUserService;
 import com.NguyenDat.ecommerce.service.ProductReviewService;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -97,9 +99,7 @@ public class ProductReviewServiceImpl implements ProductReviewService {
         productReview.setMedia(productReviewMediaList);
 
         try {
-            return productReviewMapper.toProductReviewResponse(
-                    productReviewRepository.saveAndFlush(productReview)
-            );
+            return productReviewMapper.toProductReviewResponse(productReviewRepository.saveAndFlush(productReview));
         } catch (DataIntegrityViolationException exception) {
             throw new AppException(ErrorCode.REVIEW_ALREADY_EXISTS);
         }
@@ -114,8 +114,7 @@ public class ProductReviewServiceImpl implements ProductReviewService {
 
     @Override
     public ProductReviewSummaryResponse getReviewSummaryByProductId(Long productId) {
-        List<ProductReview> reviews =
-                productReviewRepository.findAllByProductIdAndDeletedFalseAndActiveTrue(productId);
+        List<ProductReview> reviews = productReviewRepository.findAllByProductIdAndDeletedFalseAndActiveTrue(productId);
 
         if (reviews.isEmpty()) {
             return emptySummary();
@@ -128,13 +127,11 @@ public class ProductReviewServiceImpl implements ProductReviewService {
         long twoStarCount = countRating(reviews, 2);
         long oneStarCount = countRating(reviews, 1);
 
-        double averageRating = reviews.stream()
-                .mapToInt(ProductReview::getRating)
-                .average()
-                .orElse(0D);
+        double averageRating =
+                reviews.stream().mapToInt(ProductReview::getRating).average().orElse(0D);
 
-        long totalMedia = productReviewMediaRepository
-                .countByReviewProductIdAndReviewDeletedFalseAndReviewActiveTrue(productId);
+        long totalMedia =
+                productReviewMediaRepository.countByReviewProductIdAndReviewDeletedFalseAndReviewActiveTrue(productId);
 
         return ProductReviewSummaryResponse.builder()
                 .averageRating(averageRating)
@@ -154,16 +151,9 @@ public class ProductReviewServiceImpl implements ProductReviewService {
     }
 
     @Override
-    public PageResponse<ProductReviewResponse> getReviews(
-            Long productId,
-            ProductReviewFilterRequest filter
-    ) {
+    public PageResponse<ProductReviewResponse> getReviews(Long productId, ProductReviewFilterRequest filter) {
         Specification<ProductReview> specification =
-                ProductReviewSpecification.filter(
-                        productId,
-                        filter.getRating(),
-                        filter.getHasMedia()
-                );
+                ProductReviewSpecification.filter(productId, filter.getRating(), filter.getHasMedia());
 
         Page<ProductReviewResponse> page = productReviewRepository
                 .findAll(specification, filter.toPageable())
@@ -173,15 +163,9 @@ public class ProductReviewServiceImpl implements ProductReviewService {
     }
 
     @Override
-    public PageResponse<ProductReviewMediaResponse> getReviewMedia(
-            Long productId,
-            Pageable pageable
-    ) {
+    public PageResponse<ProductReviewMediaResponse> getReviewMedia(Long productId, Pageable pageable) {
         Page<ProductReviewMediaResponse> page = productReviewMediaRepository
-                .findAllByReviewProductIdAndReviewDeletedFalseAndReviewActiveTrue(
-                        productId,
-                        pageable
-                )
+                .findAllByReviewProductIdAndReviewDeletedFalseAndReviewActiveTrue(productId, pageable)
                 .map(productReviewMapper::toProductReviewMediaResponse);
 
         return PageResponse.from(page);
@@ -191,11 +175,9 @@ public class ProductReviewServiceImpl implements ProductReviewService {
     public ProductReviewEligibilityResponse getReviewEligibility(Long productId) {
         User user = currentUserService.getCurrentUser();
 
-        List<OrderItem> items = orderItemRepository
-                .findAllByOrderUserIdAndProductVariantProductIdOrderByOrderCreatedAtDesc(
-                        user.getId(),
-                        productId
-                );
+        List<OrderItem> items =
+                orderItemRepository.findAllByOrderUserIdAndProductVariantProductIdOrderByOrderCreatedAtDesc(
+                        user.getId(), productId);
 
         if (items.isEmpty()) {
             return eligibility(false, null, "NOT_PURCHASED");
@@ -208,8 +190,8 @@ public class ProductReviewServiceImpl implements ProductReviewService {
             }
         }
 
-        boolean hasCompletedOrder = items.stream()
-                .anyMatch(item -> item.getOrder().getStatus() == OrderStatus.COMPLETED);
+        boolean hasCompletedOrder =
+                items.stream().anyMatch(item -> item.getOrder().getStatus() == OrderStatus.COMPLETED);
 
         return hasCompletedOrder
                 ? eligibility(false, null, "ALREADY_REVIEWED")
@@ -238,7 +220,8 @@ public class ProductReviewServiceImpl implements ProductReviewService {
     @Override
     @Transactional
     public ProductReviewResponse moderateReview(Long reviewId, ProductReviewModerationRequest request) {
-        ProductReview review = productReviewRepository.findById(reviewId)
+        ProductReview review = productReviewRepository
+                .findById(reviewId)
                 .filter(item -> !item.isDeleted())
                 .orElseThrow(() -> new AppException(ErrorCode.REVIEW_NOT_FOUND));
 
@@ -249,7 +232,8 @@ public class ProductReviewServiceImpl implements ProductReviewService {
     @Override
     @Transactional
     public void deleteReviewForAdmin(Long reviewId) {
-        ProductReview review = productReviewRepository.findById(reviewId)
+        ProductReview review = productReviewRepository
+                .findById(reviewId)
                 .filter(item -> !item.isDeleted())
                 .orElseThrow(() -> new AppException(ErrorCode.REVIEW_NOT_FOUND));
 
@@ -258,11 +242,7 @@ public class ProductReviewServiceImpl implements ProductReviewService {
         productReviewRepository.save(review);
     }
 
-    private ProductReviewEligibilityResponse eligibility(
-            boolean eligible,
-            Long orderItemId,
-            String reason
-    ) {
+    private ProductReviewEligibilityResponse eligibility(boolean eligible, Long orderItemId, String reason) {
         return ProductReviewEligibilityResponse.builder()
                 .eligible(eligible)
                 .orderItemId(orderItemId)
@@ -271,9 +251,7 @@ public class ProductReviewServiceImpl implements ProductReviewService {
     }
 
     private long countRating(List<ProductReview> reviews, int rating) {
-        return reviews.stream()
-                .filter(review -> review.getRating() == rating)
-                .count();
+        return reviews.stream().filter(review -> review.getRating() == rating).count();
     }
 
     private double calculatePercent(long count, long total) {

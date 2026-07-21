@@ -1,7 +1,5 @@
 package com.NguyenDat.ecommerce.service.impl;
 
-import java.time.LocalDateTime;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -44,16 +42,16 @@ public class AdminPaymentServiceImpl implements AdminPaymentService {
 
     @Override
     public PaymentResponse getPaymentById(Long id) {
-        Payment payment = paymentRepository.findById(id)
-                .orElseThrow(() -> new AppException(ErrorCode.PAYMENT_NOT_FOUND));
+        Payment payment =
+                paymentRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.PAYMENT_NOT_FOUND));
         return toEnrichedResponse(payment);
     }
 
     @Override
     @Transactional
     public PaymentResponse updatePaymentStatus(Long id, PaymentUpdateRequest request) {
-        Payment payment = paymentRepository.findById(id)
-                .orElseThrow(() -> new AppException(ErrorCode.PAYMENT_NOT_FOUND));
+        Payment payment =
+                paymentRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.PAYMENT_NOT_FOUND));
 
         if (request.getStatus() == PaymentStatus.PAID && payment.getPaidAt() == null) {
             orderPaymentService.markPaid(payment.getOrder());
@@ -64,7 +62,7 @@ public class AdminPaymentServiceImpl implements AdminPaymentService {
         }
 
         Payment savedPayment = paymentRepository.save(payment);
-        
+
         // Sync Order payment status
         if (savedPayment.getOrder() != null) {
             Order order = savedPayment.getOrder();

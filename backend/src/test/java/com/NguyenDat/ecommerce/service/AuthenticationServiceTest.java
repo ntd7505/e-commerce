@@ -267,7 +267,8 @@ public class AuthenticationServiceTest {
         when(userRepository.findByEmailAndDeletedFalse("admin@gmail.com")).thenReturn(Optional.of(user));
         when(invalidatedTokenRepository.existsById(anyString())).thenReturn(false);
 
-        AppException exception = assertThrows(AppException.class, () -> authenticationService.introspect(introspectRequest));
+        AppException exception =
+                assertThrows(AppException.class, () -> authenticationService.introspect(introspectRequest));
 
         assertEquals(ErrorCode.TOKEN_BLACKLISTED, exception.getErrorCode());
     }

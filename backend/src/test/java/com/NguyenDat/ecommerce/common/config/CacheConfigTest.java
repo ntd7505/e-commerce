@@ -29,13 +29,9 @@ class CacheConfigTest {
         var serializationPair = configuration.getValueSerializationPair();
         Object result = serializationPair.read(serializationPair.write(product));
 
-        assertEquals(
-                Duration.ofMinutes(15),
-                configuration.getTtlFunction().getTimeToLive("airpods-pro-2", product));
+        assertEquals(Duration.ofMinutes(15), configuration.getTtlFunction().getTimeToLive("airpods-pro-2", product));
         assertFalse(configuration.getAllowCacheNullValues());
-        assertEquals(
-                "ecommerce:test:v2:cache:product-details::",
-                configuration.getKeyPrefixFor("product-details"));
+        assertEquals("ecommerce:test:v2:cache:product-details::", configuration.getKeyPrefixFor("product-details"));
         ProductResponse cachedProduct = assertInstanceOf(ProductResponse.class, result);
         assertEquals("airpods-pro-2", cachedProduct.getSlug());
         assertInstanceOf(
@@ -58,8 +54,7 @@ class CacheConfigTest {
         Object result = serializationPair.read(serializationPair.write(categories));
 
         ArrayList<?> cachedCategories = assertInstanceOf(ArrayList.class, result);
-        CategoryResponse cachedCategory =
-                assertInstanceOf(CategoryResponse.class, cachedCategories.getFirst());
+        CategoryResponse cachedCategory = assertInstanceOf(CategoryResponse.class, cachedCategories.getFirst());
         assertEquals("dien-thoai", cachedCategory.getSlug());
     }
 }

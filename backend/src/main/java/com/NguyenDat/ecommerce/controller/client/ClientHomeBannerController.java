@@ -27,7 +27,7 @@ public class ClientHomeBannerController {
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<HomeBannerResponse>>> getActiveBanners() {
-        return ResponseEntity.ok(ApiResponse.ofList(
-                ResponseCode.HOME_BANNERS_FETCHED, homeBannerService.getActiveClientBanners()));
+        return ResponseEntity.ok(
+                ApiResponse.ofList(ResponseCode.HOME_BANNERS_FETCHED, homeBannerService.getActiveClientBanners()));
     }
 }

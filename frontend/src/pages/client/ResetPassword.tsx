@@ -25,6 +25,7 @@ export default function ResetPassword() {
   useEffect(() => {
     const savedEmail = sessionStorage.getItem('nexamart_password_reset_email');
     if (savedEmail) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setEmail(savedEmail);
     }
 
@@ -57,6 +58,7 @@ export default function ResetPassword() {
     }
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const parseError = (err: any) => {
     const errorCode = err?.response?.data?.code || err?.message;
     switch (errorCode) {
@@ -92,6 +94,7 @@ export default function ResetPassword() {
       sessionStorage.removeItem('nexamart_password_reset_timestamp');
       showToast('Đổi mật khẩu thành công', 'success');
       navigate('/login?passwordChanged=1');
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       setError(parseError(err));
     } finally {

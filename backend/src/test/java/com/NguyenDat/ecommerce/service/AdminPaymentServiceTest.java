@@ -1,5 +1,18 @@
 package com.NguyenDat.ecommerce.service;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
+import java.util.Optional;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
 import com.NguyenDat.ecommerce.dto.request.PaymentUpdateRequest;
 import com.NguyenDat.ecommerce.dto.response.PaymentResponse;
 import com.NguyenDat.ecommerce.entity.Order;
@@ -9,18 +22,6 @@ import com.NguyenDat.ecommerce.mapper.PaymentMapper;
 import com.NguyenDat.ecommerce.repository.OrderRepository;
 import com.NguyenDat.ecommerce.repository.PaymentRepository;
 import com.NguyenDat.ecommerce.service.impl.AdminPaymentServiceImpl;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class AdminPaymentServiceTest {
@@ -61,9 +62,11 @@ class AdminPaymentServiceTest {
         request.setStatus(PaymentStatus.PAID);
 
         doAnswer(invocation -> {
-            payment.setStatus(PaymentStatus.PAID);
-            return null;
-        }).when(orderPaymentService).markPaid(order);
+                    payment.setStatus(PaymentStatus.PAID);
+                    return null;
+                })
+                .when(orderPaymentService)
+                .markPaid(order);
 
         when(paymentRepository.findById(1L)).thenReturn(Optional.of(payment));
         when(paymentRepository.save(any(Payment.class))).thenReturn(payment);
@@ -82,9 +85,11 @@ class AdminPaymentServiceTest {
         request.setStatus(PaymentStatus.CANCELLED);
 
         doAnswer(invocation -> {
-            payment.setStatus(PaymentStatus.CANCELLED);
-            return null;
-        }).when(orderPaymentService).markCancelled(order);
+                    payment.setStatus(PaymentStatus.CANCELLED);
+                    return null;
+                })
+                .when(orderPaymentService)
+                .markCancelled(order);
 
         when(paymentRepository.findById(1L)).thenReturn(Optional.of(payment));
         when(paymentRepository.save(any(Payment.class))).thenReturn(payment);

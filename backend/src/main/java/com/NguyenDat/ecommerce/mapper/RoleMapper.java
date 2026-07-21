@@ -24,9 +24,7 @@ public interface RoleMapper {
 
     default Set<String> mapRoles(Set<Permission> permissions) {
         if (permissions == null) return new HashSet<>();
-        return permissions.stream()
-                .map(Permission::getName)
-                .collect(Collectors.toSet());
+        return permissions.stream().map(Permission::getName).collect(Collectors.toSet());
     }
 
     default Set<PermissionResponse> mapPermissions(Set<Permission> permissions) {

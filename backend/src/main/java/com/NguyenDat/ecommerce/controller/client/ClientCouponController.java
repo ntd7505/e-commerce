@@ -29,23 +29,20 @@ public class ClientCouponController {
 
     @GetMapping("/coupons/available")
     public ResponseEntity<ApiResponse<List<CouponResponse>>> getAvailableCoupons() {
-        return ResponseEntity.ok(ApiResponse.ofList(
-                ResponseCode.AVAILABLE_COUPONS_FETCHED,
-                clientCouponService.getAvailableCoupons()));
+        return ResponseEntity.ok(
+                ApiResponse.ofList(ResponseCode.AVAILABLE_COUPONS_FETCHED, clientCouponService.getAvailableCoupons()));
     }
 
     @GetMapping("/coupons/my")
     public ResponseEntity<ApiResponse<List<CouponResponse>>> getMyCoupons() {
-        return ResponseEntity.ok(ApiResponse.ofList(
-                ResponseCode.MY_COUPONS_FETCHED,
-                clientCouponService.getMyCoupons()));
+        return ResponseEntity.ok(
+                ApiResponse.ofList(ResponseCode.MY_COUPONS_FETCHED, clientCouponService.getMyCoupons()));
     }
 
     @PostMapping("/coupons/validate")
     public ResponseEntity<ApiResponse<CouponValidationResponse>> validateCoupon(
             @RequestBody @Valid CouponValidationRequest request) {
-        return ResponseEntity.ok(ApiResponse.of(
-                ResponseCode.COUPON_VALIDATED,
-                clientCouponService.validateCoupon(request)));
+        return ResponseEntity.ok(
+                ApiResponse.of(ResponseCode.COUPON_VALIDATED, clientCouponService.validateCoupon(request)));
     }
 }

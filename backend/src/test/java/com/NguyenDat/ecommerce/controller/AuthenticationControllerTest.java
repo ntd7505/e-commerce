@@ -265,7 +265,8 @@ public class AuthenticationControllerTest {
 
     @Test
     void forgotPassword_shouldReturnGenericSuccessResponse() throws Exception {
-        ForgotPasswordRequest request = ForgotPasswordRequest.builder().email("customer@example.com").build();
+        ForgotPasswordRequest request =
+                ForgotPasswordRequest.builder().email("customer@example.com").build();
 
         mockMvc.perform(post("/api/v1/auth/forgot-password")
                         .contentType(APPLICATION_JSON)

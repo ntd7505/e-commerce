@@ -39,11 +39,9 @@ public class AdminProductReviewController {
 
     @PatchMapping("/product-reviews/{reviewId}/moderation")
     public ResponseEntity<ApiResponse<ProductReviewResponse>> moderateReview(
-            @PathVariable Long reviewId,
-            @RequestBody @Valid ProductReviewModerationRequest request) {
+            @PathVariable Long reviewId, @RequestBody @Valid ProductReviewModerationRequest request) {
         return ResponseEntity.ok(ApiResponse.of(
-                ResponseCode.PRODUCT_REVIEW_MODERATED,
-                productReviewService.moderateReview(reviewId, request)));
+                ResponseCode.PRODUCT_REVIEW_MODERATED, productReviewService.moderateReview(reviewId, request)));
     }
 
     @DeleteMapping("/product-reviews/{reviewId}")

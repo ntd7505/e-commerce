@@ -17,8 +17,7 @@ import tools.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
 public class CacheConfig {
 
     @Bean
-    RedisCacheConfiguration redisCacheConfiguration(
-            @Value("${app.cache.key-prefix}") String keyPrefix) {
+    RedisCacheConfiguration redisCacheConfiguration(@Value("${app.cache.key-prefix}") String keyPrefix) {
         var validator = BasicPolymorphicTypeValidator.builder()
                 .allowIfSubType("com.NguyenDat.ecommerce")
                 .allowIfSubType("java.util")
@@ -33,7 +32,6 @@ public class CacheConfig {
                 .entryTtl(Duration.ofMinutes(15))
                 .disableCachingNullValues()
                 .prefixCacheNameWith(keyPrefix)
-                .serializeValuesWith(
-                        RedisSerializationContext.SerializationPair.fromSerializer(serializer));
+                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(serializer));
     }
 }

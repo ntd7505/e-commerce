@@ -1,5 +1,12 @@
 package com.NguyenDat.ecommerce.service.impl;
 
+import java.math.BigDecimal;
+
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.NguyenDat.ecommerce.common.exception.AppException;
 import com.NguyenDat.ecommerce.common.exception.ErrorCode;
 import com.NguyenDat.ecommerce.dto.request.CartItemRequest;
@@ -16,15 +23,10 @@ import com.NguyenDat.ecommerce.repository.CartRepository;
 import com.NguyenDat.ecommerce.repository.ProductVariantRepository;
 import com.NguyenDat.ecommerce.repository.UserRepository;
 import com.NguyenDat.ecommerce.service.CartService;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigDecimal;
 
 @Service
 @RequiredArgsConstructor
@@ -181,7 +183,7 @@ public class CartServiceImpl implements CartService {
 
                 int newQuantity = cartItem.getQuantity() + itemReq.getQuantity();
                 int clampedQuantity = Math.min(newQuantity, productVariant.getStockQuantity());
-                
+
                 if (clampedQuantity > 0) {
                     cartItem.setQuantity(clampedQuantity);
                     cartItem.setUnitPrice(BigDecimal.valueOf(getCurrentPrice(productVariant)));

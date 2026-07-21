@@ -2,6 +2,7 @@ package com.NguyenDat.ecommerce.service.impl;
 
 import java.time.LocalDateTime;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.NguyenDat.ecommerce.common.exception.AppException;
@@ -11,8 +12,6 @@ import com.NguyenDat.ecommerce.entity.Payment;
 import com.NguyenDat.ecommerce.enums.PaymentMethod;
 import com.NguyenDat.ecommerce.enums.PaymentStatus;
 import com.NguyenDat.ecommerce.service.OrderPaymentService;
-
-import org.springframework.beans.factory.annotation.Value;
 
 @Service
 public class OrderPaymentServiceImpl implements OrderPaymentService {
@@ -86,8 +85,7 @@ public class OrderPaymentServiceImpl implements OrderPaymentService {
                     qrTemplate,
                     response.getAmount().toPlainString(),
                     response.getTransactionCode(),
-                    java.net.URLEncoder.encode(bankAccountName, java.nio.charset.StandardCharsets.UTF_8)
-            );
+                    java.net.URLEncoder.encode(bankAccountName, java.nio.charset.StandardCharsets.UTF_8));
             response.setQrCodeUrl(qrUrl);
         }
     }

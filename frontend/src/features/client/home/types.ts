@@ -11,6 +11,7 @@ export interface ProductSummary {
   name: string;
   slug: string;
   thumbnailUrl?: string;
+  imageUrls?: string[];
   price?: number;
   salePrice?: number;
 }

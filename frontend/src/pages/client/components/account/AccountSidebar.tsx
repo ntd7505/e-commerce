@@ -2,6 +2,8 @@ import { User as UserIcon, Package, MapPin, Star, Ticket, LogOut, ShieldCheck } 
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../../../features/auth/AuthProvider';
 
+import { canAccessAdmin, getFirstAdminRoute } from '../../../../features/auth/authHelpers';
+
 type ActiveKey = 'profile' | 'orders' | 'addresses' | 'reviews' | 'coupons';
 
 function resolveActiveKey(pathname: string): ActiveKey {
@@ -19,7 +21,8 @@ export default function AccountSidebar() {
 
   if (!user) return null;
 
-  const isAdmin = user.roles && user.roles.length > 0;
+  const showAdminLink = canAccessAdmin(user);
+  const adminRoute = getFirstAdminRoute(user);
 
   const baseItem =
     'flex items-center gap-3 px-5 py-3 lg:py-3.5 lg:rounded-lg lg:border-b-0 border-b-2 whitespace-nowrap transition-colors';
@@ -93,10 +96,10 @@ export default function AccountSidebar() {
             Mã giảm giá
           </Link>
         </li>
-        {isAdmin && (
+        {showAdminLink && (
           <li className="shrink-0 lg:w-full lg:border-t border-border lg:mt-3 lg:pt-3">
             <Link
-              to="/admin/dashboard"
+              to={adminRoute}
               className={idleItem}
             >
               <ShieldCheck className="w-5 h-5 hidden lg:block" />
@@ -104,7 +107,7 @@ export default function AccountSidebar() {
             </Link>
           </li>
         )}
-        <li className={`shrink-0 lg:w-full ${isAdmin ? '' : 'lg:border-t border-border lg:mt-3 lg:pt-3'}`}>
+        <li className={`shrink-0 lg:w-full ${showAdminLink ? '' : 'lg:border-t border-border lg:mt-3 lg:pt-3'}`}>
           <button 
             onClick={logout} 
             className="w-full flex items-center gap-3 px-5 py-3 lg:py-3.5 lg:rounded-lg text-muted font-medium hover:text-danger hover:bg-danger-soft transition-colors lg:border-b-0 border-b-2 border-transparent text-left cursor-pointer whitespace-nowrap focus-visible:outline-none focus-visible:bg-danger-soft"

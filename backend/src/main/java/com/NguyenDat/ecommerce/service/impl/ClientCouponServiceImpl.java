@@ -55,18 +55,14 @@ public class ClientCouponServiceImpl implements ClientCouponService {
             }
         }
 
-        return coupons.values().stream()
-                .map(couponMapper::toCouponResponse)
-                .toList();
+        return coupons.values().stream().map(couponMapper::toCouponResponse).toList();
     }
 
     @Override
     public CouponValidationResponse validateCoupon(CouponValidationRequest request) {
         User user = currentUserService.getCurrentUser();
-        CouponCalculation calculation = couponApplicationService.calculateForPreview(
-                request.getCode(),
-                user,
-                request.getSubtotalAmount());
+        CouponCalculation calculation =
+                couponApplicationService.calculateForPreview(request.getCode(), user, request.getSubtotalAmount());
 
         return CouponValidationResponse.builder()
                 .coupon(couponMapper.toCouponResponse(calculation.coupon()))

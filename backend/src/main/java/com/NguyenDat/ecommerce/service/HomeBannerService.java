@@ -13,18 +13,18 @@ import com.NguyenDat.ecommerce.enums.BannerPosition;
 
 public interface HomeBannerService {
     Page<HomeBannerResponse> getAdminBanners(BannerPosition position, Boolean active, Pageable pageable);
-    
+
     List<HomeBannerResponse> getActiveClientBanners();
-    
+
     HomeBannerResponse getBannerById(Long id);
-    
+
     HomeBannerResponse createBanner(HomeBannerRequest request);
-    
+
     HomeBannerResponse updateBanner(Long id, HomeBannerRequest request);
-    
+
     HomeBannerResponse updateBannerStatus(Long id, HomeBannerStatusRequest request);
-    
+
     void deleteBanner(Long id);
-    
+
     void reorderHeroBanners(ReorderBannersRequest request);
 }

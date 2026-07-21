@@ -38,7 +38,6 @@ public class OrderCreationServiceImpl implements OrderCreationService {
     CouponApplicationService couponApplicationService;
     OrderStatusHistoryService orderStatusHistoryService;
 
-
     @Override
     @Transactional
     public Order create(User user, CheckoutRequest request, CheckoutCalculation checkout) {
@@ -61,12 +60,7 @@ public class OrderCreationServiceImpl implements OrderCreationService {
                 savedOrder, user, new CouponCalculation(checkout.getCoupon(), checkout.getDiscountAmount()));
 
         Order finalOrder = orderRepository.save(savedOrder);
-        orderStatusHistoryService.record(
-                finalOrder,
-                user,
-                null,
-                OrderStatus.PENDING,
-                "Customer placed order");
+        orderStatusHistoryService.record(finalOrder, user, null, OrderStatus.PENDING, "Customer placed order");
 
         return finalOrder;
     }

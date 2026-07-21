@@ -5,6 +5,9 @@ import { cartApi } from '../../features/client/cart/cartApi';
 import type { AddressResponse } from '../../features/client/cart/cartTypes';
 import { useAuth } from '../../features/auth/AuthProvider';
 import { useCart } from '../../features/client/cart/CartProvider';
+import { useGuestDeliveryLocation } from '../../features/client/addresses/hooks/useGuestDeliveryLocation';
+import type { GuestDeliveryLocation } from '../../features/client/addresses/hooks/useGuestDeliveryLocation';
+import { buttonVariants } from '../../components/common/buttonVariants';
 
 const Header = () => {
   const navigate = useNavigate();
@@ -20,7 +23,18 @@ const Header = () => {
   const [addresses, setAddresses] = useState<AddressResponse[]>([]);
   const [loadingAddresses, setLoadingAddresses] = useState(false);
   const [showLocationMenu, setShowLocationMenu] = useState(false);
-  const [locationTimer, setLocationTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
+  const locationMenuRef = React.useRef<HTMLDivElement>(null);
+  const { location: guestLocation, setLocation: setGuestLocation, clearLocation: clearGuestLocation } = useGuestDeliveryLocation();
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (locationMenuRef.current && !locationMenuRef.current.contains(event.target as Node)) {
+        setShowLocationMenu(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   useEffect(() => {
     if (user) {
@@ -36,9 +50,13 @@ const Header = () => {
   }, [user]);
 
   const activeAddress = activeDeliveryAddress || addresses.find(a => a.isDefault) || addresses[0];
-  const locationText = user 
-    ? (activeAddress ? `${activeAddress.districtName}, ${activeAddress.provinceName}` : "Chọn địa chỉ") 
-    : "Thanh Xuân, HN";
+  
+  let locationText = "Chọn khu vực giao hàng";
+  if (user) {
+    locationText = activeAddress ? `${activeAddress.districtName}, ${activeAddress.provinceName}` : "Chọn địa chỉ";
+  } else if (guestLocation) {
+    locationText = `${guestLocation.districtName}, ${guestLocation.provinceName}`;
+  }
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -107,58 +125,66 @@ const Header = () => {
         <div className="flex-1 min-w-0 flex items-center justify-end gap-4 md:gap-6 shrink-0">
           {/* Location */}
           <div 
-            className="relative flex items-center gap-1.5 text-[var(--text-secondary)] text-sm cursor-pointer hover:text-[var(--text-primary)] transition-colors hidden md:flex"
-            onMouseEnter={() => {
-              if (locationTimer) clearTimeout(locationTimer);
-              setShowLocationMenu(true);
-            }}
-            onMouseLeave={() => {
-              const timer = setTimeout(() => setShowLocationMenu(false), 200);
-              setLocationTimer(timer);
-            }}
+            ref={locationMenuRef}
+            className="relative flex items-center gap-1.5 text-[var(--text-secondary)] text-sm hidden md:flex"
           >
-            <MapPin className="w-5 h-5 text-[var(--text-primary)]" />
-            <span className="max-w-[140px] truncate font-medium">{locationText}</span>
-            <ChevronDown className="w-3.5 h-3.5 opacity-60" />
+            <div 
+              className="flex items-center gap-1.5 cursor-pointer hover:text-[var(--text-primary)] transition-colors"
+              onClick={() => setShowLocationMenu(!showLocationMenu)}
+            >
+              <MapPin className="w-5 h-5 text-[var(--text-primary)]" />
+              <span className="max-w-[140px] truncate font-medium">{locationText}</span>
+              <ChevronDown className="w-3.5 h-3.5 opacity-60" />
+            </div>
 
             {/* Dropdown */}
-            {showLocationMenu && user && (
+            {showLocationMenu && (
               <div className="absolute top-full right-0 mt-3 w-80 bg-[var(--surface-0)] border border-[var(--border)] shadow-lg rounded-xl overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
-                <div className="p-3 bg-[var(--surface-1)] border-b border-[var(--border)]">
-                  <h4 className="font-bold text-[var(--text-primary)] text-sm">Địa chỉ giao hàng</h4>
-                </div>
-                <div className="max-h-[300px] overflow-y-auto p-2 scrollbar-thin scrollbar-thumb-[var(--border-strong)] scrollbar-track-transparent">
-                  {loadingAddresses ? (
-                    <div className="flex justify-center p-6"><Loader2 className="w-5 h-5 animate-spin text-[var(--text-muted)]" /></div>
-                  ) : addresses.length === 0 ? (
-                    <div className="p-6 text-center text-sm text-[var(--text-muted)]">Bạn chưa có địa chỉ nào.</div>
-                  ) : (
-                    addresses.map(addr => {
-                      const isActive = activeAddress?.id === addr.id;
-                      return (
-                        <div 
-                          key={addr.id}
-                          className={`cursor-pointer block p-3 rounded-lg flex items-start gap-3 transition-colors no-underline mb-1 ${isActive ? 'bg-[var(--color-primary-soft)]' : 'hover:bg-[var(--surface-1)]'}`}
-                          onClick={() => {
-                            setActiveDeliveryAddress(addr);
-                            setShowLocationMenu(false);
-                          }}
-                        >
-                           <MapPin className={`w-4 h-4 shrink-0 mt-0.5 ${isActive ? 'text-[var(--color-primary)]' : 'text-[var(--text-muted)]'}`} />
-                           <div className="flex-1 min-w-0">
-                             <div className="font-bold text-[var(--text-primary)] text-sm mb-0.5 flex justify-between items-center gap-2">
-                               <span className="truncate">{addr.recipientName}</span>
-                               {isActive && <Check className="w-4 h-4 text-[var(--color-primary)] shrink-0" />}
-                             </div>
-                             <div className="text-xs text-[var(--text-secondary)] line-clamp-2 leading-relaxed">
-                               {addr.fullAddress}, {addr.wardName}, {addr.districtName}, {addr.provinceName}
-                             </div>
-                           </div>
-                        </div>
-                      );
-                    })
-                  )}
-                </div>
+                {user ? (
+                  <>
+                    <div className="p-3 bg-[var(--surface-1)] border-b border-[var(--border)]">
+                      <h4 className="font-bold text-[var(--text-primary)] text-sm">Địa chỉ giao hàng</h4>
+                    </div>
+                    <div className="max-h-[300px] overflow-y-auto p-2 scrollbar-thin scrollbar-thumb-[var(--border-strong)] scrollbar-track-transparent">
+                      {loadingAddresses ? (
+                        <div className="flex justify-center p-6"><Loader2 className="w-5 h-5 animate-spin text-[var(--text-muted)]" /></div>
+                      ) : addresses.length === 0 ? (
+                        <div className="p-6 text-center text-sm text-[var(--text-muted)]">Bạn chưa có địa chỉ nào.</div>
+                      ) : (
+                        addresses.map(addr => {
+                          const isActive = activeAddress?.id === addr.id;
+                          return (
+                            <div 
+                              key={addr.id}
+                              className={`cursor-pointer block p-3 rounded-lg flex items-start gap-3 transition-colors no-underline mb-1 ${isActive ? 'bg-[var(--color-primary-soft)]' : 'hover:bg-[var(--surface-1)]'}`}
+                              onClick={() => {
+                                setActiveDeliveryAddress(addr);
+                                setShowLocationMenu(false);
+                              }}
+                            >
+                               <MapPin className={`w-4 h-4 shrink-0 mt-0.5 ${isActive ? 'text-[var(--color-primary)]' : 'text-[var(--text-muted)]'}`} />
+                               <div className="flex-1 min-w-0">
+                                 <div className="font-bold text-[var(--text-primary)] text-sm mb-0.5 flex justify-between items-center gap-2">
+                                   <span className="truncate">{addr.recipientName}</span>
+                                   {isActive && <Check className="w-4 h-4 text-[var(--color-primary)] shrink-0" />}
+                                 </div>
+                                 <div className="text-xs text-[var(--text-secondary)] line-clamp-2 leading-relaxed">
+                                   {addr.fullAddress}, {addr.wardName}, {addr.districtName}, {addr.provinceName}
+                                 </div>
+                               </div>
+                            </div>
+                          );
+                        })
+                      )}
+                    </div>
+                  </>
+                ) : (
+                  <GuestLocationSelector 
+                    initialLocation={guestLocation}
+                    onSave={(loc) => { setGuestLocation(loc); setShowLocationMenu(false); }}
+                    onClear={() => { clearGuestLocation(); setShowLocationMenu(false); }}
+                  />
+                )}
               </div>
             )}
           </div>
@@ -194,5 +220,86 @@ const Header = () => {
     </header>
   );
 };
+
+function GuestLocationSelector({ 
+  initialLocation, 
+  onSave, 
+  onClear 
+}: { 
+  initialLocation: GuestDeliveryLocation | null, 
+  onSave: (loc: GuestDeliveryLocation) => void, 
+  onClear: () => void 
+}) {
+  const [provinceName, setProvinceName] = React.useState(initialLocation?.provinceName || '');
+  const [districtName, setDistrictName] = React.useState(initialLocation?.districtName || '');
+  const [wardName, setWardName] = React.useState(initialLocation?.wardName || '');
+  const [error, setError] = React.useState('');
+
+  const handleSave = () => {
+    const p = provinceName.trim();
+    const d = districtName.trim();
+    const w = wardName.trim();
+    if (!p || !d) {
+      setError('Vui lòng nhập Tỉnh/Thành phố và Quận/Huyện');
+      return;
+    }
+    setError('');
+    onSave({ provinceName: p, districtName: d, wardName: w });
+  };
+
+  return (
+    <div className="p-4 bg-[var(--surface-0)]">
+      <h4 className="font-bold text-[var(--text-primary)] text-sm mb-4">Khu vực giao hàng</h4>
+      {error && <p className="text-[var(--color-danger)] text-xs mb-3">{error}</p>}
+      <div className="flex flex-col gap-3">
+        <div>
+          <input 
+            type="text" 
+            placeholder="Tỉnh/Thành phố" 
+            value={provinceName}
+            onChange={e => setProvinceName(e.target.value)}
+            className="w-full bg-[var(--surface-0)] border border-[var(--border)] rounded-md px-3 h-9 text-sm text-[var(--text-primary)] outline-none focus:border-[var(--color-primary)] transition-colors"
+          />
+        </div>
+        <div>
+          <input 
+            type="text" 
+            placeholder="Quận/Huyện" 
+            value={districtName}
+            onChange={e => setDistrictName(e.target.value)}
+            className="w-full bg-[var(--surface-0)] border border-[var(--border)] rounded-md px-3 h-9 text-sm text-[var(--text-primary)] outline-none focus:border-[var(--color-primary)] transition-colors"
+          />
+        </div>
+        <div>
+          <input 
+            type="text" 
+            placeholder="Phường/Xã (không bắt buộc)" 
+            value={wardName}
+            onChange={e => setWardName(e.target.value)}
+            className="w-full bg-[var(--surface-0)] border border-[var(--border)] rounded-md px-3 h-9 text-sm text-[var(--text-primary)] outline-none focus:border-[var(--color-primary)] transition-colors"
+          />
+        </div>
+        <div className="flex gap-2 mt-2">
+          <button 
+            type="button"
+            onClick={handleSave}
+            className={buttonVariants({ variant: 'primary', size: 'sm', fullWidth: true })}
+          >
+            Lưu khu vực
+          </button>
+          {initialLocation && (
+            <button 
+              type="button"
+              onClick={onClear}
+              className={buttonVariants({ variant: 'outline', size: 'sm', fullWidth: true })}
+            >
+              Xóa lựa chọn
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default Header;

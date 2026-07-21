@@ -34,13 +34,15 @@ public class EmailServiceImpl implements EmailService {
         message.setFrom(from);
         message.setTo(recipientEmail);
         message.setSubject("NexaMart - Mã đặt lại mật khẩu");
-        message.setText("""
-                Xin chào,
+        message.setText(
+                """
+				Xin chào,
 
-                Mã đặt lại mật khẩu NexaMart của bạn là: %s
+				Mã đặt lại mật khẩu NexaMart của bạn là: %s
 
-                Mã có hiệu lực trong 10 phút. Không chia sẻ mã này với bất kỳ ai.
-                """.formatted(code));
+				Mã có hiệu lực trong 10 phút. Không chia sẻ mã này với bất kỳ ai.
+				"""
+                        .formatted(code));
 
         try {
             mailSender.send(message);

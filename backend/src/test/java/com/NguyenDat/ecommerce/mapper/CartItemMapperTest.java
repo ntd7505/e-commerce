@@ -26,10 +26,7 @@ class CartItemMapperTest {
 
     @Test
     void toCartItemResponse_shouldPreferThumbnailMedia() {
-        CartItem item = cartItemWithMedia(List.of(
-                media("fallback.jpg", false, 0),
-                media("thumbnail.jpg", true, 10)
-        ));
+        CartItem item = cartItemWithMedia(List.of(media("fallback.jpg", false, 0), media("thumbnail.jpg", true, 10)));
 
         CartItemResponse result = mapper.toCartItemResponse(item);
 
@@ -39,10 +36,7 @@ class CartItemMapperTest {
 
     @Test
     void toCartItemResponse_shouldFallbackToFirstActiveMediaBySortOrder() {
-        CartItem item = cartItemWithMedia(List.of(
-                media("second.jpg", false, 2),
-                media("first.jpg", false, 1)
-        ));
+        CartItem item = cartItemWithMedia(List.of(media("second.jpg", false, 2), media("first.jpg", false, 1)));
 
         CartItemResponse result = mapper.toCartItemResponse(item);
 

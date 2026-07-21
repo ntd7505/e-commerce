@@ -9,6 +9,7 @@ import { AdminErrorBoundary } from '../../components/admin/AdminErrorBoundary';
 import { AdminImage } from '../../components/admin/AdminImage';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { clearAuthSession, getStoredUser } from '../../features/auth/authStorage';
+import { hasRole, hasPermission } from '../../features/auth/authHelpers';
 
 // ─── Sidebar primitives ───────────────────────────────────────────
 
@@ -239,79 +240,103 @@ export default function AdminLayout() {
         {/* Nav items */}
         <div className="flex-1 overflow-y-auto p-3">
           {/* ─── Overview ─── */}
-          <nav className="mb-4">
-            {!collapsed && (
-              <p className="px-3 mb-1.5 text-xs font-semibold text-muted">
-                {MENU_GROUPS[0].label}
-              </p>
-            )}
-            <SidebarItem collapsed={collapsed} to="/admin/dashboard" icon={LayoutDashboard} label="Dashboard" />
-          </nav>
+          {hasRole(user, 'ADMIN') && (
+            <nav className="mb-4">
+              {!collapsed && (
+                <p className="px-3 mb-1.5 text-xs font-semibold text-muted">
+                  {MENU_GROUPS[0].label}
+                </p>
+              )}
+              <SidebarItem collapsed={collapsed} to="/admin/dashboard" icon={LayoutDashboard} label="Dashboard" />
+            </nav>
+          )}
 
           {/* ─── Sales ─── */}
-          <nav className="mb-4">
-            {!collapsed && (
-              <p className="px-3 mb-1.5 text-xs font-semibold text-muted">
-                {MENU_GROUPS[1].label}
-              </p>
-            )}
-            <SidebarItem collapsed={collapsed} to="/admin/orders" icon={ShoppingCart} label="Orders" />
-            <SidebarItem collapsed={collapsed} to="/admin/transactions" icon={CreditCard} label="Transactions" />
-            <SidebarItem collapsed={collapsed} to="/admin/coupons" icon={Ticket} label="Coupons" />
-          </nav>
+          {(hasPermission(user, 'ORDER_MANAGE') || hasRole(user, 'ADMIN') || hasPermission(user, 'COUPON_MANAGE')) && (
+            <nav className="mb-4">
+              {!collapsed && (
+                <p className="px-3 mb-1.5 text-xs font-semibold text-muted">
+                  {MENU_GROUPS[1].label}
+                </p>
+              )}
+              {(hasPermission(user, 'ORDER_MANAGE') || hasRole(user, 'ADMIN')) && (
+                <SidebarItem collapsed={collapsed} to="/admin/orders" icon={ShoppingCart} label="Orders" />
+              )}
+              {hasRole(user, 'ADMIN') && (
+                <SidebarItem collapsed={collapsed} to="/admin/transactions" icon={CreditCard} label="Transactions" />
+              )}
+              {(hasPermission(user, 'COUPON_MANAGE') || hasRole(user, 'ADMIN')) && (
+                <SidebarItem collapsed={collapsed} to="/admin/coupons" icon={Ticket} label="Coupons" />
+              )}
+            </nav>
+          )}
 
           {/* ─── Catalog ─── */}
-          <nav className="mb-4">
-            {!collapsed && (
-              <p className="px-3 mb-1.5 text-xs font-semibold text-muted">
-                {MENU_GROUPS[2].label}
-              </p>
-            )}
-            <SidebarGroup
-              collapsed={collapsed}
-              icon={Package}
-              label="Products"
-              groupPrefix="/admin/products"
-              autoExpand={isProductsRoute}
-            >
-              <SidebarItem
-                collapsed={collapsed}
-                to="/admin/products"
-                icon={ClipboardList}
-                label="Product List"
-                alsoMatch={/^\/admin\/products\/\d+\/edit$/}
-              />
-              <SidebarItem collapsed={collapsed} to="/admin/products/add" icon={PlusSquare} label="Add Product" />
-              <SidebarItem collapsed={collapsed} to="/admin/products/media" icon={ImageIcon} label="Product Media" />
-              <SidebarItem collapsed={collapsed} to="/admin/products/reviews" icon={MessageSquare} label="Reviews" />
-            </SidebarGroup>
-            <SidebarItem collapsed={collapsed} to="/admin/categories" icon={LayoutGrid} label="Categories" />
-            <SidebarItem collapsed={collapsed} to="/admin/brands" icon={Award} label="Brands" />
-            <SidebarItem collapsed={collapsed} to="/admin/home-banners" icon={ImageIcon} label="Banner trang chủ" />
-          </nav>
+          {(hasPermission(user, 'PRODUCT_MANAGE') || hasPermission(user, 'BRAND_MANAGE') || hasRole(user, 'ADMIN')) && (
+            <nav className="mb-4">
+              {!collapsed && (
+                <p className="px-3 mb-1.5 text-xs font-semibold text-muted">
+                  {MENU_GROUPS[2].label}
+                </p>
+              )}
+              {(hasPermission(user, 'PRODUCT_MANAGE') || hasRole(user, 'ADMIN')) && (
+                <SidebarGroup
+                  collapsed={collapsed}
+                  icon={Package}
+                  label="Products"
+                  groupPrefix="/admin/products"
+                  autoExpand={isProductsRoute}
+                >
+                  <SidebarItem
+                    collapsed={collapsed}
+                    to="/admin/products"
+                    icon={ClipboardList}
+                    label="Product List"
+                    alsoMatch={/^\/admin\/products\/\d+\/edit$/}
+                  />
+                  <SidebarItem collapsed={collapsed} to="/admin/products/add" icon={PlusSquare} label="Add Product" />
+                  <SidebarItem collapsed={collapsed} to="/admin/products/media" icon={ImageIcon} label="Product Media" />
+                  <SidebarItem collapsed={collapsed} to="/admin/products/reviews" icon={MessageSquare} label="Reviews" />
+                </SidebarGroup>
+              )}
+              {hasRole(user, 'ADMIN') && (
+                <SidebarItem collapsed={collapsed} to="/admin/categories" icon={LayoutGrid} label="Categories" />
+              )}
+              {(hasPermission(user, 'BRAND_MANAGE') || hasRole(user, 'ADMIN')) && (
+                <SidebarItem collapsed={collapsed} to="/admin/brands" icon={Award} label="Brands" />
+              )}
+              {hasRole(user, 'ADMIN') && (
+                <SidebarItem collapsed={collapsed} to="/admin/home-banners" icon={ImageIcon} label="Banner trang chủ" />
+              )}
+            </nav>
+          )}
 
           {/* ─── Customers ─── */}
-          <nav className="mb-4">
-            {!collapsed && (
-              <p className="px-3 mb-1.5 text-xs font-semibold text-muted">
-                {MENU_GROUPS[3].label}
-              </p>
-            )}
-            <SidebarItem collapsed={collapsed} to="/admin/customers" icon={Users} label="Customers" />
-          </nav>
+          {hasRole(user, 'ADMIN') && (
+            <nav className="mb-4">
+              {!collapsed && (
+                <p className="px-3 mb-1.5 text-xs font-semibold text-muted">
+                  {MENU_GROUPS[3].label}
+                </p>
+              )}
+              <SidebarItem collapsed={collapsed} to="/admin/customers" icon={Users} label="Customers" />
+            </nav>
+          )}
 
           {/* ─── Administration ─── */}
-          <nav className="mb-4">
-            {!collapsed && (
-              <p className="px-3 mb-1.5 text-xs font-semibold text-muted">
-                {MENU_GROUPS[4].label}
-              </p>
-            )}
-            <SidebarItem collapsed={collapsed} to="/admin/roles" icon={UserCog} label="Roles" />
-            <SidebarItem collapsed={collapsed} to="/admin/authority" icon={ShieldCheck} label="Authority" />
-            <SidebarItem collapsed={collapsed} to="/admin/profile" icon={User} label="Profile" />
-            <SidebarItem collapsed={collapsed} to="/admin/settings" icon={Settings} label="Settings" />
-          </nav>
+          {hasRole(user, 'ADMIN') && (
+            <nav className="mb-4">
+              {!collapsed && (
+                <p className="px-3 mb-1.5 text-xs font-semibold text-muted">
+                  {MENU_GROUPS[4].label}
+                </p>
+              )}
+              <SidebarItem collapsed={collapsed} to="/admin/roles" icon={UserCog} label="Roles" />
+              <SidebarItem collapsed={collapsed} to="/admin/authority" icon={ShieldCheck} label="Authority" />
+              <SidebarItem collapsed={collapsed} to="/admin/profile" icon={User} label="Profile" />
+              <SidebarItem collapsed={collapsed} to="/admin/settings" icon={Settings} label="Settings" />
+            </nav>
+          )}
         </div>
 
         {/* Footer user profile */}

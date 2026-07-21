@@ -1,12 +1,11 @@
 package com.NguyenDat.ecommerce.common.util;
 
+import java.util.List;
+
 import com.NguyenDat.ecommerce.entity.ProductMedia;
 
-import java.util.List;
-import java.util.Comparator;
-
 public class MediaUtils {
-    
+
     private MediaUtils() {
         throw new IllegalStateException("Utility class");
     }

@@ -47,6 +47,7 @@ export default function HomeBannerFormModal({ isOpen, onClose, banner, onSuccess
   useEffect(() => {
     if (isOpen) {
       if (banner) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setProductId(banner.product.id);
         setPosition(banner.position);
         setTitle(banner.title || '');
@@ -90,6 +91,7 @@ export default function HomeBannerFormModal({ isOpen, onClose, banner, onSuccess
 
   useEffect(() => {
     if (!isDropdownOpen) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSearchResults([]);
       return;
     }
@@ -163,6 +165,7 @@ export default function HomeBannerFormModal({ isOpen, onClose, banner, onSuccess
         showToast('Thêm mới banner thành công', 'success');
       }
       onSuccess();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       showToast(error?.response?.data?.message || 'Có lỗi xảy ra', 'error');
     } finally {

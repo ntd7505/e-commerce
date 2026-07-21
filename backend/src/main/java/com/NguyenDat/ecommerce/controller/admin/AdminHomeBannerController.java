@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import com.NguyenDat.ecommerce.common.constant.AdminPermission;
 import com.NguyenDat.ecommerce.common.constant.ApiConstant;
 import com.NguyenDat.ecommerce.common.constant.ResponseCode;
 import com.NguyenDat.ecommerce.common.dto.response.ApiResponse;
@@ -27,7 +28,7 @@ import lombok.experimental.FieldDefaults;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequestMapping(ApiConstant.ADMIN_PREFIX + "/home-banners")
-// @PreAuthorize("hasRole('ADMIN')") // Adjust permission as needed, assuming ADMIN for now
+@PreAuthorize(AdminPermission.ADMIN_ONLY)
 public class AdminHomeBannerController {
 
     HomeBannerService homeBannerService;
@@ -37,8 +38,8 @@ public class AdminHomeBannerController {
             @RequestParam(required = false) BannerPosition position,
             @RequestParam(required = false) Boolean active,
             @Valid PageRequest pageRequest) {
-        PageResponse<HomeBannerResponse> response = PageResponse.from(
-                homeBannerService.getAdminBanners(position, active, pageRequest.toPageable()));
+        PageResponse<HomeBannerResponse> response =
+                PageResponse.from(homeBannerService.getAdminBanners(position, active, pageRequest.toPageable()));
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.HOME_BANNERS_FETCHED, response));
     }
 
@@ -56,13 +57,15 @@ public class AdminHomeBannerController {
     @PatchMapping("/{id}")
     public ResponseEntity<ApiResponse<HomeBannerResponse>> updateBanner(
             @PathVariable Long id, @RequestBody @Valid HomeBannerRequest request) {
-        return ResponseEntity.ok(ApiResponse.of(ResponseCode.HOME_BANNER_UPDATED, homeBannerService.updateBanner(id, request)));
+        return ResponseEntity.ok(
+                ApiResponse.of(ResponseCode.HOME_BANNER_UPDATED, homeBannerService.updateBanner(id, request)));
     }
 
     @PatchMapping("/{id}/status")
     public ResponseEntity<ApiResponse<HomeBannerResponse>> updateBannerStatus(
             @PathVariable Long id, @RequestBody @Valid HomeBannerStatusRequest request) {
-        return ResponseEntity.ok(ApiResponse.of(ResponseCode.HOME_BANNER_STATUS_UPDATED, homeBannerService.updateBannerStatus(id, request)));
+        return ResponseEntity.ok(ApiResponse.of(
+                ResponseCode.HOME_BANNER_STATUS_UPDATED, homeBannerService.updateBannerStatus(id, request)));
     }
 
     @DeleteMapping("/{id}")

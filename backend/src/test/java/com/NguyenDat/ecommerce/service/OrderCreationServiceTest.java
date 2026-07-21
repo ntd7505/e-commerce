@@ -110,7 +110,6 @@ class OrderCreationServiceTest {
         assertEquals(BigDecimal.valueOf(200_000.0), result.getItems().getFirst().getLineTotal());
         verify(orderRepository, times(2)).save(result);
         verify(couponApplicationService).recordUsage(eq(result), eq(user), any(CouponCalculation.class));
-        verify(orderStatusHistoryService)
-                .record(result, user, null, OrderStatus.PENDING, "Customer placed order");
+        verify(orderStatusHistoryService).record(result, user, null, OrderStatus.PENDING, "Customer placed order");
     }
 }

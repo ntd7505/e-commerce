@@ -40,17 +40,25 @@ public class HomeBannerServiceImpl implements HomeBannerService {
     @Override
     @Transactional(readOnly = true)
     public Page<HomeBannerResponse> getAdminBanners(BannerPosition position, Boolean active, Pageable pageable) {
-        return homeBannerRepository.findAdminBanners(position, active, pageable)
-                .map(this::mapToResponse);
+        return homeBannerRepository.findAdminBanners(position, active, pageable).map(this::mapToResponse);
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<HomeBannerResponse> getActiveClientBanners() {
-        return homeBannerRepository.findActiveClientBanners(LocalDateTime.now())
-                .stream()
-                .map(this::mapToResponse)
-                .collect(Collectors.toList());
+        List<HomeBanner> banners = homeBannerRepository.findActiveClientBanners(LocalDateTime.now());
+        List<HomeBannerResponse> responses = new java.util.ArrayList<>();
+        boolean hasHero = false;
+
+        for (HomeBanner banner : banners) {
+            if (banner.getPosition() == BannerPosition.HOME_HERO) {
+                if (hasHero) continue;
+                hasHero = true;
+            }
+            responses.add(mapToResponse(banner));
+        }
+
+        return responses;
     }
 
     @Override
@@ -116,7 +124,7 @@ public class HomeBannerServiceImpl implements HomeBannerService {
     public HomeBannerResponse updateBannerStatus(Long id, HomeBannerStatusRequest request) {
         HomeBanner banner = getBannerEntity(id);
         banner.setActive(request.getActive());
-        
+
         handleExclusiveActivePosition(banner);
         HomeBanner savedBanner = homeBannerRepository.save(banner);
         return mapToResponse(savedBanner);
@@ -151,7 +159,8 @@ public class HomeBannerServiceImpl implements HomeBannerService {
                 throw new AppException(ErrorCode.INVALID_KEY);
             }
         }
-        if (request.getBackgroundColor() != null && !request.getBackgroundColor().isEmpty()) {
+        if (request.getBackgroundColor() != null
+                && !request.getBackgroundColor().isEmpty()) {
             if (!request.getBackgroundColor().matches("^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$")) {
                 throw new AppException(ErrorCode.INVALID_KEY);
             }
@@ -160,26 +169,26 @@ public class HomeBannerServiceImpl implements HomeBannerService {
 
     private void handleExclusiveActivePosition(HomeBanner banner) {
         if (!banner.isActive()) return;
-        
-        if (banner.getPosition() == BannerPosition.HOME_SIDE_TOP || banner.getPosition() == BannerPosition.HOME_SIDE_BOTTOM) {
-            List<HomeBanner> activeBanners = homeBannerRepository.findByPositionAndIsActiveTrueAndDeletedFalse(banner.getPosition());
-            for (HomeBanner activeBanner : activeBanners) {
-                if (!activeBanner.getId().equals(banner.getId())) {
-                    activeBanner.setActive(false);
-                    homeBannerRepository.save(activeBanner);
-                }
+
+        List<HomeBanner> activeBanners =
+                homeBannerRepository.findByPositionAndIsActiveTrueAndDeletedFalse(banner.getPosition());
+        for (HomeBanner activeBanner : activeBanners) {
+            if (!activeBanner.getId().equals(banner.getId())) {
+                activeBanner.setActive(false);
+                homeBannerRepository.save(activeBanner);
             }
         }
     }
 
     private HomeBanner getBannerEntity(Long id) {
-        return homeBannerRepository.findByIdAndDeletedFalse(id)
-                .orElseThrow(() -> new AppException(ErrorCode.HOME_BANNER_NOT_FOUND)); 
+        return homeBannerRepository
+                .findByIdAndDeletedFalse(id)
+                .orElseThrow(() -> new AppException(ErrorCode.HOME_BANNER_NOT_FOUND));
     }
 
     private Product getProductEntity(Long productId) {
-        Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+        Product product =
+                productRepository.findById(productId).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
         if (!product.isActive() || product.isDeleted()) {
             throw new AppException(ErrorCode.PRODUCT_INACTIVE);
         }
@@ -188,13 +197,24 @@ public class HomeBannerServiceImpl implements HomeBannerService {
 
     private HomeBannerResponse mapToResponse(HomeBanner banner) {
         Product product = banner.getProduct();
-        
+
         BigDecimal price = BigDecimal.ZERO;
         BigDecimal salePrice = BigDecimal.ZERO;
-        
+
         if (product.getVariants() != null && !product.getVariants().isEmpty()) {
             price = BigDecimal.valueOf(product.getVariants().get(0).getPrice());
             salePrice = BigDecimal.valueOf(product.getVariants().get(0).getSalePrice());
+        }
+
+        List<String> imageUrls = null;
+        if (product.getMedia() != null) {
+            imageUrls = product.getMedia().stream()
+                    .filter(m -> m.isActive() && !m.isDeleted() && "IMAGE".equalsIgnoreCase(m.getMediaType()))
+                    .sorted(java.util.Comparator.comparingInt(
+                            com.NguyenDat.ecommerce.entity.ProductMedia::getSortOrder))
+                    .map(com.NguyenDat.ecommerce.entity.ProductMedia::getUrl)
+                    .distinct()
+                    .collect(Collectors.toList());
         }
 
         ProductSummaryResponse productSummary = ProductSummaryResponse.builder()
@@ -202,6 +222,7 @@ public class HomeBannerServiceImpl implements HomeBannerService {
                 .name(product.getName())
                 .slug(product.getSlug())
                 .thumbnailUrl(MediaUtils.resolveThumbnailUrl(product.getMedia()))
+                .imageUrls(imageUrls)
                 .price(price)
                 .salePrice(salePrice)
                 .build();

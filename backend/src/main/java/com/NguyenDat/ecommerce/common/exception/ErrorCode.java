@@ -53,7 +53,8 @@ public enum ErrorCode {
     PASSWORD_SAME_AS_CURRENT(3007, "New password must be different from current password", HttpStatus.BAD_REQUEST),
     PASSWORD_RESET_CODE_INVALID(3008, "Password reset code is invalid", HttpStatus.BAD_REQUEST),
     PASSWORD_RESET_CODE_EXPIRED(3009, "Password reset code has expired", HttpStatus.BAD_REQUEST),
-    PASSWORD_RESET_CODE_ATTEMPTS_EXCEEDED(3010, "Too many invalid password reset code attempts", HttpStatus.TOO_MANY_REQUESTS),
+    PASSWORD_RESET_CODE_ATTEMPTS_EXCEEDED(
+            3010, "Too many invalid password reset code attempts", HttpStatus.TOO_MANY_REQUESTS),
     EMAIL_DELIVERY_FAILED(3011, "Unable to send email at this time", HttpStatus.SERVICE_UNAVAILABLE),
 
     // product

@@ -40,11 +40,12 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     long countByStatus(OrderStatus status);
 
-    @Query("""
-            SELECT COALESCE(SUM(o.totalAmount), 0)
-            FROM Order o
-            WHERE o.status IN ('DELIVERED', 'COMPLETED')
-            """)
+    @Query(
+            """
+			SELECT COALESCE(SUM(o.totalAmount), 0)
+			FROM Order o
+			WHERE o.status IN ('DELIVERED', 'COMPLETED')
+			""")
     java.math.BigDecimal sumRevenueForSuccessfulOrders();
 
     Slice<Order> findAllByOrderByCreatedAtDesc(Pageable pageable);

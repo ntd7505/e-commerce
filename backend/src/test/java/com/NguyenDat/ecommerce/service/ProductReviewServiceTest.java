@@ -17,9 +17,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import com.NguyenDat.ecommerce.common.dto.response.PageResponse;
 import com.NguyenDat.ecommerce.common.exception.AppException;
 import com.NguyenDat.ecommerce.common.exception.ErrorCode;
-import com.NguyenDat.ecommerce.common.dto.response.PageResponse;
 import com.NguyenDat.ecommerce.dto.request.ProductReviewModerationRequest;
 import com.NguyenDat.ecommerce.dto.request.product_review.ProductReviewCreateRequest;
 import com.NguyenDat.ecommerce.dto.request.product_review.ProductReviewMediaRequest;
@@ -137,8 +137,7 @@ class ProductReviewServiceTest {
         ProductReview threeStar = reviewWithRating(3);
         when(productReviewRepository.findAllByProductIdAndDeletedFalseAndActiveTrue(1L))
                 .thenReturn(List.of(fiveStar, threeStar));
-        when(productReviewMediaRepository
-                        .countByReviewProductIdAndReviewDeletedFalseAndReviewActiveTrue(1L))
+        when(productReviewMediaRepository.countByReviewProductIdAndReviewDeletedFalseAndReviewActiveTrue(1L))
                 .thenReturn(2L);
 
         ProductReviewSummaryResponse result = productReviewService.getReviewSummaryByProductId(1L);
@@ -197,10 +196,10 @@ class ProductReviewServiceTest {
     void moderateReview_shouldUpdateActiveStatus() {
         ProductReview review = reviewWithRating(5);
         review.setDeleted(false);
-        ProductReviewResponse response = ProductReviewResponse.builder().id(1L).active(false).build();
-        ProductReviewModerationRequest request = ProductReviewModerationRequest.builder()
-                .active(false)
-                .build();
+        ProductReviewResponse response =
+                ProductReviewResponse.builder().id(1L).active(false).build();
+        ProductReviewModerationRequest request =
+                ProductReviewModerationRequest.builder().active(false).build();
         when(productReviewRepository.findById(1L)).thenReturn(Optional.of(review));
         when(productReviewRepository.save(review)).thenReturn(review);
         when(productReviewMapper.toProductReviewResponse(review)).thenReturn(response);

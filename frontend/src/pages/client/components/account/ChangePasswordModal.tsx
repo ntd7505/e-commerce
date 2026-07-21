@@ -33,6 +33,7 @@ export default function ChangePasswordModal({ isOpen, onClose }: ChangePasswordM
 
   if (!isOpen) return null;
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const parseError = (err: any) => {
     const errorCode = err?.response?.data?.code || err?.message;
     switch (errorCode) {
@@ -67,6 +68,7 @@ export default function ChangePasswordModal({ isOpen, onClose }: ChangePasswordM
       
       onClose();
       navigate('/login?passwordChanged=1');
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       setError(parseError(err));
     } finally {
