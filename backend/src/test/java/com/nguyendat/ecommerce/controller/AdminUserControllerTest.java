@@ -1,0 +1,373 @@
+package com.nguyendat.ecommerce.controller;
+
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.web.servlet.MockMvc;
+
+import com.nguyendat.ecommerce.common.constant.ResponseCode;
+import com.nguyendat.ecommerce.common.exception.AppException;
+import com.nguyendat.ecommerce.common.exception.ErrorCode;
+import com.nguyendat.ecommerce.controller.admin.AdminUserController;
+import com.nguyendat.ecommerce.dto.request.UserCreationRequest;
+import com.nguyendat.ecommerce.dto.request.UserUpdateRequest;
+import com.nguyendat.ecommerce.dto.response.UserResponse;
+import com.nguyendat.ecommerce.service.UserService;
+
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
+import tools.jackson.databind.ObjectMapper;
+
+@WebMvcTest(AdminUserController.class)
+@AutoConfigureMockMvc(addFilters = false)
+@FieldDefaults(level = AccessLevel.PRIVATE)
+class AdminUserControllerTest {
+
+    @Autowired
+    MockMvc mockMvc;
+
+    @Autowired
+    ObjectMapper objectMapper;
+
+    @MockitoBean
+    UserService userService;
+
+    UserResponse userResponse;
+    UserCreationRequest userCreationRequest;
+    UserUpdateRequest userUpdateRequest;
+
+    @BeforeEach
+    void setUp() {
+        userCreationRequest = UserCreationRequest.builder()
+                .email("dat@gmail.com")
+                .password("Dat@1234")
+                .fullName("Nguyen Dat")
+                .phoneNumber("0912345678")
+                .avatarUrl("avatar.png")
+                .build();
+
+        userUpdateRequest = UserUpdateRequest.builder()
+                .fullName("Nguyen Dat Updated")
+                .phoneNumber("0987654321")
+                .avatarUrl("updated-avatar.png")
+                .build();
+
+        userResponse = UserResponse.builder()
+                .email("dat@gmail.com")
+                .fullName("Nguyen Dat")
+                .phoneNumber("0912345678")
+                .avatarUrl("avatar.png")
+                .roles(Set.of())
+                .build();
+    }
+
+    @Test
+    void createUser_shouldReturnCreatedResponse_whenRequestIsValid() throws Exception {
+        when(userService.createUser(any(UserCreationRequest.class))).thenReturn(userResponse);
+        mockMvc.perform(post("/api/v1/admin/users")
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(userCreationRequest)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.code").value(ResponseCode.USER_CREATED.getCode()))
+                .andExpect(jsonPath("$.message").value(ResponseCode.USER_CREATED.getMessage()))
+                .andExpect(jsonPath("$.data.email").value("dat@gmail.com"))
+                .andExpect(jsonPath("$.data.fullName").value("Nguyen Dat"))
+                .andExpect(jsonPath("$.data.phoneNumber").value("0912345678"))
+                .andExpect(jsonPath("$.data.avatarUrl").value("avatar.png"));
+
+        verify(userService).createUser(any(UserCreationRequest.class));
+    }
+
+    @Test
+    void createUser_shouldReturnBadRequest_whenEmailIsBlank() throws Exception {
+        userCreationRequest = UserCreationRequest.builder()
+                .email("")
+                .password("Dat@1234")
+                .fullName("Nguyen Dat")
+                .phoneNumber("0912345678")
+                .avatarUrl("avatar.png")
+                .build();
+        mockMvc.perform(post("/api/v1/admin/users")
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(userCreationRequest)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value(ErrorCode.INVALID_KEY.getCode()))
+                .andExpect(jsonPath("$.message").value(ErrorCode.INVALID_KEY.getMessage()));
+
+        verify(userService, never()).createUser(any(UserCreationRequest.class));
+    }
+
+    @Test
+    void createUser_shouldReturnBadRequest_whenPasswordIsBlank() throws Exception {
+        userCreationRequest = UserCreationRequest.builder()
+                .email("dat@gmail.com")
+                .password("")
+                .fullName("Nguyen Dat")
+                .phoneNumber("0912345678")
+                .avatarUrl("avatar.png")
+                .build();
+        mockMvc.perform(post("/api/v1/admin/users")
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(userCreationRequest)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value(ErrorCode.INVALID_KEY.getCode()))
+                .andExpect(jsonPath("$.message").value(ErrorCode.INVALID_KEY.getMessage()));
+
+        verify(userService, never()).createUser(any(UserCreationRequest.class));
+    }
+
+    @Test
+    void createUser_shouldReturnBadRequest_whenPhoneNumberIsInvalid() throws Exception {
+        userCreationRequest = UserCreationRequest.builder()
+                .email("dat@gmail.com")
+                .password("Dat@1234")
+                .fullName("Nguyen Dat")
+                .phoneNumber("091234567")
+                .avatarUrl("avatar.png")
+                .build();
+        mockMvc.perform(post("/api/v1/admin/users")
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(userCreationRequest)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value(ErrorCode.INVALID_KEY.getCode()))
+                .andExpect(jsonPath("$.message").value(ErrorCode.INVALID_KEY.getMessage()));
+
+        verify(userService, never()).createUser(any(UserCreationRequest.class));
+    }
+
+    @Test
+    void createUser_shouldReturnErrorResponse_whenEmailAlreadyExists() throws Exception {
+        when(userService.createUser(any(UserCreationRequest.class)))
+                .thenThrow(new AppException(ErrorCode.EMAIL_EXISTED));
+        mockMvc.perform(post("/api/v1/admin/users")
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(userCreationRequest)))
+                .andExpect(status().is(ErrorCode.EMAIL_EXISTED.getStatusCode().value()))
+                .andExpect(jsonPath("$.code").value(ErrorCode.EMAIL_EXISTED.getCode()))
+                .andExpect(jsonPath("$.message").value(ErrorCode.EMAIL_EXISTED.getMessage()));
+        verify(userService).createUser(any(UserCreationRequest.class));
+    }
+
+    @Test
+    void createUser_shouldReturnErrorResponse_whenPhoneAlreadyExists() throws Exception {
+        when(userService.createUser(any(UserCreationRequest.class)))
+                .thenThrow(new AppException(ErrorCode.PHONE_EXISTED));
+        mockMvc.perform(post("/api/v1/admin/users")
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(userCreationRequest)))
+                .andExpect(status().is(ErrorCode.PHONE_EXISTED.getStatusCode().value()))
+                .andExpect(jsonPath("$.code").value(ErrorCode.PHONE_EXISTED.getCode()))
+                .andExpect(jsonPath("$.message").value(ErrorCode.PHONE_EXISTED.getMessage()));
+        verify(userService).createUser(any(UserCreationRequest.class));
+    }
+
+    @Test
+    void getUserById_shouldReturnFetchedResponse_whenUserExists() throws Exception {
+        when(userService.getUserById(1L)).thenReturn(userResponse);
+        mockMvc.perform(get("/api/v1/admin/users/{id}", 1))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(ResponseCode.USER_FETCHED.getCode()))
+                .andExpect(jsonPath("$.message").value(ResponseCode.USER_FETCHED.getMessage()))
+                .andExpect(jsonPath("$.data.email").value("dat@gmail.com"))
+                .andExpect(jsonPath("$.data.fullName").value("Nguyen Dat"))
+                .andExpect(jsonPath("$.data.phoneNumber").value("0912345678"))
+                .andExpect(jsonPath("$.data.avatarUrl").value("avatar.png"));
+
+        verify(userService).getUserById(1L);
+    }
+
+    @Test
+    void getUserById_shouldReturnErrorResponse_whenUserNotFound() throws Exception {
+        when(userService.getUserById(1L)).thenThrow(new AppException(ErrorCode.USER_NOT_EXISTED));
+        mockMvc.perform(get("/api/v1/admin/users/{id}", 1))
+                .andExpect(
+                        status().is(ErrorCode.USER_NOT_EXISTED.getStatusCode().value()))
+                .andExpect(jsonPath("$.code").value(ErrorCode.USER_NOT_EXISTED.getCode()))
+                .andExpect(jsonPath("$.message").value(ErrorCode.USER_NOT_EXISTED.getMessage()));
+        verify(userService).getUserById(1L);
+    }
+
+    @Test
+    void getAllUsers_shouldReturnFetchedResponse_whenDataExists() throws Exception {
+        List<UserResponse> userResponseList = new ArrayList<>();
+        userResponseList.add(userResponse);
+        when(userService.getAllUsers()).thenReturn(userResponseList);
+        mockMvc.perform(get("/api/v1/admin/users/all"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(ResponseCode.USERS_FETCHED.getCode()))
+                .andExpect(jsonPath("$.message").value(ResponseCode.USERS_FETCHED.getMessage()))
+                .andExpect(jsonPath("$.data[0].email").value("dat@gmail.com"))
+                .andExpect(jsonPath("$.data[0].fullName").value("Nguyen Dat"))
+                .andExpect(jsonPath("$.data[0].phoneNumber").value("0912345678"))
+                .andExpect(jsonPath("$.data[0].avatarUrl").value("avatar.png"));
+
+        verify(userService).getAllUsers();
+    }
+
+    @Test
+    void getAllUsers_shouldReturnNoDataFound_whenListIsEmpty() throws Exception {
+        List<UserResponse> userResponseList = new ArrayList<>();
+        when(userService.getAllUsers()).thenReturn(userResponseList);
+        mockMvc.perform(get("/api/v1/admin/users/all"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(ResponseCode.NO_DATA_FOUND.getCode()))
+                .andExpect(jsonPath("$.message").value(ResponseCode.NO_DATA_FOUND.getMessage()))
+                .andExpect(jsonPath("$.data.length()").value(0));
+        verify(userService).getAllUsers();
+    }
+
+    @Test
+    void updateUserById_shouldReturnUpdatedResponse_whenRequestIsValid() throws Exception {
+        UserResponse updatedUserResponse = UserResponse.builder()
+                .email("dat@gmail.com")
+                .fullName("Nguyen Dat Updated")
+                .phoneNumber("0987654321")
+                .avatarUrl("updated-avatar.png")
+                .roles(Set.of())
+                .build();
+        when(userService.updateUserById(eq(1L), any(UserUpdateRequest.class))).thenReturn(updatedUserResponse);
+        mockMvc.perform(patch("/api/v1/admin/users/{id}", 1L)
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(userUpdateRequest)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(ResponseCode.USER_UPDATED.getCode()))
+                .andExpect(jsonPath("$.message").value(ResponseCode.USER_UPDATED.getMessage()))
+                .andExpect(jsonPath("$.data.fullName").value("Nguyen Dat Updated"))
+                .andExpect(jsonPath("$.data.phoneNumber").value("0987654321"))
+                .andExpect(jsonPath("$.data.avatarUrl").value("updated-avatar.png"));
+        verify(userService).updateUserById(eq(1L), any(UserUpdateRequest.class));
+    }
+
+    @Test
+    void updateUserById_shouldReturnBadRequest_whenFullNameIsBlank() throws Exception {
+        userUpdateRequest = UserUpdateRequest.builder()
+                .fullName("")
+                .phoneNumber("0987654321")
+                .avatarUrl("updated-avatar.png")
+                .build();
+        mockMvc.perform(patch("/api/v1/admin/users/{id}", 1L)
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(userUpdateRequest)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value(ErrorCode.INVALID_KEY.getCode()))
+                .andExpect(jsonPath("$.message").value(ErrorCode.INVALID_KEY.getMessage()));
+        verify(userService, never()).updateUserById(anyLong(), any(UserUpdateRequest.class));
+    }
+
+    @Test
+    void updateUserById_shouldReturnBadRequest_whenPhoneNumberIsInvalid() throws Exception {
+        userUpdateRequest = UserUpdateRequest.builder()
+                .fullName("Nguyen Dat Updated")
+                .phoneNumber("098765431")
+                .avatarUrl("updated-avatar.png")
+                .build();
+
+        mockMvc.perform(patch("/api/v1/admin/users/{userId}", 1)
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(userUpdateRequest)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value(ErrorCode.INVALID_KEY.getCode()))
+                .andExpect(jsonPath("$.message").value(ErrorCode.INVALID_KEY.getMessage()));
+
+        verify(userService, never()).updateUserById(anyLong(), any(UserUpdateRequest.class));
+    }
+
+    @Test
+    void updateUserById_shouldReturnErrorResponse_whenPhoneAlreadyExists() throws Exception {
+        when(userService.updateUserById(anyLong(), any(UserUpdateRequest.class)))
+                .thenThrow(new AppException(ErrorCode.PHONE_EXISTED));
+
+        mockMvc.perform(patch("/api/v1/admin/users/{userId}", 1)
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(userUpdateRequest)))
+                .andExpect(status().is(ErrorCode.PHONE_EXISTED.getStatusCode().value()))
+                .andExpect(jsonPath("$.code").value(ErrorCode.PHONE_EXISTED.getCode()))
+                .andExpect(jsonPath("$.message").value(ErrorCode.PHONE_EXISTED.getMessage()));
+
+        verify(userService).updateUserById(anyLong(), any(UserUpdateRequest.class));
+    }
+
+    @Test
+    void updateUserById_shouldReturnErrorResponse_whenUserNotFound() throws Exception {
+        when(userService.updateUserById(anyLong(), any(UserUpdateRequest.class)))
+                .thenThrow(new AppException(ErrorCode.USER_NOT_EXISTED));
+        mockMvc.perform(patch("/api/v1/admin/users/{userId}", 1)
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(userUpdateRequest)))
+                .andExpect(
+                        status().is(ErrorCode.USER_NOT_EXISTED.getStatusCode().value()))
+                .andExpect(jsonPath("$.code").value(ErrorCode.USER_NOT_EXISTED.getCode()))
+                .andExpect(jsonPath("$.message").value(ErrorCode.USER_NOT_EXISTED.getMessage()));
+
+        verify(userService).updateUserById(anyLong(), any(UserUpdateRequest.class));
+    }
+
+    @Test
+    void softDeleteUser_shouldReturnDeletedResponse_whenUserExists() throws Exception {
+        doNothing().when(userService).softDeleteUser(1L);
+
+        mockMvc.perform(delete("/api/v1/admin/users/{userId}", 1L))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(ResponseCode.USER_DELETED.getCode()))
+                .andExpect(jsonPath("$.message").value(ResponseCode.USER_DELETED.getMessage()));
+
+        verify(userService).softDeleteUser(1L);
+    }
+
+    @Test
+    void softDeleteUser_shouldReturnErrorResponse_whenUserNotFound() throws Exception {
+        doThrow(new AppException(ErrorCode.USER_NOT_EXISTED)).when(userService).softDeleteUser(1L);
+
+        mockMvc.perform(delete("/api/v1/admin/users/{userId}", 1L))
+                .andExpect(
+                        status().is(ErrorCode.USER_NOT_EXISTED.getStatusCode().value()))
+                .andExpect(jsonPath("$.code").value(ErrorCode.USER_NOT_EXISTED.getCode()))
+                .andExpect(jsonPath("$.message").value(ErrorCode.USER_NOT_EXISTED.getMessage()));
+
+        verify(userService).softDeleteUser(1L);
+    }
+
+    @Test
+    void getMyInfo_shouldReturnFetchedResponse_whenUserExists() throws Exception {
+        when(userService.getMyInfo()).thenReturn(userResponse);
+
+        mockMvc.perform(get("/api/v1/admin/users/me"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(ResponseCode.USER_FETCHED.getCode()))
+                .andExpect(jsonPath("$.message").value(ResponseCode.USER_FETCHED.getMessage()))
+                .andExpect(jsonPath("$.data.email").value("dat@gmail.com"))
+                .andExpect(jsonPath("$.data.fullName").value("Nguyen Dat"))
+                .andExpect(jsonPath("$.data.phoneNumber").value("0912345678"))
+                .andExpect(jsonPath("$.data.avatarUrl").value("avatar.png"));
+
+        verify(userService).getMyInfo();
+    }
+
+    @Test
+    void getMyInfo_shouldReturnErrorResponse_whenUserNotFound() throws Exception {
+        when(userService.getMyInfo()).thenThrow(new AppException(ErrorCode.USER_NOT_EXISTED));
+
+        mockMvc.perform(get("/api/v1/admin/users/me"))
+                .andExpect(
+                        status().is(ErrorCode.USER_NOT_EXISTED.getStatusCode().value()))
+                .andExpect(jsonPath("$.code").value(ErrorCode.USER_NOT_EXISTED.getCode()))
+                .andExpect(jsonPath("$.message").value(ErrorCode.USER_NOT_EXISTED.getMessage()));
+
+        verify(userService).getMyInfo();
+    }
+}
+

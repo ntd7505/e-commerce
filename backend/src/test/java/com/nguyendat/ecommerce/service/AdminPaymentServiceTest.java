@@ -1,0 +1,105 @@
+package com.nguyendat.ecommerce.service;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
+import java.util.Optional;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import com.nguyendat.ecommerce.dto.request.PaymentUpdateRequest;
+import com.nguyendat.ecommerce.dto.response.PaymentResponse;
+import com.nguyendat.ecommerce.entity.Order;
+import com.nguyendat.ecommerce.entity.Payment;
+import com.nguyendat.ecommerce.enums.PaymentStatus;
+import com.nguyendat.ecommerce.mapper.PaymentMapper;
+import com.nguyendat.ecommerce.repository.OrderRepository;
+import com.nguyendat.ecommerce.repository.PaymentRepository;
+import com.nguyendat.ecommerce.service.impl.AdminPaymentServiceImpl;
+
+@ExtendWith(MockitoExtension.class)
+class AdminPaymentServiceTest {
+
+    @Mock
+    private PaymentRepository paymentRepository;
+
+    @Mock
+    private OrderRepository orderRepository;
+
+    @Mock
+    private OrderPaymentService orderPaymentService;
+
+    @Mock
+    private PaymentMapper paymentMapper;
+
+    @InjectMocks
+    private AdminPaymentServiceImpl adminPaymentService;
+
+    private Payment payment;
+    private Order order;
+
+    @BeforeEach
+    void setUp() {
+        order = new Order();
+        order.setId(1L);
+        order.setPaymentStatus(PaymentStatus.UNPAID);
+
+        payment = new Payment();
+        payment.setId(1L);
+        payment.setStatus(PaymentStatus.UNPAID);
+        payment.setOrder(order);
+    }
+
+    @Test
+    void updatePaymentStatus_ToPaid_ShouldDelegateToMarkPaid() {
+        PaymentUpdateRequest request = new PaymentUpdateRequest();
+        request.setStatus(PaymentStatus.PAID);
+
+        doAnswer(invocation -> {
+                    payment.setStatus(PaymentStatus.PAID);
+                    return null;
+                })
+                .when(orderPaymentService)
+                .markPaid(order);
+
+        when(paymentRepository.findById(1L)).thenReturn(Optional.of(payment));
+        when(paymentRepository.save(any(Payment.class))).thenReturn(payment);
+        when(paymentMapper.toPaymentResponse(payment)).thenReturn(new PaymentResponse());
+
+        adminPaymentService.updatePaymentStatus(1L, request);
+
+        verify(orderPaymentService).markPaid(order);
+        verify(orderRepository).save(order);
+        assertEquals(PaymentStatus.PAID, order.getPaymentStatus());
+    }
+
+    @Test
+    void updatePaymentStatus_ToCancelled_ShouldDelegateToMarkCancelled() {
+        PaymentUpdateRequest request = new PaymentUpdateRequest();
+        request.setStatus(PaymentStatus.CANCELLED);
+
+        doAnswer(invocation -> {
+                    payment.setStatus(PaymentStatus.CANCELLED);
+                    return null;
+                })
+                .when(orderPaymentService)
+                .markCancelled(order);
+
+        when(paymentRepository.findById(1L)).thenReturn(Optional.of(payment));
+        when(paymentRepository.save(any(Payment.class))).thenReturn(payment);
+        when(paymentMapper.toPaymentResponse(payment)).thenReturn(new PaymentResponse());
+
+        adminPaymentService.updatePaymentStatus(1L, request);
+
+        verify(orderPaymentService).markCancelled(order);
+        verify(orderRepository).save(order);
+        assertEquals(PaymentStatus.CANCELLED, order.getPaymentStatus());
+    }
+}
+

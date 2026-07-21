@@ -8,7 +8,7 @@
         <version>4.0.3</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.NguyenDat</groupId>
+    <groupId>com.nguyendat</groupId>
     <artifactId>ecommerce</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>e-commerce-backend</name>
@@ -214,3 +214,4 @@
     </build>
 
 </project>
+

@@ -1,0 +1,40 @@
+package com.nguyendat.ecommerce.mapper;
+
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+
+import com.nguyendat.ecommerce.dto.request.RoleRequest;
+import com.nguyendat.ecommerce.dto.response.PermissionResponse;
+import com.nguyendat.ecommerce.dto.response.RoleResponse;
+import com.nguyendat.ecommerce.entity.Permission;
+import com.nguyendat.ecommerce.entity.Role;
+
+@Mapper(componentModel = "spring")
+public interface RoleMapper {
+
+    RoleResponse toRoleResponse(Role role);
+
+    @Mapping(target = "userSet", ignore = true)
+    @Mapping(target = "permissions", ignore = true)
+    Role toRole(RoleRequest request);
+
+    default Set<String> mapRoles(Set<Permission> permissions) {
+        if (permissions == null) return new HashSet<>();
+        return permissions.stream().map(Permission::getName).collect(Collectors.toSet());
+    }
+
+    default Set<PermissionResponse> mapPermissions(Set<Permission> permissions) {
+        if (permissions == null) return new HashSet<>();
+        return permissions.stream()
+                .map(permission -> PermissionResponse.builder()
+                        .name(permission.getName())
+                        .description(permission.getDescription())
+                        .build())
+                .collect(Collectors.toSet());
+    }
+}
+

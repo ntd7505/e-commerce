@@ -1,0 +1,68 @@
+package com.nguyendat.ecommerce.service.impl;
+
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.nguyendat.ecommerce.common.exception.AppException;
+import com.nguyendat.ecommerce.common.exception.ErrorCode;
+import com.nguyendat.ecommerce.dto.request.RoleRequest;
+import com.nguyendat.ecommerce.dto.response.RoleResponse;
+import com.nguyendat.ecommerce.entity.Permission;
+import com.nguyendat.ecommerce.entity.Role;
+import com.nguyendat.ecommerce.mapper.RoleMapper;
+import com.nguyendat.ecommerce.repository.PermissionRepository;
+import com.nguyendat.ecommerce.repository.RoleRepository;
+import com.nguyendat.ecommerce.service.RoleService;
+
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+
+@Service
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+public class RoleServiceImpl implements RoleService {
+    RoleRepository roleRepository;
+    RoleMapper roleMapper;
+    PermissionRepository permissionRepository;
+
+    @Transactional
+    public RoleResponse createRole(RoleRequest request) {
+        if (roleRepository.existsById(request.getName())) {
+            throw new AppException(ErrorCode.ROLE_EXISTED);
+        }
+
+        Role role = roleMapper.toRole(request);
+        // Set<String> -> Set<Permission>
+        Set<Permission> permissions = request.getPermissions().stream()
+                .map(pers -> permissionRepository
+                        .findById(pers)
+                        .orElseThrow(() -> new AppException(ErrorCode.PERMISSION_NOT_FOUND)))
+                .collect(Collectors.toSet());
+        role.setPermissions(permissions);
+        try {
+            role = roleRepository.save(role);
+        } catch (DataIntegrityViolationException e) {
+            throw new AppException(ErrorCode.ROLE_EXISTED);
+        }
+        return roleMapper.toRoleResponse(role);
+    }
+
+    @Transactional(readOnly = true)
+    public List<RoleResponse> getAllRole() {
+        return this.roleRepository.findAllWithPermissions().stream()
+                .map(roleMapper::toRoleResponse)
+                .toList();
+    }
+
+    //    public void deleteRoles(String roleName) {
+    //        if (!roleRepository.existsById(roleName)) throw new AppException(ErrorCode.ROLE_NOT_FOUND);
+    //        roleRepository.deleteById(roleName);
+    //    }
+}
+
